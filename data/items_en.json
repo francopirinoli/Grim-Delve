@@ -1,0 +1,1096 @@
+{
+  "armor": [
+    {
+      "id": "arm_none",
+      "name": "Unarmored",
+      "as": 0,
+      "cost": "0",
+      "slots": 0,
+      "req": null,
+      "penalty": null,
+      "description": "Standard clothing."
+    },
+    {
+      "id": "arm_light",
+      "name": "Light Armor",
+      "as": 1,
+      "cost": "10g",
+      "slots": 1,
+      "req": null,
+      "penalty": null,
+      "description": "Leather jack, gambeson, or furs."
+    },
+    {
+      "id": "arm_medium",
+      "name": "Medium Armor",
+      "as": 2,
+      "cost": "50g",
+      "slots": 2,
+      "req": "STR +1",
+      "penalty": "Clumsy (Disadvantage on Stealth & Dodge)",
+      "description": "Chainmail, scale shirt, or hide."
+    },
+    {
+      "id": "arm_heavy",
+      "name": "Heavy Armor",
+      "as": 3,
+      "cost": "200g",
+      "slots": 3,
+      "req": "STR +2, CON +2",
+      "penalty": "Heavy (Disadvantage on Stealth, Dodge, Athletics). Slow (Cannot Dash).",
+      "description": "Plate mail or splint armor."
+    },
+    {
+      "id": "arm_shield",
+      "name": "Shield",
+      "as": 1,
+      "cost": "10g",
+      "slots": 1,
+      "req": null,
+      "penalty": "Occupies one hand.",
+      "description": "Wood or steel shield. Enables Block action."
+    }
+  ],
+  "weapons": [
+    {
+      "id": "wep_dagger",
+      "name": "Dagger",
+      "damage": "1d4",
+      "cost": "2g",
+      "slots": 1,
+      "type": "Melee",
+      "tags": ["Finesse", "Light", "Precise", "Thrown"]
+    },
+    {
+      "id": "wep_club",
+      "name": "Club",
+      "damage": "1d4",
+      "cost": "1g",
+      "slots": 1,
+      "type": "Melee",
+      "tags": ["Light", "Messy"]
+    },
+    {
+      "id": "wep_staff",
+      "name": "Staff",
+      "damage": "1d6",
+      "cost": "1g",
+      "slots": 1,
+      "type": "Melee",
+      "tags": ["Guard", "Two-Handed"]
+    },
+    {
+      "id": "wep_spear",
+      "name": "Spear",
+      "damage": "1d6",
+      "cost": "2g",
+      "slots": 1,
+      "type": "Melee",
+      "tags": ["Guard", "Thrown", "Brace"]
+    },
+    {
+      "id": "wep_handaxe",
+      "name": "Handaxe",
+      "damage": "1d6",
+      "cost": "5g",
+      "slots": 1,
+      "type": "Melee",
+      "tags": ["Light", "Thrown", "Sunder"]
+    },
+    {
+      "id": "wep_mace",
+      "name": "Mace",
+      "damage": "1d6",
+      "cost": "5g",
+      "slots": 1,
+      "type": "Melee",
+      "tags": ["Sunder"]
+    },
+    {
+      "id": "wep_longsword",
+      "name": "Longsword",
+      "damage": "1d8",
+      "cost": "15g",
+      "slots": 1,
+      "type": "Melee",
+      "tags": ["Guard"]
+    },
+    {
+      "id": "wep_battleaxe",
+      "name": "Battleaxe",
+      "damage": "1d8",
+      "cost": "15g",
+      "slots": 1,
+      "type": "Melee",
+      "tags": ["Sunder"]
+    },
+    {
+      "id": "wep_warhammer",
+      "name": "Warhammer",
+      "damage": "1d8",
+      "cost": "15g",
+      "slots": 1,
+      "type": "Melee",
+      "tags": ["Messy"]
+    },
+    {
+      "id": "wep_rapier",
+      "name": "Rapier",
+      "damage": "1d8",
+      "cost": "25g",
+      "slots": 1,
+      "type": "Melee",
+      "tags": ["Finesse", "Precise"]
+    },
+    {
+      "id": "wep_flail",
+      "name": "Flail",
+      "damage": "1d8",
+      "cost": "10g",
+      "slots": 1,
+      "type": "Melee",
+      "tags": ["Messy", "Sunder"]
+    },
+    {
+      "id": "wep_whip",
+      "name": "Whip",
+      "damage": "1d4",
+      "cost": "3g",
+      "slots": 1,
+      "type": "Melee",
+      "tags": ["Finesse", "Reach", "Messy"]
+    },
+    {
+      "id": "wep_greatsword",
+      "name": "Greatsword",
+      "damage": "2d6",
+      "cost": "50g",
+      "slots": 2,
+      "type": "Melee",
+      "tags": ["Heavy", "Guard", "Two-Handed"]
+    },
+    {
+      "id": "wep_greataxe",
+      "name": "Greataxe",
+      "damage": "1d12",
+      "cost": "50g",
+      "slots": 2,
+      "type": "Melee",
+      "tags": ["Heavy", "Sunder", "Two-Handed"]
+    },
+    {
+      "id": "wep_maul",
+      "name": "Maul",
+      "damage": "2d6",
+      "cost": "45g",
+      "slots": 2,
+      "type": "Melee",
+      "tags": ["Heavy", "Sunder", "Messy", "Two-Handed"]
+    },
+    {
+      "id": "wep_polearm",
+      "name": "Polearm",
+      "damage": "1d10",
+      "cost": "40g",
+      "slots": 2,
+      "type": "Melee",
+      "tags": ["Reach", "Brace", "Two-Handed"]
+    },
+    {
+      "id": "wep_sling",
+      "name": "Sling",
+      "damage": "1d4",
+      "cost": "5s",
+      "slots": 1,
+      "type": "Ranged",
+      "tags": ["Ammunition", "Light"]
+    },
+    {
+      "id": "wep_shortbow",
+      "name": "Shortbow",
+      "damage": "1d6",
+      "cost": "25g",
+      "slots": 2,
+      "type": "Ranged",
+      "tags": ["Ammunition", "Two-Handed"]
+    },
+    {
+      "id": "wep_longbow",
+      "name": "Longbow",
+      "damage": "1d8",
+      "cost": "50g",
+      "slots": 2,
+      "type": "Ranged",
+      "tags": ["Ammunition", "Heavy", "Two-Handed"]
+    },
+    {
+      "id": "wep_hand_crossbow",
+      "name": "Hand Crossbow",
+      "damage": "1d6",
+      "cost": "75g",
+      "slots": 1,
+      "type": "Ranged",
+      "tags": ["Ammunition", "Light", "Reload"]
+    },
+    {
+      "id": "wep_light_crossbow",
+      "name": "Light Crossbow",
+      "damage": "1d10",
+      "cost": "60g",
+      "slots": 2,
+      "type": "Ranged",
+      "tags": ["Ammunition", "Reload", "Two-Handed"]
+    },
+    {
+      "id": "wep_heavy_crossbow",
+      "name": "Heavy Crossbow",
+      "damage": "1d12",
+      "cost": "100g",
+      "slots": 3,
+      "type": "Ranged",
+      "tags": ["Ammunition", "Heavy", "Reload", "Two-Handed"]
+    }
+  ],
+  "gear": [
+    {
+      "id": "gear_backpack",
+      "name": "Backpack",
+      "cost": "2g",
+      "slots": 1,
+      "type": "Exploration",
+      "effect": "Required to carry items hands-free. Does not add slots, but enables storage."
+    },
+    {
+      "id": "gear_bedroll",
+      "name": "Bedroll",
+      "cost": "1s",
+      "slots": 1,
+      "type": "Exploration",
+      "effect": "Required for Long Rest in wilderness to prevent Exhaustion."
+    },
+    {
+      "id": "gear_chain",
+      "name": "Chain (10ft)",
+      "cost": "3g",
+      "slots": 2,
+      "type": "Exploration",
+      "effect": "Heavy iron. DC 18 Strength check to burst."
+    },
+    {
+      "id": "gear_chalk",
+      "name": "Chalk (10)",
+      "cost": "1s",
+      "slots": 0,
+      "type": "Exploration",
+      "effect": "Mark paths in labyrinth. Free Slot."
+    },
+    {
+      "id": "gear_crowbar",
+      "name": "Crowbar",
+      "cost": "2g",
+      "slots": 1,
+      "type": "Exploration",
+      "effect": "Advantage on Athletics checks to pry open doors/chests."
+    },
+    {
+      "id": "gear_grapple",
+      "name": "Grappling Hook",
+      "cost": "1g",
+      "slots": 1,
+      "type": "Exploration",
+      "effect": "Attached to rope. Allows anchoring for climbing without a check."
+    },
+    {
+      "id": "gear_hammer",
+      "name": "Hammer",
+      "cost": "5s",
+      "slots": 1,
+      "type": "Exploration",
+      "effect": "For pitons/construction. Simple weapon (1d4)."
+    },
+    {
+      "id": "gear_lock",
+      "name": "Lock",
+      "cost": "5g",
+      "slots": 0,
+      "type": "Exploration",
+      "effect": "Simple iron lock (DC 13 to pick)."
+    },
+    {
+      "id": "gear_manacles",
+      "name": "Manacles",
+      "cost": "2g",
+      "slots": 1,
+      "type": "Exploration",
+      "effect": "Restrains a target. Escape DC 15 (STR/DEX)."
+    },
+    {
+      "id": "gear_mirror",
+      "name": "Mirror (Steel)",
+      "cost": "5s",
+      "slots": 0,
+      "type": "Exploration",
+      "effect": "Peek around corners or reflect gaze attacks."
+    },
+    {
+      "id": "gear_pitons",
+      "name": "Pitons (5)",
+      "cost": "1s",
+      "slots": 1,
+      "type": "Exploration",
+      "effect": "Secure climbing points. Reduces climbing DC by 2."
+    },
+    {
+      "id": "gear_pole",
+      "name": "Pole (10ft)",
+      "cost": "1s",
+      "slots": 2,
+      "type": "Exploration",
+      "effect": "Wooden. Trigger traps from safe distance."
+    },
+    {
+      "id": "gear_rope",
+      "name": "Rope (50ft)",
+      "cost": "1g",
+      "slots": 1,
+      "type": "Exploration",
+      "effect": "Hemp. Supports 300lbs."
+    },
+    {
+      "id": "gear_sack",
+      "name": "Sack",
+      "cost": "1s",
+      "slots": 1,
+      "type": "Exploration",
+      "effect": "Holds 1 Slot worth of loose items (e.g., 100 coins)."
+    },
+    {
+      "id": "gear_spikes",
+      "name": "Spike Strip",
+      "cost": "1g",
+      "slots": 1,
+      "type": "Exploration",
+      "effect": "Action: Deploy in 5ft square. Difficult Terrain. 1d4 dmg if walked on."
+    },
+    {
+      "id": "gear_spyglass",
+      "name": "Spyglass",
+      "cost": "20g",
+      "slots": 0,
+      "type": "Exploration",
+      "effect": "See detail at 1 mile. Advantage on Scrutiny at range."
+    },
+    {
+      "id": "gear_tent",
+      "name": "Tent (2-Person)",
+      "cost": "2g",
+      "slots": 2,
+      "type": "Exploration",
+      "effect": "Required for Long Rest in harsh weather."
+    },
+    {
+      "id": "gear_candles",
+      "name": "Candles (5)",
+      "cost": "1s",
+      "slots": 1,
+      "type": "Light",
+      "effect": "Dim Light (5ft radius). Burns for 1 hour (6 Turns)."
+    },
+    {
+      "id": "gear_flint",
+      "name": "Flint & Steel",
+      "cost": "5s",
+      "slots": 0,
+      "type": "Light",
+      "effect": "Required to light fires. Free Slot."
+    },
+    {
+      "id": "gear_lantern",
+      "name": "Lantern",
+      "cost": "10g",
+      "slots": 1,
+      "type": "Light",
+      "effect": "Bright Light (30ft radius). Requires Oil. Can be shuttered."
+    },
+    {
+      "id": "gear_oil",
+      "name": "Oil (3 Flasks)",
+      "cost": "3s",
+      "slots": 1,
+      "type": "Light",
+      "effect": "Fuel for Lanterns (1 Flask = 3 Hours). Flammable."
+    },
+    {
+      "id": "gear_rations",
+      "name": "Rations (3 Days)",
+      "cost": "5s",
+      "slots": 1,
+      "type": "Sustenance",
+      "effect": "Preserved food. Must eat 1 Day's worth daily or gain Exhausted."
+    },
+    {
+      "id": "gear_torches",
+      "name": "Torches (3)",
+      "cost": "1s",
+      "slots": 1,
+      "type": "Light",
+      "effect": "Bright Light (20ft radius). Burns for 1 hour (6 Turns). One hand."
+    },
+    {
+      "id": "gear_waterskin",
+      "name": "Waterskin",
+      "cost": "1s",
+      "slots": 1,
+      "type": "Sustenance",
+      "effect": "Holds 1 day of water."
+    },
+    {
+      "id": "kit_alchemist",
+      "name": "Alchemist's Kit",
+      "cost": "50g",
+      "slots": 2,
+      "type": "Tool",
+      "effect": "Crafting Alchemical Reagents (Acids, Bombs). Identifying potions."
+    },
+    {
+      "id": "kit_crafting",
+      "name": "Crafting Kit",
+      "cost": "20g",
+      "slots": 2,
+      "type": "Tool",
+      "effect": "Repairing items in the field. Crafting mechanical gadgets."
+    },
+    {
+      "id": "kit_disguise",
+      "name": "Disguise Kit",
+      "cost": "10g",
+      "slots": 1,
+      "type": "Tool",
+      "effect": "Creating disguises. Contains makeup, wigs, dyes."
+    },
+    {
+      "id": "kit_forgery",
+      "name": "Forgery Kit",
+      "cost": "15g",
+      "slots": 1,
+      "type": "Tool",
+      "effect": "Creating fake documents and seals."
+    },
+    {
+      "id": "kit_herbalism",
+      "name": "Herbalism Kit",
+      "cost": "10g",
+      "slots": 1,
+      "type": "Tool",
+      "effect": "Crafting poultices and antidotes. Harvesting flora."
+    },
+    {
+      "id": "kit_medicine",
+      "name": "Medicine Kit",
+      "cost": "10g",
+      "slots": 1,
+      "type": "Tool",
+      "effect": "Stabilizing the Dying. Ending Bleeding condition."
+    },
+    {
+      "id": "kit_poisoner",
+      "name": "Poisoner's Kit",
+      "cost": "25g",
+      "slots": 1,
+      "type": "Tool",
+      "effect": "Crafting and safely applying toxins."
+    },
+    {
+      "id": "kit_thieves",
+      "name": "Thieves' Tools",
+      "cost": "25g",
+      "slots": 1,
+      "type": "Tool",
+      "effect": "Picking locks and disarming mechanical traps."
+    },
+    {
+      "id": "serv_inn",
+      "name": "Inn Stay (Night)",
+      "cost": "5s",
+      "slots": 0,
+      "type": "Service",
+      "effect": "Safe haven rest. Good quality costs 2g."
+    },
+    {
+      "id": "serv_meal",
+      "name": "Hot Meal",
+      "cost": "2s",
+      "slots": 0,
+      "type": "Service",
+      "effect": "Tavern food. Feast costs 1g."
+    },
+    {
+      "id": "serv_hireling",
+      "name": "Hireling (Day)",
+      "cost": "1g",
+      "slots": 0,
+      "type": "Service",
+      "effect": "Porter (carries gear). Mercenary costs 5g + loot share."
+    }
+  ],
+  "materials": [
+    {
+      "id": "mat_organics",
+      "name": "Organics Bundle",
+      "source": "Beasts, Monsters, Flesh",
+      "type": "Material",
+      "slots": 0.33,
+      "description": "Used for Poisons, Acids, and Adrenaline. (3 Bundles = 1 Slot)."
+    },
+    {
+      "id": "mat_flora",
+      "name": "Flora Bundle",
+      "source": "Plants, Fungi, Nature",
+      "type": "Material",
+      "slots": 0.33,
+      "description": "Used for Healing, Cures, and Utility. (3 Bundles = 1 Slot)."
+    },
+    {
+      "id": "mat_scrap",
+      "name": "Scrap Bundle",
+      "source": "Constructs, Traps, Ruins, Minerals",
+      "type": "Material",
+      "slots": 0.33,
+      "description": "Used for Explosives, Gadgets, and Traps. (3 Bundles = 1 Slot)."
+    },
+    {
+      "id": "mat_essence",
+      "name": "Essence Bundle",
+      "source": "Spirits, Undead, Magic",
+      "type": "Material",
+      "slots": 0.33,
+      "description": "Used for Magical Inks, Enchantments, and High-Tier items. (3 Bundles = 1 Slot)."
+    }
+  ],
+  "reagents": [
+    {
+      "id": "rea_acid",
+      "name": "Acid Flask",
+      "cost": "1 Organics",
+      "craft_dc": 13,
+      "type": "Alchemy",
+      "effect": "Thrown (30ft). Deal 2d6 Acid Damage. Ignores Armor. Can melt locks."
+    },
+    {
+      "id": "rea_fire",
+      "name": "Alchemist's Fire",
+      "cost": "1 Organics",
+      "craft_dc": 11,
+      "type": "Alchemy",
+      "effect": "Thrown (30ft). Deal 1d6 Fire Damage + Burning condition."
+    },
+    {
+      "id": "rea_adrenaline",
+      "name": "Adrenaline Shot",
+      "cost": "1 Organics",
+      "craft_dc": 15,
+      "type": "Alchemy",
+      "effect": "Action (Touch). Target gains 1d8 Temp HP and Advantage on STR/CON checks (1 min)."
+    },
+    {
+      "id": "rea_stoneskin",
+      "name": "Stone-Skin Elixir",
+      "cost": "1 Scrap",
+      "craft_dc": 15,
+      "type": "Alchemy",
+      "effect": "Action (Self). Gain +1 Armor Score for 1 minute."
+    },
+    {
+      "id": "rea_flashbomb",
+      "name": "Flashbomb",
+      "cost": "1 Scrap",
+      "craft_dc": 11,
+      "type": "Alchemy",
+      "effect": "Thrown (30ft). 10ft Radius. Creatures must save vs. Fortitude or be Blinded (1 round)."
+    },
+    {
+      "id": "rea_smokebomb",
+      "name": "Smoke Bomb",
+      "cost": "1 Organics",
+      "craft_dc": 9,
+      "type": "Alchemy",
+      "effect": "Thrown (30ft). 10ft Radius cloud. Heavily Obscured (blocks sight) for 1 minute."
+    },
+    {
+      "id": "rea_gluebomb",
+      "name": "Glue Bomb",
+      "cost": "1 Organics",
+      "craft_dc": 13,
+      "type": "Alchemy",
+      "effect": "Thrown (30ft). 5ft Radius. Creatures must save vs. Reflex or be Restrained (Speed 0)."
+    },
+    {
+      "id": "rea_salve",
+      "name": "Healing Salve",
+      "cost": "1 Flora",
+      "craft_dc": 11,
+      "type": "Herbalism",
+      "effect": "Action (Touch). Restore 2d4 Hit Points to a living creature."
+    },
+    {
+      "id": "rea_stamina",
+      "name": "Stamina Brew",
+      "cost": "1 Flora",
+      "craft_dc": 13,
+      "type": "Herbalism",
+      "effect": "Action (Self). Immediately regain 1d4 Stamina (STA)."
+    },
+    {
+      "id": "rea_antidote",
+      "name": "Antidote",
+      "cost": "1 Flora",
+      "craft_dc": 11,
+      "type": "Herbalism",
+      "effect": "Action (Touch). Ends the Poisoned condition."
+    },
+    {
+      "id": "rea_burnbalm",
+      "name": "Burn Balm",
+      "cost": "1 Flora",
+      "craft_dc": 11,
+      "type": "Herbalism",
+      "effect": "Action (Touch). Ends the Burning condition."
+    },
+    {
+      "id": "rea_focus",
+      "name": "Focus Tincture",
+      "cost": "1 Flora",
+      "craft_dc": 15,
+      "type": "Herbalism",
+      "effect": "Action (Self). Ends the Dazed or Confused condition."
+    },
+    {
+      "id": "rea_tox_basic",
+      "name": "Basic Toxin",
+      "cost": "1 Organics",
+      "craft_dc": 11,
+      "type": "Poison",
+      "effect": "Coating. On next hit, target is Poisoned (1d6 dmg/turn) for 1 minute."
+    },
+    {
+      "id": "rea_tox_daze",
+      "name": "Befuddling Toxin",
+      "cost": "1 Organics",
+      "craft_dc": 13,
+      "type": "Poison",
+      "effect": "Coating. On next hit, target must save vs. Fortitude or be Dazed (1 round)."
+    },
+    {
+      "id": "rea_tox_weak",
+      "name": "Weakening Toxin",
+      "cost": "1 Organics",
+      "craft_dc": 13,
+      "type": "Poison",
+      "effect": "Coating. On next hit, target must save vs. Fortitude or be Weakened (1 minute)."
+    },
+    {
+      "id": "rea_tox_para",
+      "name": "Paralytic Toxin",
+      "cost": "1 Organics",
+      "craft_dc": 17,
+      "type": "Poison",
+      "effect": "Coating. On next hit, target must save vs. Fortitude or be Stunned (1 round)."
+    },
+    {
+      "id": "rea_caltrops",
+      "name": "Caltrops",
+      "cost": "1 Scrap",
+      "craft_dc": 9,
+      "type": "Gadget",
+      "effect": "Action. Cover 10ft square. Area is Difficult Terrain. Moving through deals 1d4 dmg."
+    },
+    {
+      "id": "rea_snare",
+      "name": "Snare Trap",
+      "cost": "1 Scrap",
+      "craft_dc": 13,
+      "type": "Gadget",
+      "effect": "Action. Set in a space. Next creature to enter must save vs. Reflex or be Grappled."
+    },
+    {
+      "id": "rea_bell",
+      "name": "Bell Tripwire",
+      "cost": "1 Scrap",
+      "craft_dc": 11,
+      "type": "Gadget",
+      "effect": "Action. Alarm trap. Emits a loud ringing if crossed."
+    },
+    {
+      "id": "rea_grease",
+      "name": "Grease Vial",
+      "cost": "1 Organics",
+      "craft_dc": 11,
+      "type": "Gadget",
+      "effect": "Thrown. 10ft square becomes slippery. Save vs. Reflex or fall Prone."
+    },
+    {
+      "id": "rea_noise",
+      "name": "Noisemaker",
+      "cost": "1 Scrap",
+      "craft_dc": 11,
+      "type": "Gadget",
+      "effect": "Thrown. Clockwork device. Ticks/whirrs loudly for 1 minute to distract guards."
+    },
+    {
+      "id": "rea_spring",
+      "name": "Spring-Dagger",
+      "cost": "1 Scrap",
+      "craft_dc": 15,
+      "type": "Gadget",
+      "effect": "Action. Set in a space. Next creature to enter takes 2d6 damage (Reflex save avoids)."
+    },
+    {
+      "id": "rea_disguise",
+      "name": "Disguise Supplies",
+      "cost": "1 Flora",
+      "craft_dc": 11,
+      "type": "Utility",
+      "effect": "Action. Consumed to apply a disguise. Grants Advantage on Deception to mimic a persona."
+    },
+    {
+      "id": "rea_paper",
+      "name": "Forged Paper",
+      "cost": "1 Flora",
+      "craft_dc": 13,
+      "type": "Utility",
+      "effect": "Downtime. Create fake orders, travel papers, or identification."
+    }
+  ],
+  "loot_tables": {
+    "tier_1": [
+      { "roll": 1, "name": "Trash", "value": "0", "slots": 0, "desc": "Lint, string, button, dead rat." },
+      { "roll": 2, "name": "Broken Gear", "value": "Scrap", "slots": 1, "desc": "Snapped hilt or cracked helmet." },
+      { "roll": 3, "name": "Curio", "value": "Sentiment", "slots": 0, "desc": "Lucky rabbit's foot or love letter." },
+      { "roll": 4, "name": "Loose Copper", "value": "2d6 cp", "slots": 0, "desc": "Green-tinged pennies." },
+      { "roll": 5, "name": "Pocket Change", "value": "4d6 cp", "slots": 0, "desc": "Small cloth pouch." },
+      { "roll": 6, "name": "Gambler's Purse", "value": "50 cp", "slots": 1, "desc": "Copper coins and bone dice." },
+      { "roll": 7, "name": "Minor Reagent", "value": "Reagent", "slots": 0, "desc": "Vial of slime or patch of moss." },
+      { "roll": 8, "name": "Silver Tooth", "value": "5s", "slots": 0, "desc": "Pried from a jaw." },
+      { "roll": 9, "name": "Day's Wages", "value": "1d6 s", "slots": 0, "desc": "Leather wallet." },
+      { "roll": 10, "name": "Soldier's Pay", "value": "2d6 s", "slots": 0, "desc": "Pouch of silver." },
+      { "roll": 11, "name": "Heavy Sack", "value": "100 cp (1g)", "slots": 1, "desc": "Bulging sack of copper." },
+      { "roll": 12, "name": "Tool", "value": "5s", "slots": 1, "desc": "File, whetstone, or hammer." },
+      { "roll": 13, "name": "Consumable", "value": "5s", "slots": 1, "desc": "1d4 Rations (stale)." },
+      { "roll": 14, "name": "Shiny", "value": "1g", "slots": 0, "desc": "Silver ring or ear-clasp." },
+      { "roll": 15, "name": "Hidden Pocket", "value": "1g", "slots": 0, "desc": "Single mint-condition Gold Coin." },
+      { "roll": 16, "name": "Minor Art", "value": "1.5g", "slots": 0, "desc": "Carved wood idol or scrimshaw." },
+      { "roll": 17, "name": "Light Source", "value": "1s", "slots": 1, "desc": "3 Candles or half-flask Oil." },
+      { "roll": 18, "name": "Officer's Pouch", "value": "2d4 g", "slots": 0, "desc": "Mix of Silver and Gold." },
+      { "roll": 19, "name": "Gemstone", "value": "5g", "slots": 0, "desc": "Rough semi-precious stone." },
+      { "roll": 20, "name": "JACKPOT", "value": "-", "slots": 0, "desc": "Roll on Tier 2 Table." }
+    ],
+    "tier_2": [
+      { "roll": 1, "name": "The Copper Trap", "value": "500 cp (5g)", "slots": 5, "desc": "Heavy chest of copper." },
+      { "roll": 2, "name": "Supplies", "value": "10g", "slots": 2, "desc": "Crate of quality rations/wine." },
+      { "roll": 3, "name": "Adventurer's Pack", "value": "5g", "slots": 1, "desc": "Backpack with rope, torch, flint." },
+      { "roll": 4, "name": "Weapon", "value": "Market", "slots": 2, "desc": "Standard weapon (Sword/Axe/Bow)." },
+      { "roll": 5, "name": "Silver Stash", "value": "200s (20g)", "slots": 2, "desc": "Heavy sack of silver." },
+      { "roll": 6, "name": "Armor", "value": "Market", "slots": 2, "desc": "Suit of Light/Medium armor." },
+      { "roll": 7, "name": "Trade Good", "value": "25g", "slots": 2, "desc": "Bolt of silk or cask of spices." },
+      { "roll": 8, "name": "Art Object", "value": "25g", "slots": 1, "desc": "Silver chalice or statuette." },
+      { "roll": 9, "name": "Coin Pouch", "value": "3d6 g", "slots": 0, "desc": "Tidy bag of Gold." },
+      { "roll": 10, "name": "Alchemist's Cache", "value": "Reagents", "slots": 1, "desc": "1d4 Vials (Acid/Fire)." },
+      { "roll": 11, "name": "Gemstones", "value": "10g each", "slots": 0, "desc": "Bag of 1d4 agates/onyx." },
+      { "roll": 12, "name": "Paychest", "value": "50g", "slots": 1, "desc": "Lockbox with 50 Gold coins." },
+      { "roll": 13, "name": "Scroll Case", "value": "10g", "slots": 0, "desc": "Map or lore text." },
+      { "roll": 14, "name": "Masterwork Tool", "value": "25g", "slots": 1, "desc": "Thieves' Tools or Healer Kit." },
+      { "roll": 15, "name": "Fine Art", "value": "50g", "slots": 3, "desc": "Gold-framed painting/tapestry." },
+      { "roll": 16, "name": "Jewelry", "value": "30g", "slots": 0, "desc": "Gold necklace or signet ring." },
+      { "roll": 17, "name": "Rare Reagents", "value": "Reagents", "slots": 1, "desc": "1d4 Uncommon Reagents." },
+      { "roll": 18, "name": "Pure Gold", "value": "50g", "slots": 1, "desc": "Heavy gold bar." },
+      { "roll": 19, "name": "Potion", "value": "25g each", "slots": 1, "desc": "1d4 Potions." },
+      { "roll": 20, "name": "JACKPOT", "value": "-", "slots": 0, "desc": "Roll on Tier 3 Table." }
+    ],
+    "tier_3": [
+      { "roll": 1, "name": "The Silver Trap", "value": "2000s (200g)", "slots": 20, "desc": "Massive chest of silver." },
+      { "roll": 2, "name": "Bulk Trade", "value": "50g each", "slots": 2, "desc": "1d4 Crates of Furs/Ivory/Spice." },
+      { "roll": 3, "name": "Masterwork Gear", "value": "100g+", "slots": 2, "desc": "Silvered or Reinforced gear." },
+      { "roll": 4, "name": "Art Hoard", "value": "150g", "slots": 4, "desc": "Large golden idol/sarcophagus." },
+      { "roll": 5, "name": "Coin Chest", "value": "100g", "slots": 1, "desc": "Reinforced chest of Gold." },
+      { "roll": 6, "name": "Gem Bag", "value": "50g each", "slots": 0, "desc": "1d6 Pearls/Garnets." },
+      { "roll": 7, "name": "Rare Art", "value": "100g", "slots": 1, "desc": "Silverware or crystal." },
+      { "roll": 8, "name": "Gold Bars", "value": "250g", "slots": 1, "desc": "Stack of 5 Ingots." },
+      { "roll": 9, "name": "Royal Jewel", "value": "200g", "slots": 0, "desc": "Single large Emerald/Ruby." },
+      { "roll": 10, "name": "Monster Harvest", "value": "100g", "slots": 1, "desc": "Pristine organ/gland (Rare)." },
+      { "roll": 11, "name": "Magic Reagents", "value": "Reagents", "slots": 1, "desc": "3 Rare Essence/Flora." },
+      { "roll": 12, "name": "Scroll Library", "value": "50g each", "slots": 1, "desc": "1d4 Spell Scrolls." },
+      { "roll": 13, "name": "The Heavy Bag", "value": "300g", "slots": 3, "desc": "Sack of 300 Gold coins." },
+      { "roll": 14, "name": "Noble Jewelry", "value": "250g", "slots": 0, "desc": "Diamond necklace/crown." },
+      { "roll": 15, "name": "Blueprint (Common)", "value": "Priceless", "slots": 0, "desc": "Recipe for Tier 1 Magic Item." },
+      { "roll": 16, "name": "Blueprint (Uncommon)", "value": "Priceless", "slots": 0, "desc": "Recipe for Tier 2 Magic Item." },
+      { "roll": 17, "name": "Curio/Relic", "value": "Priceless", "slots": 1, "desc": "Minor utility magic item." },
+      { "roll": 18, "name": "Magic Weapon", "value": "Priceless", "slots": 1, "desc": "Fully crafted +1/Effect Weapon." },
+      { "roll": 19, "name": "Wondrous Item", "value": "Priceless", "slots": 1, "desc": "Boots/Cloak/Ring (Tier 2)." },
+      { "roll": 20, "name": "King's Ransom", "value": "1000g", "slots": 1, "desc": "Chest of Platinum/Diamonds." }
+    ]
+  },
+  "commodities": [
+    { "name": "Iron/Lead Ingots", "unit": "Crate", "slots": 4, "value": "10g" },
+    { "name": "Grain/Flour", "unit": "Sack", "slots": 2, "value": "2g" },
+    { "name": "Salt", "unit": "Block", "slots": 2, "value": "10g" },
+    { "name": "Common Cloth", "unit": "Bolts", "slots": 2, "value": "10g" },
+    { "name": "Copper Wire", "unit": "Spools", "slots": 1, "value": "5g" },
+    { "name": "Obsidian", "unit": "Chunks", "slots": 2, "value": "20g" },
+    { "name": "Fine Wine", "unit": "Crate", "slots": 2, "value": "30g" },
+    { "name": "Tobacco", "unit": "Cask", "slots": 1, "value": "15g" },
+    { "name": "Monster Hides", "unit": "Bundle", "slots": 2, "value": "40g" },
+    { "name": "Silver Ingots", "unit": "Bar", "slots": 1, "value": "25g" },
+    { "name": "Exotic Spices", "unit": "Chest", "slots": 1, "value": "30g" },
+    { "name": "Silk", "unit": "Bolt", "slots": 1, "value": "40g" },
+    { "name": "Ivory", "unit": "Tusk", "slots": 2, "value": "80g" },
+    { "name": "Alchemical Fuel", "unit": "Canister", "slots": 1, "value": "50g" },
+    { "name": "Gold Ingots", "unit": "Bar", "slots": 1, "value": "100g" },
+    { "name": "Mithril Scrap", "unit": "Fragments", "slots": 1, "value": "100g" },
+    { "name": "Rare Incense", "unit": "Block", "slots": 0, "value": "50g" },
+    { "name": "Platinum Bar", "unit": "Bar", "slots": 1, "value": "500g" },
+    { "name": "Gem Dust", "unit": "Pouch", "slots": 0, "value": "100g" },
+    { "name": "Adamantine Ore", "unit": "Geode", "slots": 2, "value": "500g" }
+  ],
+  "art_generator": {
+    "materials": [
+      "Obsidian", "Jade", "Gold", "Bone", "Silver", "Bronze", "Ivory", "Crystal", "Petrified Wood", "Porcelain",
+      "Electrum", "Soapstone", "Glass", "Coral", "Amber", "Marble", "Leather", "Copper", "Pearl", "Platinum"
+    ],
+    "forms": [
+      "Idol", "Mask", "Chalice", "Dagger", "Necklace", "Coin", "Tablet", "Comb", "Box", "Urn",
+      "Ring", "Pipe", "Bottle", "Crown", "Beetle", "Bust", "Book", "Plate", "Orb", "Sarcophagus"
+    ],
+    "subjects": [
+      "The Beast", "The Skull", "The King", "The Serpent", "Celestial Bodies", "The Warrior", "The Demon", "The Eye", "Geometry", "The Flower",
+      "The Spider", "The Ship", "The Lover", "The Fish", "The Insect", "The God", "The Map", "The Dragon", "The Storm", "The Void"
+    ]
+  },
+  "curios": [
+    { "roll": 1, "name": "Coin of Whispers", "effect": "Repeats the last 5 words spoken near it when squeezed." },
+    { "roll": 2, "name": "Lantern of Revealing", "effect": "Bright Light (30ft). Reveals Invisible creatures as ghostly outlines." },
+    { "roll": 3, "name": "Rope of Climbing", "effect": "50ft silk rope. Snakes upward and knots itself on command." },
+    { "roll": 4, "name": "Bag of Holding", "effect": "Holds 50 Slots/500lbs. Weighs 1 Slot. Retrieval is an Action." },
+    { "roll": 5, "name": "Chime of Opening", "effect": "1/Day. Unlocks one non-magical lock or latch." },
+    { "roll": 6, "name": "Dust of Dryness", "effect": "Pinch destroys 100 gallons of water (or 4d6 dmg to Water Elementals)." },
+    { "roll": 7, "name": "Ever-Burning Torch", "effect": "Cold flame. Never consumes fuel. Casts light like a torch." },
+    { "roll": 8, "name": "Goggles of Night", "effect": "Grants Darkvision 60ft while worn." },
+    { "roll": 9, "name": "Immovable Rod", "effect": " stays fixed in space when button pressed. Holds 4,000lbs. DC 25 STR to move." },
+    { "roll": 10, "name": "Sending Stones", "effect": "Pair. Speak into one to be heard from the other (any distance)." },
+    { "roll": 11, "name": "Decanter of Water", "effect": "Pour endless fresh water. Geyser mode knocks targets Prone (5ft)." },
+    { "roll": 12, "name": "Helm of Comprehension", "effect": "Wearer can read (but not speak) any written language." },
+    { "roll": 13, "name": "Cloak of the Bat", "effect": "Advantage on Stealth in dim light. 1/Day: Polymorph into Bat (1 hour)." },
+    { "roll": 14, "name": "Ring of Feather Fall", "effect": "Wearer takes no damage from falling (Auto-activate)." },
+    { "roll": 15, "name": "Gem of Brightness", "effect": "50 Charges. 1: Light. 5: Blind creature (CON Save). Crumbles when empty." },
+    { "roll": 16, "name": "Skeleton Key", "effect": "Bone key opens any standard door. 1-in-6 chance to break per use." },
+    { "roll": 17, "name": "Folding Boat", "effect": "Box unfolds into 10ft rowboat (or 20ft sloop) on command." },
+    { "roll": 18, "name": "Boots of Striding", "effect": "Speed is not reduced by Encumbrance or Difficult Terrain." },
+    { "roll": 19, "name": "Wand of Secrets", "effect": "3 Charges/Day. Pulsates when within 30ft of secret door/trap." },
+    { "roll": 20, "name": "Portable Hole", "effect": "Cloth circle opens extra-dimensional pit (6ft deep) on any surface." }
+  ],
+  "magic_effects": {
+    "weapon": {
+      "tier_1": [
+        { "name": "Ember-Touch", "reagent": "Fire Essence", "effect": "Deals +1d4 Fire Damage." },
+        { "name": "Frost-Rimmed", "reagent": "Cold Essence", "effect": "Deals +1d4 Cold Damage." },
+        { "name": "Sparking", "reagent": "Lightning Essence", "effect": "Deals +1d4 Lightning Damage." },
+        { "name": "Toxic Coating", "reagent": "Organics (Poison)", "effect": "Deals +1d4 Poison Damage." },
+        { "name": "Acid-Etched", "reagent": "Organics (Acid)", "effect": "Deals +1d4 Acid Damage." },
+        { "name": "Serrated", "reagent": "Scrap (Sharp)", "effect": "Crit: Target gains Bleeding condition." },
+        { "name": "Weighted", "reagent": "Scrap (Heavy)", "effect": "Crit: Target is pushed 5 feet." },
+        { "name": "Balanced", "reagent": "Scrap (Light)", "effect": "+1 Bonus to Initiative." },
+        { "name": "Glowing", "reagent": "Essence (Light)", "effect": "Sheds Bright Light (20ft)." },
+        { "name": "Silent", "reagent": "Essence (Shadow)", "effect": "Misses from Hiding do not reveal position." },
+        { "name": "Returning", "reagent": "Essence (Air)", "effect": "Thrown: Returns to hand immediately." },
+        { "name": "Beast-Bane", "reagent": "Organics (Beast)", "effect": "+1d4 Dmg vs Beasts/Monstrosities." },
+        { "name": "Grave-Bane", "reagent": "Essence (Unliving)", "effect": "+1d4 Dmg vs Undead." },
+        { "name": "Man-Slayer", "reagent": "Loot (Trophy)", "effect": "+1d4 Dmg vs Humanoids." },
+        { "name": "Reinforced", "reagent": "Scrap (Hard)", "effect": "Immune to breaking/rust/acid." },
+        { "name": "Silvered", "reagent": "Essence (Spirit)", "effect": "Counts as Silver. +1 Dmg vs Shapechangers/Devils." },
+        { "name": "Aquatic", "reagent": "Organics (Water)", "effect": "No Disadvantage attacking underwater." },
+        { "name": "Vampiric (Minor)", "reagent": "Organics (Blood)", "effect": "Crit: Regain 1 HP." },
+        { "name": "Duelist's", "reagent": "Scrap (Precision)", "effect": "+1 Dmg if wielding no other weapon/shield." },
+        { "name": "Lucky", "reagent": "Essence (Luck)", "effect": "1/Day: Re-roll a damage die of 1." }
+      ],
+      "tier_2": [
+        { "name": "Blaze-Brand", "reagent": "Fire Essence", "effect": "Deals +1d6 Fire. Crit: Target Burns." },
+        { "name": "Glacial-Edge", "reagent": "Cold Essence", "effect": "Deals +1d6 Cold. Crit: Target Speed Halved." },
+        { "name": "Storm-Strike", "reagent": "Lightning Essence", "effect": "Deals +1d6 Lightning. Crit: Target loses Reaction." },
+        { "name": "Viper-Fang", "reagent": "Organics (Poison)", "effect": "Deals +1d6 Poison. Crit: Target Poisoned (1 min)." },
+        { "name": "Corrosive", "reagent": "Organics (Acid)", "effect": "Deals +1d6 Acid. Crit: Sunder Armor (-1 AS)." },
+        { "name": "Masterwork", "reagent": "Scrap (Rare Metal)", "effect": "+1 to Attack and Damage rolls." },
+        { "name": "Vampiric", "reagent": "Essence (Necrotic)", "effect": "Regain 1 HP on every hit." },
+        { "name": "Radiant", "reagent": "Essence (Holy)", "effect": "Deals +1d6 Radiant. Sheds sunlight." },
+        { "name": "Forceful", "reagent": "Essence (Force)", "effect": "Deals +1d6 Force. Crit: Target Prone." },
+        { "name": "Psychic", "reagent": "Organics (Horror)", "effect": "Deals +1d6 Psychic. Crit: Target Confused." },
+        { "name": "Hunter", "reagent": "Organics (Target)", "effect": "+2d6 Dmg vs chosen Family. Advantage to Track." },
+        { "name": "Dancing", "reagent": "Essence (Air)", "effect": "Action: Hovers/Attacks independently (1 min)." },
+        { "name": "Warning", "reagent": "Essence (Divination)", "effect": "+2 Initiative. Glows near enemies." },
+        { "name": "Wounding", "reagent": "Organics (Necrotic)", "effect": "Damage cannot be healed until next turn." },
+        { "name": "Defensive", "reagent": "Scrap (Shielding)", "effect": "+1 to Parry Defense Checks." },
+        { "name": "Swift", "reagent": "Essence (Speed)", "effect": "First round: Make one extra attack." },
+        { "name": "Spell-Stored", "reagent": "Essence (Arcane)", "effect": "Store 2 MP spell. Casts on next Hit." },
+        { "name": "Thunderous", "reagent": "Essence (Sound)", "effect": "Crit: 10ft Shockwave deals 1d8 Thunder to all." },
+        { "name": "Displacing", "reagent": "Organics (Displacer)", "effect": "On Hit: Teleport 5 feet." },
+        { "name": "Vorpal-Lite", "reagent": "Scrap (Adamantine)", "effect": "Crit range expands to 19-20." }
+      ],
+      "tier_3": [
+        { "name": "Inferno", "reagent": "Fire Essence", "effect": "+1d8 Fire (Ignores Resist). 1/Day: Fireball on hit." },
+        { "name": "Winter's Heart", "reagent": "Cold Essence", "effect": "+1d8 Cold (Ignores Resist). Crit: Stunned (Frozen)." },
+        { "name": "Thunderlord", "reagent": "Lightning Essence", "effect": "+1d8 Lightning. Arcs to 2 neighbors (1d8)." },
+        { "name": "Plague-Bringer", "reagent": "Organics (Disease)", "effect": "+1d8 Poison. Hit: Fatal Disease (Rot)." },
+        { "name": "Annihilation", "reagent": "Essence (Entropy)", "effect": "+1d8 Necrotic. 0 HP = Disintegrate." },
+        { "name": "Legendary", "reagent": "Scrap (Meteorite)", "effect": "+2 to Attack and Damage rolls." },
+        { "name": "Life-Drinker", "reagent": "Organics (Vampire)", "effect": "Heal equal to Necrotic Dmg dealt." },
+        { "name": "Sun-Blade", "reagent": "Essence (Radiant)", "effect": "+1d8 Radiant (+3d8 vs Undead/Fiend)." },
+        { "name": "Siege-Breaker", "reagent": "Scrap (Titan)", "effect": "Double Dmg vs Objects. Ignores Physical Resist." },
+        { "name": "Mind-Shatter", "reagent": "Organics (Mind Flayer)", "effect": "+1d8 Psychic. Hit: Target -1d4 on next roll." },
+        { "name": "Exterminator", "reagent": "Organics (Target)", "effect": "+3d6 vs Family. No Disadvantage vs them." },
+        { "name": "Speed", "reagent": "Essence (Time)", "effect": "Bonus Action: Make one extra attack." },
+        { "name": "Luck-Blade", "reagent": "Essence (Fate)", "effect": "3 Charges: Auto-Succeed roll." },
+        { "name": "Severing", "reagent": "Scrap (Razor)", "effect": "Crit: Sever Limb (+4d6 Dmg)." },
+        { "name": "Parrying", "reagent": "Scrap (Defense)", "effect": "+2 Parry. Infinite Parry Reactions." },
+        { "name": "Ethereal", "reagent": "Essence (Ghost)", "effect": "Hits Ethereal/Invisible. Bypasses Shields." },
+        { "name": "Spell-Lord", "reagent": "Essence (Arcane)", "effect": "Store 10 MP spells. Cast as Bonus Action." },
+        { "name": "Explosive", "reagent": "Organics (Volatile)", "effect": "Every hit explodes: 5ft radius 1d8 Fire." },
+        { "name": "Blink", "reagent": "Essence (Teleport)", "effect": "Teleport 30ft after every attack." },
+        { "name": "Vorpal", "reagent": "Scrap (God-Metal)", "effect": "Crit 19-20. Crit vs Head = Instant Death." }
+      ]
+    },
+    "armor": {
+      "tier_1": [
+        { "name": "Singed", "reagent": "Fire Essence", "effect": "DR 2 vs Fire Damage." },
+        { "name": "Furred", "reagent": "Cold Essence", "effect": "DR 2 vs Cold Damage." },
+        { "name": "Insulated", "reagent": "Lightning Essence", "effect": "DR 2 vs Lightning Damage." },
+        { "name": "Hardened", "reagent": "Scrap (Plate)", "effect": "Immune to Critical Hit extra effects." },
+        { "name": "Lightweight", "reagent": "Scrap (Mesh)", "effect": "Weight (Slots) halved. Sleep in armor ok." },
+        { "name": "Buoyant", "reagent": "Organics (Gas)", "effect": "Cannot sink. Advantage on Swim." },
+        { "name": "Silent", "reagent": "Essence (Shadow)", "effect": "Removes Stealth Disadvantage." },
+        { "name": "Glimmering", "reagent": "Essence (Light)", "effect": "Command: Shed Bright Light." },
+        { "name": "Spiked", "reagent": "Scrap (Barbs)", "effect": "Grapplers/Unarmed attackers take 1d4 Dmg." },
+        { "name": "Reinforced", "reagent": "Scrap (Hard)", "effect": "Immune to Sunder/Rust/Acid destruction." },
+        { "name": "Pocketed", "reagent": "Flora (Weave)", "effect": "+2 Inventory Slots." },
+        { "name": "Heraldic", "reagent": "Loot (Gold)", "effect": "+1 Bonus to Influence Checks." },
+        { "name": "Camouflaged", "reagent": "Flora (Leaf)", "effect": "Advantage on Stealth in specific terrain." },
+        { "name": "Quick-Release", "reagent": "Scrap (Mechanism)", "effect": "Doff armor as 1 Action." },
+        { "name": "Staunching", "reagent": "Flora (Herb)", "effect": "Advantage on Death Saves." },
+        { "name": "Antidote", "reagent": "Organics (Poison)", "effect": "Advantage vs Poisoned." },
+        { "name": "Coated", "reagent": "Organics (Cork)", "effect": "Advantage vs Burning." },
+        { "name": "Slippery", "reagent": "Organics (Oil)", "effect": "Advantage to Escape Grapple." },
+        { "name": "Warm", "reagent": "Flora (Cotton)", "effect": "Immune to Extreme Cold." },
+        { "name": "Cool", "reagent": "Flora (Silk)", "effect": "Immune to Extreme Heat." }
+      ],
+      "tier_2": [
+        { "name": "Fire-Ward", "reagent": "Fire Essence", "effect": "DR 3 vs Fire. Immune to Burning." },
+        { "name": "Cold-Ward", "reagent": "Cold Essence", "effect": "DR 3 vs Cold." },
+        { "name": "Storm-Ward", "reagent": "Lightning Essence", "effect": "DR 3 vs Lightning." },
+        { "name": "Poison-Ward", "reagent": "Organics (Poison)", "effect": "DR 3 vs Poison. Immune to Poisoned." },
+        { "name": "Acid-Ward", "reagent": "Organics (Acid)", "effect": "DR 3 vs Acid. Immune to Melting." },
+        { "name": "Fortified", "reagent": "Scrap (Alloy)", "effect": "+1 Armor Score." },
+        { "name": "Retaliating", "reagent": "Scrap (Razor)", "effect": "Reaction when hit melee: Deal 1d4 Dmg." },
+        { "name": "Mithril", "reagent": "Scrap (Mithril)", "effect": "Counts as one category lighter (e.g., Heavy->Medium)." },
+        { "name": "Blurring", "reagent": "Essence (Illusion)", "effect": "1/Day: 1 min, attacks against you have Disadvantage." },
+        { "name": "Ghostly", "reagent": "Essence (Ghost)", "effect": "Move through enemies. No Opportunity Attacks." },
+        { "name": "Spell-Guard", "reagent": "Essence (Abjuration)", "effect": "Advantage on Saves vs Spells." },
+        { "name": "Regenerating", "reagent": "Organics (Troll)", "effect": "Below 50% HP: Regain 1 HP/turn." },
+        { "name": "Feather", "reagent": "Essence (Air)", "effect": "No Fall Damage. Glide." },
+        { "name": "Necro-Ward", "reagent": "Essence (Spirit)", "effect": "DR 3 vs Necrotic. Undead passive to you." },
+        { "name": "Radiant-Ward", "reagent": "Essence (Holy)", "effect": "DR 3 vs Radiant." },
+        { "name": "Beast-Ward", "reagent": "Organics (Beast)", "effect": "Beasts must pass Will Save DC 15 to attack you." },
+        { "name": "Mind-Shield", "reagent": "Organics (Mind Flayer)", "effect": "DR 3 vs Psychic. Immune Telepathy." },
+        { "name": "Vengeful", "reagent": "Essence (Wrath)", "effect": "Take Dmg: +1 to next Attack vs that foe." },
+        { "name": "Stable", "reagent": "Scrap (Gyro)", "effect": "Immune to Prone/Push/Pull." },
+        { "name": "Adamantine", "reagent": "Scrap (Adamantine)", "effect": "Immune to Crits. DR 1 vs Physical." }
+      ],
+      "tier_3": [
+        { "name": "Infernal", "reagent": "Fire Essence", "effect": "Fire Resistance. Hit by melee: Deal 1d6 Fire." },
+        { "name": "Winter", "reagent": "Cold Essence", "effect": "Cold Resistance. Immune Slow/Restrain." },
+        { "name": "Storm", "reagent": "Lightning Essence", "effect": "Lightning Resistance. Reaction: Deal 1d8 Lightning." },
+        { "name": "Impervious", "reagent": "Organics (Tarrasque)", "effect": "Resistance to Non-Magical Physical Dmg." },
+        { "name": "Juggernaut", "reagent": "Scrap (Titan)", "effect": "+2 Armor Score." },
+        { "name": "Razor-Skin", "reagent": "Scrap (Demon)", "effect": "Hit by melee: Deal 1d6 Physical Dmg." },
+        { "name": "Ethereal", "reagent": "Essence (Phase)", "effect": "1/Day: Etherealness (1 min)." },
+        { "name": "Vanish", "reagent": "Essence (Invis)", "effect": "1/Day: Invisibility (1 hour)." },
+        { "name": "Phoenix", "reagent": "Essence (Life)", "effect": "Drop to 0 HP: Explode 2d6 Fire, Regain 10 HP." },
+        { "name": "Spell-Eater", "reagent": "Essence (Null)", "effect": "Resistance to Spell Damage." },
+        { "name": "Reflective", "reagent": "Scrap (Mirror)", "effect": "Crit Success vs Spell: Reflect spell back." },
+        { "name": "Dragon", "reagent": "Organics (Dragon)", "effect": "Resistance to Element. +1 AS. Adv vs Breath." },
+        { "name": "Vampiric", "reagent": "Essence (Blood)", "effect": "Kill enemy: Regain 5 HP." },
+        { "name": "Titan", "reagent": "Scrap (Hydraulic)", "effect": "Count as Large. STR Score becomes 22 (+6)." },
+        { "name": "Nemesis", "reagent": "Organics (Target)", "effect": "+2 Defense vs Family. Adv on Saves." },
+        { "name": "Force", "reagent": "Essence (Force)", "effect": "Start Combat: Gain 10 Temp HP." },
+        { "name": "Time", "reagent": "Essence (Time)", "effect": "1/Day: Re-roll failed Save." },
+        { "name": "Living", "reagent": "Organics (Flesh)", "effect": "Immune Sunder/Acid/Crits. Self-Repair." },
+        { "name": "Flight", "reagent": "Essence (Air)", "effect": "Gain Fly Speed equal to Walk Speed." },
+        { "name": "Invulnerable", "reagent": "Essence (Godly)", "effect": "1/Day: Immune to ALL Damage for 1 Round." }
+      ]
+    },
+    "wondrous": {
+      "tier_1": [
+        { "name": "Strider", "reagent": "Essence (Air)", "effect": "+5 Speed." },
+        { "name": "Climber", "reagent": "Organics (Spider)", "effect": "Advantage on Climb." },
+        { "name": "Swimmer", "reagent": "Organics (Fish)", "effect": "Advantage on Swim." },
+        { "name": "Leaper", "reagent": "Organics (Frog)", "effect": "Double Jump distance." },
+        { "name": "Skill (Ath)", "reagent": "Scrap (Weights)", "effect": "Gain Proficiency (d4) in Athletics." },
+        { "name": "Skill (Acr)", "reagent": "Scrap (Balance)", "effect": "Gain Proficiency (d4) in Acrobatics." },
+        { "name": "Skill (Ste)", "reagent": "Essence (Shadow)", "effect": "Gain Proficiency (d4) in Stealth." },
+        { "name": "Skill (Per)", "reagent": "Organics (Eye)", "effect": "Gain Proficiency (d4) in Scrutiny." },
+        { "name": "Skill (Sur)", "reagent": "Flora (Compass)", "effect": "Gain Proficiency (d4) in Survival." },
+        { "name": "Skill (Inf)", "reagent": "Loot (Jewel)", "effect": "Gain Proficiency (d4) in Influence." },
+        { "name": "Illuminator", "reagent": "Essence (Light)", "effect": "3/Day: Shed Bright Light (1 hr)." },
+        { "name": "Telekinetic", "reagent": "Essence (Force)", "effect": "3/Day: Move 5lb object 30ft." },
+        { "name": "Mender", "reagent": "Scrap (Tool)", "effect": "3/Day: Repair small break." },
+        { "name": "Compass", "reagent": "Scrap (Magnet)", "effect": "Cannot get lost non-magically." },
+        { "name": "Warmth", "reagent": "Essence (Fire)", "effect": "Endure cold to -20F." },
+        { "name": "Cool", "reagent": "Essence (Ice)", "effect": "Endure heat to 120F." },
+        { "name": "Cleaner", "reagent": "Essence (Water)", "effect": "Instantly clean object/creature." },
+        { "name": "Alarm", "reagent": "Scrap (Bell)", "effect": "Audible whistle on approach." },
+        { "name": "Igniter", "reagent": "Essence (Fire)", "effect": "Touch ignites flammable objects." },
+        { "name": "Whisper", "reagent": "Essence (Air)", "effect": "3/Day: Send whisper 60ft." }
+      ],
+      "tier_2": [
+        { "name": "Spider-Walk", "reagent": "Organics (Spider)", "effect": "Gain Climb Speed. Walk on ceilings." },
+        { "name": "Gill-Throat", "reagent": "Organics (Gill)", "effect": "Breathe Water. Gain Swim Speed." },
+        { "name": "Night-Eye", "reagent": "Organics (Dark)", "effect": "Darkvision 60ft." },
+        { "name": "Feather-Fall", "reagent": "Essence (Air)", "effect": "1/Day: Reaction to take 0 Fall Dmg." },
+        { "name": "Expert (Skill)", "reagent": "Essence (Skill)", "effect": "Upgrade one Skill to Expert (d6)." },
+        { "name": "Storage", "reagent": "Essence (Space)", "effect": "Bag of Holding: +10 Inventory Slots." },
+        { "name": "Alchemy", "reagent": "Flora (Jug)", "effect": "Produces 1 Common Reagent/Day." },
+        { "name": "Healer", "reagent": "Flora (Life)", "effect": "1/Day: Cast Cure Wounds (2d6)." },
+        { "name": "Blaster", "reagent": "Essence (Fire)", "effect": "1/Day: Cast Scorching Ray (4d6 Fire)." },
+        { "name": "Shielding", "reagent": "Scrap (Force)", "effect": "1/Day: Cast Shield (+2 AS)." },
+        { "name": "Invisibility", "reagent": "Essence (Invis)", "effect": "1/Day: Cast Invisibility." },
+        { "name": "Detection", "reagent": "Essence (Eye)", "effect": "3/Day: Sense Magic/Poison/Undead." },
+        { "name": "Protection", "reagent": "Essence (Holy)", "effect": "+1 Bonus to Defense Checks." },
+        { "name": "Lucky", "reagent": "Essence (Luck)", "effect": "Max Luck +1." },
+        { "name": "Mana-Well", "reagent": "Essence (Arcane)", "effect": "Max MP +2." },
+        { "name": "Vitality", "reagent": "Organics (Heart)", "effect": "Max STA +1." },
+        { "name": "Spell-Store", "reagent": "Essence (Memory)", "effect": "Store one 2 MP spell." },
+        { "name": "Communicator", "reagent": "Scrap (Wire)", "effect": "1/Day: Message unlimited range." },
+        { "name": "Disguise", "reagent": "Essence (Illusion)", "effect": "1/Day: Disguise Self (1 hr)." },
+        { "name": "Restful", "reagent": "Flora (Incense)", "effect": "Long Rest takes only 1 Hour." }
+      ],
+      "tier_3": [
+        { "name": "Flight", "reagent": "Essence (Air)", "effect": "1/Day: Fly Speed (1 Hour)." },
+        { "name": "X-Ray", "reagent": "Essence (Void)", "effect": "1/Day: See through walls (1 min)." },
+        { "name": "True-Sight", "reagent": "Essence (Eye)", "effect": "Truesight 30ft. See Invisible/Illusions." },
+        { "name": "Teleport", "reagent": "Essence (Warp)", "effect": "1/Day: Teleport party 500ft." },
+        { "name": "Mastery", "reagent": "Essence (Skill)", "effect": "Advantage on ALL checks with chosen Skill." },
+        { "name": "Regen", "reagent": "Organics (Troll)", "effect": "Regain 1d6 HP every 10 mins." },
+        { "name": "Revival", "reagent": "Essence (Life)", "effect": "1/Week: Cast Revivify." },
+        { "name": "Fireball", "reagent": "Essence (Fire)", "effect": "1/Day: Cast Fireball (4d6)." },
+        { "name": "Lightning", "reagent": "Essence (Storm)", "effect": "1/Day: Cast Lightning Bolt (4d8)." },
+        { "name": "Control", "reagent": "Essence (Mind)", "effect": "1/Day: Cast Dominate Person." },
+        { "name": "Summon", "reagent": "Organics (Beast)", "effect": "1/Day: Summon Spirit Wolf (1 hr)." },
+        { "name": "Fortress", "reagent": "Scrap (Cube)", "effect": "1/Day: Tiny Hut (8 hr dome)." },
+        { "name": "Speed", "reagent": "Essence (Time)", "effect": "1/Day: Haste (Double Speed, +Action)." },
+        { "name": "Displacement", "reagent": "Organics (Displacer)", "effect": "Disadvantage on attacks against you." },
+        { "name": "Reflection", "reagent": "Scrap (Mirror)", "effect": "Reflect spells on Crit Defense." },
+        { "name": "Spell-Lord", "reagent": "Essence (Arcane)", "effect": "Store 8 MP of spells." },
+        { "name": "Attribute", "reagent": "Essence (Pure)", "effect": "+1 to a Stat Mod (Break Cap)." },
+        { "name": "Fate", "reagent": "Essence (Luck)", "effect": "Luck Pool refreshes to 3 at dawn." },
+        { "name": "Power", "reagent": "Essence (Mana)", "effect": "Max MP +4." },
+        { "name": "Vigor", "reagent": "Organics (Heart)", "effect": "Max STA +2." }
+      ]
+    }
+  }
+}

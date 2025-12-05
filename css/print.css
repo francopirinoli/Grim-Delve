@@ -1,0 +1,41 @@
+@media print {
+    @page { margin: 0.5cm; size: auto; }
+    
+    body {
+        background-color: white;
+        color: black;
+        height: auto;
+        overflow: visible;
+    }
+
+    /* Hide UI Elements */
+    #sidebar, .chargen-sidebar, .chargen-footer, .print-actions, .mode-toggle, .roll-btn {
+        display: none !important;
+    }
+
+    #app-container { display: block; height: auto; }
+    #main-content { padding: 0; overflow: visible; }
+    .chargen-content { display: block; }
+    
+    /* Sheet Formatting */
+    .sheet-wrapper {
+        box-shadow: none;
+        border: none;
+        width: 100%;
+        max-width: 100%;
+        padding: 0;
+        margin: 0;
+        background: white;
+        color: black;
+    }
+
+    /* Ensure grid works on paper */
+    .sheet-grid {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 1cm;
+    }
+    
+    .vital-box { border-color: black; }
+    .vital-label { background: white; }
+}

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grim Delve | Dark Pulp RPG</title>
+    
+    <!-- Google Fonts: Cinzel (Headers), Inter (Body), Fira Code (Stats) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Fira+Code:wght@400;600&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="./css/main.css">
+    <link rel="stylesheet" href="./css/print.css" media="print">
+</head>
+<body>
+
+    <div id="app-container">
+        
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar">
+            <div class="brand">
+                <h1>GRIM DELVE</h1>
+                <p class="subtitle">Dark Pulp RPG</p>
+            </div>
+
+            <nav class="main-nav">
+                <button class="nav-btn active" data-module="home">
+                    <span class="icon">📜</span> <span data-i18n="nav_home">Rules Reference</span>
+                </button>
+                <button class="nav-btn" data-module="chargen">
+                    <span class="icon">👤</span> <span data-i18n="nav_chargen">Character Creator</span>
+                </button>
+                <button class="nav-btn" data-module="bestiary">
+                    <span class="icon">💀</span> <span data-i18n="nav_bestiary">Monster Architect</span>
+                </button>
+                <button class="nav-btn" data-module="artificer">
+                    <span class="icon">⚒️</span> <span data-i18n="nav_items">Magic Items</span>
+                </button>
+                <button class="nav-btn" data-module="library">
+                    <span class="icon">📚</span> <span data-i18n="nav_library">My Library</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="lang-toggle">
+                    <button id="btn-lang-en" class="lang-btn active">EN</button>
+                    <button id="btn-lang-es" class="lang-btn">ES</button>
+                </div>
+                <div class="version">v0.1.0</div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main id="main-content">
+            <!-- Dynamic content will be injected here by JavaScript -->
+            <div class="welcome-screen">
+                <h2 data-i18n="welcome_title">Welcome to the Dark</h2>
+                <p data-i18n="welcome_text">Select a module from the left to begin.</p>
+            </div>
+        </main>
+
+    </div>
+
+    <!-- Entry Point Script -->
+    <script type="module" src="./js/main.js"></script>
+</body>
+</html>

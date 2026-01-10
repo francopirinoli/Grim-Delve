@@ -9,6 +9,7 @@ import { CharGen } from './modules/chargen.js';
 import { MonsterBuilder } from './modules/monster_builder.js';
 import { Library } from './modules/library.js';
 import { ItemBuilder } from './modules/item_builder.js';
+import { TableLookup } from './modules/table_lookup.js'; // <--- NEW LINE
 
 document.addEventListener("DOMContentLoaded", async () => {
     console.log("Grim Delve System Initializing...");
@@ -56,8 +57,8 @@ function loadModule(moduleName) {
     
     // 1. Reset State
     contentArea.innerHTML = '';
-    contentArea.className = ''; // CRITICAL: Clear module-specific layout classes (e.g., 'rulebook-container')
-    contentArea.scrollTop = 0;  // Reset scroll position
+    contentArea.className = ''; 
+    contentArea.scrollTop = 0;  
 
     console.log(`Switching to module: ${moduleName}`);
 
@@ -75,12 +76,16 @@ function loadModule(moduleName) {
             MonsterBuilder.init(contentArea);
             break;
         
-case 'artificer':
+        case 'artificer':
             ItemBuilder.init(contentArea);
             break;
         
         case 'library':
             Library.init(contentArea);
+            break;
+            
+        case 'tables': // <--- NEW CASE
+            TableLookup.init(contentArea);
             break;
 
         default:

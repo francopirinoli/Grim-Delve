@@ -281,7 +281,8 @@
         },
         {
           "name": "Scaly Hide",
-          "effect": "While Unarmored, you have natural Armor Score (AS) 1. Stacks with Shield."
+          "effect": "While Unarmored, you have natural Armor Score (AS) 1. Stacks with Shield.",
+          "modifiers": { "natural_armor": 1 }
         },
         {
           "name": "Trap-Maker's Cunning",
@@ -344,260 +345,160 @@
       "name": "Acolyte",
       "description": "Spent life in service to a god or cult. Knows ancient rites and sacrificial incense.",
       "skill": "Lore & Knowledge (INT)",
-      "feat": {
-        "name": "Divine Sanctuary",
-        "effect": "You can find safe haven at temples/shrines of your faith. You are considered a guest and can rest safely."
-      },
-      "gear": [
-        "Holy Symbol", "Prayer Book (1 Slot)", "Backpack (1 Slot)", "Rations (3 Days, 1 Slot)", "Waterskin (1 Slot)", "Candles (Bundle, 1 Slot)", "Flint & Steel", "10 Silver"
-      ]
+      "feat": { "name": "Divine Sanctuary", "effect": "Safe haven at temples. Guest rights." },
+      "gear": ["Holy Symbol", "Prayer Book", "Backpack", "Rations (3 Days)", "Waterskin", "Candles", "Flint & Steel", "30 Gold"]
     },
     {
       "id": "bg_scholar",
       "name": "Forbidden Scholar",
       "description": "Studied heretical texts locked in deep vaults. Your education is dangerous.",
       "skill": "Lore & Knowledge (INT)",
-      "feat": {
-        "name": "Whispers of the Void",
-        "effect": "When encountering 'forbidden' lore, ask the GM for one piece of obscure/dangerous info about it."
-      },
-      "gear": [
-        "Forbidden Tome (1 Slot)", "Backpack (1 Slot)", "Rations (3 Days, 1 Slot)", "Waterskin (1 Slot)", "Chalk (10)", "Candles (Bundle, 1 Slot)", "Flint & Steel", "3 Gold"
-      ]
+      "feat": { "name": "Whispers of the Void", "effect": "Ask GM for obscure info about forbidden lore." },
+      "gear": ["Forbidden Tome", "Backpack", "Rations (3 Days)", "Waterskin", "Chalk (10)", "Candles", "Flint & Steel", "30 Gold"]
     },
     {
       "id": "bg_antiquarian",
       "name": "Antiquarian",
       "description": "A seeker of the past who sees the value hidden within history.",
       "skill": "Investigate (INT)",
-      "feat": {
-        "name": "Eye for Value",
-        "effect": "Advantage to appraise items. Can sell gems/art/relics for 10% more gold in a safe haven."
-      },
-      "gear": [
-        "Magnifying Glass", "Notebook & Pencil", "Crowbar (1 Slot)", "Backpack (1 Slot)", "Rations (3 Days, 1 Slot)", "Waterskin (1 Slot)", "Candles (Bundle, 1 Slot)", "Flint & Steel", "3 Gold"
-      ]
+      "feat": { "name": "Eye for Value", "effect": "Advantage to appraise items. Sell Art for +10% value." },
+      "gear": ["Magnifying Glass", "Notebook & Pencil", "Crowbar", "Backpack", "Rations (3 Days)", "Waterskin", "Candles", "Flint & Steel", "35 Gold"]
     },
     {
       "id": "bg_medic",
       "name": "Field Medic",
       "description": "A battlefield sawbones. You know the smell of gangrene and the sound of a dying breath.",
       "skill": "Medicine Kit Proficiency",
-      "feat": {
-        "name": "Triage",
-        "effect": "Action: Assess a creature/corpse to get a summary of their physical state (Stable, Bleeding out, Poisoned, etc.)."
-      },
-      "gear": [
-        "Medicine Kit (1 Slot)", "Backpack (1 Slot)", "Rations (3 Days, 1 Slot)", "Waterskin (1 Slot)", "Torches (Bundle, 1 Slot)", "Flint & Steel", "5 Silver"
-      ]
+      "feat": { "name": "Triage", "effect": "Action: Assess creature's exact physical state." },
+      "gear": ["Medicine Kit", "Backpack", "Rations (3 Days)", "Waterskin", "Torches", "Flint & Steel", "25 Gold"]
     },
     {
       "id": "bg_alchemist",
       "name": "Alchemist's Apprentice",
       "description": "Spent years cleaning beakers and inhaling fumes. Knows how to turn filth into fire.",
       "skill": "Alchemist's Kit Proficiency",
-      "feat": {
-        "name": "Alchemical Eye",
-        "effect": "Advantage on Checks to identify potions, poisons, or unknown substances."
-      },
-      "gear": [
-        "Alchemist's Kit (2 Slots)", "Backpack (1 Slot)", "Rations (3 Days, 1 Slot)", "Waterskin (1 Slot)", "Candles (Bundle, 1 Slot)", "Flint & Steel", "2 Gold"
-      ]
+      "feat": { "name": "Alchemical Eye", "effect": "Advantage to identify potions/poisons." },
+      "gear": ["Alchemist's Kit", "Backpack", "Rations (3 Days)", "Waterskin", "Candles", "Flint & Steel", "30 Gold"]
     },
     {
       "id": "bg_artisan",
       "name": "Artisan",
       "description": "A maker of things. Smiths, tinkers, masons. You know everything has a breaking point.",
       "skill": "Crafting Kit Proficiency",
-      "feat": {
-        "name": "Eye for Craft",
-        "effect": "When examining a crafted object, ask the GM for one piece of info (weak point, origin, value)."
-      },
-      "gear": [
-        "Crafting Kit (2 Slots)", "Hammer (1 Slot)", "Backpack (1 Slot)", "Rations (3 Days, 1 Slot)", "Waterskin (1 Slot)", "Torches (Bundle, 1 Slot)", "Flint & Steel", "5 Silver"
-      ]
+      "feat": { "name": "Eye for Craft", "effect": "Ask GM for info on object construction/weakness." },
+      "gear": ["Crafting Kit", "Hammer", "Backpack", "Rations (3 Days)", "Waterskin", "Torches", "Flint & Steel", "30 Gold"]
     },
     {
       "id": "bg_herbalist",
       "name": "Herbalist",
       "description": "A wild-crafter who knows which roots stop bleeding and which mushrooms stop a heart.",
       "skill": "Herbalism Kit Proficiency",
-      "feat": {
-        "name": "Forager's Lore",
-        "effect": "Ask the GM one practical fact about a plant/fungus (Edible? Poisonous? Medicinal?)."
-      },
-      "gear": [
-        "Herbalism Kit (1 Slot)", "Backpack (1 Slot)", "Rations (3 Days, 1 Slot)", "Waterskin (1 Slot)", "Torches (Bundle, 1 Slot)", "Flint & Steel", "5 Silver"
-      ]
+      "feat": { "name": "Forager's Lore", "effect": "Identify plants/fungi effects instantly." },
+      "gear": ["Herbalism Kit", "Backpack", "Rations (3 Days)", "Waterskin", "Torches", "Flint & Steel", "25 Gold"]
     },
     {
       "id": "bg_poisoner",
       "name": "Poisoner",
       "description": "Deals in death with a single drop. Understands the crawling and burning tricks of nature.",
       "skill": "Poisoner's Kit Proficiency",
-      "feat": {
-        "name": "Poisoner's Eye",
-        "effect": "Advantage on Checks to identify a poison, its effects, or its delivery method."
-      },
-      "gear": [
-        "Poisoner's Kit (1 Slot)", "Dagger (1 Slot)", "Backpack (1 Slot)", "Rations (3 Days, 1 Slot)", "Waterskin (1 Slot)", "Candles (Bundle, 1 Slot)", "Flint & Steel", "3 Gold"
-      ]
+      "feat": { "name": "Poisoner's Eye", "effect": "Advantage to identify poisons." },
+      "gear": ["Poisoner's Kit", "Dagger", "Backpack", "Rations (3 Days)", "Waterskin", "Candles", "Flint & Steel", "35 Gold"]
     },
     {
       "id": "bg_urchin",
       "name": "Urchin",
       "description": "Raised by the streets. A gutter rat who knows how to be invisible.",
       "skill": "Stealth & Thievery (DEX)",
-      "feat": {
-        "name": "Hidden Paths",
-        "effect": "Advantage to navigate cities/sewers. Can find safe places to rest in urban environments."
-      },
-      "gear": [
-        "Dagger (1 Slot)", "Backpack (1 Slot)", "Rations (3 Days, 1 Slot)", "Waterskin (1 Slot)", "Sack (1 Slot)", "Flint & Steel", "5 Silver"
-      ]
+      "feat": { "name": "Hidden Paths", "effect": "Advantage navigating cities. Find safe rest spots." },
+      "gear": ["Dagger", "Backpack", "Rations (3 Days)", "Waterskin", "Sack", "Flint & Steel", "25 Gold"]
     },
     {
       "id": "bg_burglar",
       "name": "Cat Burglar",
       "description": "A second-story artist. Sees walls and locks as puzzles to be solved.",
       "skill": "Thieves' Tools Proficiency",
-      "feat": {
-        "name": "Case the Joint",
-        "effect": "Spend 10 mins observing a location to ask the GM for one detail about security (patrols, blind spots)."
-      },
-      "gear": [
-        "Thieves' Tools (1 Slot)", "Rope (50ft, 1 Slot)", "Backpack (1 Slot)", "Rations (3 Days, 1 Slot)", "Waterskin (1 Slot)", "Chalk (10)", "Flint & Steel", "3 Gold"
-      ]
+      "feat": { "name": "Case the Joint", "effect": "Observe location 10m to ask GM one security detail." },
+      "gear": ["Thieves' Tools", "Rope (50ft)", "Backpack", "Rations (3 Days)", "Waterskin", "Chalk", "Flint & Steel", "35 Gold"]
     },
     {
       "id": "bg_smuggler",
       "name": "Smuggler",
       "description": "Moves things that shouldn't be moved. Knows the back roads and the right bribes.",
       "skill": "Deception (CHA)",
-      "feat": {
-        "name": "Hidden Compartment",
-        "effect": "Gain 1 'Hidden' Inventory Slot. Items here are undetectable without a specific search (Scrutiny DC 13)."
-      },
-      "gear": [
-        "Crowbar (1 Slot)", "Backpack (1 Slot)", "Rations (3 Days, 1 Slot)", "Waterskin (1 Slot)", "Torches (Bundle, 1 Slot)", "Flint & Steel", "5 Gold"
-      ]
+      "feat": { "name": "Hidden Compartment", "effect": "Gain 1 Hidden Inventory Slot." },
+      "gear": ["Crowbar", "Backpack", "Rations (3 Days)", "Waterskin", "Torches", "Flint & Steel", "40 Gold"]
     },
     {
       "id": "bg_gambler",
       "name": "Gambler",
       "description": "Lives by the roll of a die. Expert at reading tells and calculating odds.",
       "skill": "Scrutiny (WIS)",
-      "feat": {
-        "name": "Read the Tell",
-        "effect": "After 1 min of conversation, ask the GM one question about a creature's emotional state/intentions."
-      },
-      "gear": [
-        "Loaded Dice/Marked Cards", "Dagger (1 Slot)", "Backpack (1 Slot)", "Rations (3 Days, 1 Slot)", "Waterskin (1 Slot)", "Candles (Bundle, 1 Slot)", "Flint & Steel", "5 Gold"
-      ]
+      "feat": { "name": "Read the Tell", "effect": "Converse 1 min to ask GM about creature's intent." },
+      "gear": ["Loaded Dice", "Dagger", "Backpack", "Rations (3 Days)", "Waterskin", "Candles", "Flint & Steel", "50 Gold"]
     },
     {
       "id": "bg_sellsword",
       "name": "Sellsword",
       "description": "A hired blade. Not a hero, but a professional who knows loyalty belongs to the highest bidder.",
       "skill": "Intimidation (CHA)",
-      "feat": {
-        "name": "Mercenary's Reputation",
-        "effect": "Advantage on Influence Checks to secure jobs, contracts, or find underworld hubs."
-      },
-      "gear": [
-        "Handaxe (1 Slot)", "Backpack (1 Slot)", "Bedroll (1 Slot)", "Rations (3 Days, 1 Slot)", "Waterskin (1 Slot)", "Torches (Bundle, 1 Slot)", "Flint & Steel", "3 Gold"
-      ]
+      "feat": { "name": "Mercenary's Reputation", "effect": "Advantage on Influence Checks for jobs/underworld." },
+      "gear": ["Handaxe", "Backpack", "Bedroll", "Rations (3 Days)", "Waterskin", "Torches", "Flint & Steel", "30 Gold"]
     },
     {
       "id": "bg_gladiator",
       "name": "Gladiator",
       "description": "Survivor of the pits. A practical fighter who knows how to size up an opponent.",
       "skill": "Athletics (STR)",
-      "feat": {
-        "name": "Sizing Up",
-        "effect": "Action: Make Scrutiny (DC 11) vs creature. Success: GM tells you one physical strength or weakness."
-      },
-      "gear": [
-        "Spear (1 Slot)", "Backpack (1 Slot)", "Bedroll (1 Slot)", "Rations (3 Days, 1 Slot)", "Waterskin (1 Slot)", "Torches (Bundle, 1 Slot)", "Flint & Steel", "3 Gold"
-      ]
+      "feat": { "name": "Sizing Up", "effect": "Action: Scrutiny Check. Reveal physical strength/weakness." },
+      "gear": ["Spear", "Backpack", "Bedroll", "Rations (3 Days)", "Waterskin", "Torches", "Flint & Steel", "30 Gold"]
     },
     {
       "id": "bg_watch",
       "name": "City Watch",
       "description": "A former copper. Has a cynical eye for trouble and knows how to make people talk.",
       "skill": "Scrutiny (WIS)",
-      "feat": {
-        "name": "Voice of Authority",
-        "effect": "Advantage on Intimidation Checks against common criminals and low-level society members."
-      },
-      "gear": [
-        "Club (1 Slot)", "Backpack (1 Slot)", "Bedroll (1 Slot)", "Rations (3 Days, 1 Slot)", "Waterskin (1 Slot)", "Torches (Bundle, 1 Slot)", "Flint & Steel", "5 Silver"
-      ]
+      "feat": { "name": "Voice of Authority", "effect": "Advantage on Intimidation vs criminals/commoners." },
+      "gear": ["Club", "Backpack", "Bedroll", "Rations (3 Days)", "Waterskin", "Torches", "Flint & Steel", "30 Gold"]
     },
     {
       "id": "bg_deserter",
       "name": "Deserter",
       "description": "Ran from the war. Learned to survive off the land and spot bounty hunters.",
       "skill": "Survival (WIS)",
-      "feat": {
-        "name": "Lie Low",
-        "effect": "Advantage on Survival Checks to find hidden, defensible campsites."
-      },
-      "gear": [
-        "Handaxe (1 Slot)", "Backpack (1 Slot)", "Bedroll (1 Slot)", "Rations (3 Days, 1 Slot)", "Waterskin (1 Slot)", "Flint & Steel", "3 Silver"
-      ]
+      "feat": { "name": "Lie Low", "effect": "Advantage on Survival to find hidden campsites." },
+      "gear": ["Handaxe", "Backpack", "Bedroll", "Rations (3 Days)", "Waterskin", "Flint & Steel", "25 Gold"]
     },
     {
       "id": "bg_courtier",
       "name": "Courtier",
       "description": "Creature of the court. Thrives in a jungle of silks, whispers, and poison.",
       "skill": "Influence (CHA)",
-      "feat": {
-        "name": "Courtly Graces",
-        "effect": "Advantage on Influence Checks in formal settings (courts, galas, meetings)."
-      },
-      "gear": [
-        "Fine Clothes", "Backpack (1 Slot)", "Rations (3 Days, 1 Slot)", "Waterskin (1 Slot)", "Candles (Bundle, 1 Slot)", "Flint & Steel", "5 Gold"
-      ]
+      "feat": { "name": "Courtly Graces", "effect": "Advantage on Influence Checks in formal settings." },
+      "gear": ["Fine Clothes", "Backpack", "Rations (3 Days)", "Waterskin", "Candles", "Flint & Steel", "50 Gold"]
     },
     {
       "id": "bg_noble",
       "name": "Exiled Noble",
       "description": "Born to privilege, lost it all. Carries the weight of a name and education.",
       "skill": "Influence (CHA)",
-      "feat": {
-        "name": "Noble Bearing",
-        "effect": "Advantage on Influence Checks with nobility/officials (if exile status is unknown/irrelevant)."
-      },
-      "gear": [
-        "Signet Ring", "Rapier (1 Slot)", "Backpack (1 Slot)", "Rations (3 Days, 1 Slot)", "Waterskin (1 Slot)", "10 Gold"
-      ]
+      "feat": { "name": "Noble Bearing", "effect": "Advantage on Influence vs nobility/officials." },
+      "gear": ["Signet Ring", "Rapier", "Backpack", "Rations (3 Days)", "Waterskin", "50 Gold"]
     },
     {
       "id": "bg_charlatan",
       "name": "Charlatan",
       "description": "Con artist and fake miracle-worker. Faith is a tool, and you wield it well.",
       "skill": "Deception (CHA)",
-      "feat": {
-        "name": "False Identity",
-        "effect": "Advantage on Deception Checks to convince others of your practiced alias."
-      },
-      "gear": [
-        "Prop (Fake item)", "Dagger (1 Slot)", "Backpack (1 Slot)", "Rations (3 Days, 1 Slot)", "Waterskin (1 Slot)", "Candles (Bundle, 1 Slot)", "Flint & Steel", "5 Gold"
-      ]
+      "feat": { "name": "False Identity", "effect": "Advantage on Deception to maintain alias." },
+      "gear": ["Prop (Fake Item)", "Dagger", "Backpack", "Rations (3 Days)", "Waterskin", "Candles", "Flint & Steel", "45 Gold"]
     },
     {
       "id": "bg_cultist",
       "name": "Escaped Cultist",
       "description": "Saw behind the curtain and fled. Knows the signs of the dark orders hunting you.",
       "skill": "Deception (CHA)",
-      "feat": {
-        "name": "Dark Whispers",
-        "effect": "Advantage to recognize cult symbols, identify members, or recall rites."
-      },
-      "gear": [
-        "Disturbing Idol", "Dagger (1 Slot)", "Backpack (1 Slot)", "Bedroll (1 Slot)", "Rations (3 Days, 1 Slot)", "Waterskin (1 Slot)", "Torches (Bundle, 1 Slot)", "Flint & Steel", "3 Silver"
-      ]
+      "feat": { "name": "Dark Whispers", "effect": "Advantage to recognize cult symbols/rites." },
+      "gear": ["Disturbing Idol", "Dagger", "Backpack", "Bedroll", "Rations (3 Days)", "Waterskin", "Torches", "Flint & Steel", "25 Gold"]
     }
   ],
   "archetypes": [

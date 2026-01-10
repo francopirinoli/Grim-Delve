@@ -2463,3 +2463,474 @@ dd {
     justify-content: space-between;
     text-transform: uppercase;
 }
+
+/* --- TABLE LOOKUP MODULE --- */
+
+.table-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr; /* Fixed Sidebar, Fluid Content */
+    height: 100%;
+    gap: 0;
+    overflow: hidden;
+}
+
+/* Sidebar Styles */
+.table-sidebar {
+    background: var(--bg-panel);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    overflow-y: auto;
+}
+
+.table-search input {
+    width: 100%;
+    background: #000;
+    border: 1px solid #444;
+    color: white;
+    padding: 8px;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+}
+
+.table-category h5 {
+    color: var(--accent-blue);
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid #333;
+    padding-bottom: 2px;
+}
+
+.table-btn {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    border: none;
+    color: #aaa;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.table-btn:hover {
+    background: rgba(255,255,255,0.05);
+    color: white;
+}
+
+.table-btn.active {
+    background: rgba(197, 160, 89, 0.15);
+    color: var(--accent-gold);
+    font-weight: bold;
+}
+
+/* Main Content Area */
+.table-content {
+    padding: 2rem;
+    overflow-y: auto;
+    background: var(--bg-dark);
+}
+
+.active-table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--accent-gold);
+}
+
+.active-table-header h3 {
+    margin: 0;
+    color: var(--text-main);
+    font-family: var(--font-header);
+    font-size: 1.5rem;
+}
+
+.roll-table-btn {
+    background: var(--accent-crimson);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    font-family: var(--font-header);
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 4px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.roll-table-btn:hover {
+    background: #a03333;
+    transform: translateY(-2px);
+}
+
+/* The Data Table Itself */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(255,255,255,0.02);
+}
+
+.data-table th {
+    text-align: left;
+    background: #222;
+    padding: 10px;
+    color: var(--accent-blue);
+    border: 1px solid #444;
+}
+
+.data-table td {
+    padding: 10px;
+    border: 1px solid #333;
+    color: #ddd;
+}
+
+/* Highlighting the Roll */
+.data-table tr.highlight {
+    background-color: rgba(197, 160, 89, 0.2) !important;
+    border: 2px solid var(--accent-gold);
+}
+
+.data-table tr.highlight td {
+    color: white;
+    font-weight: bold;
+}
+
+.roll-badge {
+    background: #333;
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+}
+
+.placeholder-msg {
+    text-align: center;
+    color: #555;
+    margin-top: 3rem;
+    font-style: italic;
+}
+
+/* --- ACCORDION UI (Character Creator) --- */
+.accordion-box {
+    background: rgba(0,0,0,0.2);
+    border: 1px solid #444;
+    margin-bottom: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.accordion-box[open] {
+    border-color: var(--accent-blue);
+}
+
+.accordion-header {
+    padding: 10px 15px;
+    cursor: pointer;
+    background: rgba(255,255,255,0.03);
+    font-weight: bold;
+    color: var(--text-main);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    list-style: none; /* Hide default arrow */
+    font-size: 0.9rem;
+    text-transform: uppercase;
+}
+
+.accordion-header:hover {
+    background: rgba(255,255,255,0.07);
+}
+
+/* Custom Arrow */
+.accordion-header::-webkit-details-marker {
+    display: none;
+}
+
+.accordion-header::after {
+    content: '+';
+    font-family: var(--font-mono);
+    font-weight: bold;
+    color: var(--accent-gold);
+    font-size: 1.2rem;
+}
+
+.accordion-box[open] .accordion-header::after {
+    content: '-';
+}
+
+.accordion-content {
+    padding: 15px;
+    background: #181818;
+    border-top: 1px solid #444;
+}
+
+.equip-btn {
+    width: 24px;
+    height: 24px;
+    border: 1px solid #555;
+    background: transparent;
+    color: #555;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    cursor: pointer;
+    font-family: var(--font-mono);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.equip-btn:hover {
+    border-color: #888;
+    color: #888;
+}
+
+.equip-btn.active {
+    background: var(--accent-gold);
+    color: black;
+    border-color: var(--accent-gold);
+    font-weight: bold;
+}
+
+.inv-item.equipped {
+    background: rgba(197, 160, 89, 0.05); /* Slight gold tint */
+    border-left: 2px solid var(--accent-gold);
+}
+
+/* --- SHEET CONTAINER --- */
+.sheet-page {
+    background: #fdfdfd; /* Clean Paper */
+    color: #111;
+    width: 100%;
+    max-width: 850px;
+    margin: 0 auto 2rem auto;
+    padding: 2rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    font-family: var(--font-body);
+    border: 1px solid #ccc;
+    position: relative;
+    box-sizing: border-box;
+}
+
+/* --- HEADER --- */
+.header-row {
+    display: flex;
+    gap: 1.5rem;
+    border-bottom: 2px solid #000;
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+    align-items: center;
+}
+
+.portrait-container {
+    width: 120px;
+    height: 120px;
+    border: 2px solid #333;
+    background: #eee;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.portrait-container img { width: 100%; height: 100%; object-fit: cover; }
+
+.header-info { flex-grow: 1; }
+.char-title { font-family: var(--font-header); font-size: 2.5rem; font-weight: 800; margin: 0; line-height: 1; text-transform: uppercase; }
+.char-subtitle { font-size: 1rem; color: #555; text-transform: uppercase; margin-top: 5px; font-family: var(--font-mono); }
+
+/* Vitals Grid */
+.header-vitals {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 200px;
+}
+
+.vital-box-compact {
+    border: 1px solid #333;
+    background: #fff;
+    padding: 4px;
+    text-align: center;
+    border-radius: 2px;
+}
+.vital-box-compact.red { border-top: 3px solid #d32f2f; }
+.vital-box-compact.green { border-top: 3px solid #388e3c; }
+.vital-box-compact.blue { border-top: 3px solid #1976d2; }
+.vital-box-compact.gold { border-top: 3px solid #fbc02d; }
+
+.vb-label { font-size: 0.65rem; font-weight: bold; text-transform: uppercase; color: #666; }
+.vb-vals { display: flex; justify-content: center; align-items: baseline; }
+.vb-input { width: 35px; border: none; font-size: 1.4rem; font-family: var(--font-mono); font-weight: bold; text-align: right; background: transparent; padding: 0; }
+.vb-max { font-size: 0.8rem; color: #888; font-family: var(--font-mono); }
+
+/* Attributes Strip */
+.attr-row {
+    display: flex;
+    justify-content: space-between;
+    background: #1a1a1a;
+    color: #eee;
+    padding: 5px 0;
+    margin-bottom: 1.5rem;
+    border-radius: 2px;
+}
+.attr-cell { flex: 1; text-align: center; border-right: 1px solid #444; }
+.attr-cell:last-child { border: none; }
+.attr-name { font-size: 0.65rem; font-weight: bold; color: #aaa; text-transform: uppercase; }
+.attr-num { font-size: 1.1rem; font-weight: bold; font-family: var(--font-mono); }
+
+/* --- PAGE 1 GRID --- */
+.p1-body {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 2rem;
+}
+
+/* Defense Panel */
+.defense-panel {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    padding: 10px;
+    background: #f9f9f9;
+}
+.ac-box { text-align: center; width: 60px; }
+.ac-val { font-size: 2.5rem; font-weight: 800; line-height: 1; display: block; }
+.ac-label { font-size: 0.6rem; font-weight: bold; text-transform: uppercase; color: #666; }
+
+.def-stats { flex-grow: 1; }
+.def-row { display: flex; justify-content: space-between; font-size: 0.85rem; border-bottom: 1px solid #eee; padding: 2px 0; }
+.def-row:last-child { border: none; }
+
+.worn-gear-section { font-size: 0.8rem; color: #555; margin-bottom: 1.5rem; }
+
+/* Tables (Skills/Weapons) */
+.skills-compact, .weapons-compact { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+.skills-compact td, .weapons-compact td { padding: 4px; border-bottom: 1px solid #ddd; }
+.skills-compact th, .weapons-compact th { text-align: left; font-size: 0.7rem; text-transform: uppercase; border-bottom: 2px solid #333; padding-bottom: 4px; }
+.tr-trained { background: rgba(0,0,0,0.05); font-weight: bold; }
+.td-die { text-align: right; font-family: var(--font-mono); }
+
+/* Inventory Grid */
+.wealth-row { display: flex; justify-content: space-between; font-size: 0.8rem; background: #ddd; padding: 4px 8px; margin-bottom: 5px; font-family: var(--font-mono); }
+
+.backpack-grid-dense {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 10px;
+    border-top: 1px solid #ccc;
+    font-size: 0.8rem;
+}
+.pack-cell { display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding: 3px 0; }
+.pack-cell .idx { color: #aaa; width: 20px; }
+.pack-cell .name { font-weight: 500; }
+.pack-cell .qty { color: #666; font-family: var(--font-mono); }
+
+.mats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; margin-top: 10px; }
+.mat-item { background: #333; color: #fff; text-align: center; padding: 2px; border-radius: 2px; font-size: 0.7rem; }
+.mat-item strong { font-family: var(--font-mono); font-size: 0.9rem; display: block; }
+
+.sheet-notes-small {
+    width: 100%; height: 120px;
+    border: 1px solid #ccc; background: #fff;
+    padding: 5px; font-size: 0.85rem;
+    font-family: var(--font-body); resize: none;
+}
+
+/* --- PAGE 2 --- */
+.page-title { font-family: var(--font-header); border-bottom: 2px solid #000; margin-bottom: 1.5rem; text-transform: uppercase; }
+.group-header { font-size: 1rem; color: var(--accent-blue); border-bottom: 1px dashed #999; margin-bottom: 10px; margin-top: 1.5rem; text-transform: uppercase; }
+
+.feat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.feat-card {
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 10px;
+    page-break-inside: avoid;
+}
+.feat-card.class-feat { border-left: 3px solid var(--accent-gold); background: #fafafa; }
+
+.feat-top { display: flex; justify-content: space-between; border-bottom: 1px solid #eee; margin-bottom: 5px; padding-bottom: 2px; }
+.f-name { font-weight: bold; font-size: 0.9rem; }
+.f-source { font-size: 0.7rem; color: #888; text-transform: uppercase; }
+.f-body { font-size: 0.85rem; line-height: 1.4; color: #333; }
+.f-cost { font-size: 0.7rem; color: var(--accent-crimson); font-weight: bold; margin-top: 5px; text-align: right; font-family: var(--font-mono); }
+
+/* --- MOBILE --- */
+@media (max-width: 768px) {
+    .header-row { flex-direction: column; text-align: center; }
+    .header-vitals { width: 100%; margin-top: 10px; }
+    .p1-body, .feat-grid { grid-template-columns: 1fr; }
+    .backpack-grid-dense { grid-template-columns: 1fr; }
+}
+
+/* --- UPDATED HEADER STYLES --- */
+.header-info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-right: 1rem;
+}
+
+.char-title {
+    font-size: 2.2rem;
+    margin: 0;
+    line-height: 1;
+}
+
+.char-subtitle {
+    font-size: 0.9rem;
+    font-family: var(--font-header);
+    text-transform: uppercase;
+    margin-top: 2px;
+}
+
+.sub-detail {
+    color: var(--accent-blue);
+    font-size: 0.8rem;
+    margin-left: 5px;
+}
+
+/* Compact XP Badge */
+.xp-badge {
+    background: #333;
+    color: #fff;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    border: 1px solid #555;
+    height: 24px;
+}
+
+.xp-badge span {
+    font-weight: bold;
+    color: #aaa;
+    margin-right: 5px;
+}
+
+.xp-badge input {
+    width: 35px;
+    background: transparent;
+    border: none;
+    color: var(--accent-gold);
+    font-weight: bold;
+    text-align: right;
+    padding: 0;
+    font-family: var(--font-mono);
+}
+
+.xp-badge input:focus { outline: none; border-bottom: 1px solid #fff; }

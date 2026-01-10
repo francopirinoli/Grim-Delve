@@ -1,41 +1,88 @@
 @media print {
-    @page { margin: 0.5cm; size: auto; }
-    
-    body {
-        background-color: white;
-        color: black;
-        height: auto;
-        overflow: visible;
+    @page {
+        margin: 0.5cm;
+        size: A4 portrait; /* Explicit size */
     }
 
-    /* Hide UI Elements */
-    #sidebar, .chargen-sidebar, .chargen-footer, .print-actions, .mode-toggle, .roll-btn {
+    body {
+        background-color: white !important;
+        color: black !important;
+        height: auto !important;
+        overflow: visible !important;
+        font-size: 11pt; /* Slightly smaller base font for fit */
+    }
+
+    /* Hide App UI */
+    #sidebar, 
+    .chargen-sidebar, 
+    .chargen-footer, 
+    .print-actions, 
+    .mode-toggle, 
+    .roll-btn,
+    .nav-btn,
+    .lang-toggle,
+    #app-container > aside {
         display: none !important;
     }
 
-    #app-container { display: block; height: auto; }
-    #main-content { padding: 0; overflow: visible; }
-    .chargen-content { display: block; }
-    
-    /* Sheet Formatting */
-    .sheet-wrapper {
-        box-shadow: none;
-        border: none;
-        width: 100%;
-        max-width: 100%;
-        padding: 0;
-        margin: 0;
-        background: white;
-        color: black;
+    /* Reset Layout */
+    #app-container {
+        display: block !important;
+        width: 100% !important;
+        height: auto !important;
     }
 
-    /* Ensure grid works on paper */
-    .sheet-grid {
-        display: grid;
-        grid-template-columns: 1fr 2fr;
-        gap: 1cm;
+    #main-content {
+        padding: 0 !important;
+        margin: 0 !important;
+        overflow: visible !important;
+        width: 100% !important;
+        background: white !important;
     }
-    
-    .vital-box { border-color: black; }
-    .vital-label { background: white; }
+
+    /* Sheet Container Fixes */
+    .sheet-page {
+        width: 100% !important;
+        max-width: 21cm !important; /* A4 Width */
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+        background: white !important;
+        page-break-after: always;
+    }
+
+    /* Remove Input Borders for clean look */
+    input[type="number"], textarea {
+        border: none !important;
+        background: transparent !important;
+        resize: none;
+    }
+
+    /* Attributes Strip - Force Print Color */
+    .attr-row {
+        background: #000 !important;
+        color: white !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    /* Vitals Box Borders */
+    .vital-box-compact {
+        border: 1px solid #000 !important;
+    }
+    .vital-box-compact.red { border-top: 3px solid #d32f2f !important; }
+    .vital-box-compact.green { border-top: 3px solid #388e3c !important; }
+    .vital-box-compact.blue { border-top: 3px solid #1976d2 !important; }
+    .vital-box-compact.gold { border-top: 3px solid #fbc02d !important; }
+
+    /* Force Grid Layouts */
+    .p1-body, .dossier-grid {
+        display: grid !important;
+        grid-template-columns: 1fr 1.4fr !important;
+        gap: 1.5cm !important;
+    }
+
+    /* Hide Page Breaks */
+    .page-break { display: none; }
 }

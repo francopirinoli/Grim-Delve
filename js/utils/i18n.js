@@ -11,6 +11,7 @@ const UI_DICTIONARY = {
         "nav_bestiary": "Monster Architect",
         "nav_items": "The Artificer",
         "nav_library": "My Library",
+        "nav_tables": "Tables & Rolls", // <--- NEW LINE
         "welcome_title": "Welcome to the Dark",
         "welcome_text": "Select a module from the left to begin.",
         "loading": "Loading Data..."
@@ -21,6 +22,7 @@ const UI_DICTIONARY = {
         "nav_bestiary": "Arquitecto de Monstruos",
         "nav_items": "El Artificiero",
         "nav_library": "Mi Biblioteca",
+        "nav_tables": "Tablas y Dados", // <--- NEW LINE
         "welcome_title": "Bienvenido a la Oscuridad",
         "welcome_text": "Selecciona un módulo a la izquierda para comenzar.",
         "loading": "Cargando Datos..."
@@ -33,7 +35,8 @@ const DATA_STORE = {
     options: null,
     items: null,
     monsters: null,
-    bestiary: null
+    bestiary: null,
+    tables: null // <--- NEW LINE
 };
 
 export const I18n = {
@@ -90,33 +93,33 @@ export const I18n = {
      * Fetches all JSON files for the specified language.
      */
     loadData: async (lang) => {
-        try {
-            // We use Promise.all to fetch everything in parallel for speed
-            const [rules, options, items, monsters, bestiary] = await Promise.all([
-                fetch(`./data/rules_${lang}.json`).then(res => res.json()),
-                fetch(`./data/options_${lang}.json`).then(res => res.json()),
-                fetch(`./data/items_${lang}.json`).then(res => res.json()),
-                fetch(`./data/monsters_${lang}.json`).then(res => res.json()),
-                fetch(`./data/bestiary_${lang}.json`).then(res => res.json())
-            ]);
+    try {
+        const [rules, options, items, monsters, bestiary, tables] = await Promise.all([
+            fetch(`./data/rules_${lang}.json`).then(res => res.json()),
+            fetch(`./data/options_${lang}.json`).then(res => res.json()),
+            fetch(`./data/items_${lang}.json`).then(res => res.json()),
+            fetch(`./data/monsters_${lang}.json`).then(res => res.json()),
+            fetch(`./data/bestiary_${lang}.json`).then(res => res.json()),
+            fetch(`./data/tables_${lang}.json`).then(res => res.json()) // <--- Loaded here
+        ]);
 
-            DATA_STORE.rules = rules;
-            DATA_STORE.options = options;
-            DATA_STORE.items = items;
-            DATA_STORE.monsters = monsters;
-            DATA_STORE.bestiary = bestiary;
-            
-            console.log(`Data loaded for [${lang}]`, DATA_STORE);
+        DATA_STORE.rules = rules;
+        DATA_STORE.options = options;
+        DATA_STORE.items = items;
+        DATA_STORE.monsters = monsters;
+        DATA_STORE.bestiary = bestiary;
+        DATA_STORE.tables = tables; // <--- Stored here
+        
+        console.log(`Data loaded for [${lang}]`, DATA_STORE);
 
-        } catch (error) {
-            console.warn(`Failed to load data for language: ${lang}. Files may be missing.`, error);
-            // Optional: Fallback to EN if ES is missing during development
-            if (lang !== 'en') {
-                console.log("Falling back to English data...");
-                await I18n.loadData('en');
-            }
+    } catch (error) {
+        console.warn(`Failed to load data for language: ${lang}.`, error);
+        if (lang !== 'en') {
+            console.log("Falling back to English data...");
+            await I18n.loadData('en');
         }
-    },
+    }
+},
 
     /**
      * Updates all HTML elements with the 'data-i18n' attribute.

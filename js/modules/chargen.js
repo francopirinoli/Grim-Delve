@@ -235,11 +235,32 @@ export const CharGen = {
             <div class="split-view">
                 <!-- Inputs -->
                 <div class="input-column">
-                    <div class="form-group">
-                        <label class="form-label">Character Name</label>
-                        <input type="text" id="char-name" value="${CharGen.char.name}" placeholder="Enter name...">
+                    
+                    <!-- 1. APPEARANCE SECTION (NEW) -->
+                    <div class="form-section" style="border-bottom:1px solid #333; padding-bottom:1rem; margin-bottom:1rem;">
+                        <h4 style="color:var(--accent-gold); margin-top:0;">Identity</h4>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Character Name</label>
+                            <input type="text" id="char-name" value="${CharGen.char.name}" placeholder="Enter name...">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Portrait</label>
+                            <div style="display:flex; gap:10px; align-items:center;">
+                                <div id="img-preview-box" style="width:60px; height:60px; background:#000; border:1px solid #444; border-radius:50%; overflow:hidden; display:flex; justify-content:center; align-items:center;">
+                                    <span style="font-size:2rem;">👤</span>
+                                </div>
+                                <div style="flex-grow:1;">
+                                    <input type="text" id="img-url-input" placeholder="Paste Image URL..." value="${CharGen.char.imageUrl || ''}" style="width:100%; margin-bottom:5px;">
+                                    <button id="btn-upload-img" class="btn-small" style="width:100%;">Or Upload File</button>
+                                    <input type="file" id="file-upload-hidden" accept="image/*" style="display:none;">
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
+                    <!-- 2. ORIGINS -->
                     <div class="form-group">
                         <label class="form-label">Ancestry</label>
                         <select id="sel-ancestry">
@@ -310,7 +331,7 @@ export const CharGen = {
         `;
         el.innerHTML = html;
 
-        // --- Elements ---
+        // --- Elements & Helpers (Same as before) ---
         const ancSelect = document.getElementById('sel-ancestry');
         const featGroup = document.getElementById('feat-group');
         const featSelect = document.getElementById('sel-anc-feat');
@@ -319,17 +340,18 @@ export const CharGen = {
         const skillDiv = document.getElementById('ancestry-skill-options');
         const skillSelect = document.getElementById('sel-anc-skill');
         const bgSelect = document.getElementById('sel-background');
+        const elemDiv = document.getElementById('ancestry-element-options');
+        const elemSelect = document.getElementById('sel-anc-element');
 
-        // --- Helpers ---
-        
+        // ... (Keep existing populateFeats and checkDynamicOptions logic from previous chargen.js code) ...
+        // Re-inserting the logic here for completeness in the file:
         const populateFeats = (ancId) => {
             featSelect.innerHTML = '<option value="">-- Choose One --</option>';
             if (!ancId) {
                 featGroup.style.display = 'none';
                 return;
             }
-            
-        const anc = data.ancestries.find(a => a.id === ancId);
+            const anc = data.ancestries.find(a => a.id === ancId);
             if (anc && anc.feats) {
                 featGroup.style.display = 'block';
                 anc.feats.forEach((f, idx) => {
@@ -339,27 +361,15 @@ export const CharGen = {
                     featSelect.appendChild(opt);
                 });
             }
-        
-        // Add this where you define other listeners
-        const elemSelect = document.getElementById('sel-anc-element');
-        if (elemSelect) {
-            elemSelect.addEventListener('change', (e) => {
-                CharGen.char.ancestryElement = e.target.value;
-            });
-        }
         };
 
         const checkDynamicOptions = () => {
             const ancId = ancSelect.value;
             const featIdx = featSelect.value;
             
-            // 1. Hide All Dynamic Sections initially
-            optDiv.style.display = 'none'; // Stat Bonus (Human)
-            skillDiv.style.display = 'none'; // Skill Choice
-            // We need a new container for Element Choice if you haven't added one to the HTML yet
-            // Let's inject it dynamically or assume we add it to the HTML structure below
-            let elemDiv = document.getElementById('ancestry-element-options');
-            if (elemDiv) elemDiv.style.display = 'none';
+            optDiv.style.display = 'none';
+            skillDiv.style.display = 'none';
+            if(elemDiv) elemDiv.style.display = 'none';
 
             if (ancId && featIdx !== "") {
                 const anc = data.ancestries.find(a => a.id === ancId);
@@ -367,61 +377,30 @@ export const CharGen = {
                 const mods = feat.modifiers;
 
                 if (mods) {
-                    // A. Stat Bonus (Human: Resourceful)
-                    if (mods.select_bonus) {
-                        optDiv.style.display = 'block';
-                    } else {
-                        CharGen.char.ancestryChoice = null;
-                        optSelect.value = "";
-                    }
+                    if (mods.select_bonus) optDiv.style.display = 'block';
+                    else { CharGen.char.ancestryChoice = null; optSelect.value = ""; }
 
-                    // B. Element Selection (Draconid)
                     if (mods.select_element) {
-                        // Ensure the UI container exists (See Part C below for HTML update)
-                        if (elemDiv) {
-                            elemDiv.style.display = 'block';
-                            const elemSelect = document.getElementById('sel-anc-element');
-                            elemSelect.innerHTML = '<option value="">-- Select Element --</option>';
-                            mods.select_element.forEach(el => {
-                                const opt = document.createElement('option');
-                                opt.value = el;
-                                opt.textContent = el;
-                                elemSelect.appendChild(opt);
-                            });
-                            // Restore state
-                            if (CharGen.char.ancestryElement) elemSelect.value = CharGen.char.ancestryElement;
-                        }
+                        elemDiv.style.display = 'block';
+                        elemSelect.innerHTML = '<option value="">-- Select Element --</option>';
+                        mods.select_element.forEach(el => {
+                            const opt = document.createElement('option');
+                            opt.value = el; opt.textContent = el;
+                            elemSelect.appendChild(opt);
+                        });
+                        if (CharGen.char.ancestryElement) elemSelect.value = CharGen.char.ancestryElement;
                     }
 
-                    // C. Skill Selection (Smallfolk / Human)
                     if (mods.select_skill) {
                         skillDiv.style.display = 'block';
                         skillSelect.innerHTML = '<option value="">-- Select Skill --</option>';
-                        
-                        let options = [];
-                        if (mods.select_skill === "any") {
-                            // Allow all skills (Human)
-                            options = allSkills;
-                        } else if (Array.isArray(mods.select_skill)) {
-                            // Allow specific subset (Smallfolk)
-                            options = allSkills.filter(s => mods.select_skill.includes(s.id));
-                        }
-
+                        let options = (mods.select_skill === "any") ? allSkills : allSkills.filter(s => mods.select_skill.includes(s.id));
                         options.forEach(s => {
                             const opt = document.createElement('option');
-                            opt.value = s.id;
-                            opt.textContent = s.name;
+                            opt.value = s.id; opt.textContent = s.name;
                             skillSelect.appendChild(opt);
                         });
-
-                        // Restore state
-                        if (CharGen.char.ancestrySkill) {
-                             if(options.some(o => o.id === CharGen.char.ancestrySkill)) {
-                                 skillSelect.value = CharGen.char.ancestrySkill;
-                             } else {
-                                 CharGen.char.ancestrySkill = null;
-                             }
-                        }
+                        if (CharGen.char.ancestrySkill) skillSelect.value = CharGen.char.ancestrySkill;
                     } else {
                         CharGen.char.ancestrySkill = null;
                     }
@@ -429,23 +408,74 @@ export const CharGen = {
             }
         };
 
-        // --- Restore State ---
+        // --- NEW IMAGE LOGIC ---
+        const updateImagePreview = async () => {
+            const box = document.getElementById('img-preview-box');
+            let src = null;
+
+            if (CharGen.char.imageId) {
+                // Load from DB
+                const { ImageStore } = await import('../utils/image_store.js');
+                src = await ImageStore.getUrl(CharGen.char.imageId);
+            } else if (CharGen.char.imageUrl) {
+                // Load from URL
+                src = CharGen.char.imageUrl;
+            }
+
+            if (src) {
+                box.innerHTML = `<img src="${src}" style="width:100%; height:100%; object-fit:cover;">`;
+            } else {
+                box.innerHTML = `<span style="font-size:2rem;">👤</span>`;
+            }
+        };
+
+        // Image Listeners
+        const urlInput = document.getElementById('img-url-input');
+        const uploadBtn = document.getElementById('btn-upload-img');
+        const fileInput = document.getElementById('file-upload-hidden');
+
+        urlInput.addEventListener('change', (e) => {
+            CharGen.char.imageUrl = e.target.value;
+            CharGen.char.imageId = null; // clear ID if using URL
+            updateImagePreview();
+        });
+
+        uploadBtn.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', async (e) => {
+            if (e.target.files && e.target.files[0]) {
+                const file = e.target.files[0];
+                const { ImageStore } = await import('../utils/image_store.js');
+                
+                try {
+                    const id = await ImageStore.saveImage(file);
+                    CharGen.char.imageId = id;
+                    CharGen.char.imageUrl = null; // Clear URL if using File
+                    updateImagePreview();
+                    urlInput.value = "[Image Uploaded]";
+                } catch (err) {
+                    console.error(err);
+                    alert("Failed to save image.");
+                }
+            }
+        });
+
+        // Restore State
+        updateImagePreview();
         if (CharGen.char.ancestry) {
             ancSelect.value = CharGen.char.ancestry;
             populateFeats(CharGen.char.ancestry);
-            if (CharGen.char.ancestryFeatIndex !== null && CharGen.char.ancestryFeatIndex !== undefined) {
-                featSelect.value = CharGen.char.ancestryFeatIndex;
-            }
+            if (CharGen.char.ancestryFeatIndex !== null) featSelect.value = CharGen.char.ancestryFeatIndex;
             checkDynamicOptions();
             if (CharGen.char.ancestryChoice) optSelect.value = CharGen.char.ancestryChoice;
             if (CharGen.char.ancestrySkill) skillSelect.value = CharGen.char.ancestrySkill;
+            if (CharGen.char.ancestryElement) elemSelect.value = CharGen.char.ancestryElement;
         }
         if (CharGen.char.background) bgSelect.value = CharGen.char.background;
-
         CharGen.updateBioPreview();
 
-        // --- Listeners ---
-        
+        // Core Listeners
+        document.getElementById('char-name').addEventListener('input', (e) => CharGen.char.name = e.target.value);
         ancSelect.addEventListener('change', (e) => {
             CharGen.char.ancestry = e.target.value;
             CharGen.char.ancestryFeatIndex = null;
@@ -453,64 +483,31 @@ export const CharGen = {
             checkDynamicOptions();
             CharGen.updateBioPreview();
         });
-
         featSelect.addEventListener('change', (e) => {
             CharGen.char.ancestryFeatIndex = e.target.value;
             checkDynamicOptions();
-            
+            // Update tiny desc
             const anc = data.ancestries.find(a => a.id === CharGen.char.ancestry);
             const feat = anc.feats[e.target.value];
             document.getElementById('feat-desc-tiny').textContent = feat ? feat.effect : "";
         });
-
-        optSelect.addEventListener('change', (e) => {
-            CharGen.char.ancestryChoice = e.target.value;
-        });
-
-        skillSelect.addEventListener('change', (e) => {
-            CharGen.char.ancestrySkill = e.target.value;
-        });
-
+        optSelect.addEventListener('change', (e) => CharGen.char.ancestryChoice = e.target.value);
+        skillSelect.addEventListener('change', (e) => CharGen.char.ancestrySkill = e.target.value);
+        if(elemSelect) elemSelect.addEventListener('change', (e) => CharGen.char.ancestryElement = e.target.value);
         bgSelect.addEventListener('change', (e) => {
             CharGen.char.background = e.target.value;
             CharGen.updateBioPreview();
         });
         
-        document.getElementById('char-name').addEventListener('input', (e) => CharGen.char.name = e.target.value);
-
+        // Random Bio Button logic (Keep existing logic or copy from previous if needed, ensuring new fields update)
         document.getElementById('btn-random-bio').addEventListener('click', () => {
             CharGen.rollRandomBio();
-            // Refresh UI logic
+            // Refresh fields manually
             ancSelect.value = CharGen.char.ancestry;
             populateFeats(CharGen.char.ancestry);
-            
-            const anc = data.ancestries.find(a => a.id === CharGen.char.ancestry);
-            const randFeatIdx = Math.floor(Math.random() * anc.feats.length);
-            CharGen.char.ancestryFeatIndex = randFeatIdx;
-            featSelect.value = randFeatIdx;
-            
+            featSelect.value = CharGen.char.ancestryFeatIndex;
             bgSelect.value = CharGen.char.background;
             checkDynamicOptions();
-            
-            // If skill choice popped up randomly, pick one
-            if (skillDiv.style.display === 'block') {
-                 const opts = skillSelect.options;
-                 const randOpt = Math.floor(Math.random() * (opts.length - 1)) + 1; // Skip index 0 placeholder
-                 if (opts[randOpt]) {
-                     skillSelect.value = opts[randOpt].value;
-                     CharGen.char.ancestrySkill = opts[randOpt].value;
-                 }
-            }
-             // If stat choice popped up, pick one
-            if (optDiv.style.display === 'block') {
-                 const opts = optSelect.options;
-                 const randOpt = Math.floor(Math.random() * (opts.length - 1)) + 1;
-                 if(opts[randOpt]) {
-                     optSelect.value = opts[randOpt].value;
-                     CharGen.char.ancestryChoice = opts[randOpt].value;
-                 }
-            }
-
             CharGen.updateBioPreview();
         });
     },
@@ -521,9 +518,7 @@ export const CharGen = {
         const data = I18n.getData('options');
         if (!data) return;
 
-        // ... [Keep existing Class Analysis logic (isFullWarrior, etc.)] ...
-        // Ensure archA/archB/hasCaster logic remains here
-        // [Class Analysis Block - assume it's here]
+        // --- 1. Class & Archetype Logic ---
         let isFullWarrior = false;
         let isFullCaster = false;
         let isFullSpecialist = false;
@@ -550,8 +545,6 @@ export const CharGen = {
 
         const d = c.derived;
         const level = c.level;
-        
-        // Handle Stats (default to 0 to prevent NaNs)
         const str = s.STR || 0;
         const dex = s.DEX || 0;
         const con = s.CON || 0;
@@ -559,27 +552,26 @@ export const CharGen = {
         const wis = s.WIS || 0;
         const cha = s.CHA || 0;
 
-        // Hit Die Determination
+        // --- 2. Base Pools Calculation ---
+        
+        // HIT POINTS (Base)
         let hitDie = 8;
         if (isFullWarrior) hitDie = 10;
         if (isFullCaster) hitDie = 6;
 
-        // --- BASE HP LOGIC (The Fix) ---
-        // At Level 1, Base HP is deterministic (Hit Die + CON).
-        // We recalculate it constantly to reflect CON changes.
-        if (c.level === 1) {
+        // Initialize Base HP if brand new character
+        if (c.level === 1 && (!c.baseHP || c.baseHP === 0)) {
             c.baseHP = Math.max(1, hitDie + con);
         }
-        // Safety fallback
-        if (!c.baseHP) c.baseHP = Math.max(1, hitDie + con);
+        
+        // Safety Fallback
+        if (!c.baseHP) c.baseHP = (hitDie + con) + ((level - 1) * (Math.floor(hitDie/2) + con));
 
-        // Reset Derived Stats to Base
-        d.maxHP = c.baseHP; // Start clean
-        d.maxSTA = 0;       // Start clean
-        d.maxMP = 0;        // Start clean
-        d.slots = 8 + str + con; // Recalc base slots
+        // Start Calculation
+        d.maxHP = c.baseHP; 
 
-        // Stamina Base
+        // STAMINA
+        d.maxSTA = 0;
         if (isFullWarrior) {
             const phys = [str, dex, con].sort((a,b) => b - a);
             d.maxSTA = Math.max(1, phys[0] + phys[1]);
@@ -587,44 +579,38 @@ export const CharGen = {
             d.maxSTA = Math.max(1, str, dex, con);
         }
 
-        // Mana Base
+        // MANA
+        d.maxMP = 0;
         if (hasCaster) {
             let castMod = 0;
-            if (archA && ["INT","WIS","CHA"].some(st => archA.primary_stats.includes(st))) 
-                castMod = Math.max(castMod, s[archA.primary_stats[0]]||0);
-            if (archB && ["INT","WIS","CHA"].some(st => archB.primary_stats.includes(st))) 
-                castMod = Math.max(castMod, s[archB.primary_stats[0]]||0);
+            if(archA && ["INT","WIS","CHA"].some(stat => archA.primary_stats.includes(stat))) castMod = Math.max(castMod, s[archA.primary_stats[0]]||0);
+            if(archB && ["INT","WIS","CHA"].some(stat => archB.primary_stats.includes(stat))) castMod = Math.max(castMod, s[archB.primary_stats[0]]||0);
             
-            // Fallback
-            if (castMod === 0) castMod = Math.max(int, wis, cha);
-
             if (isFullCaster) d.maxMP = ((level + 1) * 2) + castMod;
             else d.maxMP = (level + 1) + castMod;
         }
 
-        // Luck Base
+        // LUCK
         d.maxLuck = 1; 
         if (isFullSpecialist) d.maxLuck = Math.max(1, cha * 2);
         else if (hasSpecialist) d.maxLuck = Math.max(1, cha);
 
+        // SLOTS
+        d.slots = 8 + str + con;
 
-        // --- MODIFIER APPLICATION ---
+        // --- 3. Apply Modifiers ---
         const applyModifiers = (mods) => {
             if (!mods) return;
-            // Add to the clean values
             if (mods.hp_flat) d.maxHP += mods.hp_flat;
+            if (mods.hp_per_level) d.maxHP += (mods.hp_per_level * level);
             if (mods.mp_flat) d.maxMP += mods.mp_flat;
             if (mods.sta_flat) d.maxSTA += mods.sta_flat;
             if (mods.luck_flat) d.maxLuck += mods.luck_flat;
             if (mods.slots_flat) d.slots += mods.slots_flat;
-            
-            if (mods.sta_mod) {
-                const val = s[mods.sta_mod] || 0;
-                d.maxSTA += val;
-            }
+            if (mods.sta_mod) d.maxSTA += (s[mods.sta_mod] || 0);
         };
 
-        // 1. Ancestry
+        // Ancestry
         if (c.ancestry) {
             const anc = data.ancestries.find(a => a.id === c.ancestry);
             if (anc && c.ancestryFeatIndex !== null && anc.feats[c.ancestryFeatIndex]) {
@@ -640,14 +626,14 @@ export const CharGen = {
             }
         }
 
-        // 2. Talents
+        // Talents
         if (c.talents.length > 0) {
             c.talents.forEach(t => {
                 if (t.modifiers) applyModifiers(t.modifiers);
             });
         }
 
-        // 3. Synergy Feats
+        // Synergy
         if (c.classId) {
             const cls = data.classes.find(cl => cl.id === c.classId);
             if (cls) {
@@ -658,13 +644,14 @@ export const CharGen = {
             }
         }
 
-        // Cleanup
+        // --- 4. Minimums ---
         if (d.maxHP < 1) d.maxHP = 1;
         if (d.maxMP < 0) d.maxMP = 0;
         if (d.maxSTA < 0) d.maxSTA = 0;
         if (d.maxLuck < 1) d.maxLuck = 1;
         if (d.slots < 8) d.slots = 8;
 
+        // --- 5. UPDATE UI (This was missing!) ---
         CharGen.updateStatPreview(hitDie);
     },
 
@@ -1005,16 +992,18 @@ export const CharGen = {
         const previewEl = document.getElementById('class-preview');
         const talentUI = document.getElementById('talent-selection-ui');
 
+        // 1. Validation
         if (!idA || !idB) {
             previewEl.innerHTML = '<p style="color:#666; text-align:center; margin-top:2rem;">Select two Archetypes to reveal your Class.</p>';
             talentUI.style.display = 'none';
             return;
         }
 
+        // 2. Fetch Data
         const archA = data.archetypes.find(a => a.id === idA);
         const archB = data.archetypes.find(a => a.id === idB);
         
-        // Find Class Name
+        // Find Class Logic
         const foundClass = data.classes.find(c => 
             (c.components[0] === archA.name && c.components[1] === archB.name) ||
             (c.components[0] === archB.name && c.components[1] === archA.name)
@@ -1022,56 +1011,79 @@ export const CharGen = {
 
         if (!foundClass) return;
 
+        // Update State
         CharGen.char.classId = foundClass.id;
         CharGen.char.className = foundClass.name;
 
-        // Helper to render one archetype card
-        const renderArchCard = (arch) => `
-            <div style="background:rgba(0,0,0,0.2); padding:10px; border-radius:4px; margin-bottom:10px; border-left:3px solid var(--accent-blue);">
-                <div style="font-weight:bold; color:var(--text-main);">${arch.name}</div>
-                <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:5px;">${arch.role} • ${arch.resource}</div>
-                <div style="font-size:0.8rem; font-style:italic; margin-bottom:8px;">${arch.description}</div>
+        // --- HELPER: Render Archetype Detail Block ---
+        const renderArchDetail = (arch) => `
+            <div style="padding:10px; font-size:0.85rem; color:#ccc; border-top:1px solid #444;">
+                <div style="margin-bottom:8px; font-style:italic;">${arch.description}</div>
+                
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px; margin-bottom:8px; font-family:var(--font-mono); font-size:0.75rem;">
+                    <div><span style="color:var(--accent-blue);">Role:</span> ${arch.role}</div>
+                    <div><span style="color:var(--accent-blue);">Resource:</span> ${arch.resource}</div>
+                    <div><span style="color:var(--accent-blue);">Stats:</span> ${arch.primary_stats.join(', ')}</div>
+                    <div><span style="color:var(--accent-blue);">Skill:</span> ${arch.proficiencies.skills.join(', ')}</div>
+                </div>
+
                 <div style="font-size:0.75rem;">
-                    <strong>Primary:</strong> ${arch.primary_stats.join(', ')}<br>
-                    <strong>Skills:</strong> ${arch.proficiencies.skills.join(', ')}
+                    <div><strong style="color:var(--text-muted);">Weapons:</strong> ${arch.proficiencies.weapons.join(', ')}</div>
+                    <div><strong style="color:var(--text-muted);">Armor:</strong> ${arch.proficiencies.armor.join(', ')}</div>
                 </div>
             </div>
         `;
 
-        let archHtml = '';
-        if (idA === idB) {
-            // Pure Class - Show once, emphasize focus
-            archHtml = `
-                <div style="margin-bottom:1rem;">
-                    <div style="font-size:0.8rem; text-transform:uppercase; color:var(--accent-gold); margin-bottom:5px;">Pure Path</div>
-                    ${renderArchCard(archA)}
-                </div>
-            `;
-        } else {
-            // Hybrid Class - Show both
-            archHtml = `
-                <div style="margin-bottom:1rem;">
-                    <div style="font-size:0.8rem; text-transform:uppercase; color:var(--accent-gold); margin-bottom:5px;">Archetypes</div>
-                    ${renderArchCard(archA)}
-                    ${renderArchCard(archB)}
-                </div>
-            `;
+        // --- HELPER: Render Synergy Feats ---
+        let featsHtml = '';
+        if (foundClass.synergy_feats) {
+            foundClass.synergy_feats.forEach(feat => {
+                let badgeColor = '#888';
+                if (feat.level === 1) badgeColor = 'var(--accent-blue)';
+                if (feat.level === 5) badgeColor = 'var(--accent-gold)';
+                if (feat.level === 10) badgeColor = 'var(--accent-crimson)';
+
+                featsHtml += `
+                    <div style="margin-bottom:10px; padding-bottom:10px; border-bottom:1px dashed #444; last-child:border-bottom:none;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2px;">
+                            <span style="font-size:0.75rem; color:${badgeColor}; font-weight:bold; text-transform:uppercase;">Level ${feat.level} Synergy</span>
+                            ${feat.cost ? `<span style="font-size:0.7rem; color:#666;">${feat.cost}</span>` : ''}
+                        </div>
+                        <div style="font-weight:bold; font-size:0.9rem; color:var(--text-main);">${feat.name}</div>
+                        <div style="font-size:0.8rem; color:#bbb; line-height:1.4;">${feat.effect}</div>
+                    </div>
+                `;
+            });
         }
 
-        // Render Preview
-        const lvl1Feat = foundClass.synergy_feats.find(f => f.level === 1);
+        // --- 3. Build HTML Structure ---
         const html = `
             <div class="preview-section">
-                <div class="preview-header" style="color:var(--accent-gold); border-bottom: 1px solid var(--accent-gold);">${foundClass.name}</div>
-                <div class="preview-text" style="margin-bottom:1rem;"><em>${foundClass.description}</em></div>
-                
-                ${archHtml}
-
-                <div class="feat-box" style="margin-top:1rem;">
-                    <div class="preview-label" style="color:var(--accent-blue);">Level 1 Synergy Feat</div>
-                    <div style="font-weight:bold;">${lvl1Feat.name}</div>
-                    <div style="font-size:0.85rem; margin-top:4px;">${lvl1Feat.effect}</div>
+                <!-- Class Header -->
+                <div class="preview-header" style="color:var(--accent-gold); border-bottom: 2px solid var(--accent-gold); padding-bottom:5px; margin-bottom:10px;">
+                    <span style="font-size:1.6rem; text-transform:uppercase; letter-spacing:1px;">${foundClass.name}</span>
                 </div>
+                <div class="preview-text" style="margin-bottom:1.5rem; font-style:italic; color:#aaa;">${foundClass.description}</div>
+                
+                <!-- Section 1: Synergy Feats (Open by Default) -->
+                <details class="accordion-box" open>
+                    <summary class="accordion-header">Class Features (Synergy)</summary>
+                    <div class="accordion-content">
+                        ${featsHtml}
+                    </div>
+                </details>
+
+                <!-- Section 2: Archetype A -->
+                <details class="accordion-box">
+                    <summary class="accordion-header">${archA.name} <span style="font-size:0.7em; opacity:0.7;">${archA.role}</span></summary>
+                    ${renderArchDetail(archA)}
+                </details>
+
+                <!-- Section 3: Archetype B -->
+                <details class="accordion-box">
+                    <summary class="accordion-header">${archB.name} <span style="font-size:0.7em; opacity:0.7;">${archB.role}</span></summary>
+                    ${renderArchDetail(archB)}
+                </details>
             </div>
         `;
         previewEl.innerHTML = html;
@@ -1377,64 +1389,70 @@ export const CharGen = {
                                 <label style="color:var(--accent-gold); font-weight:bold; display:block; margin-bottom:5px;">${stat}</label>
                                 ${isManual 
                                     ? `<input type="number" class="manual-input" data-stat="${stat}" value="${CharGen.char.stats[stat] || 0}">`
-                                    : `<div class="stat-value-display">${CharGen.char.stats[stat] !== null ? (CharGen.char.stats[stat] > 0 ? '+'+CharGen.char.stats[stat] : CharGen.char.stats[stat]) : '--'}</div>`
+                                    : `<div class="stat-value-display">${CharGen.char.stats[stat] !== null ? (CharGen.char.stats[stat] >= 0 ? '+'+CharGen.char.stats[stat] : CharGen.char.stats[stat]) : '--'}</div>`
                                 }
                             </div>
                         `).join('')}
                     </div>
                     
                     <p class="text-muted" style="font-size:0.8rem; margin-top:10px; text-align:center;">
-                        ${isManual ? "Enter stats freely (-2 to +5)." : "Click a number, then click a Stat box."}
+                        ${isManual ? "Enter modifiers directly (e.g. +3, -1)." : "Click a number above, then click a Stat box."}
                     </p>
                 </div>
 
-                <!-- Preview Column -->
+                <!-- Preview Column (Target for Updates) -->
                 <div class="info-column">
                     <div id="stats-preview" class="preview-card">
-                        <div class="preview-header">Derived Vitals</div>
-                        <!-- Populated by updateStatPreview -->
+                        <!-- Content injected by updateStatPreview -->
+                        <p class="text-muted" style="text-align:center; margin-top:2rem;">Stats calculated automatically.</p>
                     </div>
                 </div>
             </div>
         `;
         el.innerHTML = html;
 
-        // Event Listeners
+        // --- Event Listeners ---
+        
+        // Manual Toggle
         document.getElementById('toggle-manual').addEventListener('change', (e) => {
             CharGen.statState.manualMode = e.target.checked;
             CharGen.statState.assignedIndices = {};
+            // Reset stats on toggle to avoid confusion
             CharGen.char.stats = { STR: null, DEX: null, CON: null, INT: null, WIS: null, CHA: null };
             CharGen.renderStats(el);
-            CharGen.calculateDerived();
-            CharGen.validateStats();
         });
 
         if (!isManual) {
+            // Roller
             document.getElementById('btn-roll-stats').addEventListener('click', CharGen.rollStats);
             
+            // Pool Buttons
             el.querySelectorAll('.pool-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const idx = parseInt(e.target.dataset.idx);
                     CharGen.statState.selectedValIndex = idx;
-                    CharGen.renderStats(el);
+                    CharGen.renderStats(el); // Re-render to show selection state
                 });
             });
 
+            // Grid Boxes
             el.querySelectorAll('.stat-box').forEach(box => {
                 box.addEventListener('click', () => CharGen.assignStatFromPool(box.dataset.stat));
             });
         } else {
+            // Manual Inputs
             el.querySelectorAll('.manual-input').forEach(input => {
                 input.addEventListener('input', (e) => {
                     CharGen.char.stats[e.target.dataset.stat] = parseInt(e.target.value) || 0;
-                    CharGen.calculateDerived();
+                    CharGen.calculateDerived(); // Live update
+                    CharGen.validateStats();
                 });
             });
         }
 
-        CharGen.calculateDerived(); 
-        CharGen.validateStats(); 
-        CharGen.calculateDefenses(); 
+        // Trigger initial calculation to populate the preview box immediately
+        CharGen.calculateDerived();
+        CharGen.validateStats();
     },
 
     renderPoolButtons: () => {
@@ -1444,9 +1462,13 @@ export const CharGen = {
             const isUsed = Object.keys(CharGen.statState.assignedIndices).includes(String(idx));
             const isSelected = (CharGen.statState.selectedValIndex === idx);
             
-            return `<button class="pool-btn ${isUsed ? 'used' : ''} ${isSelected ? 'selected' : ''}" 
-                    data-idx="${idx}" ${isUsed ? 'disabled' : ''}>
-                    ${val > 0 ? '+'+val : val}
+            // Helper class for visual feedback
+            let classes = "pool-btn";
+            if (isUsed) classes += " used";
+            if (isSelected) classes += " selected";
+
+            return `<button class="${classes}" data-idx="${idx}" ${isUsed ? 'disabled' : ''}>
+                    ${val >= 0 ? '+'+val : val}
                     </button>`;
         }).join('');
     },
@@ -1456,6 +1478,7 @@ export const CharGen = {
         let values = [];
         let name = "";
 
+        // Standard Array Logic
         switch(roll) {
             case 1: values = [1,1,1,1,1,0]; name = "The Jack"; break;
             case 2: values = [2,1,1,1,0,0]; name = "The Standard"; break;
@@ -1469,6 +1492,7 @@ export const CharGen = {
             case 10: values = [3,3,1,-1,-1,0]; name = "The Focused"; break;
             case 11: values = [2,2,2,1,-1,-1]; name = "The Complex"; break;
             case 12: values = [3,3,2,-1,-1,-1]; name = "The High Stakes"; break;
+            default: values = [1,1,1,1,1,1]; name = "Standard"; break;
         }
 
         CharGen.statState.arrayValues = values;
@@ -1478,13 +1502,14 @@ export const CharGen = {
         const arrayNameEl = document.getElementById('array-name');
         if(arrayNameEl) arrayNameEl.innerHTML = `<strong>Roll ${roll}: ${name}</strong>`;
         
-        const container = document.getElementById('step-container');
-        if(container) CharGen.renderStats(container);
+        // Re-render to show buttons
+        CharGen.renderStats(document.getElementById('step-container'));
     },
 
     assignStatFromPool: (statKey) => {
         const state = CharGen.statState;
 
+        // If clicking a filled box, clear it (return value to pool)
         if (CharGen.char.stats[statKey] !== null) {
             const idxToRemove = Object.keys(state.assignedIndices).find(key => state.assignedIndices[key] === statKey);
             if (idxToRemove) {
@@ -1492,21 +1517,24 @@ export const CharGen = {
                 CharGen.char.stats[statKey] = null;
                 state.selectedValIndex = null;
                 
+                // Refresh
                 CharGen.renderStats(document.getElementById('step-container'));
-                CharGen.calculateDerived();
+                CharGen.calculateDerived(); // Recalc on change
                 CharGen.validateStats();
                 return;
             }
         }
 
+        // If clicking an empty box with a value selected
         if (state.selectedValIndex !== null) {
             const val = state.arrayValues[state.selectedValIndex];
             state.assignedIndices[state.selectedValIndex] = statKey;
             CharGen.char.stats[statKey] = val;
             state.selectedValIndex = null;
             
+            // Refresh
             CharGen.renderStats(document.getElementById('step-container'));
-            CharGen.calculateDerived();
+            CharGen.calculateDerived(); // Recalc on change
             CharGen.validateStats();
         }
     },
@@ -1527,10 +1555,10 @@ export const CharGen = {
         const c = CharGen.char;
         const s = c.stats;
         const data = I18n.getData('options');
+        
         if (!data) return;
 
-        // ... (Keep existing Class Analysis & Hit Die logic) ...
-        // [Assuming ArchA/ArchB/HasCaster logic is here]
+        // --- 1. Class Logic ---
         let isFullWarrior = false;
         let isFullCaster = false;
         let isFullSpecialist = false;
@@ -1564,15 +1592,23 @@ export const CharGen = {
         const wis = s.WIS || 0;
         const cha = s.CHA || 0;
 
-        // --- BASE POOLS ---
+        // --- 2. Calculate Base Vitals ---
         
-        // 1. Hit Points
+        // Hit Points
         let hitDie = 8;
         if (isFullWarrior) hitDie = 10;
         if (isFullCaster) hitDie = 6;
-        if (d.maxHP === 0) d.maxHP = hitDie + con; // Init
 
-        // 2. Stamina
+        // Init Base HP if fresh (Level 1 and undefined)
+        if (c.level === 1 && (!c.baseHP || c.baseHP === 0)) {
+            c.baseHP = Math.max(1, hitDie + con);
+        }
+        // Safety for existing chars
+        if (!c.baseHP) c.baseHP = Math.max(1, hitDie + con);
+
+        d.maxHP = c.baseHP;
+
+        // Stamina
         d.maxSTA = 0;
         if (isFullWarrior) {
             const phys = [str, dex, con].sort((a,b) => b - a);
@@ -1581,30 +1617,33 @@ export const CharGen = {
             d.maxSTA = Math.max(1, str, dex, con);
         }
 
-        // 3. Mana
+        // Mana
         d.maxMP = 0;
         if (hasCaster) {
             let castMod = 0;
-            // Simple check for casting stat
-            if(archA && ["INT","WIS","CHA"].some(stat => archA.primary_stats.includes(stat))) castMod = Math.max(castMod, s[archA.primary_stats[0]]||0);
-            if(archB && ["INT","WIS","CHA"].some(stat => archB.primary_stats.includes(stat))) castMod = Math.max(castMod, s[archB.primary_stats[0]]||0);
+            // Find casting stat
+            if(archA && ["INT","WIS","CHA"].some(st => archA.primary_stats.includes(st))) castMod = Math.max(castMod, s[archA.primary_stats[0]]||0);
+            if(archB && ["INT","WIS","CHA"].some(st => archB.primary_stats.includes(st))) castMod = Math.max(castMod, s[archB.primary_stats[0]]||0);
             
+            if (castMod === 0) castMod = Math.max(int, wis, cha); // Fallback
+
             if (isFullCaster) d.maxMP = ((level + 1) * 2) + castMod;
             else d.maxMP = (level + 1) + castMod;
         }
 
-        // 4. Luck
+        // Luck
         d.maxLuck = 1; 
         if (isFullSpecialist) d.maxLuck = Math.max(1, cha * 2);
         else if (hasSpecialist) d.maxLuck = Math.max(1, cha);
 
-        // 5. Slots
+        // Slots
         d.slots = 8 + str + con;
 
-        // --- MODIFIER APPLICATION ---
+        // --- 3. Apply Modifiers ---
         const applyModifiers = (mods) => {
             if (!mods) return;
             if (mods.hp_flat) d.maxHP += mods.hp_flat;
+            if (mods.hp_per_level) d.maxHP += (mods.hp_per_level * level);
             if (mods.mp_flat) d.maxMP += mods.mp_flat;
             if (mods.sta_flat) d.maxSTA += mods.sta_flat;
             if (mods.luck_flat) d.maxLuck += mods.luck_flat;
@@ -1612,7 +1651,7 @@ export const CharGen = {
             if (mods.sta_mod) d.maxSTA += (s[mods.sta_mod] || 0);
         };
 
-        // A. Ancestry
+        // Ancestry Mods
         if (c.ancestry) {
             const anc = data.ancestries.find(a => a.id === c.ancestry);
             if (anc && c.ancestryFeatIndex !== null && anc.feats[c.ancestryFeatIndex]) {
@@ -1628,27 +1667,14 @@ export const CharGen = {
             }
         }
 
-        // B. Talents (Includes Ranger Choice)
+        // Talent Mods
         if (c.talents.length > 0) {
             c.talents.forEach(t => {
                 if (t.modifiers) applyModifiers(t.modifiers);
-                
-                // RANGER SPECIAL LOGIC
-                if (t.name === "Primal Bond Selection" && t.choice) {
-                    // Normally we'd put this in JSON, but for conditional choices logic is easier here
-                    // or update the Talent JSON to have 'modifiers' that are conditional (complex).
-                    // Hardcoding the Ranger Choice effect here for safety:
-                    /*
-                       Hunter: Handled in Attack Logic (+1 Ranged).
-                       Beast: Handled in Beast Logic.
-                       Neither affects Derived Stats (HP/MP/Luck), so no derived update needed here.
-                       BUT if we add more choices later, handle them here.
-                    */
-                }
             });
         }
 
-        // C. Synergy Feats (NEW: This fixes the Level 5/10 Passive Bonuses)
+        // Class Synergy Mods
         if (c.classId) {
             const cls = data.classes.find(cl => cl.id === c.classId);
             if (cls) {
@@ -1659,61 +1685,65 @@ export const CharGen = {
             }
         }
 
-        // Cleanup
+        // --- 4. Minimum Safety ---
+        if (d.maxHP < 1) d.maxHP = 1;
         if (d.maxMP < 0) d.maxMP = 0;
         if (d.maxSTA < 0) d.maxSTA = 0;
         if (d.maxLuck < 1) d.maxLuck = 1;
         if (d.slots < 8) d.slots = 8;
 
+        // --- 5. Update UI ---
+        // This is the critical line that was missing in previous iterations
         CharGen.updateStatPreview(hitDie);
     },
 
     updateStatPreview: (hitDie) => {
         const d = CharGen.char.derived;
+        const s = CharGen.char.stats;
         const el = document.getElementById('stats-preview');
+        
+        // If element doesn't exist, we aren't on Step 3, so stop.
         if (!el) return;
         
         el.innerHTML = `
-            <div class="preview-header">Vitals</div>
+            <div class="preview-header" style="color:var(--accent-gold); border-bottom:1px solid #444; margin-bottom:1rem; padding-bottom:5px;">Derived Vitals</div>
             
-            <div class="resource-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom: 1rem;">
-                <div class="resource-box" style="border-color: var(--accent-crimson);">
-                    <div class="label">Hit Points</div>
-                    <div class="resource-val">${d.maxHP}</div>
-                    <div style="font-size:0.7rem;">(Die: d${hitDie})</div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom: 1rem;">
+                <div class="resource-box" style="border:1px solid var(--accent-crimson); background:rgba(138, 44, 44, 0.1); padding:10px; text-align:center;">
+                    <div style="font-size:0.7rem; color:#aaa; text-transform:uppercase;">Hit Points</div>
+                    <div style="font-family:var(--font-mono); font-size:1.8rem; font-weight:bold; color:#eee;">${d.maxHP}</div>
+                    <div style="font-size:0.7rem; color:#888;">(Hit Die: d${hitDie})</div>
                 </div>
-                <div class="resource-box" style="border-color: #fff;">
-                    <div class="label">Inv. Slots</div>
-                    <div class="resource-val">${d.slots}</div>
-                </div>
-            </div>
-
-            <div class="resource-grid" style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:5px;">
-                <div class="resource-box" style="opacity: ${d.maxSTA > 0 ? 1 : 0.3};">
-                    <div class="label">Stamina</div>
-                    <div class="resource-val">${d.maxSTA}</div>
-                </div>
-                <div class="resource-box" style="opacity: ${d.maxMP > 0 ? 1 : 0.3};">
-                    <div class="label">Mana</div>
-                    <div class="resource-val">${d.maxMP}</div>
-                </div>
-                <div class="resource-box" style="opacity: ${d.maxLuck > 1 ? 1 : 0.5};">
-                    <div class="label">Luck</div>
-                    <div class="resource-val">${d.maxLuck}</div>
+                <div class="resource-box" style="border:1px solid #eee; background:rgba(255,255,255,0.05); padding:10px; text-align:center;">
+                    <div style="font-size:0.7rem; color:#aaa; text-transform:uppercase;">Inv. Slots</div>
+                    <div style="font-family:var(--font-mono); font-size:1.8rem; font-weight:bold; color:#eee;">${d.slots}</div>
                 </div>
             </div>
 
-            <div style="margin-top: 1.5rem;">
-                 <div class="preview-header">Combat</div>
-                 <div class="split-view" style="gap:10px;">
-                    <div>
-                        <div class="preview-label">Initiative</div>
-                        <div class="preview-text">${CharGen.char.stats.DEX !== null ? (CharGen.char.stats.DEX >= 0 ? '+'+CharGen.char.stats.DEX : CharGen.char.stats.DEX) : '--'}</div>
-                    </div>
-                    <div>
-                        <div class="preview-label">Defense Bonus</div>
-                        <div class="preview-text">Dodge: ${CharGen.char.stats.DEX !== null ? CharGen.char.stats.DEX : '--'}</div>
-                    </div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:5px;">
+                <div class="resource-box" style="border:1px solid ${d.maxSTA > 0 ? '#388e3c' : '#333'}; padding:8px; text-align:center; opacity: ${d.maxSTA > 0 ? 1 : 0.4};">
+                    <div style="font-size:0.6rem; color:#aaa;">STAMINA</div>
+                    <div style="font-family:var(--font-mono); font-size:1.2rem; font-weight:bold;">${d.maxSTA}</div>
+                </div>
+                <div class="resource-box" style="border:1px solid ${d.maxMP > 0 ? '#1976d2' : '#333'}; padding:8px; text-align:center; opacity: ${d.maxMP > 0 ? 1 : 0.4};">
+                    <div style="font-size:0.6rem; color:#aaa;">MANA</div>
+                    <div style="font-family:var(--font-mono); font-size:1.2rem; font-weight:bold;">${d.maxMP}</div>
+                </div>
+                <div class="resource-box" style="border:1px solid ${d.maxLuck > 1 ? '#fbc02d' : '#333'}; padding:8px; text-align:center; opacity: ${d.maxLuck > 1 ? 1 : 0.6};">
+                    <div style="font-size:0.6rem; color:#aaa;">LUCK</div>
+                    <div style="font-family:var(--font-mono); font-size:1.2rem; font-weight:bold;">${d.maxLuck}</div>
+                </div>
+            </div>
+
+            <div style="margin-top: 1.5rem; border-top:1px dashed #444; padding-top:1rem;">
+                 <div style="font-size:0.8rem; color:#888; text-transform:uppercase; margin-bottom:5px;">Combat Stats</div>
+                 <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                    <span>Initiative (DEX):</span>
+                    <strong style="font-family:var(--font-mono);">${s.DEX !== null ? (s.DEX >= 0 ? '+'+s.DEX : s.DEX) : '--'}</strong>
+                 </div>
+                 <div style="display:flex; justify-content:space-between;">
+                    <span>Base Defense (DEX):</span>
+                    <strong style="font-family:var(--font-mono);">${s.DEX !== null ? (s.DEX >= 0 ? '+'+s.DEX : s.DEX) : '--'}</strong>
                  </div>
             </div>
         `;
@@ -1723,8 +1753,7 @@ export const CharGen = {
        STEP 4: GEAR (Cleaned)
        ------------------------------------------------------------------ */
 
-    renderGear: (el) => {
-        // Ensure currency object exists
+renderGear: (el) => {
         const w = CharGen.char.currency || { g: 0, s: 0, c: 0 };
         
         const html = `
@@ -1734,8 +1763,8 @@ export const CharGen = {
                     <div class="shop-header">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
                             <h3 style="margin:0;">Equipment Shop</h3>
-                            <!-- WALLET DISPLAY -->
-                            <div style="font-family:var(--font-mono); font-size:0.9rem; color:var(--accent-gold); background:rgba(0,0,0,0.3); padding:4px 8px; border-radius:4px; border:1px solid var(--border-color);">
+                            <!-- WALLET DISPLAY (Added ID) -->
+                            <div id="wallet-display" style="font-family:var(--font-mono); font-size:1.1rem; color:var(--accent-gold); background:rgba(0,0,0,0.4); padding:6px 12px; border-radius:4px; border:1px solid var(--border-color); font-weight:bold;">
                                 💰 ${w.g}g ${w.s}s ${w.c}c
                             </div>
                         </div>
@@ -1752,7 +1781,7 @@ export const CharGen = {
                     
                     <div id="bg-gear-section" style="margin-top:10px; border-top:1px solid #333; padding-top:10px;">
                         <button id="btn-bg-gear" class="roll-btn" style="width:100%;">
-                            🎁 Equip Background Gear
+                            🎁 Equip Background Gear (Get Money)
                         </button>
                     </div>
                 </div>
@@ -1768,7 +1797,7 @@ export const CharGen = {
                         ⚠️ ENCUMBERED (Speed Halved)
                     </div>
                     <div id="inv-list-container" class="shop-list" style="height: 300px;">
-                        <!-- Inventory items injected here by updateInventoryUI -->
+                        <!-- Inventory items injected here -->
                     </div>
                 </div>
             </div>
@@ -1776,8 +1805,9 @@ export const CharGen = {
         
         el.innerHTML = html;
 
-        // --- Event Listeners ---
-
+        // ... (Listeners remain same as before, see renderGear original code) ...
+        // Re-attach listeners for tabs, add buttons, and background gear logic.
+        
         // Shop Tab Switching
         el.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -1789,7 +1819,6 @@ export const CharGen = {
 
         // Background Gear Button
         const bgBtn = document.getElementById('btn-bg-gear');
-        // Disable button if we detect background items already added to prevent duplicates/infinite money
         const hasBgItems = CharGen.char.inventory.some(i => i.type === "Background");
         if(hasBgItems) {
             bgBtn.disabled = true;
@@ -1797,8 +1826,6 @@ export const CharGen = {
         } else {
             bgBtn.addEventListener('click', () => {
                 CharGen.equipBackgroundGear(); 
-                // Re-render this step to update the Wallet Display at the top
-                CharGen.renderGear(el);
             });
         }
 
@@ -1908,23 +1935,51 @@ export const CharGen = {
     // Convert a cost string (e.g., "15g", "5s", "10g") to total Copper value
     parseCostToCopper: (costStr) => {
         if (!costStr || costStr === "-") return 0;
+
+        // Normalize: lowercase, remove commas
+        const clean = String(costStr).toLowerCase().replace(/,/g, '').trim();
+
+        // Regex: Capture numeric value and the unit identifier
+        // matches "50" then "g", "silver", "cp", etc.
+        const match = clean.match(/(\d+)\s*([a-z]+)/);
         
-        // Regex to find number and unit (g, s, c)
-        const match = costStr.toLowerCase().match(/(\d+)\s*([gsc])/);
         if (!match) return 0;
 
-        const val = parseInt(match[1]);
-        const unit = match[2];
+        const val = parseInt(match[1], 10);
+        const unit = match[2]; // g, s, c, gold, silver, copper
 
-        if (unit === 'g') return val * 100;
-        if (unit === 's') return val * 10;
-        return val;
+        if (unit.startsWith('g')) return val * 100; // 1 Gold = 100 Copper
+        if (unit.startsWith('s')) return val * 10;  // 1 Silver = 10 Copper
+        return val; // Default to Copper
     },
 
     // Convert character's current wealth to total Copper
     getWalletTotal: () => {
-        const w = CharGen.char.currency || { g:0, s:0, c:0 };
+        const w = CharGen.char.currency || { g: 0, s: 0, c: 0 };
         return (w.g * 100) + (w.s * 10) + (w.c);
+    },
+
+    updateWallet: (totalCopper) => {
+        // A. Update Data Model
+        const g = Math.floor(totalCopper / 100);
+        const rem1 = totalCopper % 100;
+        const s = Math.floor(rem1 / 10);
+        const c = rem1 % 10;
+
+        CharGen.char.currency = { g, s, c };
+
+        // B. Update UI immediately
+        const walletEl = document.getElementById('wallet-display');
+        if (walletEl) {
+            walletEl.innerHTML = `💰 ${g}g ${s}s ${c}c`;
+            
+            // Visual feedback (Flash Gold)
+            walletEl.style.transition = "color 0.2s";
+            walletEl.style.color = "#fff"; // Flash white
+            setTimeout(() => {
+                walletEl.style.color = "var(--accent-gold)"; // Return to Gold
+            }, 300);
+        }
     },
 
     // Update character wallet from a total Copper amount (Greedy Exchange)
@@ -1935,39 +1990,27 @@ export const CharGen = {
         const c = rem1 % 10;
         
         CharGen.char.currency = { g, s, c };
-    },
-
-    /* --- INVENTORY LOGIC --- */
-
-    addToInventory: (item) => {
-        // 1. Check Cost
-        const costCopper = CharGen.parseCostToCopper(item.cost);
-        const currentCopper = CharGen.getWalletTotal();
-
-        // If it's not free ("-") and we can't afford it
-        if (costCopper > 0 && currentCopper < costCopper) {
-            alert(`Not enough coin! \nCost: ${item.cost} \nYou have: ${currentCopper}c value.`);
-            return;
-        }
-
-        // 2. Deduct Cost
-        if (costCopper > 0) {
-            CharGen.setWalletFromTotal(currentCopper - costCopper);
-        }
-
-        // 3. Add Item
-        const newItem = JSON.parse(JSON.stringify(item));
-        CharGen.char.inventory.push(newItem);
         
-        CharGen.updateInventoryUI();
-        CharGen.calculateDefenses(); 
-        CharGen.calculateArmorScore(); // Ensure armor updates
+        // IMMEDIATE UI UPDATE
+        const walletEl = document.getElementById('wallet-display');
+        if (walletEl) {
+            walletEl.innerHTML = `💰 ${g}g ${s}s ${c}c`;
+            // Add a visual flash effect
+            walletEl.style.color = '#fff';
+            setTimeout(() => walletEl.style.color = 'var(--accent-gold)', 300);
+        }
     },
 
-    removeFromInventory: (index) => {
-        CharGen.char.inventory.splice(index, 1);
-        CharGen.updateInventoryUI();
-        CharGen.calculateDefenses(); 
+    /* --- INVENTORY LOGIC (ROBUST) --- */
+
+    _sanitizeItem: (item) => {
+        // Ensure item has a type for logic checks
+        if (!item.type) {
+            if (item.name.toLowerCase().includes("shield")) item.type = "Shield";
+            else if (item.as > 0) item.type = "Armor";
+            else item.type = "Gear";
+        }
+        return item;
     },
 
     equipBackgroundGear: () => {
@@ -1978,56 +2021,132 @@ export const CharGen = {
 
         if (!bg || !bg.gear) return;
 
-        // Reset Wallet before adding (prevents double-adding if button clicked twice)
-        CharGen.char.currency = { g: 0, s: 0, c: 0 };
-        // Note: Ideally we'd clear 'Background' items from inventory too, but simplistic addition is safer for MVP
+        let currentCopper = 0;
+        // Check if we already have these items to avoid duplicates
+        const existingNames = CharGen.char.inventory.map(i => i.name);
 
         bg.gear.forEach(gearStr => {
-            // 1. Check if this is Money (e.g., "10 Gold", "5 Silver")
-            // Regex checks for Number + "Gold"/"Silver"/"Copper"
-            const moneyMatch = gearStr.match(/(\d+)\s*(Gold|Silver|Copper)/i);
-            
-            if (moneyMatch) {
-                const val = parseInt(moneyMatch[1]);
-                const type = moneyMatch[2].toLowerCase();
-                
-                if (type.includes('gold')) CharGen.char.currency.g += val;
-                else if (type.includes('silver')) CharGen.char.currency.s += val;
-                else if (type.includes('copper')) CharGen.char.currency.c += val;
-                
-                return; // Skip adding this as an item
+            // Money Check
+            if (gearStr.match(/(gold|silver|copper)/i)) {
+                currentCopper += CharGen.parseCostToCopper(gearStr);
+                return;
             }
 
-            // 2. Standard Item Logic
-            let slots = 0;
-            const slotMatch = gearStr.match(/(\d+)\s*Slot/i);
-            if (slotMatch) slots = parseFloat(slotMatch[1]);
-            
-            const cleanName = gearStr.replace(/\(.*\)/, '').trim();
-            
-            const dbItem = [...itemsData.weapons, ...itemsData.armor, ...itemsData.gear, ...itemsData.reagents]
-                           .find(i => i.name.toLowerCase() === cleanName.toLowerCase());
+            // prevent duplicates of background gear
+            if (existingNames.includes(gearStr)) return;
 
-            let finalItem = {
-                name: gearStr,
-                slots: slots,
-                cost: "-",
-                type: "Background"
-            };
+            // Name Parsing
+            const cleanName = gearStr.replace(/\s*\(.*?\)\s*/g, '').trim();
+            
+            // DB Lookup
+            const dbList = [...itemsData.weapons, ...itemsData.armor, ...itemsData.gear, ...itemsData.reagents];
+            let dbItem = dbList.find(i => i.name.toLowerCase() === cleanName.toLowerCase());
+            if (!dbItem) dbItem = dbList.find(i => cleanName.toLowerCase().includes(i.name.toLowerCase()));
+
+            let finalItem = {};
 
             if (dbItem) {
-                finalItem = { ...dbItem, name: gearStr, cost: "-" }; // Keep flavor name but use DB stats
+                finalItem = JSON.parse(JSON.stringify(dbItem));
+                finalItem.cost = "-";
+                // Keep the flavor text name (e.g. "Rations (3 Days)")
+                finalItem.name = gearStr; 
+            } else {
+                let slots = 0;
+                const slotMatch = gearStr.match(/(\d+)\s*Slot/i);
+                if (slotMatch) slots = parseFloat(slotMatch[1]);
+                
+                finalItem = {
+                    name: gearStr,
+                    slots: slots,
+                    cost: "-",
+                    type: "Gear", 
+                    description: "Background Item"
+                };
+            }
+
+            // Sanitize Type
+            finalItem = CharGen._sanitizeItem(finalItem);
+
+            // Auto-Equip Logic
+            finalItem.equipped = false;
+            const inv = CharGen.char.inventory;
+            
+            if (finalItem.type === "Melee" || finalItem.type === "Ranged") {
+                // Equip if we don't have a weapon equipped
+                if (!inv.some(i => (i.type === "Melee" || i.type === "Ranged") && i.equipped)) finalItem.equipped = true;
+            } else if (finalItem.type === "Shield") {
+                // Equip if we don't have a shield
+                if (!inv.some(i => i.type === "Shield" && i.equipped)) finalItem.equipped = true;
+            } else if (finalItem.type === "Armor") {
+                // Equip if we don't have armor
+                if (!inv.some(i => i.type === "Armor" && i.equipped)) finalItem.equipped = true;
             }
 
             CharGen.char.inventory.push(finalItem);
         });
 
+        // Update Wallet
+        const currentTotal = CharGen.getWalletTotal();
+        CharGen.updateWallet(currentTotal + currentCopper);
+
+        // Update Button
         const btn = document.getElementById('btn-bg-gear');
         if (btn) {
             btn.disabled = true;
-            btn.textContent = "✅ Gear & Coin Added";
+            btn.innerHTML = "✅ Added";
+            btn.classList.remove('roll-btn');
+            btn.classList.add('btn-secondary');
         }
+
         CharGen.updateInventoryUI();
+        CharGen.recalcAll();
+    },
+
+    addToInventory: (item) => {
+        const costCopper = CharGen.parseCostToCopper(item.cost);
+        const currentCopper = CharGen.getWalletTotal();
+
+        if (costCopper > 0 && currentCopper < costCopper) {
+            const walletEl = document.getElementById('wallet-display');
+            if (walletEl) {
+                walletEl.style.color = "var(--accent-crimson)";
+                setTimeout(() => walletEl.style.color = "var(--accent-gold)", 500);
+            }
+            return; 
+        }
+
+        if (costCopper > 0) CharGen.updateWallet(currentCopper - costCopper);
+
+        let newItem = JSON.parse(JSON.stringify(item));
+        newItem = CharGen._sanitizeItem(newItem);
+        newItem.equipped = false;
+
+        // Smart Auto-Equip for Shop
+        const inv = CharGen.char.inventory;
+        if (newItem.type === "Melee" || newItem.type === "Ranged") {
+             if (!inv.some(i => (i.type === "Melee" || i.type === "Ranged") && i.equipped)) newItem.equipped = true;
+        } else if (newItem.type === "Shield") {
+             if (!inv.some(i => i.type === "Shield" && i.equipped)) newItem.equipped = true;
+        } else if (newItem.type === "Armor") {
+             if (!inv.some(i => i.type === "Armor" && i.equipped)) newItem.equipped = true;
+        }
+
+        CharGen.char.inventory.push(newItem);
+        CharGen.updateInventoryUI();
+        CharGen.recalcAll();
+    },
+
+    // Helper to refresh everything
+    recalcAll: () => {
+        CharGen.calculateDerived();
+        CharGen.calculateDefenses();
+        CharGen.calculateArmorScore();
+    },
+
+    removeFromInventory: (index) => {
+        CharGen.char.inventory.splice(index, 1);
+        CharGen.updateInventoryUI();
+        CharGen.calculateDefenses(); 
     },
 
     updateInventoryUI: () => {
@@ -2041,31 +2160,83 @@ export const CharGen = {
         // Calculate Slots
         let currentSlots = 0;
         CharGen.char.inventory.forEach(i => currentSlots += (i.slots || 0));
-        // Fix float precision
         currentSlots = Math.round(currentSlots * 100) / 100;
 
         const maxSlots = CharGen.char.derived.slots;
         const pct = Math.min(100, (currentSlots / maxSlots) * 100);
 
-        // Render
+        // Render Meter
         fillEl.style.width = `${pct}%`;
         fillEl.style.backgroundColor = currentSlots > maxSlots ? 'var(--accent-crimson)' : 'var(--accent-gold)';
         textEl.textContent = `${currentSlots} / ${maxSlots} Slots`;
         warnEl.style.display = currentSlots > maxSlots ? 'block' : 'none';
 
-        listEl.innerHTML = CharGen.char.inventory.map((item, idx) => `
-            <div class="inv-item">
-                <span style="font-size:0.85rem; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;">${item.name}</span>
+        // Render List
+        listEl.innerHTML = CharGen.char.inventory.map((item, idx) => {
+            // Check if item is equipable
+            const isEquipable = (item.type === "Melee" || item.type === "Ranged" || item.as > 0 || item.name.includes("Shield"));
+            const eqClass = item.equipped ? "equipped" : "";
+            const eqText = item.equipped ? "E" : "-";
+            
+            return `
+            <div class="inv-item ${eqClass}">
+                <div style="display:flex; align-items:center; gap:8px; overflow:hidden;">
+                    ${isEquipable ? 
+                        `<button class="equip-btn ${item.equipped ? 'active' : ''}" data-idx="${idx}" title="Toggle Equip">${eqText}</button>` 
+                        : '<span style="width:24px;"></span>'}
+                    <div style="display:flex; flex-direction:column; overflow:hidden;">
+                        <span style="font-size:0.85rem; white-space:nowrap; text-overflow:ellipsis; font-weight:${item.equipped ? 'bold' : 'normal'}; color:${item.equipped ? 'var(--accent-gold)' : 'inherit'}">${item.name}</span>
+                        <span style="font-size:0.7rem; color:#666;">${item.type}</span>
+                    </div>
+                </div>
                 <div style="display:flex; align-items:center;">
                     <span style="font-family:var(--font-mono); font-size:0.75rem; margin-right:5px; color:#888;">${item.slots || 0}</span>
                     <button class="remove-btn" data-idx="${idx}">×</button>
                 </div>
             </div>
-        `).join('');
+            `;
+        }).join('');
 
+        // Listeners
         listEl.querySelectorAll('.remove-btn').forEach(btn => {
             btn.addEventListener('click', (e) => CharGen.removeFromInventory(e.target.dataset.idx));
         });
+
+        listEl.querySelectorAll('.equip-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => CharGen.toggleEquip(e.target.dataset.idx));
+        });
+    },
+
+    toggleEquip: (index) => {
+        const item = CharGen.char.inventory[index];
+        const isEquipping = !item.equipped; 
+
+        if (isEquipping) {
+            // 1. Check Requirements
+            const check = CharGen.checkRequirements(item);
+            if (!check.pass) {
+                alert(`Cannot equip ${item.name}.\n${check.msg}`);
+                return;
+            }
+
+            // 2. Check Exclusivity
+            const inv = CharGen.char.inventory;
+            
+            if (item.type === "Armor") {
+                // Unequip other Armor (but not Shields)
+                inv.forEach(i => { if(i.type === "Armor") i.equipped = false; });
+            } else if (item.type === "Shield") {
+                // Unequip other Shields
+                inv.forEach(i => { if(i.type === "Shield") i.equipped = false; });
+            }
+            // Weapons can have multiple equipped (Dual Wielding or Ranged/Melee swap), 
+            // so we don't auto-unequip them here, user must unequip manually if needed.
+        }
+
+        item.equipped = isEquipping;
+        
+        CharGen.updateInventoryUI();
+        CharGen.recalcAll();
     },
 
     /* --- TALENT LOGIC --- */
@@ -2113,380 +2284,363 @@ export const CharGen = {
        STEP 5: FINAL SHEET
        ------------------------------------------------------------------ */
 
-renderSheet: (el) => {
+renderSheet: async (el) => {
         const c = CharGen.char;
         const data = I18n.getData('options');
         
-        // 1. Calculations
+        // 1. Calculations & Sanity Checks
         CharGen.calculateDerived();
         CharGen.calculateDefenses(); 
         const armorScore = CharGen.calculateArmorScore();
         const def = c.defenses; 
         const skillsList = CharGen.calculateSkills();
 
-        // 2. Initialization (Live State)
         if (c.current.hp === null) c.current.hp = c.derived.maxHP;
         if (c.current.mp === null) c.current.mp = c.derived.maxMP;
         if (c.current.sta === null) c.current.sta = c.derived.maxSTA;
         if (c.current.luck === null) c.current.luck = c.derived.maxLuck;
-        if (!c.activeConditions) c.activeConditions = [];
 
-        // 3. Metadata & Feats
+        // 2. Metadata Lookup
         const ancestry = data.ancestries.find(a => a.id === c.ancestry) || { name: "Unknown", feats:[] };
         const background = data.backgrounds.find(b => b.id === c.background) || { name: "Unknown", feat: { name: "-", effect: "-" } };
         const cls = data.classes.find(cl => cl.id === c.classId) || { name: "Unknown", synergy_feats: [] };
-        const synFeat = cls.synergy_feats.find(f => f.level === 1) || { name: "-", effect: "-" };
         
-        let ancFeat = { name: "Attribute Bonus", effect: "Selected raw stats." };
+        // Archetype Names (New)
+        const archA = data.archetypes.find(a => a.id === c.archA)?.name || "Archetype A";
+        const archB = data.archetypes.find(a => a.id === c.archB)?.name || "Archetype B";
+        
+        let ancFeat = { name: "Attribute Bonus", effect: "Raw stats." };
         if (c.ancestryFeatIndex !== null && ancestry.feats && ancestry.feats[c.ancestryFeatIndex]) {
             ancFeat = ancestry.feats[c.ancestryFeatIndex];
         }
 
-        // 4. Inventory Logic
-        const weapons = [];
-        const gear = [];
+        // 3. Inventory Sorting
+        const weapons = c.inventory.filter(i => (i.type === 'Melee' || i.type === 'Ranged') && i.equipped);
+        const equippedArmor = c.inventory.filter(i => (i.type === 'Armor' || i.type === 'Shield') && i.equipped);
+        const backpack = c.inventory.filter(i => !i.equipped);
+        
+        // Count Materials
         const materials = { "Organics": 0, "Scrap": 0, "Flora": 0, "Essence": 0 };
-
-        c.inventory.forEach(item => {
-            if (item.type === 'Melee' || item.type === 'Ranged') {
-                weapons.push(item);
-                gear.push(item); 
-            } else if (item.type === 'Material') {
-                if(item.name.includes("Organics")) materials.Organics++;
-                else if(item.name.includes("Scrap")) materials.Scrap++;
-                else if(item.name.includes("Flora")) materials.Flora++;
-                else if(item.name.includes("Essence")) materials.Essence++;
-            } else {
-                gear.push(item);
-            }
+        c.inventory.forEach(i => {
+            if(i.name.includes("Organics")) materials.Organics++;
+            if(i.name.includes("Scrap")) materials.Scrap++;
+            if(i.name.includes("Flora")) materials.Flora++;
+            if(i.name.includes("Essence")) materials.Essence++;
         });
 
-        const toolProfs = [];
-        c.talents.forEach(t => {
-            if (t.tags && t.tags.includes("Kit")) {
-                if(t.name.startsWith("Kit:")) toolProfs.push(t.name.replace("Kit: ", ""));
-                else if(t.name === "Poisoner") toolProfs.push("Poisoner's Kit");
-                else if(t.name === "Saboteur") toolProfs.push("Thieves' Tools");
-            }
-        });
-        if (background.skill && background.skill.includes("Proficiency")) toolProfs.push(background.skill.replace(" Proficiency", ""));
-
-        // Synergy Warning
-        const pendingSynergy = CharGen.checkSynergyGrant();
-        let warningHtml = "";
-        if (pendingSynergy) {
-            warningHtml = `
-                <div style="background: rgba(197, 160, 89, 0.15); border: 1px solid var(--accent-gold); padding: 15px; margin-bottom: 1.5rem; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 0 10px rgba(0,0,0,0.5);">
-                    <div>
-                        <strong style="color:var(--accent-gold); display:block; margin-bottom:4px;">⚠ Class Bonus Available</strong>
-                        <span style="font-size:0.9rem; color:#ddd;">Your <strong>${pendingSynergy.featName}</strong> feature grants you a free talent: <strong>${pendingSynergy.grantName}</strong>.</span>
-                    </div>
-                    <button id="btn-resolve-synergy" class="btn-primary" style="padding: 5px 15px; font-size:0.9rem;">Select Now</button>
-                </div>
-            `;
-        }
-
-        // Helper: Defense Box
-        const renderDefBox = (label, d) => {
-            const opacity = d.val === null ? 0.3 : 1;
-            const valStr = d.val !== null ? (d.val >= 0 ? `+${d.val}` : d.val) : "--";
-            const dieStr = (d.die && d.die !== "-") ? `<span style="color:var(--accent-gold); font-size:0.7em;"> + ${d.die}</span>` : "";
-            return `
-                <div class="vital-box" style="opacity:${opacity}; flex-direction:column; justify-content:center; min-width: 90px;">
-                    <span class="vital-label" style="margin-top:-25px; background:#e0e0e0; padding:0 5px;">${label}</span>
-                    <div class="vital-value" style="font-size:1.4rem;">${valStr}${dieStr}</div>
-                </div>
-            `;
+        // 4. Feature Sorting
+        const feats = {
+            origin: [
+                { name: `${ancFeat.name} (${ancestry.name})`, effect: `${ancFeat.effect} ${c.ancestryChoice ? `[${c.ancestryChoice}]` : ''}` },
+                { name: `${background.feat.name} (${background.name})`, effect: background.feat.effect }
+            ],
+            classSynergy: cls.synergy_feats.filter(f => f.level <= c.level).map(f => ({
+                name: f.name,
+                source: `Class Lvl ${f.level}`,
+                effect: f.effect,
+                cost: f.cost
+            })),
+            archetype: c.talents.map(t => ({
+                name: t.name,
+                source: t.sourceName || "Archetype",
+                effect: t.choice ? `${t.effect} <em>(Choice: ${t.choice})</em>` : t.effect,
+                cost: t.cost
+            }))
         };
 
-        // Helper: Condition Checkbox
-        const renderCond = (name) => {
-            const isChecked = c.activeConditions.includes(name) ? 'checked' : '';
-            return `<label class="cond-check"><input type="checkbox" class="cond-toggle" data-cond="${name}" ${isChecked}> ${name}</label>`;
-        };
+        // --- RENDER HELPERS ---
+        const renderVital = (label, current, max, colorClass) => `
+            <div class="vital-box-compact ${colorClass}">
+                <div class="vb-label">${label}</div>
+                <div class="vb-vals">
+                    <input type="number" class="vb-input" id="inp-${label.toLowerCase()}" value="${current}">
+                    <span class="vb-max">/ ${max}</span>
+                </div>
+            </div>
+        `;
 
-        // --- HTML START ---
+        const renderAttr = (stat, val) => `
+            <div class="attr-cell">
+                <div class="attr-name">${stat}</div>
+                <div class="attr-num">${val >= 0 ? '+'+val : val}</div>
+            </div>
+        `;
+
+        const placeholderImg = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='%23ccc'%3E%3Crect width='100' height='100' fill='%23333'/%3E%3Ccircle cx='50' cy='40' r='15' fill='%23666'/%3E%3Cpath d='M20 90 Q50 60 80 90' fill='%23666'/%3E%3C/svg%3E`;
+
+        // --- HTML CONSTRUCTION ---
         const html = `
+            <!-- TOOLBAR -->
             <div class="print-actions">
                 <button id="btn-levelup" class="btn-primary" style="background:var(--accent-blue); border-color:var(--accent-blue);">⬆ Level Up</button>
-                <button id="btn-print-pdf" class="btn-secondary">🖨️ Print to PDF</button>
-                <button id="btn-save-lib" class="btn-primary">💾 Save to Library</button>
+                <button id="btn-print-pdf" class="btn-secondary">🖨️ Print Sheet</button>
+                <button id="btn-save-lib" class="btn-primary">💾 Save</button>
             </div>
-            
-            ${warningHtml}
 
-            <!-- PAGE 1 -->
-            <div class="sheet-wrapper">
-                <!-- HEADER -->
-                <div class="sheet-header">
-                    <div style="flex-grow:1;">
-                        <div class="sheet-name">${c.name || "Unnamed Hero"}</div>
-                        <div style="color:#555; font-style:italic;">${ancestry.name} ${background.name}</div>
+            <!-- PAGE 1: STATS, GEAR & NOTES -->
+            <div class="sheet-page" id="page-1">
+                
+                <!-- HEADER (COMPACT) -->
+                <div class="header-row">
+                    <!-- Left: Image -->
+                    <div class="portrait-container">
+                        <img id="char-portrait-img" src="${placeholderImg}">
                     </div>
-                    <div class="sheet-class-box">
-                        <div style="font-size:0.8rem; text-transform:uppercase; color:#666;">Level ${c.level}</div>
-                        <div style="display:flex; align-items:center; gap:5px; margin-top:5px;">
-                            <span style="font-size:0.8rem; color:#666;">XP:</span>
-                            <input type="number" id="inp-xp" class="sheet-input-sm" value="${c.current.xp}">
-                            <span style="font-size:0.8rem; color:#666;">/ ${c.level * 10}</span>
+                    
+                    <!-- Center: Identity & XP -->
+                    <div class="header-info">
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                            <h1 class="char-title">${c.name || "Nameless"}</h1>
+                            <div class="xp-badge">
+                                <span>XP</span>
+                                <input type="number" id="inp-xp" value="${c.current.xp}">
+                                <span>/ ${c.level * 10}</span>
+                            </div>
                         </div>
+                        
+                        <div class="char-subtitle">
+                            <span style="color:var(--accent-crimson); font-weight:bold;">Level ${c.level} ${c.className}</span>
+                            <span class="sub-detail">(${archA} + ${archB})</span>
+                        </div>
+                        <div class="char-subtitle text-muted">
+                            ${ancestry.name} ${background.name}
+                        </div>
+                    </div>
+
+                    <!-- Right: Vitals Grid -->
+                    <div class="header-vitals">
+                        ${renderVital("HP", c.current.hp, c.derived.maxHP, "red")}
+                        ${renderVital("STA", c.current.sta, c.derived.maxSTA, "green")}
+                        ${renderVital("MP", c.current.mp, c.derived.maxMP, "blue")}
+                        ${renderVital("LUCK", c.current.luck, c.derived.maxLuck, "gold")}
                     </div>
                 </div>
 
-                <!-- ATTRIBUTES STRIP -->
-                <div class="stat-block-horizontal">
-                     ${['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'].map(stat => `
-                        <div class="mini-stat">
-                            <div class="mini-stat-label">${stat}</div>
-                            <div class="mini-stat-val">${(c.stats[stat] || 0) >= 0 ? '+' : ''}${c.stats[stat] || 0}</div>
-                        </div>
-                    `).join('')}
+                <!-- ATTRIBUTES -->
+                <div class="attr-row">
+                    ${['STR','DEX','CON','INT','WIS','CHA'].map(s => renderAttr(s, c.stats[s]||0)).join('')}
                 </div>
 
-                <!-- VITALS ROW (INTERACTIVE) -->
-                <div class="vitals-row" style="gap:15px; margin-bottom: 1.5rem;">
-                    <div class="vital-box" style="border-color: var(--accent-crimson);">
-                        <span class="vital-label">Hit Points</span>
-                        <div class="vital-input-container">
-                            <input type="number" id="inp-hp" class="sheet-input-lg" value="${c.current.hp}">
-                            <span class="sheet-slash">/</span>
-                            <span class="sheet-max">${c.derived.maxHP}</span>
+                <!-- MAIN GRID -->
+                <div class="p1-body">
+                    
+                    <!-- LEFT COL: DEFENSE & SKILLS -->
+                    <div class="p1-left">
+                        <div class="defense-panel">
+                            <div class="ac-box">
+                                <span class="ac-val">${armorScore}</span>
+                                <span class="ac-label">Armor Score</span>
+                            </div>
+                            <div class="def-stats">
+                                <div class="def-row"><span>Dodge</span> <b>${def.dodge.val >=0 ? '+'+def.dodge.val : def.dodge.val} ${def.dodge.die !== '-' ? '+ '+def.dodge.die : ''}</b></div>
+                                <div class="def-row"><span>Parry</span> <b>${def.parry.val !== null ? (def.parry.val >=0 ? '+'+def.parry.val : def.parry.val) : '--'}</b></div>
+                                <div class="def-row"><span>Block</span> <b>${def.block.val !== null ? (def.block.val >=0 ? '+'+def.block.val : def.block.val) : '--'}</b></div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="vital-box">
-                        <span class="vital-label">Stamina</span>
-                        <div class="vital-input-container">
-                            <input type="number" id="inp-sta" class="sheet-input-lg" value="${c.current.sta}">
-                            <span class="sheet-slash">/</span>
-                            <span class="sheet-max">${c.derived.maxSTA}</span>
-                        </div>
-                    </div>
-                    <div class="vital-box">
-                        <span class="vital-label">Mana</span>
-                        <div class="vital-input-container">
-                            <input type="number" id="inp-mp" class="sheet-input-lg" value="${c.current.mp}">
-                            <span class="sheet-slash">/</span>
-                            <span class="sheet-max">${c.derived.maxMP}</span>
-                        </div>
-                    </div>
-                    <div class="vital-box">
-                        <span class="vital-label">Luck</span>
-                        <div class="vital-input-container">
-                            <input type="number" id="inp-luck" class="sheet-input-lg" value="${c.current.luck}">
-                            <span class="sheet-slash">/</span>
-                            <span class="sheet-max">${c.derived.maxLuck}</span>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- DEFENSES ROW -->
-                <div class="sheet-section-title">Defenses & Speed</div>
-                <div class="vitals-row" style="gap:10px; margin-bottom: 1.5rem;">
-                    ${renderDefBox("Dodge (DEX)", def.dodge)}
-                    ${renderDefBox("Parry (STR/DEX)", def.parry)}
-                    ${renderDefBox("Block (CON)", def.block)}
-                    <div class="vital-box" style="border: 2px solid #333; min-width: 90px; flex-direction:column; justify-content:center;">
-                        <span class="vital-label" style="margin-top:-25px; background:#e0e0e0; padding:0 5px;">Armor Score</span>
-                        <div class="vital-value" style="font-size:1.4rem;">${armorScore}</div>
-                    </div>
-                    <div class="vital-box" style="border: 1px dashed #555; min-width: 80px; flex-direction:column; justify-content:center;">
-                        <span class="vital-label" style="margin-top:-25px; background:#e0e0e0; padding:0 5px;">Speed</span>
-                        <div class="vital-value" style="font-size:1.4rem;">30<span style="font-size:0.6em">ft</span></div>
-                    </div>
-                </div>
+                        <div class="worn-gear-section">
+                            <strong>Worn:</strong>
+                            <span class="worn-text">${equippedArmor.length ? equippedArmor.map(a => `${a.name} (AS ${a.as})`).join(', ') : 'Unarmored'}</span>
+                        </div>
 
-                <div class="sheet-grid">
-                    <!-- LEFT COL -->
-                    <div class="col-left">
-                        <div class="sheet-section-title">Skills</div>
-                        <table class="sheet-table" style="font-size:0.85rem;">
+                        <div class="panel-header" style="margin-top:1.5rem;">Skills</div>
+                        <table class="skills-compact">
                             ${skillsList.map(s => `
-                                <tr style="${s.count > 0 ? 'font-weight:bold; background:rgba(0,0,0,0.05);' : 'color:#777;'}">
+                                <tr class="${s.count > 0 ? 'tr-trained' : ''}">
                                     <td>${s.name}</td>
-                                    <td style="text-align:right;">${s.die !== '-' ? `+${s.die}` : '-'}</td>
+                                    <td class="td-stat">${s.stat}</td>
+                                    <td class="td-die">${s.die !== '-' ? '+' + s.die : '-'}</td>
                                 </tr>
                             `).join('')}
                         </table>
-
-                         <div class="sheet-section-title" style="margin-top:1rem;">Proficiencies</div>
-                         <div style="font-size:0.8rem; color:#333;">
-                            <strong>Tools:</strong> ${toolProfs.length ? toolProfs.join(', ') : 'None'}
-                         </div>
+                        <div class="profs-text">
+                            <strong>Tool Kits:</strong> ${CharGen._getToolProfs(c, background).join(', ') || "None"}
+                        </div>
                     </div>
 
-                    <!-- RIGHT COL -->
-                    <div class="col-right">
-                        <div class="sheet-section-title">Attacks</div>
-                        <table class="sheet-table">
-                            <tr>
-                                <th width="30%">Weapon</th>
-                                <th width="15%">Atk</th>
-                                <th width="20%">Dmg</th>
-                                <th width="35%">Tags</th>
-                            </tr>
-                            ${weapons.length > 0 ? weapons.map(w => {
-                                const isFinesse = (w.tags && w.tags.includes("Finesse")) || w.type === 'Ranged';
-                                const isRanged = w.type === 'Ranged';
-                                let atkMod = c.stats.STR || 0;
-                                if (isRanged) atkMod = c.stats.DEX || 0;
-                                else if (isFinesse) atkMod = Math.max(c.stats.STR || 0, c.stats.DEX || 0);
-                                let dmgMod = atkMod; 
-                                const sign = atkMod >= 0 ? '+' : '';
-                                const dmgSign = dmgMod >= 0 ? '+' : '';
-                                
-                                return `<tr>
-                                    <td>${w.name}</td>
-                                    <td>${sign}${atkMod}</td>
-                                    <td>${w.damage} ${sign}${dmgMod}</td>
-                                    <td style="font-size:0.7rem;">${w.tags ? w.tags.join(', ') : ''}</td>
-                                </tr>`;
-                            }).join('') : '<tr><td colspan="4" style="text-align:center;">Unarmed (1d4 + STR)</td></tr>'}
+                    <!-- RIGHT COL: OFFENSE, INVENTORY, NOTES -->
+                    <div class="p1-right">
+                        <div class="panel-header">Attacks</div>
+                        <table class="weapons-compact">
+                            <thead><tr><th>Name</th><th>Atk</th><th>Dmg</th><th>Tags</th></tr></thead>
+                            <tbody>
+                                <tr>
+                                    <td>Unarmed</td>
+                                    <td>${(c.stats.STR || 0) >= 0 ? '+' : ''}${c.stats.STR || 0}</td>
+                                    <td>1d4 ${(c.stats.STR || 0) >= 0 ? '+' : ''}${c.stats.STR || 0}</td>
+                                    <td class="tags">Melee</td>
+                                </tr>
+                                ${weapons.map(w => CharGen._renderWeaponRow(w, c.stats)).join('')}
+                            </tbody>
                         </table>
 
-                        <div class="sheet-section-title" style="margin-top:1rem;">Talents & Features</div>
-                        <div class="feat-row"><strong>${ancFeat.name}</strong>: ${c.ancestryChoice ? `(${c.ancestryChoice}) ` : ''}${ancFeat.effect}</div>
-                        <div class="feat-row"><strong>${background.feat.name}</strong>: ${background.feat.effect}</div>
-                        <div class="feat-row" style="background:rgba(197, 160, 89, 0.1);"><strong>${synFeat.name}</strong>: ${synFeat.effect} ${synFeat.cost ? `<br><em>Cost: ${synFeat.cost}</em>` : ''}</div>
+                        <div class="panel-header" style="margin-top:1.5rem;">Inventory (${c.derived.slots} Slots)</div>
+                        <div class="wealth-row">
+                            <span><strong>GOLD:</strong> ${c.currency.g}</span>
+                            <span><strong>SILVER:</strong> ${c.currency.s}</span>
+                            <span><strong>COPPER:</strong> ${c.currency.c}</span>
+                        </div>
+
+                        <div class="backpack-grid-dense">
+                            ${Array.from({length: 12}).map((_, i) => `
+                                <div class="pack-cell">
+                                    <span class="idx">${i+1}</span>
+                                    <span class="name">${backpack[i] ? backpack[i].name : ''}</span>
+                                    <span class="qty">${backpack[i] && backpack[i].slots ? backpack[i].slots : ''}</span>
+                                </div>
+                            `).join('')}
+                        </div>
                         
-                        ${c.talents.length > 0 ? c.talents.map(t => `
-                            <div class="feat-row">
-                                <strong>${t.name}</strong> 
-                                ${t.choice ? `<span style="color:var(--accent-gold); font-weight:bold; font-size:0.9em;">(${t.choice.toUpperCase()})</span>` : ''}
-                                <span style="color:#666; font-size:0.8em;">(${t.type})</span>: 
-                                ${t.effect}
-                                ${t.cost ? `<em style="float:right; font-size:0.75rem;">[${t.cost}]</em>` : ''}
-                            </div>
-                        `).join('') : ''}
+                        <div class="mats-row">
+                            <div class="mat-item"><span>FLORA</span> <strong>${materials.Flora}</strong></div>
+                            <div class="mat-item"><span>ORG</span> <strong>${materials.Organics}</strong></div>
+                            <div class="mat-item"><span>SCRAP</span> <strong>${materials.Scrap}</strong></div>
+                            <div class="mat-item"><span>ESS</span> <strong>${materials.Essence}</strong></div>
+                        </div>
+
+                        <div class="panel-header" style="margin-top:1rem;">Notes</div>
+                        <textarea id="inp-notes" class="sheet-notes-small" placeholder="Biography, Quest Logs, etc...">${c.notes}</textarea>
                     </div>
                 </div>
             </div>
-            
-            <!-- PAGE BREAK -->
-            <div style="page-break-before: always;"></div>
 
-            <!-- PAGE 2: INVENTORY, NOTES & RULES -->
-            <div class="sheet-wrapper" style="margin-top: 20px;">
-                <div class="sheet-header">
-                    <div class="sheet-name">Inventory & Notes</div>
+            <div class="page-break"></div>
+
+            <!-- PAGE 2: DOSSIER -->
+            <div class="sheet-page" id="page-2">
+                <h2 class="page-title">Features & Talents</h2>
+                
+                <div class="feature-group">
+                    <h3 class="group-header">Origin Traits</h3>
+                    <div class="feat-grid">
+                        ${feats.origin.map(f => `
+                            <div class="feat-card">
+                                <div class="feat-top">
+                                    <span class="f-name">${f.name}</span>
+                                </div>
+                                <div class="f-body">${f.effect}</div>
+                            </div>
+                        `).join('')}
+                    </div>
                 </div>
 
-                <div class="sheet-grid">
-                    <div class="col-left">
-                        <div class="sheet-section-title">Gear (${c.derived.slots} Slots)</div>
-                        <div class="inv-grid">
-                            ${Array.from({length: 12}).map((_, i) => {
-                                const item = gear[i];
-                                return `
-                                <div class="inv-slot">
-                                    <span class="slot-num">${i+1}</span>
-                                    <span class="slot-content">${item ? item.name : ''}</span>
-                                    <span class="slot-qty">${item && item.slots ? item.slots : ''}</span>
-                                </div>`;
-                            }).join('')}
-                        </div>
-
-                        <div class="sheet-section-title" style="margin-top:1rem;">Materials Pouch</div>
-                        <div class="resource-grid" style="grid-template-columns: 1fr 1fr;">
-                            <div class="resource-box"><div class="label">Organics</div><div class="resource-val" style="font-size:1.2rem;">${materials.Organics}</div></div>
-                            <div class="resource-box"><div class="label">Scrap</div><div class="resource-val" style="font-size:1.2rem;">${materials.Scrap}</div></div>
-                            <div class="resource-box"><div class="label">Flora</div><div class="resource-val" style="font-size:1.2rem;">${materials.Flora}</div></div>
-                            <div class="resource-box"><div class="label">Essence</div><div class="resource-val" style="font-size:1.2rem;">${materials.Essence}</div></div>
-                        </div>
-                        <p style="font-size:0.7rem; text-align:center; margin-top:5px;">3 Bundles = 1 Inventory Slot</p>
-
-                        <div class="sheet-section-title" style="margin-top:1rem;">Wealth</div>
-                        <div class="currency-box">
-                            <div><span>Gold:</span> ${c.currency.g}</div>
-                            <div><span>Silver:</span> ${c.currency.s}</div>
-                            <div><span>Copper:</span> ${c.currency.c}</div>
-                        </div>
+                <div class="feature-group">
+                    <h3 class="group-header">Class Features (${c.className})</h3>
+                    <div class="feat-grid">
+                        ${feats.classSynergy.map(f => `
+                            <div class="feat-card class-feat">
+                                <div class="feat-top">
+                                    <span class="f-name">${f.name}</span>
+                                    <span class="f-source">${f.source}</span>
+                                </div>
+                                <div class="f-body">${f.effect}</div>
+                                ${f.cost ? `<div class="f-cost">${f.cost}</div>` : ''}
+                            </div>
+                        `).join('')}
                     </div>
+                </div>
 
-                    <div class="col-right">
-                        <div class="sheet-section-title">Conditions</div>
-                        <div class="cond-grid">
-                            ${['Blinded', 'Burning', 'Bleeding', 'Charmed', 'Confused', 'Dazed', 'Deafened', 'Exhausted', 'Frightened', 'Grappled', 'Poisoned', 'Prone', 'Restrained', 'Stunned', 'Weakened'].map(cond => 
-                                renderCond(cond)
-                            ).join('')}
-                        </div>
-
-                        <div class="sheet-section-title" style="margin-top:1rem;">Notes</div>
-                        <textarea id="inp-notes" style="width:100%; height:150px; border:1px solid #ccc; padding:5px; font-family:var(--font-body);">${c.notes}</textarea>
-
-                        <div class="sheet-section-title" style="margin-top:1rem;">Quick Rules</div>
-                        <div class="rules-ref">
-                            <p><strong>The Roll:</strong> d20 + Mod + Prof Die vs DC.</p>
-                            <p><strong>Crit (Nat 20):</strong> Double Damage OR Gain 1 Luck.</p>
-                            <p><strong>Whiff (Nat 1):</strong> GM Gains 1 Danger Point + Whiff Table.</p>
-                            <hr style="margin:5px 0; border:0; border-top:1px solid #ccc;">
-                            <p><strong>Death:</strong> 0 HP = Dying. Start of Turn: CON Check (DC 13). Pass = Stable. Fail = Dead.</p>
-                        </div>
+                <div class="feature-group">
+                    <h3 class="group-header">Archetype Talents</h3>
+                    <div class="feat-grid">
+                        ${feats.archetype.map(t => `
+                            <div class="feat-card">
+                                <div class="feat-top">
+                                    <span class="f-name">${t.name}</span>
+                                    <span class="f-source">${t.source}</span>
+                                </div>
+                                <div class="f-body">${t.effect}</div>
+                                ${t.cost ? `<div class="f-cost">${t.cost}</div>` : ''}
+                            </div>
+                        `).join('')}
                     </div>
                 </div>
             </div>
         `;
         
-        // 5. Inject
         el.innerHTML = html;
+        CharGen._attachSheetListeners();
+        CharGen._loadPortrait();
+    },
 
-        // 6. Attach Listeners for Interactive Elements
+    _renderWeaponRow: (w, stats) => {
+        const isFinesse = (w.tags && w.tags.includes("Finesse")) || w.type === 'Ranged';
+        const isRanged = w.type === 'Ranged';
+        let atkMod = stats.STR || 0;
         
-        // Live Updates for Stats
-        const bindInput = (id, field) => {
-            const input = document.getElementById(id);
-            if(input) {
-                input.addEventListener('change', (e) => {
-                    c.current[field] = parseInt(e.target.value);
-                    // Auto-save on change? Or wait for Save button? 
-                    // Let's rely on explicit save button for performance, but update object in memory
-                });
-            }
+        if (isRanged) atkMod = stats.DEX || 0;
+        else if (isFinesse) atkMod = Math.max(stats.STR || 0, stats.DEX || 0);
+        
+        const sign = atkMod >= 0 ? '+' : '';
+        
+        return `<tr>
+            <td>${w.name}</td>
+            <td>${sign}${atkMod}</td>
+            <td>${w.damage} ${sign}${atkMod}</td>
+            <td class="tags">${w.tags ? w.tags.join(', ') : ''}</td>
+        </tr>`;
+    },
+
+    _attachSheetListeners: () => {
+        // Safe binding helper
+        const bind = (id, key) => {
+            const el = document.getElementById(id);
+            if(el) el.addEventListener('change', (e) => CharGen.char.current[key] = parseInt(e.target.value));
         };
-        bindInput('inp-xp', 'xp');
-        bindInput('inp-hp', 'hp');
-        bindInput('inp-sta', 'sta');
-        bindInput('inp-mp', 'mp');
-        bindInput('inp-luck', 'luck');
+        bind('inp-hp', 'hp'); bind('inp-mp', 'mp'); bind('inp-sta', 'sta'); bind('inp-luck', 'luck'); bind('inp-xp', 'xp');
 
-        // Notes
-        const noteInput = document.getElementById('inp-notes');
-        if(noteInput) {
-            noteInput.addEventListener('change', (e) => c.notes = e.target.value);
-        }
+        const notes = document.getElementById('inp-notes');
+        if(notes) notes.addEventListener('change', (e) => CharGen.char.notes = e.target.value);
 
-        // Conditions
-        el.querySelectorAll('.cond-toggle').forEach(chk => {
-            chk.addEventListener('change', (e) => {
-                const cond = e.target.dataset.cond;
-                if (e.target.checked) {
-                    if (!c.activeConditions.includes(cond)) c.activeConditions.push(cond);
-                } else {
-                    c.activeConditions = c.activeConditions.filter(x => x !== cond);
-                }
-            });
-        });
+        // Buttons (Check existence first)
+        const btnSave = document.getElementById('btn-save-lib');
+        if (btnSave) btnSave.onclick = CharGen.saveCharacter;
 
-        // Button Listeners
-        document.getElementById('btn-print-pdf').addEventListener('click', () => window.print());
-        document.getElementById('btn-save-lib').addEventListener('click', CharGen.saveCharacter);
+        const btnPrint = document.getElementById('btn-print-pdf');
+        if (btnPrint) btnPrint.onclick = () => window.print();
         
-        const btnLevel = document.getElementById('btn-levelup');
-        if (btnLevel) {
-            if (c.level >= 10) {
-                btnLevel.disabled = true;
-                btnLevel.textContent = "Max Level";
-            } else {
-                btnLevel.onclick = () => CharGen.initLevelUp();
+        const btnLvl = document.getElementById('btn-levelup');
+        if(btnLvl) {
+            if(CharGen.char.level >= 10) { btnLvl.disabled=true; btnLvl.textContent = "Max Level"; }
+            else btnLvl.onclick = CharGen.initLevelUp;
+        }
+    },
+
+    _getToolProfs: (char, bg) => {
+        const tools = [];
+        // Extract from Talents
+        char.talents.forEach(t => {
+            if (t.tags && (t.tags.includes("Kit") || t.tags.includes("Crafting"))) {
+                if(t.name.startsWith("Kit:")) tools.push(t.name.replace("Kit: ", ""));
+                else if(t.name === "Poisoner") tools.push("Poisoner's Kit");
+                else if(t.name === "Saboteur") tools.push("Thieves' Tools");
+                else if(t.name === "Master Trapper") tools.push("Thieves' Tools");
+                else if(t.name === "Master Herbalist") tools.push("Herbalism Kit");
             }
+        });
+        // Extract from Background
+        if (bg.skill && bg.skill.includes("Proficiency")) {
+            tools.push(bg.skill.replace(" Proficiency", ""));
+        }
+        return [...new Set(tools)]; // Unique
+    },
+
+    _loadPortrait: async () => {
+        const imgEl = document.getElementById('char-portrait-img');
+        if (!imgEl) return;
+        
+        // 1. Check for URL
+        if (CharGen.char.imageUrl) {
+            imgEl.src = CharGen.char.imageUrl;
+            return;
         }
 
-        if (pendingSynergy) {
-            const btnSyn = document.getElementById('btn-resolve-synergy');
-            if (btnSyn) {
-                btnSyn.addEventListener('click', () => {
-                    CharGen.resolveSynergyGrant(pendingSynergy);
-                });
-            }
+        // 2. Check for IndexedDB Blob
+        if (CharGen.char.imageId) {
+            // Dynamic import to avoid dependency issues if not loaded
+            const { ImageStore } = await import('../utils/image_store.js');
+            const url = await ImageStore.getUrl(CharGen.char.imageId);
+            if (url) imgEl.src = url;
         }
     },
 
@@ -2577,62 +2731,76 @@ renderSheet: (el) => {
 
     calculateArmorScore: () => {
         const c = CharGen.char;
-        const data = I18n.getData('options'); // This line was missing
+        const data = I18n.getData('options');
         
-        let maxArmorAS = 0;
+        let wornArmorAS = 0;
         let shieldBonus = 0;
-        let otherBonus = 0;
+        let naturalArmor = 0;
+        let flatBonus = 0;
 
-        // 1. Check Inventory for Armor and Shields
+        // 1. Inventory Check
         c.inventory.forEach(i => {
-            // Armor doesn't stack, take highest
-            if (i.as && !i.name.includes("Shield")) {
-                if (i.as > maxArmorAS) maxArmorAS = i.as;
-            }
-            // Shields stack
-            if (i.name.includes("Shield")) {
-                shieldBonus = 1; // Base shield bonus
-                // Note: Tower Shield penalty logic is handled in calculateDefenses, 
-                // but if you have a specific item "Tower Shield" that gives +2 natively, check here.
-                // For this system, "Tower Shield Training" is a passive talent that boosts this.
+            if (!i.equipped) return;
+
+            if (i.type === "Shield") {
+                shieldBonus = Math.max(shieldBonus, i.as || 1);
+            } else if (i.type === "Armor") {
+                wornArmorAS = Math.max(wornArmorAS, i.as || 0);
             }
         });
 
-        // 2. Check Passive Talents
+        // 2. Talents & Feats
         let unarmoredDef = false;
+        let towerShield = false;
+
+        const checkMods = (mods) => {
+            if (!mods) return;
+            if (mods.as_bonus) flatBonus += mods.as_bonus;
+            if (mods.natural_armor) naturalArmor = Math.max(naturalArmor, mods.natural_armor);
+        };
+
+        // Ancestry
+        if (c.ancestry) {
+            const anc = data.ancestries.find(a => a.id === c.ancestry);
+            if (anc && anc.feats[c.ancestryFeatIndex]) checkMods(anc.feats[c.ancestryFeatIndex].modifiers);
+        }
+
+        // Talents
         c.talents.forEach(t => {
-            // Generic AS bonuses (e.g. Armored Behemoth, Iron Hide)
-            if (t.modifiers && t.modifiers.as_bonus) otherBonus += t.modifiers.as_bonus;
-            // Specific Unarmored Defense Check
+            if (t.modifiers) checkMods(t.modifiers);
             if (t.name === "Unarmored Defense") unarmoredDef = true;
-            // Tower Shield Training Check
-            if (t.name === "Tower Shield Training" && shieldBonus > 0) shieldBonus = 2;
+            if (t.name === "Tower Shield Training") towerShield = true;
         });
 
-        // 3. Check Synergy Feats (Level 5/10 Class Bonuses)
+        // Synergy
         if (c.classId) {
             const cls = data.classes.find(cl => cl.id === c.classId);
             if (cls) {
                 cls.synergy_feats.filter(f => f.level <= c.level).forEach(f => {
-                    if (f.modifiers && f.modifiers.as_bonus) {
-                        otherBonus += f.modifiers.as_bonus;
-                    }
+                    if (f.modifiers) checkMods(f.modifiers);
                 });
             }
         }
 
-        // 4. Calculate Total
-        let total = maxArmorAS + shieldBonus + otherBonus;
+        // 3. Resolve
+        if (towerShield && shieldBonus > 0) shieldBonus = 2;
 
-        // Handle Unarmored Defense (Monk/Skirmisher logic)
-        // If wearing no armor (maxArmorAS is 0), AS = DEX Mod
-        if (unarmoredDef && maxArmorAS === 0) {
-            const dex = c.stats.DEX || 0;
-            const naturalArmor = Math.min(3, Math.max(0, dex)); 
-            total = naturalArmor + shieldBonus + otherBonus;
+        let base = 0;
+        if (wornArmorAS > 0) {
+            base = wornArmorAS;
+        } else {
+            // Unarmored logic
+            if (unarmoredDef) {
+                const dex = c.stats.DEX || 0;
+                base = Math.max(0, dex);
+                if (naturalArmor > base) base = naturalArmor; // Take better of Natural or DEX
+            } else {
+                base = naturalArmor;
+            }
         }
-
-        return total;
+        
+        // Final Total
+        return base + shieldBonus + flatBonus;
     },
 
     /* ------------------------------------------------------------------
@@ -2910,6 +3078,32 @@ renderSheet: (el) => {
         };
     },
 
+    /* --- NEW HELPER: CHECK REQUIREMENTS --- */
+    checkRequirements: (item) => {
+        if (!item.req) return { pass: true };
+
+        const stats = CharGen.char.stats;
+        const requirements = item.req.split(',').map(s => s.trim());
+        let errorMsg = "";
+
+        for (let r of requirements) {
+            // Parse "STR +2" or "CON 13" (if using scores)
+            // Our system uses Modifiers (-2 to +5)
+            const match = r.match(/([A-Z]+)\s*([+-]?\d+)/);
+            if (match) {
+                const statName = match[1];
+                const requiredVal = parseInt(match[2]);
+                const myVal = stats[statName] || 0;
+
+                if (myVal < requiredVal) {
+                    errorMsg += `${statName} ${requiredVal} (You have ${myVal}). `;
+                }
+            }
+        }
+
+        if (errorMsg) return { pass: false, msg: errorMsg };
+        return { pass: true };
+    },
 
     /**
      * Generates a list of purchasable talents based on Archetypes.
@@ -2954,49 +3148,63 @@ renderSheet: (el) => {
         const state = CharGen.levelState;
         const data = I18n.getData('options');
 
-        // 1. Update Basic Stats
+        // Snapshot previous Maximums to calculate gains later
+        const prevMaxHP = c.derived.maxHP;
+        const prevMaxMP = c.derived.maxMP;
+        const prevMaxLuck = c.derived.maxLuck;
+
+        // 1. Commit Basic Changes
         c.level = newLevel;
-        if (!c.baseHP) c.baseHP = c.derived.maxHP; // Safety init if missing
+        
+        // Add the NEW roll to the BASE HP (not the derived max)
+        // This prevents double-counting modifiers like "Toughness"
         c.baseHP += state.newHP; 
 
-        // 2. Add Talent (With Choice Handling)
+        // 2. Add Talent
         if (state.selectedTalent) {
             const t = state.selectedTalent;
-            
-            // If talent requires a choice (like Arcane Specialization), trigger the modal
+            // Handle Choice Modal for special talents
             if (t.flags && (t.flags.select_mod || t.flags.select_skill || t.flags.select_property)) {
-                // Determine archetype ID for the modal logic
-                // We search which archetype this talent belongs to by name
                 let arch = data.archetypes.find(a => a.name === t.sourceName);
-                // Fallback if sourceName is formatted differently
                 if (!arch) arch = data.archetypes.find(a => a.id === c.archA);
-
                 setTimeout(() => {
                    CharGen.renderChoiceModal(t, arch.id, 0, 'levelup-context');
                 }, 200); 
             } else {
-                // Simple add
                 c.talents.push(t);
             }
         }
 
-        // 3. Apply Milestones (Synergy + Stat)
+        // 3. Apply Milestones (Stat Boosts)
         if (newLevel === 5 || newLevel === 10) {
             if (state.selectedStat) {
                 c.stats[state.selectedStat] += 1;
             }
         }
 
-        // 4. Recalculate
+        // 4. Recalculate Derived Stats
+        // This updates c.derived.maxHP/MP/STA based on new Level and new Stats
         CharGen.calculateDerived();
         CharGen.calculateDefenses();
 
-        // 5. Refresh UI
-        // If we launched the modal, it will handle the refresh on confirm.
-        // If not, we do it here.
+        // 5. Update Current Values (Heal the difference)
+        // If Max HP went up by 8, Current HP goes up by 8.
+        const hpGain = c.derived.maxHP - prevMaxHP;
+        const mpGain = c.derived.maxMP - prevMaxMP;
+        const luckGain = c.derived.maxLuck - prevMaxLuck;
+
+        if (hpGain > 0) c.current.hp += hpGain;
+        if (mpGain > 0) c.current.mp += mpGain;
+        if (luckGain > 0) c.current.luck += luckGain;
+        
+        // Refresh STA (usually full refresh on level up logic, or just match cap increase)
+        // Let's refill STA completely on level up as a reward
+        c.current.sta = c.derived.maxSTA;
+
+        // 6. Refresh UI
         if (!state.selectedTalent || !(state.selectedTalent.flags && (state.selectedTalent.flags.select_mod || state.selectedTalent.flags.select_skill || state.selectedTalent.flags.select_property))) {
             CharGen.renderSheet(CharGen.container);
-            alert(`Level Up Complete! Welcome to Level ${newLevel}.`);
+            alert(`Level Up Complete! You are now Level ${newLevel}.\nHP Increased by ${hpGain}.`);
         }
     },
 };

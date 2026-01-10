@@ -1,0 +1,286 @@
+{
+  "tables": [
+    {
+      "id": "tbl_whiff_melee",
+      "title": "Melee Attack Whiff",
+      "category": "Combat",
+      "dice": "1d10",
+      "rows": [
+        { "roll": 1, "result": "Weapon Break! Destroyed or broken until repaired." },
+        { "roll": 2, "result": "Critical Fumble! Attack an adjacent ally." },
+        { "roll": 3, "result": "Overextended! Knocked Prone and Flanked." },
+        { "roll": 4, "result": "Weapon Dropped! Clatters 10ft away." },
+        { "roll": 5, "result": "Weapon Stuck! DC 11 STR to free." },
+        { "roll": 6, "result": "Armor Damaged! -1 AS for encounter." },
+        { "roll": 7, "result": "Enemy Riposte! Enemy makes free reaction attack." },
+        { "roll": 8, "result": "Exposed! Disadvantage on Defense until next turn." },
+        { "roll": 9, "result": "Dazed! Action OR Move only next turn." },
+        { "roll": 10, "result": "Winded! Lose 1d4 STA or become Weakened." }
+      ]
+    },
+    {
+      "id": "tbl_whiff_ranged",
+      "title": "Ranged Attack Whiff",
+      "category": "Combat",
+      "dice": "1d10",
+      "rows": [
+        { "roll": 1, "result": "Weapon Failure! String snaps or mechanism jams." },
+        { "roll": 2, "result": "Friendly Fire! Hit nearest ally in line of fire." },
+        { "roll": 3, "result": "Ammo Spilled! Lose 1 Bundle of ammo." },
+        { "roll": 4, "result": "Position Revealed! You are no longer Hidden." },
+        { "roll": 5, "result": "Jammed! Spend Action to clear." },
+        { "roll": 6, "result": "Hit Cover! Destroy light source or potion." },
+        { "roll": 7, "result": "Enemy Advance! Target moves 15ft closer." },
+        { "roll": 8, "result": "Exposed! Disadvantage on Defense." },
+        { "roll": 9, "result": "Dazed! Recoil hits you." },
+        { "roll": 10, "result": "Ricochet! Loud noise. +1 Extra Danger Point." }
+      ]
+    },
+    {
+      "id": "tbl_whiff_magic",
+      "title": "Magic Mishap",
+      "category": "Combat",
+      "dice": "1d10",
+      "rows": [
+        { "roll": 1, "result": "Catastrophe! 1d10 Dmg to self, Stunned." },
+        { "roll": 2, "result": "Wrong Target! Spell hits random target." },
+        { "roll": 3, "result": "Feedback! Take 1d6 Dmg per MP spent." },
+        { "roll": 4, "result": "Uncontrolled! Lights out or loud wail." },
+        { "roll": 5, "result": "Mana Drain! Lose extra 1d6 MP." },
+        { "roll": 6, "result": "Rift Opened! +1 Extra Danger Point." },
+        { "roll": 7, "result": "Self-Inflict! Spell targets you." },
+        { "roll": 8, "result": "Sickness! You are Poisoned (1 min)." },
+        { "roll": 9, "result": "Mind-Shock! You are Dazed." },
+        { "roll": 10, "result": "Fizzle! Spell fails, MP lost." }
+      ]
+    },
+    {
+      "id": "tbl_whiff_defense",
+      "title": "Defense Whiff",
+      "category": "Combat",
+      "dice": "1d10",
+      "rows": [
+        { "roll": 1, "result": "Catastrophic! You take damage and are Stunned." },
+        { "roll": 2, "result": "Gear Destroyed! Shield/Weapon breaks or Armor damaged." },
+        { "roll": 3, "result": "Knocked Prone! Slams into ground." },
+        { "roll": 4, "result": "Armor Sunder! -1 AS for encounter." },
+        { "roll": 5, "result": "Forced Back! Pushed 10ft." },
+        { "roll": 6, "result": "Exposed! Flanked until next turn." },
+        { "roll": 7, "result": "Winded! Lose 1d4 STA or Dazed." },
+        { "roll": 8, "result": "Dazed! Rattled." },
+        { "roll": 9, "result": "Weakened! Hit nerve/muscle." },
+        { "roll": 10, "result": "Bad Hit! Normal damage, no extra effect." }
+      ]
+    },
+    {
+      "id": "tbl_dungeon_dressing",
+      "title": "Dungeon Dressing",
+      "category": "World",
+      "dice": "1d10",
+      "rows": [
+        { "roll": 1, "result": "Smashed furniture and rotting crates." },
+        { "roll": 2, "result": "Dried-up fountain (echoing)." },
+        { "roll": 3, "result": "Strange graffiti (charcoal/blood)." },
+        { "roll": 4, "result": "Headless statue of forgotten god." },
+        { "roll": 5, "result": "Thick cobwebs (Harmless)." },
+        { "roll": 6, "result": "Old campsite (Cold ash)." },
+        { "roll": 7, "result": "Large cracked mirror." },
+        { "roll": 8, "result": "Dripping water and cold draft." },
+        { "roll": 9, "result": "Mural of ancient war." },
+        { "roll": 10, "result": "Looted skeleton pointing a way." }
+      ]
+    },
+    {
+      "id": "tbl_trap_trigger",
+      "title": "Trap Triggers",
+      "category": "World",
+      "dice": "1d8",
+      "rows": [
+        { "roll": 1, "result": "Pressure Plate (Uneven stone)." },
+        { "roll": 2, "result": "Tripwire (Glint of light)." },
+        { "roll": 3, "result": "Door Rig (Tension on handle)." },
+        { "roll": 4, "result": "Arcane Rune (Ozone smell)." },
+        { "roll": 5, "result": "Sensor (Glass eye)." },
+        { "roll": 6, "result": "Timer (Ticking sound)." },
+        { "roll": 7, "result": "Weight (Object interaction)." },
+        { "roll": 8, "result": "Sound (Echoing crystals)." }
+      ]
+    },
+    {
+      "id": "tbl_trap_effect",
+      "title": "Trap Effects",
+      "category": "World",
+      "dice": "1d12",
+      "rows": [
+        { "roll": 1, "result": "Projectile (Defense Check)." },
+        { "roll": 2, "result": "Pit Trap (Reflex Save)." },
+        { "roll": 3, "result": "Poison Needle (Fortitude Save)." },
+        { "roll": 4, "result": "Falling Block (Reflex Save)." },
+        { "roll": 5, "result": "Alchemical Spray (Reflex Save)." },
+        { "roll": 6, "result": "Magic Rune (Will/Reflex)." },
+        { "roll": 7, "result": "Net/Snare (Reflex Save)." },
+        { "roll": 8, "result": "Alarm (Auto-Trigger)." },
+        { "roll": 9, "result": "Gas Cloud (Fortitude Save)." },
+        { "roll": 10, "result": "Scything Blade (Defense Check)." },
+        { "roll": 11, "result": "Teleporter (Will Save)." },
+        { "roll": 12, "result": "Crushing Walls (Complex)." }
+      ]
+    },
+    {
+      "id": "tbl_hazards_phys",
+      "title": "Physical Hazards",
+      "category": "World",
+      "dice": "1d6",
+      "rows": [
+        { "roll": 1, "result": "Crumbling Floor: Reflex DC 13 or Fall 10ft." },
+        { "roll": 2, "result": "Falling Debris: 2d6 Bludgeoning." },
+        { "roll": 3, "result": "Slippery Surface: Save vs Prone if Dashing." },
+        { "roll": 4, "result": "Rushing Water: Strength DC 13 or swept away." },
+        { "roll": 5, "result": "Squeeze: Must remove armor/pack." },
+        { "roll": 6, "result": "Razor Rock: Move > Half Speed = 1d4 Dmg." }
+      ]
+    },
+    {
+      "id": "tbl_hazards_bio",
+      "title": "Biological Hazards",
+      "category": "World",
+      "dice": "1d6",
+      "rows": [
+        { "roll": 1, "result": "Rot Gas: Fortitude DC 13 or Poisoned." },
+        { "roll": 2, "result": "Yellow Mold: 2d6 Poison Damage." },
+        { "roll": 3, "result": "Green Slime: 1d6 Acid/turn." },
+        { "roll": 4, "result": "Rot Grubs: Fire dmg or Death in 3 turns." },
+        { "roll": 5, "result": "Shrieker: Auto-trigger Random Encounter." },
+        { "roll": 6, "result": "Vampire Moss: Resting gives Exhaustion." }
+      ]
+    },
+    {
+      "id": "tbl_hazards_elem",
+      "title": "Elemental Hazards",
+      "category": "World",
+      "dice": "1d6",
+      "rows": [
+        { "roll": 1, "result": "Extreme Cold: Fortitude Save/Hour." },
+        { "roll": 2, "result": "Extreme Heat: Water needs doubled." },
+        { "roll": 3, "result": "Magma Flow: 1d6 (Near) or 10d6 (Touch)." },
+        { "roll": 4, "result": "Toxic Fumes: Weakened condition." },
+        { "roll": 5, "result": "Spiderwebs: Difficult Terrain + Grapple." },
+        { "roll": 6, "result": "Static Field: Metal armor takes 1d4 Lightning." }
+      ]
+    },
+    {
+      "id": "tbl_hazards_mag",
+      "title": "Magical Hazards",
+      "category": "World",
+      "dice": "1d6",
+      "rows": [
+        { "roll": 1, "result": "Dead Magic: Spells cost double MP." },
+        { "roll": 2, "result": "Wild Magic: Magic Mishap on roll of 1-3." },
+        { "roll": 3, "result": "Psychic Echo: Will DC 13 or Dazed." },
+        { "roll": 4, "result": "Gravity Well: Jump distance halved." },
+        { "roll": 5, "result": "Necrotic Soil: Healing is halved." },
+        { "roll": 6, "result": "Planar Bleed: Will DC 13 or Phase Out." }
+      ]
+    },
+    {
+      "id": "tbl_loot_1",
+      "title": "Loot: Tier 1 (Scavenging)",
+      "category": "Loot",
+      "dice": "1d20",
+      "rows": [
+        { "roll": 1, "result": "Trash (Lint/String)." },
+        { "roll": 2, "result": "Broken Gear (Scrap)." },
+        { "roll": 3, "result": "Curio (Letter/Foot)." },
+        { "roll": 4, "result": "Loose Copper (2d6 cp)." },
+        { "roll": 5, "result": "Pocket Change (4d6 cp)." },
+        { "roll": 6, "result": "Gambler's Purse (50 cp)." },
+        { "roll": 7, "result": "Minor Reagent." },
+        { "roll": 8, "result": "Silver Tooth (5s)." },
+        { "roll": 9, "result": "Day's Wages (1d6 s)." },
+        { "roll": 10, "result": "Soldier's Pay (2d6 s)." },
+        { "roll": 11, "result": "Heavy Sack (100 cp)." },
+        { "roll": 12, "result": "Tool (File/Hammer)." },
+        { "roll": 13, "result": "Consumable (Rations)." },
+        { "roll": 14, "result": "Shiny (Silver Ring 1g)." },
+        { "roll": 15, "result": "Hidden Pocket (1 Gold Coin)." },
+        { "roll": 16, "result": "Minor Art (Carving 1.5g)." },
+        { "roll": 17, "result": "Light Source (Candles/Oil)." },
+        { "roll": 18, "result": "Officer's Pouch (2d4 g)." },
+        { "roll": 19, "result": "Gemstone (5g)." },
+        { "roll": 20, "result": "JACKPOT (Roll on Tier 2)." }
+      ]
+    },
+    {
+      "id": "tbl_loot_2",
+      "title": "Loot: Tier 2 (The Stash)",
+      "category": "Loot",
+      "dice": "1d20",
+      "rows": [
+        { "roll": 1, "result": "Copper Trap (500 cp)." },
+        { "roll": 2, "result": "Supplies (Crate)." },
+        { "roll": 3, "result": "Adventurer's Pack." },
+        { "roll": 4, "result": "Standard Weapon." },
+        { "roll": 5, "result": "Silver Stash (200s)." },
+        { "roll": 6, "result": "Armor (Light/Med)." },
+        { "roll": 7, "result": "Trade Good (Cask)." },
+        { "roll": 8, "result": "Art Object (25g)." },
+        { "roll": 9, "result": "Coin Pouch (3d6 g)." },
+        { "roll": 10, "result": "Alchemist's Cache." },
+        { "roll": 11, "result": "Gemstones (Bag)." },
+        { "roll": 12, "result": "Paychest (50g)." },
+        { "roll": 13, "result": "Scroll Case." },
+        { "roll": 14, "result": "Masterwork Tool." },
+        { "roll": 15, "result": "Fine Art (50g)." },
+        { "roll": 16, "result": "Jewelry (30g)." },
+        { "roll": 17, "result": "Rare Reagents." },
+        { "roll": 18, "result": "Gold Bar (50g)." },
+        { "roll": 19, "result": "Potions (1d4)." },
+        { "roll": 20, "result": "JACKPOT (Roll on Tier 3)." }
+      ]
+    },
+    {
+      "id": "tbl_loot_3",
+      "title": "Loot: Tier 3 (The Hoard)",
+      "category": "Loot",
+      "dice": "1d20",
+      "rows": [
+        { "roll": 1, "result": "Silver Trap (2000s)." },
+        { "roll": 2, "result": "Bulk Trade (1d4 Crates)." },
+        { "roll": 3, "result": "Masterwork Gear." },
+        { "roll": 4, "result": "Art Hoard (150g)." },
+        { "roll": 5, "result": "Coin Chest (100g)." },
+        { "roll": 6, "result": "Gem Bag (Pearls)." },
+        { "roll": 7, "result": "Rare Art (100g)." },
+        { "roll": 8, "result": "Gold Bars (250g)." },
+        { "roll": 9, "result": "Royal Jewel (200g)." },
+        { "roll": 10, "result": "Monster Harvest." },
+        { "roll": 11, "result": "Magic Reagents." },
+        { "roll": 12, "result": "Scroll Library." },
+        { "roll": 13, "result": "Heavy Bag (300g)." },
+        { "roll": 14, "result": "Noble Jewelry." },
+        { "roll": 15, "result": "Blueprint (Common)." },
+        { "roll": 16, "result": "Blueprint (Uncommon)." },
+        { "roll": 17, "result": "Curio / Relic." },
+        { "roll": 18, "result": "Magic Weapon." },
+        { "roll": 19, "result": "Wondrous Item." },
+        { "roll": 20, "result": "King's Ransom (1000g)." }
+      ]
+    },
+    {
+      "id": "tbl_eye_rays",
+      "title": "Watcher Eye Rays",
+      "category": "Combat",
+      "dice": "1d8",
+      "rows": [
+        { "roll": 1, "result": "Searing Ray: Defense Check. Fail: 2d6 Fire + Burning." },
+        { "roll": 2, "result": "Frost Ray: Defense Check. Fail: 2d6 Cold + Frozen (Speed 0)." },
+        { "roll": 3, "result": "Telekinetic Ray: Strength Save. Fail: Thrown 30ft, 2d6 Impact." },
+        { "roll": 4, "result": "Fear Ray: Will Save. Fail: Frightened 1 min." },
+        { "roll": 5, "result": "Charm Ray: Will Save. Fail: Charmed 1 min." },
+        { "roll": 6, "result": "Enervation Ray: Fortitude Save. Fail: 3d6 Necrotic + Weakened." },
+        { "roll": 7, "result": "Petrification Ray: Fortitude Save. Fail: Restrained (turning to stone)." },
+        { "roll": 8, "result": "Death Ray: Fortitude Save. Fail: 5d8 Necrotic. (0 HP = Death)." }
+      ]
+    }
+  ]
+}

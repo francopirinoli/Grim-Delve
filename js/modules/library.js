@@ -1,54 +1,59 @@
 /**
  * library.js
- * Manages Saved Characters and the Bestiary (Official + Custom).
- * Handles filtering, rendering cards, and importing/exporting data.
+ * Central Hub for Characters, Monsters, and Items.
+ * v3.1: Integrated Viewers (Stat Blocks & Item Cards)
  */
 
 import { Storage } from '../utils/storage.js';
 import { CharGen } from './chargen.js';
-import { MonsterBuilder } from './monster_builder.js';
+// Import Renderers and Builders
+import { MonsterBuilder, MonsterRenderer } from './monster_builder.js';
+import { ItemBuilder, ItemRenderer } from './item_builder.js';
 import { I18n } from '../utils/i18n.js';
+import { ImageStore } from '../utils/image_store.js';
 
 export const Library = {
     
-    // State
     container: null,
-    currentTab: 'characters', // 'characters' or 'bestiary'
+    currentTab: 'characters', // characters | bestiary | items
     filters: {
         search: '',
-        role: 'all',
-        family: 'all',
-        level: 'all',
-        source: 'all' // 'official', 'custom', 'all'
+        role: 'all', // For monsters
+        type: 'all', // For items
+        source: 'all'
     },
 
     init: (container) => {
-        // Apply Layout Class for Scrolling
         container.classList.add('library-module');
         Library.container = container;
         Library.renderShell();
     },
 
     /**
-     * Renders the outer framework (Fixed Top + Scrolling Grid)
+     * Renders the Frame (Tabs, Filters, Scroll Area)
      */
     renderShell: () => {
+        const isMon = Library.currentTab === 'bestiary';
+        const isItem = Library.currentTab === 'items';
+        const isChar = Library.currentTab === 'characters';
+
         const html = `
-            <!-- FIXED HEADER SECTION -->
             <div class="lib-static-top">
                 <div class="lib-header">
                     <h2>My Library</h2>
                     <div class="lib-tabs">
-                        <button class="lib-tab-btn ${Library.currentTab === 'characters' ? 'active' : ''}" data-tab="characters">👤 Characters</button>
-                        <button class="lib-tab-btn ${Library.currentTab === 'bestiary' ? 'active' : ''}" data-tab="bestiary">💀 Bestiary</button>
+                        <button class="lib-tab-btn ${isChar ? 'active' : ''}" data-tab="characters">👤 Characters</button>
+                        <button class="lib-tab-btn ${isMon ? 'active' : ''}" data-tab="bestiary">💀 Bestiary</button>
+                        <button class="lib-tab-btn ${isItem ? 'active' : ''}" data-tab="items">⚒️ Items</button>
                     </div>
                 </div>
 
-                <!-- Filter Bar (Bestiary Only) -->
-                <div id="lib-filters" class="filter-bar" style="display: ${Library.currentTab === 'bestiary' ? 'grid' : 'none'};">
-                    <input type="text" id="filter-search" placeholder="Search names..." value="${Library.filters.search}">
+                <!-- Filters -->
+                <div class="filter-bar">
+                    <input type="text" id="lib-search" placeholder="Search..." value="${Library.filters.search}">
                     
-                    <select id="filter-role">
+                    <!-- Monster Filters -->
+                    <select id="filter-role" style="display: ${isMon ? 'block' : 'none'}">
                         <option value="all">All Roles</option>
                         <option value="soldier">Soldier</option>
                         <option value="brute">Brute</option>
@@ -60,462 +65,427 @@ export const Library = {
                         <option value="solo">Solo</option>
                     </select>
 
-                    <select id="filter-family">
-                        <option value="all">All Families</option>
-                        <option value="folk">Folk</option>
-                        <option value="beasts">Beasts</option>
-                        <option value="unliving">Unliving</option>
-                        <option value="constructs">Constructs</option>
-                        <option value="horrors">Horrors</option>
-                        <option value="spirits">Spirits</option>
-                        <option value="wyrms">Wyrms</option>
-                        <option value="titans">Titans</option>
-                        <option value="watchers">Watchers</option>
-                        <option value="amorphous">Amorphous</option>
-                        <option value="verdant">Verdant</option>
-                        <option value="monstrosities">Monstrosities</option>
+                    <!-- Item Filters -->
+                    <select id="filter-type" style="display: ${isItem ? 'block' : 'none'}">
+                        <option value="all">All Types</option>
+                        <option value="Weapon">Weapons</option>
+                        <option value="Armor">Armor</option>
+                        <option value="Trinket">Trinkets</option>
+                        <option value="Clothing">Clothing</option>
+                        <option value="Focus">Focus</option>
+                        <option value="Loot">Loot</option>
                     </select>
 
-                    <select id="filter-level">
-                        <option value="all">All Levels</option>
-                        ${Array.from({length:10}, (_, i) => `<option value="${i+1}">Level ${i+1}</option>`).join('')}
-                    </select>
-
-                    <select id="filter-source">
+                    <select id="filter-source" style="display: ${isChar ? 'none' : 'block'}">
                         <option value="all">All Sources</option>
                         <option value="official">Official</option>
                         <option value="custom">Custom</option>
                     </select>
                 </div>
 
-                <!-- Action Buttons -->
-                <div id="char-actions" style="display: ${Library.currentTab === 'characters' ? 'flex' : 'none'}; gap:10px; margin-bottom:1rem;">
-                     <button class="btn-secondary" id="btn-import-char">📥 Import Character</button>
-                     <input type="file" id="file-import-char" style="display:none" accept=".json">
-                </div>
-
-                <div id="bestiary-actions" style="display: ${Library.currentTab === 'bestiary' ? 'flex' : 'none'}; gap:10px; margin-bottom:1rem;">
-                     <button class="btn-secondary" id="btn-import-mon">📥 Import Monster</button>
-                     <input type="file" id="file-import-mon" style="display:none" accept=".json">
+                <!-- Action Bar -->
+                <div style="display:flex; justify-content:flex-end; gap:10px; margin-bottom:1rem;">
+                     ${isChar ? `<button class="btn-primary" id="btn-import-char">📥 Import JSON</button>` : ''}
+                     ${isMon ? `<button class="btn-primary" id="btn-import-mon">📥 Import JSON</button>` : ''}
+                     ${isItem ? `<button class="btn-primary" id="btn-import-item">📥 Import JSON</button>` : ''}
+                     <input type="file" id="lib-file-input" style="display:none" accept=".json">
                 </div>
             </div>
 
-            <!-- SCROLLING CONTENT SECTION -->
+            <!-- Content Grid -->
             <div class="lib-scroll-area">
                 <div id="library-grid" class="library-grid">
-                    <!-- Content injected here -->
+                    <!-- Cards Injected Here -->
                 </div>
             </div>
         `;
         
         Library.container.innerHTML = html;
+        Library.attachListeners();
+        Library.refreshContent();
+    },
 
-        // --- EVENT LISTENERS ---
-        
-        // Tab Switching
+    attachListeners: () => {
+        // Tabs
         Library.container.querySelectorAll('.lib-tab-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                Library.currentTab = e.target.dataset.tab;
+            btn.addEventListener('click', () => {
+                Library.currentTab = btn.dataset.tab;
                 Library.renderShell(); 
-                // No need to call refreshContent here as renderShell calls it at the end implicitly 
-                // via re-running renderShell logic, but let's be safe:
-                // Actually, renderShell replaces innerHTML, so we lose listeners if we recurse.
-                // Better pattern: update state, re-render shell, then populate grid.
             });
         });
 
         // Filters
-        const bindFilter = (id, key) => {
+        const bind = (id, key) => {
             const el = document.getElementById(id);
             if(el) el.addEventListener('input', (e) => {
                 Library.filters[key] = e.target.value.toLowerCase();
-                Library.renderBestiaryList(); // Re-render just the grid
+                Library.refreshContent();
             });
         };
-        bindFilter('filter-search', 'search');
-        bindFilter('filter-role', 'role');
-        bindFilter('filter-family', 'family');
-        bindFilter('filter-level', 'level');
-        bindFilter('filter-source', 'source');
+        bind('lib-search', 'search');
+        bind('filter-role', 'role');
+        bind('filter-type', 'type');
+        bind('filter-source', 'source');
 
-        // Imports
-        const setupImport = (btnId, inputId, type) => {
-            const btn = document.getElementById(btnId);
-            const input = document.getElementById(inputId);
-            if(btn && input) {
-                btn.onclick = () => input.click();
-                input.onchange = (e) => Library.handleImport(e, type);
-            }
-        };
-        setupImport('btn-import-char', 'file-import-char', 'character');
-        setupImport('btn-import-mon', 'file-import-mon', 'monster');
+        // Import Logic
+        const fileInput = document.getElementById('lib-file-input');
+        const importBtns = ['btn-import-char', 'btn-import-mon', 'btn-import-item'];
+        
+        importBtns.forEach(id => {
+            const btn = document.getElementById(id);
+            if(btn) btn.onclick = () => fileInput.click();
+        });
 
-        // Load Data into Grid
-        Library.refreshContent();
+        if(fileInput) {
+            fileInput.onchange = (e) => Library.handleImport(e);
+        }
     },
 
     refreshContent: () => {
-        if (Library.currentTab === 'characters') {
-            Library.renderCharacterList();
-        } else {
-            Library.renderBestiaryList();
+        const grid = document.getElementById('library-grid');
+        grid.innerHTML = '<div style="color:#666; text-align:center; grid-column:1/-1;">Loading...</div>';
+
+        if (Library.currentTab === 'characters') Library.renderCharacters(grid);
+        else if (Library.currentTab === 'bestiary') Library.renderBestiary(grid);
+        else if (Library.currentTab === 'items') Library.renderItems(grid);
+    },
+
+    /**
+     * Helper: Updates <img> src attributes after render
+     */
+    lazyLoadImages: async (container) => {
+        const imgs = container.querySelectorAll('img[data-img-id]');
+        for (const img of imgs) {
+            const id = img.dataset.imgId;
+            if (id) {
+                const url = await ImageStore.getUrl(id);
+                if (url) img.src = url;
+            }
         }
     },
 
     /* ------------------------------------------------------------------
-       CHARACTER LIST LOGIC
+       RENDERERS
        ------------------------------------------------------------------ */
-    
-    renderCharacterList: () => {
-        const grid = document.getElementById('library-grid');
-        const chars = Storage.getCharacters();
 
-        if (chars.length === 0) {
-            grid.innerHTML = `<p class="text-muted" style="grid-column: 1 / -1; text-align:center;">No characters saved yet. Go create one!</p>`;
+    renderCharacters: (grid) => {
+        const chars = Storage.getCharacters();
+        const filtered = chars.filter(c => c.name.toLowerCase().includes(Library.filters.search));
+
+        if (filtered.length === 0) {
+            grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:#555;">No characters found.</div>`;
             return;
         }
 
-        grid.innerHTML = chars.map(char => `
+        grid.innerHTML = filtered.map(c => `
             <div class="lib-card custom">
-                <div class="lib-card-header">
-                    <div class="lib-card-name">${char.name || "Unnamed"}</div>
-                    <span class="badge source-custom">Local</span>
+                <div class="lib-card-thumb">
+                    ${c.imageId ? `<img src="" data-img-id="${c.imageId}">` : 
+                      c.imageUrl ? `<img src="${c.imageUrl}">` : 
+                      `<div class="lib-thumb-placeholder">👤</div>`}
                 </div>
-                <div class="lib-card-meta">Level ${char.level} ${char.className}</div>
-                <div class="lib-card-stats">
-                    <div class="stat-pill hp">
-                        <span class="stat-pill-label">HP</span>
-                        <span class="stat-pill-value">${char.derived.maxHP}</span>
-                    </div>
-                    <div class="stat-pill ac">
-                        <span class="stat-pill-label">STA</span>
-                        <span class="stat-pill-value">${char.derived.maxSTA}</span>
-                    </div>
-                    <div class="stat-pill dc">
-                        <span class="stat-pill-label">MP</span>
-                        <span class="stat-pill-value">${char.derived.maxMP}</span>
+                <div class="lib-card-body">
+                    <div class="lib-card-name">${c.name}</div>
+                    <div class="lib-card-meta">Lvl ${c.level} ${c.className}</div>
+                    
+                    <div class="lib-mini-stats">
+                        <div class="lms-box"><div class="lms-label">HP</div><div class="lms-val" style="color:#d32f2f">${c.current.hp}/${c.derived.maxHP}</div></div>
+                        <div class="lms-box"><div class="lms-label">STA</div><div class="lms-val" style="color:#388e3c">${c.current.sta}/${c.derived.maxSTA}</div></div>
+                        <div class="lms-box"><div class="lms-label">MP</div><div class="lms-val" style="color:#1976d2">${c.current.mp}/${c.derived.maxMP}</div></div>
                     </div>
                 </div>
-                <div class="lib-actions">
-                    <button class="btn-small edit-btn" data-id="${char.id}">Edit</button>
-                    <button class="btn-small export-btn" data-id="${char.id}">Export</button>
-                    <button class="btn-small delete-btn" data-id="${char.id}" style="color:var(--accent-crimson);">Delete</button>
+                <div class="lib-card-footer">
+                    <button class="lib-btn primary action-play" data-id="${c.id}">▶ Play</button>
+                    <button class="lib-btn action-edit" data-id="${c.id}">✏️ Edit</button>
+                    <button class="lib-btn delete action-delete" data-id="${c.id}" data-type="char">🗑️</button>
                 </div>
             </div>
         `).join('');
 
-        // Bind Buttons
-        grid.querySelectorAll('.edit-btn').forEach(btn => {
-            btn.onclick = () => {
-                const char = Storage.getCharacter(btn.dataset.id);
-                CharGen.loadCharacter(char);
-                document.querySelector('[data-module="chargen"]').click();
-            };
-        });
-
-        grid.querySelectorAll('.export-btn').forEach(btn => {
-            btn.onclick = () => {
-                const char = Storage.getCharacter(btn.dataset.id);
-                Storage.exportJSON(char, `Character_${char.name.replace(/\s+/g, '_')}`);
-            };
-        });
-
-        grid.querySelectorAll('.delete-btn').forEach(btn => {
-            btn.onclick = () => {
-                if(confirm("Delete this character permanently?")) {
-                    Storage.deleteCharacter(btn.dataset.id);
-                    Library.refreshContent();
-                }
-            };
-        });
+        Library.lazyLoadImages(grid);
+        Library.bindCardActions(grid, 'char');
     },
 
-    /* ------------------------------------------------------------------
-       BESTIARY LOGIC (Merge & Filter)
-       ------------------------------------------------------------------ */
-
-    renderBestiaryList: () => {
-        const grid = document.getElementById('library-grid');
-        
-        // 1. Fetch & Normalize Official Data
+    renderBestiary: (grid) => {
+        // 1. Get Official
         const rawOfficial = I18n.getData('bestiary') || [];
+        const official = rawOfficial.map(m => ({ ...m, source: 'official', id: m.id || m.name })); 
         
-        const officialMobs = rawOfficial.map(m => ({
-            id: m.id,
-            name: m.name,
-            role: m.role.toLowerCase(),
-            family: m.family,
-            level: m.level,
-            source: 'official',
-            stats: {
-                hp: m.stats.hp,
-                as: m.stats.as,
-                speed: m.stats.speed,
-                atk: m.combat.atk_dc,
-                def: m.combat.def_dc,
-                save: m.combat.save_dc,
-                dmg: m.combat.dmg
-            },
-            traits: m.abilities.filter(a => a.type === "Passive" || a.type === "Trait"),
-            actions: m.abilities.filter(a => a.type === "Action" || a.type === "Attack" || a.type === "Magic"),
-            danger_abilities: m.abilities.filter(a => a.type === "Danger"),
-            notes: `Loot: ${m.loot}`
-        }));
+        // 2. Get Custom
+        const custom = Storage.getLibrary('grim_monsters') || [];
         
-        // 2. Fetch Custom Data
-        const customMobs = Storage.getLibrary('grim_monsters') || [];
-        const userMobs = customMobs.map(m => ({ ...m, source: 'custom' }));
-
-        // 3. Merge
-        const allMobs = [...userMobs, ...officialMobs];
-
-        // 4. Filter
+        // 3. Merge & Filter
+        const all = [...custom, ...official];
         const f = Library.filters;
-        const filtered = allMobs.filter(m => {
+        
+        const filtered = all.filter(m => {
             if (f.search && !m.name.toLowerCase().includes(f.search)) return false;
             if (f.role !== 'all' && m.role.toLowerCase() !== f.role) return false;
-            if (f.family !== 'all' && m.family.toLowerCase() !== f.family) return false;
-            if (f.level !== 'all' && m.level.toString() !== f.level) return false;
-            if (f.source !== 'all' && m.source !== f.source) return false;
+            if (f.source !== 'all' && (m.source || 'custom') !== f.source) return false;
             return true;
         });
 
-        // 5. Render
-        if (filtered.length === 0) {
-            grid.innerHTML = `<p class="text-muted" style="grid-column: 1 / -1; text-align:center;">No monsters match your filters.</p>`;
-            return;
-        }
-
         grid.innerHTML = filtered.map(m => {
-            const isCustom = m.source === 'custom';
-            const badgeText = isCustom ? 'Custom' : 'Official';
-            const badgeClass = isCustom ? 'source-custom' : 'source-official';
-            
+            const isCustom = (m.source !== 'official');
             const roleCap = m.role.charAt(0).toUpperCase() + m.role.slice(1);
-            const famCap = m.family.charAt(0).toUpperCase() + m.family.slice(1);
             
-            // Stats
-            const hp = m.stats.hp;
-            const ac = m.stats.as;
-            const atk = m.stats.atk;
-            const def = m.stats.def;
+            let imgHTML = `<div class="lib-thumb-placeholder">💀</div>`;
+            if (m.imageId) imgHTML = `<img src="" data-img-id="${m.imageId}">`;
+            else if (m.imageUrl) imgHTML = `<img src="${m.imageUrl}">`;
 
             return `
-                <div class="lib-card ${m.source}" data-id="${m.id}" data-source="${m.source}">
-                    <div class="lib-card-header">
+                <div class="lib-card ${isCustom ? 'custom' : 'official'}">
+                    <div class="lib-card-thumb">
+                        ${imgHTML}
+                        <div style="position:absolute; top:5px; right:5px; background:rgba(0,0,0,0.7); padding:2px 6px; border-radius:3px; font-size:0.6rem; color:#fff;">
+                            ${isCustom ? 'CUSTOM' : 'OFFICIAL'}
+                        </div>
+                    </div>
+                    <div class="lib-card-body">
                         <div class="lib-card-name">${m.name}</div>
-                        <span class="badge ${badgeClass}">${badgeText}</span>
-                    </div>
-                    
-                    <div class="lib-card-meta">
-                        Lvl ${m.level} ${famCap} ${roleCap}
-                    </div>
-                    
-                    <div class="lib-card-stats">
-                        <div class="stat-pill hp">
-                            <span class="stat-pill-label">HP</span>
-                            <span class="stat-pill-value">${hp}</span>
-                        </div>
-                        <div class="stat-pill ac">
-                            <span class="stat-pill-label">AS</span>
-                            <span class="stat-pill-value">${ac}</span>
-                        </div>
-                        <div class="stat-pill dc">
-                            <span class="stat-pill-label">Def/Atk</span>
-                            <span class="stat-pill-value">${def}/${atk}</span>
+                        <div class="lib-card-meta">Lvl ${m.level} ${roleCap}</div>
+                        
+                        <div class="lib-mini-stats">
+                            <div class="lms-box"><div class="lms-label">HP</div><div class="lms-val" style="color:#d32f2f">${m.stats.hp}</div></div>
+                            <div class="lms-box"><div class="lms-label">AS</div><div class="lms-val">${m.stats.as}</div></div>
+                            <div class="lms-box"><div class="lms-label">ATK</div><div class="lms-val">${m.stats.atk}</div></div>
                         </div>
                     </div>
-                    
-                    <div class="lib-actions">
-                        <button class="view-btn" data-id="${m.id}" data-source="${m.source}">
-                            ${isCustom ? '✏️ Edit' : '📋 Clone'}
-                        </button>
-                        ${isCustom ? `<button class="export-btn" data-id="${m.id}">💾</button>` : ''}
-                        ${isCustom ? `<button class="delete-btn" data-id="${m.id}">🗑️</button>` : ''}
+                    <div class="lib-card-footer">
+                        <button class="lib-btn primary action-view" data-id="${m.id}" data-source="${m.source || 'custom'}">👁️ View</button>
+                        <button class="lib-btn action-edit" data-id="${m.id}" data-source="${m.source || 'custom'}">${isCustom ? '✏️ Edit' : '📋 Copy'}</button>
+                        ${isCustom ? `<button class="lib-btn delete action-delete" data-id="${m.id}" data-type="mon">🗑️</button>` : ''}
                     </div>
                 </div>
             `;
         }).join('');
 
-        // 6. Bind Event Listeners
+        Library.lazyLoadImages(grid);
+        Library.bindCardActions(grid, 'mon');
+    },
 
-        // A. Card Click (Open Modal)
-        grid.querySelectorAll('.lib-card').forEach(card => {
-            card.addEventListener('click', (e) => {
-                if (e.target.closest('button')) return; // Ignore button clicks
+    renderItems: (grid) => {
+        const items = Storage.getLibrary('grim_delve_items') || [];
+        const f = Library.filters;
 
-                const id = card.dataset.id;
-                const source = card.dataset.source;
-                
-                let mobData;
-                if (source === 'custom') {
-                    mobData = userMobs.find(m => m.id === id);
-                } else {
-                    mobData = officialMobs.find(m => m.id === id);
-                }
-
-                if (mobData) Library.showFullCard(mobData);
-            });
+        const filtered = items.filter(i => {
+            if (f.search && !i.name.toLowerCase().includes(f.search)) return false;
+            if (f.type !== 'all' && i.type !== f.type) return false;
+            return true;
         });
 
-        // B. Edit/Clone Button
-        grid.querySelectorAll('.view-btn').forEach(btn => {
+        if (filtered.length === 0) {
+            grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:#555;">No items found. Create some in the Artificer!</div>`;
+            return;
+        }
+
+        grid.innerHTML = filtered.map(i => {
+            const isMagic = i.isMagic;
+            
+            let imgHTML = `<div class="lib-thumb-placeholder">⚔️</div>`;
+            if (i.imageId) imgHTML = `<img src="" data-img-id="${i.imageId}">`;
+            else if (i.imageUrl) imgHTML = `<img src="${i.imageUrl}">`;
+
+            return `
+                <div class="lib-card item ${isMagic ? 'magic' : ''}">
+                    <div class="lib-card-thumb">
+                        ${imgHTML}
+                    </div>
+                    <div class="lib-card-body">
+                        <div class="lib-card-name">${i.name}</div>
+                        <div class="lib-card-meta">${i.type} • ${i.cost}</div>
+                        <div style="font-size:0.8rem; color:#aaa; flex-grow:1; overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical;">
+                            ${i.description}
+                        </div>
+                    </div>
+                    <div class="lib-card-footer">
+                        <button class="lib-btn primary action-view-item" data-id="${i.id}">👁️ View</button>
+                        <button class="lib-btn delete action-delete" data-id="${i.id}" data-type="item">🗑️</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        Library.lazyLoadImages(grid);
+        Library.bindCardActions(grid, 'item');
+    },
+
+    /* ------------------------------------------------------------------
+       INTERACTIONS
+       ------------------------------------------------------------------ */
+
+    bindCardActions: (grid, type) => {
+        // DELETE
+        grid.querySelectorAll('.action-delete').forEach(btn => {
             btn.onclick = (e) => {
                 e.stopPropagation();
-                const id = btn.dataset.id;
-                const source = btn.dataset.source;
-                
-                let mobData;
-                if (source === 'custom') {
-                    mobData = userMobs.find(m => m.id === id);
-                } else {
-                    mobData = officialMobs.find(m => m.id === id);
-                }
-
-                if (mobData) {
-                    document.querySelector('[data-module="bestiary"]').click();
-                    setTimeout(() => {
-                        MonsterBuilder.loadMonster(mobData);
-                    }, 50);
-                }
-            };
-        });
-
-        // C. Delete Button
-        grid.querySelectorAll('.delete-btn').forEach(btn => {
-            btn.onclick = (e) => {
-                e.stopPropagation();
-                if(confirm("Delete this custom monster?")) {
+                if(confirm("Delete this permanently?")) {
                     const id = btn.dataset.id;
-                    let lib = Storage.getLibrary('grim_monsters');
-                    lib = lib.filter(m => m.id !== id);
-                    localStorage.setItem('grim_monsters', JSON.stringify(lib));
+                    if (type === 'char') Storage.deleteCharacter(id);
+                    else if (type === 'mon') {
+                        let lib = Storage.getLibrary('grim_monsters');
+                        lib = lib.filter(x => x.id !== id);
+                        localStorage.setItem('grim_monsters', JSON.stringify(lib));
+                    }
+                    else if (type === 'item') {
+                        let lib = Storage.getLibrary('grim_delve_items');
+                        lib = lib.filter(x => x.id !== id);
+                        localStorage.setItem('grim_delve_items', JSON.stringify(lib));
+                    }
                     Library.refreshContent();
                 }
             };
         });
 
-        // D. Export Button
-        grid.querySelectorAll('.export-btn').forEach(btn => {
+        // EDIT (Route to Builder)
+        grid.querySelectorAll('.action-edit').forEach(btn => {
             btn.onclick = (e) => {
                 e.stopPropagation();
                 const id = btn.dataset.id;
-                const mob = userMobs.find(m => m.id === id);
-                if(mob) Storage.exportJSON(mob, `Monster_${mob.name.replace(/\s+/g, '_')}`);
+                
+                if (type === 'char') {
+                    const char = Storage.getCharacter(id);
+                    CharGen.loadCharacter(char);
+                    document.querySelector('[data-module="chargen"]').click();
+                } else if (type === 'mon') {
+                    const source = btn.dataset.source;
+                    let mob;
+                    if (source === 'official') mob = I18n.getData('bestiary').find(m => m.id === id);
+                    else mob = Storage.getLibrary('grim_monsters').find(m => m.id === id);
+                    
+                    if(mob) {
+                        MonsterBuilder.loadMonster(mob);
+                        document.querySelector('[data-module="bestiary"]').click();
+                    }
+                }
+            };
+        });
+
+        // VIEW / PLAY
+        grid.querySelectorAll('.action-play').forEach(btn => {
+            btn.onclick = (e) => {
+                e.stopPropagation();
+                const id = btn.dataset.id;
+                const char = Storage.getCharacter(id);
+                
+                if (char) {
+                    // Switch to CharGen module context visually
+                    const mainNav = document.querySelector('[data-module="chargen"]');
+                    if(mainNav) mainNav.classList.add('active');
+                    
+                    // Initialize Play Mode
+                    CharGen.initPlayMode(char);
+                } else {
+                    alert("Error: Character not found.");
+                }
+            };
+        });
+
+        grid.querySelectorAll('.action-view').forEach(btn => {
+            btn.onclick = (e) => {
+                const id = btn.dataset.id;
+                const source = btn.dataset.source;
+                let mob;
+                if (source === 'official') mob = I18n.getData('bestiary').find(m => m.id === id);
+                else mob = Storage.getLibrary('grim_monsters').find(m => m.id === id);
+                
+                if(mob) Library.openMonsterModal(mob);
+            };
+        });
+        
+        grid.querySelectorAll('.action-view-item').forEach(btn => {
+            btn.onclick = (e) => {
+                const id = btn.dataset.id;
+                const item = Storage.getLibrary('grim_delve_items').find(i => i.id === id);
+                if(item) Library.openItemModal(item);
             };
         });
     },
 
-    /**
-     * Displays a modal with the full Monster Card
-     */
-    showFullCard: (m) => {
+    /* --- MODALS --- */
+
+    openMonsterModal: async (mob) => {
         const overlay = document.createElement('div');
         overlay.className = 'modal-overlay';
         
-        const roleCap = m.role.charAt(0).toUpperCase() + m.role.slice(1);
-        
-        const displayTraits = m.traits || [];
-        const displayActions = m.actions || [];
-        const displayDanger = m.danger_abilities || [];
-        
-        if(m.custom_abilities) {
-            m.custom_abilities.forEach(c => {
-                if(c.type === 'trait') displayTraits.push(c);
-                if(c.type === 'action') displayActions.push(c);
-                if(c.type === 'danger') displayDanger.push(c);
-            });
-        }
+        let src = mob.imageUrl;
+        if(mob.imageId) src = await ImageStore.getUrl(mob.imageId);
 
-        const renderRow = (item, isDanger) => {
-             const cost = item.cost ? `(${item.cost})` : '';
-             return `<div class="mc-ability ${isDanger ? 'mc-danger' : ''}">
-                <span class="mc-ability-name">${item.name} ${cost}:</span> ${item.effect}
-             </div>`;
-        };
+        // Use Renderer
+        const cardHtml = MonsterRenderer.getHTML(mob, src);
 
-        const html = `
-            <div class="view-monster-modal">
-                <div class="monster-card">
-                    <div class="mc-header">
-                        <div class="mc-name">${m.name}</div>
-                        <div class="mc-meta">Lvl ${m.level} ${roleCap}</div>
-                    </div>
-                    
-                    <div class="mc-stats-grid">
-                        <div class="mc-stat"><div class="mc-stat-label">HP</div><div class="mc-stat-val" style="color:#8a2c2c;">${m.stats.hp}</div></div>
-                        <div class="mc-stat"><div class="mc-stat-label">Armor</div><div class="mc-stat-val">${m.stats.as}</div></div>
-                        <div class="mc-stat"><div class="mc-stat-label">Atk DC</div><div class="mc-stat-val">${m.stats.atk}</div></div>
-                        <div class="mc-stat"><div class="mc-stat-label">Def DC</div><div class="mc-stat-val">${m.stats.def}</div></div>
-                    </div>
-                    
-                    <div style="display:flex; justify-content:space-between; margin-bottom:10px; border-bottom:1px solid #aaa; padding-bottom:5px; font-size:0.9rem;">
-                        <span><strong>Speed:</strong> ${m.stats.speed} ft</span>
-                        <span><strong>Save DC:</strong> ${m.stats.save}</span>
-                    </div>
-
-                    <div class="mc-section">
-                        <div class="mc-section-title">Standard Attack</div>
-                        <div class="mc-ability"><strong>Damage:</strong> ${m.stats.dmg}</div>
-                    </div>
-
-                    ${displayTraits.length ? `<div class="mc-section"><div class="mc-section-title">Traits</div>${displayTraits.map(t=>renderRow(t)).join('')}</div>` : ''}
-                    ${displayActions.length ? `<div class="mc-section"><div class="mc-section-title">Actions</div>${displayActions.map(a=>renderRow(a)).join('')}</div>` : ''}
-                    ${displayDanger.length ? `<div class="mc-section"><div class="mc-section-title" style="color:#8a2c2c;">Danger Abilities</div>${displayDanger.map(d=>renderRow(d,true)).join('')}</div>` : ''}
-                    ${m.notes ? `<div class="mc-section" style="border-top:1px dashed #aaa; margin-top:10px; font-style:italic;">${m.notes}</div>` : ''}
-                
-                    <div style="margin-top:20px; text-align:center;">
-                        <button id="btn-close-modal" class="btn-primary">Close</button>
-                    </div>
+        overlay.innerHTML = `
+            <div class="view-monster-modal" style="max-width:500px; padding:0; background:transparent; box-shadow:none;">
+                ${cardHtml}
+                <div style="text-align:center; margin-top:10px;">
+                    <button class="btn-primary" onclick="this.closest('.modal-overlay').remove()">Close</button>
+                    <button class="btn-secondary" onclick="window.print()">Print</button>
                 </div>
             </div>
         `;
-
-        overlay.innerHTML = html;
         document.body.appendChild(overlay);
 
-        const close = () => document.body.removeChild(overlay);
-        document.getElementById('btn-close-modal').onclick = close;
         overlay.addEventListener('click', (e) => {
-            if (e.target === overlay) close();
+            if (e.target === overlay) overlay.remove();
         });
     },
 
-    /* --- IMPORT LOGIC --- */
+    openItemModal: async (item) => {
+        const overlay = document.createElement('div');
+        overlay.className = 'modal-overlay';
 
-    handleImport: (event, type) => {
-        const file = event.target.files[0];
+        let src = item.imageUrl;
+        if(item.imageId) src = await ImageStore.getUrl(item.imageId);
+
+        // Use Renderer
+        const cardHtml = ItemRenderer.getHTML(item, src);
+
+        overlay.innerHTML = `
+            <div class="view-monster-modal" style="max-width:400px; padding:0; background:transparent; box-shadow:none;">
+                ${cardHtml}
+                <div style="text-align:center; margin-top:10px;">
+                    <button class="btn-primary" onclick="this.closest('.modal-overlay').remove()">Close</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) overlay.remove();
+        });
+    },
+
+    handleImport: (e) => {
+        const file = e.target.files[0];
         if (!file) return;
         
         const reader = new FileReader();
-        reader.onload = (e) => {
+        reader.onload = (event) => {
             try {
-                const json = JSON.parse(e.target.result);
+                const json = JSON.parse(event.target.result);
                 
-                if (type === 'character') {
-                    if (json.stats && json.derived) {
-                        Storage.saveCharacter(json);
-                        alert("Character Imported!");
-                        Library.refreshContent();
-                    } else {
-                        alert("Invalid Character file.");
-                    }
-                } else if (type === 'monster') {
-                    if (json.stats && json.role) {
-                        json.id = 'mon_imp_' + Date.now();
-                        json.source = 'custom';
-                        const lib = Storage.getLibrary('grim_monsters');
-                        lib.push(json);
-                        localStorage.setItem('grim_monsters', JSON.stringify(lib));
-                        alert("Monster Imported!");
-                        Library.refreshContent();
-                    } else {
-                        alert("Invalid Monster file.");
-                    }
+                if (json.stats && json.derived) { 
+                    Storage.saveCharacter(json);
+                    alert("Character Imported");
+                } else if (json.role && json.family) { 
+                    json.id = 'mon_' + Date.now();
+                    const lib = Storage.getLibrary('grim_monsters');
+                    lib.push(json);
+                    localStorage.setItem('grim_monsters', JSON.stringify(lib));
+                    alert("Monster Imported");
+                } else if (json.cost && json.type) { 
+                    json.id = 'item_' + Date.now();
+                    const lib = Storage.getLibrary('grim_delve_items');
+                    lib.push(json);
+                    localStorage.setItem('grim_delve_items', JSON.stringify(lib));
+                    alert("Item Imported");
+                } else {
+                    alert("Unknown file type.");
                 }
+                Library.refreshContent();
             } catch (err) {
                 console.error(err);
-                alert("Error parsing JSON file.");
+                alert("Invalid JSON.");
             }
         };
         reader.readAsText(file);

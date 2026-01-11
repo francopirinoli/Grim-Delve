@@ -2015,11 +2015,59 @@ dd {
 /* --- MAIN LAYOUT --- */
 .artificer-layout {
     display: grid;
-    grid-template-columns: 420px 1fr; /* Fixed Controls, Fluid Preview */
-    gap: 0; /* Gap handled by padding/borders */
+    grid-template-columns: 550px 1fr; /* Wider Left Panel */
+    gap: 0;
     height: 100%;
     overflow: hidden;
     background: var(--bg-dark);
+}
+
+/* Accordion Styles */
+.blueprint-details {
+    border-bottom: 1px solid #333;
+}
+
+.blueprint-details[open] {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.blueprint-summary {
+    padding: 10px 12px;
+    background: #2a2a2a;
+    color: #aaa;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: bold;
+    cursor: pointer;
+    list-style: none; /* Hide default triangle */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #444;
+}
+
+.blueprint-summary:hover {
+    background: #333;
+    color: var(--accent-gold);
+}
+
+.blueprint-summary::-webkit-details-marker {
+    display: none;
+}
+
+.blueprint-summary::after {
+    content: '+';
+    font-family: var(--font-mono);
+    font-size: 1.1em;
+}
+
+.blueprint-details[open] .blueprint-summary::after {
+    content: '-';
+    color: var(--accent-gold);
+}
+
+.blueprint-group-header {
+    display: none; 
 }
 
 /* Left Panel: The Workbench */
@@ -2934,3 +2982,410 @@ dd {
 }
 
 .xp-badge input:focus { outline: none; border-bottom: 1px solid #fff; }
+
+.stat-block-classic {
+    font-family: 'Noto Sans', 'Open Sans', sans-serif;
+    background: #fdf1dc; /* Old Paper */
+    color: #333;
+    border: 1px solid #d4c4a9;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    width: 100%;
+    max-width: 450px;
+    padding: 15px;
+    position: relative;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+/* The Red Tapered Header */
+.sb-name-bar {
+    background: #8a2c2c;
+    color: white;
+    padding: 5px 10px;
+    font-family: var(--font-header);
+    font-size: 1.4rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    /* Tapered shape using clip-path */
+    clip-path: polygon(0% 0%, 100% 0%, 95% 100%, 0% 100%);
+    margin-bottom: 5px;
+}
+
+.sb-meta {
+    font-style: italic;
+    font-size: 0.9rem;
+    color: #555;
+    border-bottom: 2px solid #8a2c2c;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+}
+
+/* Image in Stat Block */
+.sb-image-container {
+    width: 100%;
+    height: 200px;
+    background: #eaddcf;
+    margin-bottom: 10px;
+    border: 1px solid #cbb69d;
+    overflow: hidden; /* Clips the image */
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: grab; /* Indicates draggable */
+}
+
+.sb-image-container:active {
+    cursor: grabbing;
+}
+
+.sb-image-container img {
+    /* Remove width/height 100% so we can scale freely */
+    max-width: none; 
+    max-height: none;
+    /* Transformation handled by JS */
+    transform-origin: center center;
+    pointer-events: none; /* Prevents browser default drag behavior */
+    user-select: none;
+}
+
+/* Tapered Red Line Separator */
+.sb-red-line {
+    height: 2px;
+    background: #8a2c2c;
+    margin: 10px 0;
+    width: 100%;
+}
+
+/* Attributes Grid */
+.sb-stats-grid {
+    display: flex;
+    justify-content: space-between;
+    color: #8a2c2c;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.sb-stat-box {
+    display: flex;
+    flex-direction: column;
+}
+
+.sb-stat-val {
+    font-size: 1.1rem;
+    color: #333;
+    font-family: var(--font-mono);
+}
+
+/* Abilities */
+.sb-section-header {
+    font-family: var(--font-header);
+    color: #8a2c2c;
+    font-size: 1.1rem;
+    border-bottom: 1px solid #d4c4a9;
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+.sb-property {
+    margin-bottom: 5px;
+    display: block;
+}
+
+.sb-prop-name {
+    font-weight: bold;
+    font-style: italic;
+    color: #222;
+}
+
+/* Danger Abilities (Highlighted) */
+.sb-danger-section {
+    background: rgba(138, 44, 44, 0.1);
+    border-left: 3px solid #8a2c2c;
+    padding: 5px;
+    margin-top: 10px;
+}
+
+.sb-danger-title {
+    font-weight: bold;
+    color: #8a2c2c;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    margin-bottom: 4px;
+}
+
+/* --- START OF FILE css/main.css --- */
+/* ... (Keep existing CSS) ... */
+
+/* =========================================
+   LIBRARY UPGRADE (v3.0)
+   ========================================= */
+
+/* Updated Grid for Visual Cards */
+.library-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Slightly narrower for density */
+    gap: 1.5rem;
+    padding-bottom: 4rem;
+}
+
+/* Card Container */
+.lib-card {
+    background: #1a1a1a;
+    border: 1px solid #444;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: all 0.2s;
+    position: relative;
+    height: 100%;
+    min-height: 280px; /* Taller for image */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+.lib-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent-gold);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.5);
+}
+
+/* Source Strip */
+.lib-card.official { border-top: 4px solid var(--accent-blue); }
+.lib-card.custom { border-top: 4px solid var(--accent-gold); }
+.lib-card.item { border-top: 4px solid #8a2c2c; } /* Crimson for Items */
+
+/* Thumbnail Image Area */
+.lib-card-thumb {
+    width: 100%;
+    height: 140px;
+    background: #252525;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-bottom: 1px solid #333;
+    position: relative;
+}
+
+.lib-card-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s;
+}
+
+.lib-card:hover .lib-card-thumb img {
+    transform: scale(1.05); /* Subtle zoom on hover */
+}
+
+/* Placeholder Icon if no image */
+.lib-thumb-placeholder {
+    font-size: 3rem;
+    opacity: 0.2;
+}
+
+/* Content Area */
+.lib-card-body {
+    padding: 12px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.lib-card-name {
+    font-family: var(--font-header);
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--text-main);
+    margin-bottom: 4px;
+    line-height: 1.2;
+}
+
+.lib-card-meta {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+    font-family: var(--font-mono);
+}
+
+/* Mini Stats Grid (HP/AC etc) */
+.lib-mini-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 5px;
+    margin-top: auto; /* Push to bottom of body */
+    background: rgba(0,0,0,0.2);
+    border-radius: 4px;
+    padding: 5px;
+}
+
+.lms-box {
+    text-align: center;
+}
+.lms-label { font-size: 0.6rem; color: #666; text-transform: uppercase; }
+.lms-val { font-size: 0.9rem; font-weight: bold; font-family: var(--font-mono); color: #ccc; }
+
+/* Footer Actions */
+.lib-card-footer {
+    padding: 8px 12px;
+    background: #151515;
+    border-top: 1px solid #333;
+    display: flex;
+    gap: 8px;
+}
+
+.lib-btn {
+    flex: 1;
+    background: #252525;
+    border: 1px solid #444;
+    color: #aaa;
+    font-size: 0.75rem;
+    padding: 4px;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.2s;
+}
+
+.lib-btn:hover { background: #333; color: white; border-color: #666; }
+.lib-btn.primary { color: var(--accent-gold); border-color: #554422; }
+.lib-btn.primary:hover { background: var(--accent-gold); color: black; }
+.lib-btn.delete:hover { background: var(--accent-crimson); color: white; border-color: var(--accent-crimson); }
+
+/* Item Card Specifics */
+.lib-card.item .lib-card-name { color: #e0e0e0; }
+.lib-card.item.magic .lib-card-name { color: var(--accent-blue); text-shadow: 0 0 5px rgba(74, 111, 165, 0.5); }
+
+/* =========================================
+   PHASE 5: PLAY MODE & MODAL REFINEMENTS
+   ========================================= */
+
+/* --- PLAY MODE STATE (Applied to Body) --- */
+body.mode-play #sidebar {
+    display: none !important;
+}
+
+body.mode-play #main-content {
+    padding: 0;
+    height: 100vh;
+    overflow-y: auto;
+    background-color: #121212; /* Ensure dark background */
+    display: flex;
+    justify-content: center;
+}
+
+/* Floating Toolbar for Play Mode */
+.play-toolbar {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.85);
+    border: 1px solid var(--accent-gold);
+    padding: 10px 15px;
+    border-radius: 50px; /* Pill shape */
+    display: flex;
+    gap: 15px;
+    z-index: 1000;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    backdrop-filter: blur(5px);
+    transition: opacity 0.3s;
+}
+
+.play-toolbar:hover {
+    opacity: 1;
+}
+
+/* Dim toolbar when not hovering to avoid distraction */
+body.mode-play:not(:hover) .play-toolbar {
+    opacity: 0.5;
+}
+
+.play-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-main);
+    font-family: var(--font-header);
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    text-transform: uppercase;
+}
+
+.play-btn:hover {
+    color: var(--accent-gold);
+}
+
+.play-btn.save { color: var(--accent-blue); }
+.play-btn.exit { color: var(--accent-crimson); border-left: 1px solid #444; padding-left: 15px; }
+
+/* --- SHEET ADJUSTMENTS FOR PLAY MODE --- */
+/* In play mode, center the sheet and add margin for the toolbar */
+body.mode-play .sheet-page {
+    margin-top: 2rem;
+    margin-bottom: 6rem; /* Space for toolbar */
+}
+
+/* Hide the "Edit Mode" buttons inside the sheet when playing */
+body.mode-play .print-actions,
+body.mode-play #btn-levelup {
+    display: none !important;
+}
+
+/* --- MODAL REFINEMENTS (For Library Viewers) --- */
+
+/* Ensure the parchment/card looks natural inside the dark overlay */
+.view-monster-modal {
+    background: transparent !important; /* Remove default panel bg */
+    box-shadow: none !important; /* Remove default panel shadow */
+    border: none !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Close button positioning for clean view */
+.view-monster-modal .btn-primary {
+    background: rgba(0,0,0,0.8);
+    border: 1px solid #555;
+    margin-top: 15px;
+    padding: 8px 20px;
+}
+
+.view-monster-modal .btn-primary:hover {
+    background: var(--accent-gold);
+    color: #000;
+}
+
+/* Prevent double scrolling in modals */
+.modal-overlay {
+    overflow-y: auto; /* Allow scrolling long stat blocks */
+    padding: 20px 0;
+}
+
+.footer-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.icon-btn {
+    background: transparent;
+    border: 1px solid #444;
+    color: #888;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.icon-btn:hover {
+    color: var(--accent-gold);
+    border-color: var(--accent-gold);
+}

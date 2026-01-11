@@ -1,10 +1,88 @@
 /**
  * monster_builder.js
  * The Architect Tool for GMs to create, edit, and save stat blocks.
+ * v3.3: Refactored Renderer for Library Use
  */
 
 import { I18n } from '../utils/i18n.js';
 import { Storage } from '../utils/storage.js';
+import { ImageStore } from '../utils/image_store.js';
+
+// --- NEW EXPORT: SHARED RENDERER ---
+export const MonsterRenderer = {
+    /**
+     * Generates the HTML string for the Parchment Stat Block.
+     * @param {Object} m - The monster data object.
+     * @param {String|null} imageSrc - Resolved URL for the image (if any).
+     * @returns {String} HTML content.
+     */
+    getHTML: (m, imageSrc) => {
+        // Image Handling
+        let imgHtml = '';
+        if (imageSrc) {
+            // Apply positioning if available, default otherwise
+            const pos = m.imgPos || { x: 0, y: 0, scale: 1.0 };
+            const style = `transform: translate(${pos.x}px, ${pos.y}px) scale(${pos.scale});`;
+            // Note: draggable="false" allows the user to scroll/drag the container in the editor, 
+            // but in View mode (Library), it will just be static.
+            imgHtml = `<div class="sb-image-container"><img src="${imageSrc}" style="${style}" draggable="false"></div>`;
+        }
+
+        // Merge Standard + Custom Abilities
+        const traits = [...(m.traits || [])];
+        const actions = [...(m.actions || [])];
+        const dangers = [...(m.danger_abilities || [])];
+
+        if (m.custom_abilities) {
+            m.custom_abilities.forEach(c => {
+                if (c.type === 'Trait') traits.push(c);
+                else if (c.type === 'Danger') dangers.push(c);
+                else actions.push(c); // Actions and Reactions
+            });
+        }
+
+        const renderRow = (list) => list.map(item => `
+            <div class="sb-property">
+                <span class="sb-prop-name">${item.name} ${item.cost ? `(${item.cost})` : ''}.</span>
+                <span class="sb-prop-text">${item.effect}</span>
+                ${item.id ? `<span class="del-custom" data-id="${item.id}" style="color:red; cursor:pointer; font-size:0.8em; margin-left:5px;">[×]</span>` : ''}
+            </div>
+        `).join('');
+
+        return `
+            <div class="stat-block-classic">
+                <div class="sb-name-bar">${m.name}</div>
+                <div class="sb-meta">Level ${m.level} ${m.family.charAt(0).toUpperCase() + m.family.slice(1)} ${m.role.charAt(0).toUpperCase() + m.role.slice(1)}</div>
+                
+                ${imgHtml}
+
+                <div class="sb-red-line"></div>
+                <div class="sb-stats-grid">
+                    <div class="sb-stat-box"><span class="sb-stat-val" style="color:#8a2c2c;">${m.stats.hp}</span><span>HP</span></div>
+                    <div class="sb-stat-box"><span class="sb-stat-val">${m.stats.as}</span><span>Armor</span></div>
+                    <div class="sb-stat-box"><span class="sb-stat-val">${m.stats.speed}</span><span>Speed</span></div>
+                </div>
+                <div class="sb-stats-grid" style="background:rgba(0,0,0,0.05); padding:5px;">
+                    <div class="sb-stat-box"><span>ATK DC</span><span class="sb-stat-val">${m.stats.atk}</span></div>
+                    <div class="sb-stat-box"><span>DEF DC</span><span class="sb-stat-val">${m.stats.def}</span></div>
+                    <div class="sb-stat-box"><span>SAVE DC</span><span class="sb-stat-val">${m.stats.save}</span></div>
+                </div>
+                <div class="sb-red-line"></div>
+
+                <div class="sb-property">
+                    <span class="sb-prop-name">Standard Attack.</span>
+                    <span class="sb-prop-text">Deals <strong>${m.stats.dmg}</strong> damage.</span>
+                </div>
+
+                ${traits.length > 0 ? `<div class="sb-section-header">Traits</div>${renderRow(traits)}` : ''}
+                ${actions.length > 0 ? `<div class="sb-section-header">Actions</div>${renderRow(actions)}` : ''}
+                ${dangers.length > 0 ? `<div class="sb-danger-section"><div class="sb-danger-title">Danger Abilities</div>${renderRow(dangers)}</div>` : ''}
+                
+                ${m.notes ? `<div class="sb-red-line"></div><div class="sb-property" style="font-style:italic; font-size:0.9em;"><strong>GM Notes:</strong> ${m.notes}</div>` : ''}
+            </div>
+        `;
+    }
+};
 
 export const MonsterBuilder = {
     
@@ -15,6 +93,9 @@ export const MonsterBuilder = {
         role: "soldier",
         level: 1,
         family: "folk",
+        imageId: null,
+        imageUrl: null,
+        imgPos: { x: 0, y: 0, scale: 1.0 }, 
         stats: { hp: 0, as: 0, speed: 0, atk: 0, def: 0, save: 0, dmg: "" },
         traits: [], 
         actions: [], 
@@ -23,84 +104,85 @@ export const MonsterBuilder = {
         notes: ""
     },
 
+    dragState: { isDragging: false, startX: 0, startY: 0, initialImgX: 0, initialImgY: 0 },
+
     init: (container) => {
         MonsterBuilder.renderInterface(container);
-        // Only calculate defaults if we are starting fresh (no ID set from a load)
         if (!MonsterBuilder.currentMonster.id) {
             MonsterBuilder.updateCalculation();
         } else {
-            // If we have a loaded monster, just render it
-            MonsterBuilder.renderAbilityPickers(MonsterBuilder.currentMonster.family);
-            MonsterBuilder.renderCard();
+            setTimeout(() => {
+                MonsterBuilder.renderAbilityPickers(MonsterBuilder.currentMonster.family);
+                MonsterBuilder.syncDOMFromState();
+                MonsterBuilder.syncCheckboxes();
+                MonsterBuilder.renderCard();
+            }, 50);
         }
     },
 
-    /**
-     * Loads a monster object into the editor state.
-     */
     loadMonster: (monsterData) => {
-        // 1. Deep copy to prevent reference issues
         MonsterBuilder.currentMonster = JSON.parse(JSON.stringify(monsterData));
+        const m = MonsterBuilder.currentMonster;
         
-        // 2. DATA SANITIZATION (Fixing the crash)
-        // Ensure arrays exist even if the JSON didn't have them
-        if (!MonsterBuilder.currentMonster.traits) MonsterBuilder.currentMonster.traits = [];
-        if (!MonsterBuilder.currentMonster.actions) MonsterBuilder.currentMonster.actions = [];
-        if (!MonsterBuilder.currentMonster.danger_abilities) MonsterBuilder.currentMonster.danger_abilities = [];
-        if (!MonsterBuilder.currentMonster.custom_abilities) MonsterBuilder.currentMonster.custom_abilities = [];
-        if (!MonsterBuilder.currentMonster.notes) MonsterBuilder.currentMonster.notes = "";
+        // Data Integrity Checks
+        if (!m.imgPos) m.imgPos = { x: 0, y: 0, scale: 1.0 };
+        if (!m.traits) m.traits = [];
+        if (!m.actions) m.actions = [];
+        if (!m.danger_abilities) m.danger_abilities = [];
+        if (!m.custom_abilities) m.custom_abilities = [];
+        if (!m.notes) m.notes = "";
 
-        // 3. Handle "Clone" logic for official monsters
         if (monsterData.source === 'official') {
-            MonsterBuilder.currentMonster.id = null;
-            MonsterBuilder.currentMonster.name = `${monsterData.name} (Copy)`;
+            m.id = null;
+            m.name = `${monsterData.name} (Copy)`;
+            m.imageId = null;
+            m.imgPos = { x: 0, y: 0, scale: 1.0 };
         }
-
-        // 4. Update DOM Inputs (if the DOM is ready)
-        // We check for an element to see if the view is active.
+        
         const nameInput = document.getElementById('mb-name');
         if (nameInput) {
-            const m = MonsterBuilder.currentMonster;
-            
-            document.getElementById('mb-name').value = m.name;
-            document.getElementById('mb-role').value = m.role.toLowerCase();
-            document.getElementById('mb-level').value = m.level;
-            document.getElementById('mb-family').value = m.family;
-            
-            document.getElementById('mb-hp').value = m.stats.hp;
-            document.getElementById('mb-as').value = m.stats.as;
-            document.getElementById('mb-speed').value = m.stats.speed;
-            document.getElementById('mb-atk').value = m.stats.atk;
-            document.getElementById('mb-def').value = m.stats.def;
-            document.getElementById('mb-save').value = m.stats.save;
-            document.getElementById('mb-dmg').value = m.stats.dmg;
-            document.getElementById('mb-notes').value = m.notes;
-
-            // Render Pickers
+            MonsterBuilder.syncDOMFromState();
             MonsterBuilder.renderAbilityPickers(m.family);
-            MonsterBuilder.syncCheckboxes(); // New helper
+            MonsterBuilder.syncCheckboxes();
             MonsterBuilder.renderCard();
         }
-        
-        console.log(`Loaded ${MonsterBuilder.currentMonster.name}`);
     },
 
     renderInterface: (container) => {
         const data = I18n.getData('monsters');
-        if (!data) return container.innerHTML = "Error loading monster data.";
-
         const roles = Object.keys(data.chassis);
         const families = Object.keys(data.families);
 
         const html = `
             <div class="architect-layout">
-                <!-- LEFT: THE LAB -->
                 <div class="architect-controls">
                     <div class="form-group">
                         <label class="form-label">Name</label>
                         <input type="text" id="mb-name" value="${MonsterBuilder.currentMonster.name}">
                     </div>
-
+                    <div class="form-group" style="background:rgba(0,0,0,0.2); padding:10px; border:1px dashed #444;">
+                        <label class="form-label" style="font-size:0.8rem;">Portrait</label>
+                        <div style="display:flex; gap:5px; margin-bottom:10px;">
+                            <input type="text" id="mb-img-url" placeholder="Image URL..." style="flex:1; font-size:0.8rem;">
+                            <button id="btn-upload-img" class="btn-small">📁 Upload</button>
+                            <input type="file" id="mb-file-input" style="display:none" accept="image/*">
+                        </div>
+                        <div id="img-controls" style="display:flex; gap:10px; align-items:center;">
+                            <div style="flex:1;">
+                                <label style="font-size:0.7rem; color:#aaa;">Zoom</label>
+                                <input type="range" id="inp-img-scale" min="0.1" max="3.0" step="0.1" value="1" style="width:100%;">
+                            </div>
+                            <div style="flex:1;">
+                                <label style="font-size:0.7rem; color:#aaa;">Pan X</label>
+                                <input type="range" id="inp-img-x" min="-200" max="200" step="10" value="0" style="width:100%;">
+                            </div>
+                            <div style="flex:1;">
+                                <label style="font-size:0.7rem; color:#aaa;">Pan Y</label>
+                                <input type="range" id="inp-img-y" min="-200" max="200" step="10" value="0" style="width:100%;">
+                            </div>
+                            <button id="btn-reset-img" class="btn-small" style="height:30px; margin-top:12px;">Reset</button>
+                        </div>
+                    </div>
                     <div class="split-view" style="gap:10px; margin-bottom:1rem;">
                         <div>
                             <label class="form-label">Role</label>
@@ -121,9 +203,8 @@ export const MonsterBuilder = {
                             </select>
                         </div>
                     </div>
-
                     <div class="info-box" style="margin-bottom:1rem;">
-                        <h4 style="margin-top:0; color:var(--accent-blue); font-size:0.9rem; text-transform:uppercase;">Base Stats (Editable)</h4>
+                        <h4 style="margin-top:0; color:var(--accent-blue); font-size:0.9rem; text-transform:uppercase;">Chassis Stats</h4>
                         <div class="stat-grid" style="grid-template-columns: repeat(3, 1fr); gap:10px;">
                             <div class="stat-input"><label>HP</label><input type="number" id="mb-hp"></div>
                             <div class="stat-input"><label>AS</label><input type="number" id="mb-as"></div>
@@ -137,40 +218,36 @@ export const MonsterBuilder = {
                             <input type="text" id="mb-dmg">
                         </div>
                     </div>
-
                     <div id="ability-section"></div>
-
                     <div class="custom-builder">
-                        <h4 style="margin-top:0; color:var(--accent-gold); font-size:0.9rem; text-transform:uppercase;">Forge Ability</h4>
+                        <h4 style="margin-top:0; color:var(--accent-gold); font-size:0.9rem; text-transform:uppercase;">Add Custom Ability</h4>
                         <div class="custom-row">
                             <input type="text" id="cust-name" placeholder="Ability Name" style="flex:2;">
                             <select id="cust-type" style="flex:1;">
-                                <option value="trait">Trait/Passive</option>
-                                <option value="action">Action</option>
-                                <option value="danger">Danger Ability</option>
+                                <option value="Action">Action</option>
+                                <option value="Trait">Trait</option>
+                                <option value="Reaction">Reaction</option>
+                                <option value="Danger">Danger (DP)</option>
                             </select>
+                        </div>
+                        <div class="custom-row" id="cust-cost-row" style="display:none;">
+                            <input type="text" id="cust-cost" placeholder="Cost (e.g. 1 DP)" value="1 DP">
                         </div>
                         <div class="custom-row">
                             <textarea id="cust-effect" rows="2" placeholder="Effect description..." style="width:100%; background:#111; color:#eee; border:1px solid #444; padding:5px;"></textarea>
                         </div>
-                         <div class="custom-row" id="cust-cost-row" style="display:none;">
-                            <input type="text" id="cust-cost" placeholder="Cost (e.g. 1 DP)" value="1 DP">
-                        </div>
-                        <button id="btn-add-custom" class="btn-add">+ Add Custom Ability</button>
+                        <button id="btn-add-custom" class="btn-add">+ Add to Stat Block</button>
                     </div>
-
                     <div class="form-group" style="margin-top:1rem;">
-                        <label class="form-label">Notes</label>
+                        <label class="form-label">GM Notes / Loot</label>
                         <textarea id="mb-notes" rows="3" style="width:100%; background:var(--bg-input); color:#eee; border:1px solid #333; padding:5px;"></textarea>
                     </div>
                 </div>
-
-                <!-- RIGHT: THE PREVIEW -->
                 <div class="architect-preview">
-                    <div id="monster-card-display" class="monster-card"></div>
+                    <div id="monster-card-display"></div>
                     <div style="margin-top:1rem; display:flex; gap:10px;">
                         <button id="btn-print-monster" class="btn-secondary">🖨️ Print</button>
-                        <button id="btn-save-monster" class="btn-primary">💾 Save</button>
+                        <button id="btn-save-monster" class="btn-primary">💾 Save to Library</button>
                     </div>
                 </div>
             </div>
@@ -178,100 +255,166 @@ export const MonsterBuilder = {
 
         container.innerHTML = html;
         MonsterBuilder.attachListeners();
-        
-        // If state is loaded, populate values
-        if(MonsterBuilder.currentMonster.id || MonsterBuilder.currentMonster.role) {
-             // We trigger a UI update based on current state without recalculating defaults
-             // This is tricky, so we manually set values
-             const m = MonsterBuilder.currentMonster;
-             document.getElementById('mb-role').value = m.role.toLowerCase();
-             document.getElementById('mb-level').value = m.level;
-             document.getElementById('mb-family').value = m.family;
-             
-             // Manually call renderAbilityPickers to ensure DOM exists
-             MonsterBuilder.renderAbilityPickers(m.family);
-             
-             // Now sync stats to inputs
-             document.getElementById('mb-hp').value = m.stats.hp;
-             document.getElementById('mb-as').value = m.stats.as;
-             document.getElementById('mb-speed').value = m.stats.speed;
-             document.getElementById('mb-atk').value = m.stats.atk;
-             document.getElementById('mb-def').value = m.stats.def;
-             document.getElementById('mb-save').value = m.stats.save;
-             document.getElementById('mb-dmg').value = m.stats.dmg;
-             document.getElementById('mb-notes').value = m.notes;
-             
-             MonsterBuilder.syncCheckboxes();
-             MonsterBuilder.renderCard();
-        }
+        MonsterBuilder.syncDOMFromState();
     },
 
     attachListeners: () => {
         ['mb-role', 'mb-level', 'mb-family'].forEach(id => {
-            document.getElementById(id).addEventListener('change', MonsterBuilder.updateCalculation);
+            const el = document.getElementById(id);
+            if(el) el.addEventListener('change', MonsterBuilder.updateCalculation);
         });
-        ['mb-hp', 'mb-as', 'mb-speed', 'mb-atk', 'mb-def', 'mb-save', 'mb-dmg'].forEach(id => {
-            document.getElementById(id).addEventListener('input', MonsterBuilder.syncManualStats);
+
+        const statIds = ['mb-hp', 'mb-as', 'mb-speed', 'mb-atk', 'mb-def', 'mb-save', 'mb-dmg'];
+        statIds.forEach(id => {
+            const el = document.getElementById(id);
+            if(el) el.addEventListener('input', () => {
+                const key = id.replace('mb-', '');
+                MonsterBuilder.currentMonster.stats[key] = el.value;
+                MonsterBuilder.renderCard();
+            });
         });
+
         document.getElementById('mb-name').addEventListener('input', (e) => {
             MonsterBuilder.currentMonster.name = e.target.value;
             MonsterBuilder.renderCard();
         });
-        document.getElementById('cust-type').addEventListener('change', (e) => {
-            document.getElementById('cust-cost-row').style.display = e.target.value === 'danger' ? 'flex' : 'none';
-        });
-        document.getElementById('btn-add-custom').addEventListener('click', MonsterBuilder.addCustomAbility);
         document.getElementById('mb-notes').addEventListener('input', (e) => {
             MonsterBuilder.currentMonster.notes = e.target.value;
             MonsterBuilder.renderCard();
         });
+
+        // Image Handling
+        const urlInput = document.getElementById('mb-img-url');
+        const fileInput = document.getElementById('mb-file-input');
+        const uploadBtn = document.getElementById('btn-upload-img');
+        const sScale = document.getElementById('inp-img-scale');
+        const sX = document.getElementById('inp-img-x');
+        const sY = document.getElementById('inp-img-y');
+        const btnReset = document.getElementById('btn-reset-img');
+
+        const updateImgState = () => {
+            const m = MonsterBuilder.currentMonster;
+            m.imgPos.scale = parseFloat(sScale.value);
+            m.imgPos.x = parseInt(sX.value);
+            m.imgPos.y = parseInt(sY.value);
+            MonsterBuilder.applyImageTransform(); 
+        };
+
+        sScale.addEventListener('input', updateImgState);
+        sX.addEventListener('input', updateImgState);
+        sY.addEventListener('input', updateImgState);
+
+        btnReset.addEventListener('click', () => {
+            MonsterBuilder.currentMonster.imgPos = { x: 0, y: 0, scale: 1.0 };
+            MonsterBuilder.syncDOMFromState();
+            MonsterBuilder.applyImageTransform();
+        });
+
+        urlInput.addEventListener('change', (e) => {
+            MonsterBuilder.currentMonster.imageUrl = e.target.value;
+            MonsterBuilder.currentMonster.imageId = null;
+            MonsterBuilder.renderCard(); 
+        });
+
+        uploadBtn.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', async (e) => {
+            if (e.target.files && e.target.files[0]) {
+                try {
+                    const id = await ImageStore.saveImage(e.target.files[0]);
+                    MonsterBuilder.currentMonster.imageId = id;
+                    MonsterBuilder.currentMonster.imageUrl = null;
+                    urlInput.value = "[Uploaded Image]";
+                    MonsterBuilder.renderCard();
+                } catch (err) {
+                    console.error("Image Save Error", err);
+                    alert("Failed to save image.");
+                }
+            }
+        });
+
+        document.getElementById('cust-type').addEventListener('change', (e) => {
+            const isDanger = e.target.value === 'Danger';
+            document.getElementById('cust-cost-row').style.display = isDanger ? 'flex' : 'none';
+        });
+        document.getElementById('btn-add-custom').addEventListener('click', MonsterBuilder.addCustomAbility);
         document.getElementById('btn-save-monster').addEventListener('click', MonsterBuilder.save);
         document.getElementById('btn-print-monster').addEventListener('click', () => window.print());
     },
 
+    syncDOMFromState: () => {
+        const m = MonsterBuilder.currentMonster;
+        const set = (id, val) => { const el = document.getElementById(id); if(el) el.value = val; };
+
+        set('mb-name', m.name);
+        set('mb-role', m.role.toLowerCase());
+        set('mb-level', m.level);
+        set('mb-family', m.family);
+        set('mb-hp', m.stats.hp);
+        set('mb-as', m.stats.as);
+        set('mb-speed', m.stats.speed);
+        set('mb-atk', m.stats.atk);
+        set('mb-def', m.stats.def);
+        set('mb-save', m.stats.save);
+        set('mb-dmg', m.stats.dmg);
+        set('mb-notes', m.notes);
+
+        if (m.imageUrl) set('mb-img-url', m.imageUrl);
+        else if (m.imageId) set('mb-img-url', "[Uploaded Image]");
+
+        if(m.imgPos) {
+            set('inp-img-scale', m.imgPos.scale);
+            set('inp-img-x', m.imgPos.x);
+            set('inp-img-y', m.imgPos.y);
+        }
+    },
+
+    applyImageTransform: () => {
+        const img = document.querySelector('.sb-image-container img');
+        const m = MonsterBuilder.currentMonster;
+        if(img && m.imgPos) {
+            img.style.transform = `translate(${m.imgPos.x}px, ${m.imgPos.y}px) scale(${m.imgPos.scale})`;
+        }
+    },
+
     updateCalculation: () => {
         const data = I18n.getData('monsters');
-        const role = document.getElementById('mb-role').value;
-        const level = parseInt(document.getElementById('mb-level').value);
-        const familyKey = document.getElementById('mb-family').value;
+        const roleEl = document.getElementById('mb-role');
+        const levelEl = document.getElementById('mb-level');
+        const familyEl = document.getElementById('mb-family');
+
+        if(!roleEl || !levelEl || !familyEl) return;
+
+        const role = roleEl.value;
+        const level = parseInt(levelEl.value);
+        const familyKey = familyEl.value;
         
         const chassis = data.chassis[role].find(c => c.lvl === level);
         
-        document.getElementById('mb-hp').value = chassis.hp;
-        document.getElementById('mb-as').value = chassis.as;
-        document.getElementById('mb-speed').value = chassis.speed;
-        document.getElementById('mb-atk').value = chassis.atk_dc;
-        document.getElementById('mb-def').value = chassis.def_dc;
-        document.getElementById('mb-save').value = chassis.save_dc;
-        document.getElementById('mb-dmg').value = chassis.dmg;
-
         const m = MonsterBuilder.currentMonster;
         m.role = role;
         m.level = level;
         m.family = familyKey;
         
-        MonsterBuilder.syncManualStats();
-        MonsterBuilder.renderAbilityPickers(familyKey);
-    },
+        m.stats.hp = chassis.hp;
+        m.stats.as = chassis.as;
+        m.stats.speed = chassis.speed;
+        m.stats.atk = chassis.atk_dc;
+        m.stats.def = chassis.def_dc;
+        m.stats.save = chassis.save_dc;
+        m.stats.dmg = chassis.dmg;
 
-    syncManualStats: () => {
-        const m = MonsterBuilder.currentMonster;
-        m.stats.hp = document.getElementById('mb-hp').value;
-        m.stats.as = document.getElementById('mb-as').value;
-        m.stats.speed = document.getElementById('mb-speed').value;
-        m.stats.atk = document.getElementById('mb-atk').value;
-        m.stats.def = document.getElementById('mb-def').value;
-        m.stats.save = document.getElementById('mb-save').value;
-        m.stats.dmg = document.getElementById('mb-dmg').value;
-        MonsterBuilder.renderCard();
+        MonsterBuilder.syncDOMFromState();
+        MonsterBuilder.renderAbilityPickers(familyKey);
     },
 
     renderAbilityPickers: (familyKey) => {
         const data = I18n.getData('monsters');
         const fam = data.families[familyKey];
         const container = document.getElementById('ability-section');
-        
-        // Clear standard arrays on re-render (Customs persist)
+        if(!container) return;
+
+        // Reset arrays, keep customs
         const m = MonsterBuilder.currentMonster;
         m.traits = [];
         m.actions = [];
@@ -280,6 +423,7 @@ export const MonsterBuilder = {
         const createAccordion = (title, items, typeKey, isOpen) => {
             if (!items || items.length === 0) return '';
             const badgeId = `badge-${typeKey}`;
+            
             let html = `
                 <details class="arch-accordion" ${isOpen ? 'open' : ''}>
                     <summary class="arch-summary">${title} <span id="${badgeId}" class="count-badge">0</span></summary>
@@ -287,13 +431,13 @@ export const MonsterBuilder = {
             `;
             items.forEach((item, idx) => {
                 const cid = `chk-${typeKey}-${idx}`;
-                // Universal traits default to Checked
                 const isChecked = (typeKey === 'traits'); 
+                
                 html += `
                     <div class="picker-item">
                         <input type="checkbox" id="${cid}" data-type="${typeKey}" data-idx="${idx}" ${isChecked ? 'checked' : ''}>
                         <div class="picker-content">
-                            <div class="picker-name">${item.name} ${item.cost ? `(${item.cost})` : ''}</div>
+                            <div class="picker-name">${item.name} <span style="font-weight:normal; font-size:0.8em; color:#888;">${item.type || ""}</span></div>
                             <div class="picker-desc">${item.effect}</div>
                         </div>
                     </div>
@@ -318,21 +462,17 @@ export const MonsterBuilder = {
         MonsterBuilder.scanSelections();
     },
 
-    // Syncs the visual checkboxes with the loaded data in currentMonster
     syncCheckboxes: () => {
         const m = MonsterBuilder.currentMonster;
-        // Flatten current selections for searching
         const allSel = [...m.traits, ...m.actions, ...m.danger_abilities];
 
         document.querySelectorAll('.arch-content input[type="checkbox"]').forEach(chk => {
             const nameEl = chk.nextElementSibling.querySelector('.picker-name');
             if (!nameEl) return;
-            const name = nameEl.textContent.split(' (')[0].trim();
-            
-            const match = allSel.some(s => s.name === name);
+            const name = nameEl.textContent.split(' (')[0].trim(); 
+            const match = allSel.some(s => s.name.includes(name)); 
             chk.checked = match;
         });
-        // Re-scan to update badges and internal arrays
         MonsterBuilder.scanSelections();
     },
 
@@ -341,137 +481,121 @@ export const MonsterBuilder = {
         const data = I18n.getData('monsters');
         const fam = data.families[m.family];
 
-        m.traits = [];
-        m.actions = [];
-        m.danger_abilities = [];
-
+        m.traits = []; m.actions = []; m.danger_abilities = [];
         const counts = { traits: 0, passives: 0, actions: 0, danger: 0 };
 
         document.querySelectorAll('.arch-content input:checked').forEach(chk => {
             const type = chk.dataset.type;
             const idx = parseInt(chk.dataset.idx);
             counts[type]++;
-
             if (type === 'traits') m.traits.push(fam.universal_traits[idx]);
-            if (type === 'passives') m.traits.push(fam.passives[idx]); 
-            if (type === 'actions') m.actions.push(fam.actions[idx]);
-            if (type === 'danger') m.danger_abilities.push(fam.danger_abilities[idx]);
+            if (type === 'passives') m.traits.push({ ...fam.passives[idx], type: "Trait" }); 
+            if (type === 'actions') m.actions.push({ ...fam.actions[idx], type: "Action" });
+            if (type === 'danger') m.danger_abilities.push({ ...fam.danger_abilities[idx], type: "Danger" });
         });
 
         for (const [key, val] of Object.entries(counts)) {
             const badge = document.getElementById(`badge-${key}`);
-            if(badge) {
-                badge.textContent = val;
-                badge.classList.toggle('active', val > 0);
-            }
+            if(badge) { badge.textContent = val; badge.classList.toggle('active', val > 0); }
         }
         MonsterBuilder.renderCard();
     },
 
     addCustomAbility: () => {
-        const nameEl = document.getElementById('cust-name');
-        const typeEl = document.getElementById('cust-type');
-        const effEl = document.getElementById('cust-effect');
-        const costEl = document.getElementById('cust-cost');
-
-        const name = nameEl.value.trim();
-        const effect = effEl.value.trim();
+        const name = document.getElementById('cust-name').value.trim();
+        const effect = document.getElementById('cust-effect').value.trim();
+        const type = document.getElementById('cust-type').value;
+        const cost = document.getElementById('cust-cost').value;
+        
         if (!name || !effect) return alert("Name and Effect required.");
 
-        const newAb = {
-            id: Date.now(),
-            name: name,
-            type: typeEl.value,
-            effect: effect,
-            cost: (typeEl.value === 'danger') ? costEl.value : null
-        };
-
-        MonsterBuilder.currentMonster.custom_abilities.push(newAb);
-        nameEl.value = "";
-        effEl.value = "";
+        MonsterBuilder.currentMonster.custom_abilities.push({
+            id: Date.now(), name, type, effect,
+            cost: (type === 'Danger') ? cost : null
+        });
+        
+        document.getElementById('cust-name').value = "";
+        document.getElementById('cust-effect').value = "";
         MonsterBuilder.renderCard();
     },
 
     removeCustomAbility: (id) => {
-        const m = MonsterBuilder.currentMonster;
-        m.custom_abilities = m.custom_abilities.filter(a => a.id !== id);
+        MonsterBuilder.currentMonster.custom_abilities = MonsterBuilder.currentMonster.custom_abilities.filter(a => a.id !== id);
         MonsterBuilder.renderCard();
     },
 
-    renderCard: () => {
+    renderCard: async () => {
         const m = MonsterBuilder.currentMonster;
-        const card = document.getElementById('monster-card-display');
-        if (!card) return;
-        
-        const roleCap = m.role.charAt(0).toUpperCase() + m.role.slice(1);
-        
-        // Safely merge arrays (Ensuring they exist)
-        const displayTraits = [...(m.traits || [])];
-        const displayActions = [...(m.actions || [])];
-        const displayDanger = [...(m.danger_abilities || [])];
+        const container = document.getElementById('monster-card-display');
+        if (!container) return;
 
-        // Add Customs
-        if (m.custom_abilities) {
-            m.custom_abilities.forEach(c => {
-                if (c.type === 'trait') displayTraits.push(c);
-                if (c.type === 'action') displayActions.push(c);
-                if (c.type === 'danger') displayDanger.push(c);
+        // Resolve Image
+        let src = m.imageUrl;
+        if (m.imageId) src = await ImageStore.getUrl(m.imageId);
+
+        // Generate HTML using Shared Renderer
+        container.innerHTML = MonsterRenderer.getHTML(m, src);
+
+        // Bind Custom Delete Buttons
+        container.querySelectorAll('.del-custom').forEach(btn => {
+            btn.addEventListener('click', (e) => MonsterBuilder.removeCustomAbility(parseInt(e.target.dataset.id)));
+        });
+
+        // --- BIND IMAGE DRAG INTERACTIONS ---
+        const imgBox = container.querySelector('.sb-image-container');
+        if (imgBox) {
+            imgBox.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                MonsterBuilder.dragState.isDragging = true;
+                MonsterBuilder.dragState.startX = e.clientX;
+                MonsterBuilder.dragState.startY = e.clientY;
+                MonsterBuilder.dragState.initialImgX = m.imgPos.x;
+                MonsterBuilder.dragState.initialImgY = m.imgPos.y;
+                imgBox.style.cursor = 'grabbing';
+            });
+
+            window.addEventListener('mouseup', () => {
+                if (MonsterBuilder.dragState.isDragging) {
+                    MonsterBuilder.dragState.isDragging = false;
+                    imgBox.style.cursor = 'grab';
+                    MonsterBuilder.syncDOMFromState();
+                }
+            });
+
+            window.addEventListener('mousemove', (e) => {
+                if (!MonsterBuilder.dragState.isDragging) return;
+                const dx = e.clientX - MonsterBuilder.dragState.startX;
+                const dy = e.clientY - MonsterBuilder.dragState.startY;
+                m.imgPos.x = MonsterBuilder.dragState.initialImgX + dx;
+                m.imgPos.y = MonsterBuilder.dragState.initialImgY + dy;
+                MonsterBuilder.applyImageTransform();
+            });
+
+            imgBox.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                const delta = e.deltaY > 0 ? -0.1 : 0.1;
+                let newScale = m.imgPos.scale + delta;
+                if (newScale < 0.1) newScale = 0.1;
+                if (newScale > 3.0) newScale = 3.0;
+                m.imgPos.scale = parseFloat(newScale.toFixed(1));
+                MonsterBuilder.applyImageTransform();
+                MonsterBuilder.syncDOMFromState();
             });
         }
-
-        const renderRow = (item, isDanger) => {
-             const delBtn = item.id ? `<span class="del-custom" data-id="${item.id}" style="cursor:pointer; color:red; margin-left:5px;">[×]</span>` : '';
-             const cost = item.cost ? `(${item.cost})` : '';
-             return `<div class="mc-ability ${isDanger ? 'mc-danger' : ''}">
-                <span class="mc-ability-name">${item.name} ${cost}:</span> ${item.effect} ${delBtn}
-             </div>`;
-        };
-
-        const html = `
-            <div class="mc-header">
-                <div class="mc-name">${m.name}</div>
-                <div class="mc-meta">Lvl ${m.level} ${roleCap}</div>
-            </div>
-            <div class="mc-stats-grid">
-                <div class="mc-stat"><div class="mc-stat-label">HP</div><div class="mc-stat-val" style="color:#8a2c2c;">${m.stats.hp}</div></div>
-                <div class="mc-stat"><div class="mc-stat-label">Armor</div><div class="mc-stat-val">${m.stats.as}</div></div>
-                <div class="mc-stat"><div class="mc-stat-label">Atk DC</div><div class="mc-stat-val">${m.stats.atk}</div></div>
-                <div class="mc-stat"><div class="mc-stat-label">Def DC</div><div class="mc-stat-val">${m.stats.def}</div></div>
-            </div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:10px; border-bottom:1px solid #aaa; font-size:0.9rem;">
-                <span><strong>Speed:</strong> ${m.stats.speed} ft</span>
-                <span><strong>Save DC:</strong> ${m.stats.save}</span>
-            </div>
-            <div class="mc-section">
-                <div class="mc-section-title">Standard Attack</div>
-                <div class="mc-ability"><strong>Damage:</strong> ${m.stats.dmg}</div>
-            </div>
-            ${displayTraits.length ? `<div class="mc-section"><div class="mc-section-title">Traits</div>${displayTraits.map(t=>renderRow(t)).join('')}</div>` : ''}
-            ${displayActions.length ? `<div class="mc-section"><div class="mc-section-title">Actions</div>${displayActions.map(a=>renderRow(a)).join('')}</div>` : ''}
-            ${displayDanger.length ? `<div class="mc-section"><div class="mc-section-title" style="color:#8a2c2c;">Danger Abilities</div>${displayDanger.map(d=>renderRow(d,true)).join('')}</div>` : ''}
-            ${m.notes ? `<div class="mc-section" style="border-top:1px dashed #aaa; margin-top:10px; font-style:italic;">${m.notes}</div>` : ''}
-        `;
-
-        card.innerHTML = html;
-        
-        card.querySelectorAll('.del-custom').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                MonsterBuilder.removeCustomAbility(parseInt(e.target.dataset.id));
-            });
-        });
     },
 
     save: () => {
         const m = MonsterBuilder.currentMonster;
-        const saved = Storage.getLibrary('grim_monsters') || [];
+        if (!m.name) return alert("Monster needs a name.");
         if (!m.id) m.id = 'mon_' + Date.now();
+        m.source = 'custom';
+
+        const lib = Storage.getLibrary('grim_monsters');
+        const idx = lib.findIndex(x => x.id === m.id);
+        if (idx > -1) lib[idx] = m;
+        else lib.push(m);
         
-        const idx = saved.findIndex(x => x.id === m.id);
-        if (idx > -1) saved[idx] = m;
-        else saved.push(m);
-        
-        localStorage.setItem('grim_monsters', JSON.stringify(saved));
+        localStorage.setItem('grim_monsters', JSON.stringify(lib));
         alert(`Saved ${m.name} to Library.`);
     }
 };

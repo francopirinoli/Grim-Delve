@@ -58,6 +58,37 @@ export const CharGen = {
     },
 
     /**
+     * PHASE 5.3: PLAY MODE ENTRY
+     * Loads the character specifically for the table-ready view.
+     */
+    initPlayMode: (charData) => {
+        // 1. Load Data
+        CharGen.char = JSON.parse(JSON.stringify(charData));
+        
+        // 2. toggle CSS State
+        document.body.classList.add('mode-play');
+        
+        // 3. Render
+        CharGen.renderPlayInterface();
+    },
+
+    /**
+     * CLEANUP & EXIT
+     */
+    exitPlayMode: () => {
+        // 1. Auto-Save
+        const { Storage } =  import('../utils/storage.js').then(m => m.Storage.saveCharacter(CharGen.char));
+        
+        // 2. Remove CSS State
+        document.body.classList.remove('mode-play');
+        
+        // 3. Return to Library
+        // We trigger a click on the nav button to handle the router logic properly
+        const libBtn = document.querySelector('[data-module="library"]');
+        if(libBtn) libBtn.click();
+    },
+
+    /**
      * Reset character state to defaults
      */
     resetChar: () => {
@@ -124,6 +155,56 @@ export const CharGen = {
 
         // Initial Render of Step 1
         CharGen.renderStep();
+    },
+
+    /**
+     * Renders the simplified "Table View" without wizard steps.
+     */
+    renderPlayInterface: () => {
+        // 1. Clear Container
+        CharGen.container.innerHTML = '';
+        
+        // 2. Create Sheet Container (Centered by CSS)
+        const sheetContainer = document.createElement('div');
+        sheetContainer.id = 'play-sheet-root';
+        sheetContainer.className = 'sheet-page'; // Re-use styling
+        CharGen.container.appendChild(sheetContainer);
+
+        // 3. Render the Sheet Logic (Step 5) directly
+        // We pass the new container so renderSheet fills it
+        CharGen.renderSheet(sheetContainer);
+
+        // 4. Add the Floating Toolbar
+        CharGen.renderPlayToolbar();
+    },
+
+    renderPlayToolbar: () => {
+        const toolbar = document.createElement('div');
+        toolbar.className = 'play-toolbar';
+        
+        // Save Button
+        const btnSave = document.createElement('button');
+        btnSave.className = 'play-btn save';
+        btnSave.innerHTML = `<span>💾</span> Save`;
+        btnSave.onclick = () => {
+            import('../utils/storage.js').then(m => {
+                m.Storage.saveCharacter(CharGen.char);
+                // Visual Feedback
+                btnSave.innerHTML = `<span>✅</span> Saved`;
+                setTimeout(() => btnSave.innerHTML = `<span>💾</span> Save`, 1000);
+            });
+        };
+
+        // Exit Button
+        const btnExit = document.createElement('button');
+        btnExit.className = 'play-btn exit';
+        btnExit.innerHTML = `<span>❌</span> Exit`;
+        btnExit.onclick = CharGen.exitPlayMode;
+
+        toolbar.appendChild(btnSave);
+        toolbar.appendChild(btnExit);
+        
+        document.body.appendChild(toolbar);
     },
 
     /**
@@ -2581,28 +2662,71 @@ renderSheet: async (el) => {
         </tr>`;
     },
 
+    /**
+     * Attaches listeners to the interactive elements of the Character Sheet.
+     * Robust checks ensure this works in both Wizard and Play modes.
+     */
     _attachSheetListeners: () => {
-        // Safe binding helper
-        const bind = (id, key) => {
+        // 1. Live Resource Tracking (HP, MP, STA, Luck, XP)
+        const bindInput = (id, key) => {
             const el = document.getElementById(id);
-            if(el) el.addEventListener('change', (e) => CharGen.char.current[key] = parseInt(e.target.value));
+            if (el) {
+                // Remove old listeners to prevent duplicates if re-rendered
+                const newEl = el.cloneNode(true);
+                el.parentNode.replaceChild(newEl, el);
+                
+                newEl.addEventListener('change', (e) => {
+                    const val = parseInt(e.target.value) || 0;
+                    CharGen.char.current[key] = val;
+                    console.log(`Updated ${key} to ${val}`);
+                });
+            }
         };
-        bind('inp-hp', 'hp'); bind('inp-mp', 'mp'); bind('inp-sta', 'sta'); bind('inp-luck', 'luck'); bind('inp-xp', 'xp');
 
-        const notes = document.getElementById('inp-notes');
-        if(notes) notes.addEventListener('change', (e) => CharGen.char.notes = e.target.value);
+        bindInput('inp-hp', 'hp');
+        bindInput('inp-mp', 'mp');
+        bindInput('inp-sta', 'sta');
+        bindInput('inp-luck', 'luck');
+        bindInput('inp-xp', 'xp');
 
-        // Buttons (Check existence first)
+        // 2. Notes Field
+        const notesEl = document.getElementById('inp-notes');
+        if (notesEl) {
+            // Clone to clear old listeners
+            const newNotes = notesEl.cloneNode(true);
+            notesEl.parentNode.replaceChild(newNotes, notesEl);
+            
+            newNotes.addEventListener('input', (e) => {
+                CharGen.char.notes = e.target.value;
+            });
+            // Restore cursor position if needed? Input event usually keeps focus. 
+            // Actually, simpler logic is just setting on change to avoid lag.
+            newNotes.addEventListener('change', (e) => {
+                 CharGen.char.notes = e.target.value;
+            });
+        }
+
+        // 3. Action Buttons (Wizard Mode Only)
+        // These might be hidden via CSS in Play Mode, but we attach safely anyway.
+        
         const btnSave = document.getElementById('btn-save-lib');
-        if (btnSave) btnSave.onclick = CharGen.saveCharacter;
+        if (btnSave) {
+            btnSave.onclick = CharGen.saveCharacter;
+        }
 
         const btnPrint = document.getElementById('btn-print-pdf');
-        if (btnPrint) btnPrint.onclick = () => window.print();
+        if (btnPrint) {
+            btnPrint.onclick = () => window.print();
+        }
         
         const btnLvl = document.getElementById('btn-levelup');
-        if(btnLvl) {
-            if(CharGen.char.level >= 10) { btnLvl.disabled=true; btnLvl.textContent = "Max Level"; }
-            else btnLvl.onclick = CharGen.initLevelUp;
+        if (btnLvl) {
+            if (CharGen.char.level >= 10) { 
+                btnLvl.disabled = true; 
+                btnLvl.textContent = "Max Level"; 
+            } else {
+                btnLvl.onclick = CharGen.initLevelUp;
+            }
         }
     },
 

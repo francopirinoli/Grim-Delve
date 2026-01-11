@@ -27,6 +27,41 @@ document.addEventListener("DOMContentLoaded", async () => {
     } else {
         loadModule('home');
     }
+     // Backup & Restore
+    const btnBackup = document.getElementById('btn-backup');
+    const btnRestore = document.getElementById('btn-restore');
+    const fileRestore = document.getElementById('file-restore');
+
+    if (btnBackup) {
+        btnBackup.addEventListener('click', async () => {
+            const { Storage } = await import('./utils/storage.js');
+            Storage.backupAll();
+        });
+    }
+
+    if (btnRestore && fileRestore) {
+        btnRestore.addEventListener('click', () => fileRestore.click());
+        
+        fileRestore.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const { Storage } = await import('./utils/storage.js');
+            
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                try {
+                    const json = JSON.parse(ev.target.result);
+                    if (Storage.restoreBackup(json)) {
+                        alert("Restoration Complete. Reloading...");
+                        location.reload();
+                    }
+                } catch (err) {
+                    alert("Invalid Backup File.");
+                }
+            };
+            reader.readAsText(file);
+        });
+    }
 });
 
 /**

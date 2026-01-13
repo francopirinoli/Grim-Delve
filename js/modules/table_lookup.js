@@ -11,9 +11,10 @@ export const TableLookup = {
         
         // Load Table Data if not already loaded
         const data = I18n.getData('tables');
+        const t = I18n.t;
         
         if (!data) {
-            container.innerHTML = `<p style="padding:2rem; text-align:center;">Error: Table data not loaded.</p>`;
+            container.innerHTML = `<p style="padding:2rem; text-align:center;">${t('lbl_loading')}</p>`;
             return;
         }
 
@@ -21,11 +22,12 @@ export const TableLookup = {
     },
 
     renderLayout: (data) => {
+        const t = I18n.t;
         // Group by Category
         const categories = {};
-        data.tables.forEach(t => {
-            if (!categories[t.category]) categories[t.category] = [];
-            categories[t.category].push(t);
+        data.tables.forEach(table => {
+            if (!categories[table.category]) categories[table.category] = [];
+            categories[table.category].push(table);
         });
 
         const html = `
@@ -33,7 +35,7 @@ export const TableLookup = {
                 <!-- Sidebar -->
                 <div class="table-sidebar">
                     <div class="table-search">
-                        <input type="text" id="table-search-input" placeholder="Search Tables...">
+                        <input type="text" id="table-search-input" placeholder="${t('lib_search')}">
                     </div>
                     <div class="table-list" id="table-list">
                         ${TableLookup.renderSidebarList(categories)}
@@ -81,21 +83,25 @@ export const TableLookup = {
 
     loadTable: (tableId) => {
         const data = I18n.getData('tables');
-        const table = data.tables.find(t => t.id === tableId);
+        const t = I18n.t;
+        const table = data.tables.find(tbl => tbl.id === tableId);
         const view = document.getElementById('table-view');
 
         if (!table) return;
+
+        // Localized Roll Button Text
+        const rollBtnText = t('tbl_btn_roll').replace('{dice}', table.dice);
 
         let html = `
             <div class="active-table-header">
                 <h3>${table.title}</h3>
                 <button id="btn-roll-table" class="roll-table-btn">
-                    🎲 Roll ${table.dice}
+                    🎲 ${rollBtnText}
                 </button>
             </div>
             <div class="table-scroll">
                 <table class="data-table" id="active-table-el">
-                    <thead><tr><th width="80px">Roll</th><th>Result</th></tr></thead>
+                    <thead><tr><th width="80px">${t('tbl_roll')}</th><th>${t('tbl_result')}</th></tr></thead>
                     <tbody>
                         ${table.rows.map(row => `
                             <tr data-roll="${row.roll}">
@@ -117,7 +123,7 @@ export const TableLookup = {
 
     rollOnTable: (tableId) => {
         const data = I18n.getData('tables');
-        const table = data.tables.find(t => t.id === tableId);
+        const table = data.tables.find(tbl => tbl.id === tableId);
         const result = Dice.roll(table.dice).total;
 
         // Highlight Row
@@ -125,8 +131,18 @@ export const TableLookup = {
         rows.forEach(r => r.classList.remove('highlight'));
 
         for (const tr of rows) {
-            // Simple integer match. If we add ranges later (e.g., 1-4), update this logic.
-            if (parseInt(tr.dataset.roll) === result) {
+            // Check for range formatting (e.g. "1-4") or single digit match
+            const rowVal = tr.dataset.roll; // "1" or "1-4"
+            let isMatch = false;
+
+            if (rowVal.includes('-')) {
+                 const [min, max] = rowVal.split('-').map(n => parseInt(n));
+                 if (result >= min && result <= max) isMatch = true;
+            } else {
+                 if (parseInt(rowVal) === result) isMatch = true;
+            }
+
+            if (isMatch) {
                 tr.classList.add('highlight');
                 tr.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 break;

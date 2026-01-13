@@ -17,7 +17,8 @@
 <body>
 
     <div id="app-container">
-        
+         <!-- Mobile Menu Toggle -->
+        <button id="mobile-menu-btn">☰</button>
         <!-- Sidebar Navigation -->
         <aside id="sidebar">
             <div class="brand">
@@ -25,8 +26,11 @@
                 <p class="subtitle">Dark Pulp RPG</p>
             </div>
 
-            <nav class="main-nav">
-                <button class="nav-btn active" data-module="home">
+           <nav class="main-nav">
+                <button class="nav-btn active" data-module="dashboard">
+                    <span class="icon">🏠</span> <span data-i18n="nav_dashboard">Dashboard</span>
+                </button>
+                <button class="nav-btn" data-module="rules">
                     <span class="icon">📜</span> <span data-i18n="nav_home">Rules Reference</span>
                 </button>
                 <button class="nav-btn" data-module="chargen">

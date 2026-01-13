@@ -1,0 +1,1096 @@
+{
+  "armor": [
+    {
+      "id": "arm_none",
+      "name": "Sin Armadura",
+      "as": 0,
+      "cost": "0",
+      "slots": 0,
+      "req": null,
+      "penalty": null,
+      "description": "Ropa estándar."
+    },
+    {
+      "id": "arm_light",
+      "name": "Armadura Ligera",
+      "as": 1,
+      "cost": "10o",
+      "slots": 1,
+      "req": null,
+      "penalty": null,
+      "description": "Jubón de cuero, gambesón o pieles."
+    },
+    {
+      "id": "arm_medium",
+      "name": "Armadura Media",
+      "as": 2,
+      "cost": "50o",
+      "slots": 2,
+      "req": "STR +1",
+      "penalty": "Torpe (Desventaja en Sigilo y Esquiva)",
+      "description": "Cota de malla, camisa de escamas o piel gruesa."
+    },
+    {
+      "id": "arm_heavy",
+      "name": "Armadura Pesada",
+      "as": 3,
+      "cost": "200o",
+      "slots": 3,
+      "req": "STR +2, CON +2",
+      "penalty": "Pesada (Desventaja en Sigilo, Esquiva, Atletismo). Lento (No puede Correr).",
+      "description": "Placas o armadura de tablillas."
+    },
+    {
+      "id": "arm_shield",
+      "name": "Escudo",
+      "as": 1,
+      "cost": "10o",
+      "slots": 1,
+      "req": null,
+      "penalty": "Ocupa una mano.",
+      "description": "Escudo de madera o acero. Permite la acción Bloquear."
+    }
+  ],
+  "weapons": [
+    {
+      "id": "wep_dagger",
+      "name": "Daga",
+      "damage": "1d4",
+      "cost": "2o",
+      "slots": 1,
+      "type": "Cuerpo a Cuerpo",
+      "tags": ["Sutil", "Ligera", "Precisa", "Arrojadiza"]
+    },
+    {
+      "id": "wep_club",
+      "name": "Garrote",
+      "damage": "1d4",
+      "cost": "1o",
+      "slots": 1,
+      "type": "Cuerpo a Cuerpo",
+      "tags": ["Ligera", "Desordenada"]
+    },
+    {
+      "id": "wep_staff",
+      "name": "Bastón",
+      "damage": "1d6",
+      "cost": "1o",
+      "slots": 1,
+      "type": "Cuerpo a Cuerpo",
+      "tags": ["Guardia", "A Dos Manos"]
+    },
+    {
+      "id": "wep_spear",
+      "name": "Lanza",
+      "damage": "1d6",
+      "cost": "2o",
+      "slots": 1,
+      "type": "Cuerpo a Cuerpo",
+      "tags": ["Guardia", "Arrojadiza", "Preparar"]
+    },
+    {
+      "id": "wep_handaxe",
+      "name": "Hacha de Mano",
+      "damage": "1d6",
+      "cost": "5o",
+      "slots": 1,
+      "type": "Cuerpo a Cuerpo",
+      "tags": ["Ligera", "Arrojadiza", "Hender"]
+    },
+    {
+      "id": "wep_mace",
+      "name": "Maza",
+      "damage": "1d6",
+      "cost": "5o",
+      "slots": 1,
+      "type": "Cuerpo a Cuerpo",
+      "tags": ["Hender"]
+    },
+    {
+      "id": "wep_longsword",
+      "name": "Espada Larga",
+      "damage": "1d8",
+      "cost": "15o",
+      "slots": 1,
+      "type": "Cuerpo a Cuerpo",
+      "tags": ["Guardia"]
+    },
+    {
+      "id": "wep_battleaxe",
+      "name": "Hacha de Batalla",
+      "damage": "1d8",
+      "cost": "15o",
+      "slots": 1,
+      "type": "Cuerpo a Cuerpo",
+      "tags": ["Hender"]
+    },
+    {
+      "id": "wep_warhammer",
+      "name": "Martillo de Guerra",
+      "damage": "1d8",
+      "cost": "15o",
+      "slots": 1,
+      "type": "Cuerpo a Cuerpo",
+      "tags": ["Desordenada"]
+    },
+    {
+      "id": "wep_rapier",
+      "name": "Estoque",
+      "damage": "1d8",
+      "cost": "25o",
+      "slots": 1,
+      "type": "Cuerpo a Cuerpo",
+      "tags": ["Sutil", "Precisa"]
+    },
+    {
+      "id": "wep_flail",
+      "name": "Mayal",
+      "damage": "1d8",
+      "cost": "10o",
+      "slots": 1,
+      "type": "Cuerpo a Cuerpo",
+      "tags": ["Desordenada", "Hender"]
+    },
+    {
+      "id": "wep_whip",
+      "name": "Látigo",
+      "damage": "1d4",
+      "cost": "3o",
+      "slots": 1,
+      "type": "Cuerpo a Cuerpo",
+      "tags": ["Sutil", "Alcance", "Desordenada"]
+    },
+    {
+      "id": "wep_greatsword",
+      "name": "Espadón",
+      "damage": "2d6",
+      "cost": "50o",
+      "slots": 2,
+      "type": "Cuerpo a Cuerpo",
+      "tags": ["Pesada", "Guardia", "A Dos Manos"]
+    },
+    {
+      "id": "wep_greataxe",
+      "name": "Gran Hacha",
+      "damage": "1d12",
+      "cost": "50o",
+      "slots": 2,
+      "type": "Cuerpo a Cuerpo",
+      "tags": ["Pesada", "Hender", "A Dos Manos"]
+    },
+    {
+      "id": "wep_maul",
+      "name": "Mazo",
+      "damage": "2d6",
+      "cost": "45o",
+      "slots": 2,
+      "type": "Cuerpo a Cuerpo",
+      "tags": ["Pesada", "Hender", "Desordenada", "A Dos Manos"]
+    },
+    {
+      "id": "wep_polearm",
+      "name": "Arma de Asta",
+      "damage": "1d10",
+      "cost": "40o",
+      "slots": 2,
+      "type": "Cuerpo a Cuerpo",
+      "tags": ["Alcance", "Preparar", "A Dos Manos"]
+    },
+    {
+      "id": "wep_sling",
+      "name": "Honda",
+      "damage": "1d4",
+      "cost": "5p",
+      "slots": 1,
+      "type": "A Distancia",
+      "tags": ["Munición", "Ligera"]
+    },
+    {
+      "id": "wep_shortbow",
+      "name": "Arco Corto",
+      "damage": "1d6",
+      "cost": "25o",
+      "slots": 2,
+      "type": "A Distancia",
+      "tags": ["Munición", "A Dos Manos"]
+    },
+    {
+      "id": "wep_longbow",
+      "name": "Arco Largo",
+      "damage": "1d8",
+      "cost": "50o",
+      "slots": 2,
+      "type": "A Distancia",
+      "tags": ["Munición", "Pesada", "A Dos Manos"]
+    },
+    {
+      "id": "wep_hand_crossbow",
+      "name": "Ballesta de Mano",
+      "damage": "1d6",
+      "cost": "75o",
+      "slots": 1,
+      "type": "A Distancia",
+      "tags": ["Munición", "Ligera", "Recarga"]
+    },
+    {
+      "id": "wep_light_crossbow",
+      "name": "Ballesta Ligera",
+      "damage": "1d10",
+      "cost": "60o",
+      "slots": 2,
+      "type": "A Distancia",
+      "tags": ["Munición", "Recarga", "A Dos Manos"]
+    },
+    {
+      "id": "wep_heavy_crossbow",
+      "name": "Ballesta Pesada",
+      "damage": "1d12",
+      "cost": "100o",
+      "slots": 3,
+      "type": "A Distancia",
+      "tags": ["Munición", "Pesada", "Recarga", "A Dos Manos"]
+    }
+  ],
+  "gear": [
+    {
+      "id": "gear_backpack",
+      "name": "Mochila",
+      "cost": "2o",
+      "slots": 1,
+      "type": "Exploración",
+      "effect": "Requerida para llevar objetos sin usar las manos. No añade espacios, pero permite almacenamiento."
+    },
+    {
+      "id": "gear_bedroll",
+      "name": "Saco de Dormir",
+      "cost": "1p",
+      "slots": 1,
+      "type": "Exploración",
+      "effect": "Requerido para Descanso Largo en la naturaleza para prevenir Agotamiento."
+    },
+    {
+      "id": "gear_chain",
+      "name": "Cadena (10 pies)",
+      "cost": "3o",
+      "slots": 2,
+      "type": "Exploración",
+      "effect": "Hierro pesado. CD 18 Fuerza para romper."
+    },
+    {
+      "id": "gear_chalk",
+      "name": "Tiza (10)",
+      "cost": "1p",
+      "slots": 0,
+      "type": "Exploración",
+      "effect": "Marcar caminos en laberintos. Espacio Gratis."
+    },
+    {
+      "id": "gear_crowbar",
+      "name": "Palanca",
+      "cost": "2o",
+      "slots": 1,
+      "type": "Exploración",
+      "effect": "Ventaja en pruebas de Atletismo para forzar puertas/cofres."
+    },
+    {
+      "id": "gear_grapple",
+      "name": "Gancho de Escalada",
+      "cost": "1o",
+      "slots": 1,
+      "type": "Exploración",
+      "effect": "Unido a cuerda. Permite anclar para escalar sin prueba."
+    },
+    {
+      "id": "gear_hammer",
+      "name": "Martillo",
+      "cost": "5p",
+      "slots": 1,
+      "type": "Exploración",
+      "effect": "Para pitones/construcción. Arma simple (1d4)."
+    },
+    {
+      "id": "gear_lock",
+      "name": "Candado",
+      "cost": "5o",
+      "slots": 0,
+      "type": "Exploración",
+      "effect": "Candado de hierro simple (CD 13 para abrir)."
+    },
+    {
+      "id": "gear_manacles",
+      "name": "Esposas",
+      "cost": "2o",
+      "slots": 1,
+      "type": "Exploración",
+      "effect": "Restringe a un objetivo. Escape CD 15 (STR/DEX)."
+    },
+    {
+      "id": "gear_mirror",
+      "name": "Espejo (Acero)",
+      "cost": "5p",
+      "slots": 0,
+      "type": "Exploración",
+      "effect": "Mirar esquinas o reflejar ataques de mirada."
+    },
+    {
+      "id": "gear_pitons",
+      "name": "Pitones (5)",
+      "cost": "1p",
+      "slots": 1,
+      "type": "Exploración",
+      "effect": "Asegurar puntos de escalada. Reduce la CD de escalar en 2."
+    },
+    {
+      "id": "gear_pole",
+      "name": "Pértiga (10 pies)",
+      "cost": "1p",
+      "slots": 2,
+      "type": "Exploración",
+      "effect": "Madera. Activar trampas desde distancia segura."
+    },
+    {
+      "id": "gear_rope",
+      "name": "Cuerda (50 pies)",
+      "cost": "1o",
+      "slots": 1,
+      "type": "Exploración",
+      "effect": "Cáñamo. Soporta 300lbs."
+    },
+    {
+      "id": "gear_sack",
+      "name": "Saco",
+      "cost": "1p",
+      "slots": 1,
+      "type": "Exploración",
+      "effect": "Sostiene 1 Espacio de objetos sueltos (ej: 100 monedas)."
+    },
+    {
+      "id": "gear_spikes",
+      "name": "Abrojos",
+      "cost": "1o",
+      "slots": 1,
+      "type": "Exploración",
+      "effect": "Acción: Desplegar en cuadrado de 5 pies. Terreno Difícil. 1d4 daño si se pisa."
+    },
+    {
+      "id": "gear_spyglass",
+      "name": "Catalejo",
+      "cost": "20o",
+      "slots": 0,
+      "type": "Exploración",
+      "effect": "Ver detalle a 1 milla. Ventaja en Escrutinio a distancia."
+    },
+    {
+      "id": "gear_tent",
+      "name": "Tienda (2 Personas)",
+      "cost": "2o",
+      "slots": 2,
+      "type": "Exploración",
+      "effect": "Requerido para Descanso Largo en clima severo."
+    },
+    {
+      "id": "gear_candles",
+      "name": "Velas (5)",
+      "cost": "1p",
+      "slots": 1,
+      "type": "Luz",
+      "effect": "Luz Tenue (5 pies). Arde por 1 hora (6 Turnos)."
+    },
+    {
+      "id": "gear_flint",
+      "name": "Pedernal y Acero",
+      "cost": "5p",
+      "slots": 0,
+      "type": "Luz",
+      "effect": "Requerido para encender fuegos. Espacio Gratis."
+    },
+    {
+      "id": "gear_lantern",
+      "name": "Linterna",
+      "cost": "10o",
+      "slots": 1,
+      "type": "Luz",
+      "effect": "Luz Brillante (30 pies). Requiere Aceite. Puede cerrarse."
+    },
+    {
+      "id": "gear_oil",
+      "name": "Aceite (3 Frascos)",
+      "cost": "3p",
+      "slots": 1,
+      "type": "Luz",
+      "effect": "Combustible para Linternas (1 Frasco = 3 Horas). Inflamable."
+    },
+    {
+      "id": "gear_rations",
+      "name": "Raciones (3 Días)",
+      "cost": "5p",
+      "slots": 1,
+      "type": "Sustento",
+      "effect": "Comida preservada. Debe comer 1 Día diario o ganar Agotamiento."
+    },
+    {
+      "id": "gear_torches",
+      "name": "Antorchas (3)",
+      "cost": "1p",
+      "slots": 1,
+      "type": "Luz",
+      "effect": "Luz Brillante (20 pies). Arde por 1 hora (6 Turnos). Una mano."
+    },
+    {
+      "id": "gear_waterskin",
+      "name": "Odre",
+      "cost": "1p",
+      "slots": 1,
+      "type": "Sustento",
+      "effect": "Contiene 1 día de agua."
+    },
+    {
+      "id": "kit_alchemist",
+      "name": "Kit de Alquimista",
+      "cost": "50o",
+      "slots": 2,
+      "type": "Herramienta",
+      "effect": "Crear Reactivos Alquímicos (Ácidos, Bombas). Identificar pociones."
+    },
+    {
+      "id": "kit_crafting",
+      "name": "Kit de Artesanía",
+      "cost": "20o",
+      "slots": 2,
+      "type": "Herramienta",
+      "effect": "Reparar objetos en campo. Crear artilugios mecánicos."
+    },
+    {
+      "id": "kit_disguise",
+      "name": "Kit de Disfraz",
+      "cost": "10o",
+      "slots": 1,
+      "type": "Herramienta",
+      "effect": "Crear disfraces. Contiene maquillaje, pelucas, tintes."
+    },
+    {
+      "id": "kit_forgery",
+      "name": "Kit de Falsificación",
+      "cost": "15o",
+      "slots": 1,
+      "type": "Herramienta",
+      "effect": "Crear documentos y sellos falsos."
+    },
+    {
+      "id": "kit_herbalism",
+      "name": "Kit de Herbolario",
+      "cost": "10o",
+      "slots": 1,
+      "type": "Herramienta",
+      "effect": "Crear cataplasmas y antídotos. Recolectar flora."
+    },
+    {
+      "id": "kit_medicine",
+      "name": "Kit de Medicina",
+      "cost": "10o",
+      "slots": 1,
+      "type": "Herramienta",
+      "effect": "Estabilizar Moribundos. Terminar condición de Sangrado."
+    },
+    {
+      "id": "kit_poisoner",
+      "name": "Kit de Envenenador",
+      "cost": "25o",
+      "slots": 1,
+      "type": "Herramienta",
+      "effect": "Crear y aplicar toxinas de forma segura."
+    },
+    {
+      "id": "kit_thieves",
+      "name": "Herramientas de Ladrón",
+      "cost": "25o",
+      "slots": 1,
+      "type": "Herramienta",
+      "effect": "Abrir cerraduras y desarmar trampas mecánicas."
+    },
+    {
+      "id": "serv_inn",
+      "name": "Estancia en Posada (Noche)",
+      "cost": "5p",
+      "slots": 0,
+      "type": "Servicio",
+      "effect": "Descanso seguro. Buena calidad cuesta 2o."
+    },
+    {
+      "id": "serv_meal",
+      "name": "Comida Caliente",
+      "cost": "2p",
+      "slots": 0,
+      "type": "Servicio",
+      "effect": "Comida de taberna. Banquete cuesta 1o."
+    },
+    {
+      "id": "serv_hireling",
+      "name": "Mercenario (Día)",
+      "cost": "1o",
+      "slots": 0,
+      "type": "Servicio",
+      "effect": "Portador (carga equipo). Mercenario combatiente cuesta 5o + parte del botín."
+    }
+  ],
+  "materials": [
+    {
+      "id": "mat_organics",
+      "name": "Lote Orgánico",
+      "source": "Bestias, Monstruos, Carne",
+      "type": "Material",
+      "slots": 0.33,
+      "description": "Usado para Venenos, Ácidos y Adrenalina. (3 Lotes = 1 Espacio)."
+    },
+    {
+      "id": "mat_flora",
+      "name": "Lote de Flora",
+      "source": "Plantas, Hongos, Naturaleza",
+      "type": "Material",
+      "slots": 0.33,
+      "description": "Usado para Curación, Curas y Utilidad. (3 Lotes = 1 Espacio)."
+    },
+    {
+      "id": "mat_scrap",
+      "name": "Lote de Chatarra",
+      "source": "Constructos, Trampas, Ruinas, Minerales",
+      "type": "Material",
+      "slots": 0.33,
+      "description": "Usado para Explosivos, Artilugios y Trampas. (3 Lotes = 1 Espacio)."
+    },
+    {
+      "id": "mat_essence",
+      "name": "Lote de Esencia",
+      "source": "Espíritus, No-Muertos, Magia",
+      "type": "Material",
+      "slots": 0.33,
+      "description": "Usado para Tintas Mágicas, Encantamientos y Objetos de Alto Nivel. (3 Lotes = 1 Espacio)."
+    }
+  ],
+  "reagents": [
+    {
+      "id": "rea_acid",
+      "name": "Frasco de Ácido",
+      "cost": "1 Orgánico",
+      "craft_dc": 13,
+      "type": "Alquimia",
+      "effect": "Arrojadizo (30 pies). Inflige 2d6 Daño de Ácido. Ignora Armadura. Puede derretir cerraduras."
+    },
+    {
+      "id": "rea_fire",
+      "name": "Fuego de Alquimista",
+      "cost": "1 Orgánico",
+      "craft_dc": 11,
+      "type": "Alquimia",
+      "effect": "Arrojadizo (30 pies). Inflige 1d6 Daño de Fuego + Condición de Quemadura."
+    },
+    {
+      "id": "rea_adrenaline",
+      "name": "Inyección de Adrenalina",
+      "cost": "1 Orgánico",
+      "craft_dc": 15,
+      "type": "Alquimia",
+      "effect": "Acción (Toque). Objetivo gana 1d8 PV Temporales y Ventaja en pruebas de STR/CON (1 min)."
+    },
+    {
+      "id": "rea_stoneskin",
+      "name": "Elixir Piel de Piedra",
+      "cost": "1 Chatarra",
+      "craft_dc": 15,
+      "type": "Alquimia",
+      "effect": "Acción (Propio). Gana +1 Puntuación de Armadura por 1 minuto."
+    },
+    {
+      "id": "rea_flashbomb",
+      "name": "Bomba Cegadora",
+      "cost": "1 Chatarra",
+      "craft_dc": 11,
+      "type": "Alquimia",
+      "effect": "Arrojadizo (30 pies). Radio 10 pies. Criaturas deben salvar vs. Fortaleza o quedar Cegadas (1 ronda)."
+    },
+    {
+      "id": "rea_smokebomb",
+      "name": "Bomba de Humo",
+      "cost": "1 Orgánico",
+      "craft_dc": 9,
+      "type": "Alquimia",
+      "effect": "Arrojadizo (30 pies). Nube de Radio 10 pies. Fuertemente Oscurecido (bloquea visión) por 1 minuto."
+    },
+    {
+      "id": "rea_gluebomb",
+      "name": "Bomba Pegajosa",
+      "cost": "1 Orgánico",
+      "craft_dc": 13,
+      "type": "Alquimia",
+      "effect": "Arrojadizo (30 pies). Radio 5 pies. Criaturas deben salvar vs. Reflejos o quedar Restringidas (Velocidad 0)."
+    },
+    {
+      "id": "rea_salve",
+      "name": "Ungüento Curativo",
+      "cost": "1 Flora",
+      "craft_dc": 11,
+      "type": "Herboristería",
+      "effect": "Acción (Toque). Restaura 2d4 Puntos de Vida a una criatura viva."
+    },
+    {
+      "id": "rea_stamina",
+      "name": "Brebaje de Aguante",
+      "cost": "1 Flora",
+      "craft_dc": 13,
+      "type": "Herboristería",
+      "effect": "Acción (Propio). Recupera inmediatamente 1d4 de Aguante (STA)."
+    },
+    {
+      "id": "rea_antidote",
+      "name": "Antídoto",
+      "cost": "1 Flora",
+      "craft_dc": 11,
+      "type": "Herboristería",
+      "effect": "Acción (Toque). Termina la condición de Envenenado."
+    },
+    {
+      "id": "rea_burnbalm",
+      "name": "Bálsamo para Quemaduras",
+      "cost": "1 Flora",
+      "craft_dc": 11,
+      "type": "Herboristería",
+      "effect": "Acción (Toque). Termina la condición de Quemadura."
+    },
+    {
+      "id": "rea_focus",
+      "name": "Tintura de Enfoque",
+      "cost": "1 Flora",
+      "craft_dc": 15,
+      "type": "Herboristería",
+      "effect": "Acción (Propio). Termina la condición de Atontado o Confundido."
+    },
+    {
+      "id": "rea_tox_basic",
+      "name": "Toxina Básica",
+      "cost": "1 Orgánico",
+      "craft_dc": 11,
+      "type": "Veneno",
+      "effect": "Recubrimiento. Al próximo impacto, objetivo Envenenado (1d6 daño/turno) por 1 minuto."
+    },
+    {
+      "id": "rea_tox_daze",
+      "name": "Toxina Atontadora",
+      "cost": "1 Orgánico",
+      "craft_dc": 13,
+      "type": "Veneno",
+      "effect": "Recubrimiento. Al próximo impacto, objetivo debe salvar vs. Fortaleza o quedar Atontado (1 ronda)."
+    },
+    {
+      "id": "rea_tox_weak",
+      "name": "Toxina Debilitante",
+      "cost": "1 Orgánico",
+      "craft_dc": 13,
+      "type": "Veneno",
+      "effect": "Recubrimiento. Al próximo impacto, objetivo debe salvar vs. Fortaleza o quedar Debilitado (1 minuto)."
+    },
+    {
+      "id": "rea_tox_para",
+      "name": "Toxina Paralizante",
+      "cost": "1 Orgánico",
+      "craft_dc": 17,
+      "type": "Veneno",
+      "effect": "Recubrimiento. Al próximo impacto, objetivo debe salvar vs. Fortaleza o quedar Aturdido (1 ronda)."
+    },
+    {
+      "id": "rea_caltrops",
+      "name": "Abrojos",
+      "cost": "1 Chatarra",
+      "craft_dc": 9,
+      "type": "Artilugio",
+      "effect": "Acción. Cubre cuadrado de 10 pies. Terreno Difícil. Moverse a través inflige 1d4 daño."
+    },
+    {
+      "id": "rea_snare",
+      "name": "Trampa de Lazo",
+      "cost": "1 Chatarra",
+      "craft_dc": 13,
+      "type": "Artilugio",
+      "effect": "Acción. Colocar en espacio. Próxima criatura en entrar debe salvar vs. Reflejos o quedar Agarrada."
+    },
+    {
+      "id": "rea_bell",
+      "name": "Cable de Campana",
+      "cost": "1 Chatarra",
+      "craft_dc": 11,
+      "type": "Artilugio",
+      "effect": "Acción. Trampa de alarma. Emite un fuerte sonido si se cruza."
+    },
+    {
+      "id": "rea_grease",
+      "name": "Vial de Grasa",
+      "cost": "1 Orgánico",
+      "craft_dc": 11,
+      "type": "Artilugio",
+      "effect": "Arrojadizo. Cuadrado de 10 pies resbaladizo. Salvar vs. Reflejos o caer Propenso."
+    },
+    {
+      "id": "rea_noise",
+      "name": "Hacedor de Ruido",
+      "cost": "1 Chatarra",
+      "craft_dc": 11,
+      "type": "Artilugio",
+      "effect": "Arrojadizo. Mecanismo de relojería. Hace tictac/zumbido fuerte por 1 min para distraer guardias."
+    },
+    {
+      "id": "rea_spring",
+      "name": "Daga con Resorte",
+      "cost": "1 Chatarra",
+      "craft_dc": 15,
+      "type": "Artilugio",
+      "effect": "Acción. Colocar en espacio. Próxima criatura en entrar recibe 2d6 daño (Salvación Reflejos evita)."
+    },
+    {
+      "id": "rea_disguise",
+      "name": "Suministros de Disfraz",
+      "cost": "1 Flora",
+      "craft_dc": 11,
+      "type": "Utilidad",
+      "effect": "Acción. Consumido para aplicar un disfraz. Otorga Ventaja en Engaño para imitar una persona."
+    },
+    {
+      "id": "rea_paper",
+      "name": "Papel Falsificado",
+      "cost": "1 Flora",
+      "craft_dc": 13,
+      "type": "Utilidad",
+      "effect": "Tiempo Muerto. Crea órdenes falsas, papeles de viaje o identificación."
+    }
+  ],
+  "loot_tables": {
+    "tier_1": [
+      { "roll": 1, "name": "Basura", "value": "0", "slots": 0, "desc": "Pelusa, cuerda, botón, rata muerta." },
+      { "roll": 2, "name": "Equipo Roto", "value": "Chatarra", "slots": 1, "desc": "Empuñadura rota o casco agrietado." },
+      { "roll": 3, "name": "Curiosidad", "value": "Sentimental", "slots": 0, "desc": "Pata de conejo o carta de amor." },
+      { "roll": 4, "name": "Cobre Suelto", "value": "2d6 cp", "slots": 0, "desc": "Monedas oxidadas." },
+      { "roll": 5, "name": "Cambio de Bolsillo", "value": "4d6 cp", "slots": 0, "desc": "Pequeña bolsa de tela." },
+      { "roll": 6, "name": "Bolsa de Tahúr", "value": "50 cp", "slots": 1, "desc": "Monedas de cobre y dados de hueso." },
+      { "roll": 7, "name": "Reactivo Menor", "value": "Reactivo", "slots": 0, "desc": "Vial de limo o parche de musgo." },
+      { "roll": 8, "name": "Diente de Plata", "value": "5p", "slots": 0, "desc": "Arrancado de una mandíbula." },
+      { "roll": 9, "name": "Jornal", "value": "1d6 p", "slots": 0, "desc": "Cartera de cuero." },
+      { "roll": 10, "name": "Paga del Soldado", "value": "2d6 p", "slots": 0, "desc": "Bolsa de plata." },
+      { "roll": 11, "name": "Saco Pesado", "value": "100 cp (1o)", "slots": 1, "desc": "Saco abultado de cobre." },
+      { "roll": 12, "name": "Herramienta", "value": "5p", "slots": 1, "desc": "Lima, piedra de afilar o martillo." },
+      { "roll": 13, "name": "Consumible", "value": "5p", "slots": 1, "desc": "1d4 Raciones (ancias)." },
+      { "roll": 14, "name": "Brillante", "value": "1o", "slots": 0, "desc": "Anillo de plata o broche." },
+      { "roll": 15, "name": "Bolsillo Oculto", "value": "1 Moneda Oro", "slots": 0, "desc": "Moneda de oro en perfecto estado." },
+      { "roll": 16, "name": "Arte Menor", "value": "15p", "slots": 0, "desc": "Ídolo de madera o hueso tallado." },
+      { "roll": 17, "name": "Fuente de Luz", "value": "1p", "slots": 1, "desc": "3 Velas o medio frasco de Aceite." },
+      { "roll": 18, "name": "Bolsa de Oficial", "value": "2d4 o", "slots": 0, "desc": "Mezcla de Plata y Oro." },
+      { "roll": 19, "name": "Gema", "value": "5o", "slots": 0, "desc": "Piedra semipreciosa en bruto." },
+      { "roll": 20, "name": "PREMIO GORDO", "value": "-", "slots": 0, "desc": "Tira en Tabla Nivel 2." }
+    ],
+    "tier_2": [
+      { "roll": 1, "name": "Trampa de Cobre", "value": "500 cp (5o)", "slots": 5, "desc": "Cofre pesado de cobre." },
+      { "roll": 2, "name": "Suministros", "value": "10o", "slots": 2, "desc": "Caja de raciones/vino de calidad." },
+      { "roll": 3, "name": "Pack de Aventurero", "value": "5o", "slots": 1, "desc": "Mochila con cuerda, antorcha, pedernal." },
+      { "roll": 4, "name": "Arma", "value": "Mercado", "slots": 2, "desc": "Arma estándar (Espada/Hacha/Arco)." },
+      { "roll": 5, "name": "Alijo de Plata", "value": "200p (20o)", "slots": 2, "desc": "Saco pesado de plata." },
+      { "roll": 6, "name": "Armadura", "value": "Mercado", "slots": 2, "desc": "Traje de armadura Ligera/Media." },
+      { "roll": 7, "name": "Bien Comercial", "value": "25o", "slots": 2, "desc": "Rollo de seda o barril de especias." },
+      { "roll": 8, "name": "Objeto de Arte", "value": "25o", "slots": 1, "desc": "Cáliz de plata o estatuilla." },
+      { "roll": 9, "name": "Bolsa de Monedas", "value": "3d6 o", "slots": 0, "desc": "Bolsa ordenada de Oro." },
+      { "roll": 10, "name": "Alijo de Alquimista", "value": "Reactivos", "slots": 1, "desc": "1d4 Viales (Ácido/Fuego)." },
+      { "roll": 11, "name": "Gemas", "value": "10o c/u", "slots": 0, "desc": "Bolsa de 1d4 ágatas/ónice." },
+      { "roll": 12, "name": "Caja de Pagos", "value": "50o", "slots": 1, "desc": "Caja fuerte con 50 monedas de Oro." },
+      { "roll": 13, "name": "Estuche de Pergamino", "value": "10o", "slots": 0, "desc": "Mapa o texto de saber." },
+      { "roll": 14, "name": "Herramienta Maestra", "value": "25o", "slots": 1, "desc": "Herramientas de Ladrón o Kit de Sanador." },
+      { "roll": 15, "name": "Bellas Artes", "value": "50o", "slots": 3, "desc": "Pintura/tapiz con marco dorado." },
+      { "roll": 16, "name": "Joyería", "value": "30o", "slots": 0, "desc": "Collar de oro o anillo de sello." },
+      { "roll": 17, "name": "Reactivos Raros", "value": "Reactivos", "slots": 1, "desc": "1d4 Reactivos Poco Comunes." },
+      { "roll": 18, "name": "Oro Puro", "value": "50o", "slots": 1, "desc": "Lingote de oro pesado." },
+      { "roll": 19, "name": "Poción", "value": "25o c/u", "slots": 1, "desc": "1d4 Pociones." },
+      { "roll": 20, "name": "PREMIO GORDO", "value": "-", "slots": 0, "desc": "Tira en Tabla Nivel 3." }
+    ],
+    "tier_3": [
+      { "roll": 1, "name": "Trampa de Plata", "value": "2000p (200o)", "slots": 20, "desc": "Cofre masivo de plata." },
+      { "roll": 2, "name": "Comercio a Granel", "value": "50o c/u", "slots": 2, "desc": "1d4 Cajas de Pieles/Marfil/Especias." },
+      { "roll": 3, "name": "Equipo Maestro", "value": "100o+", "slots": 2, "desc": "Equipo Plateado o Reforzado." },
+      { "roll": 4, "name": "Tesoro de Arte", "value": "150o", "slots": 4, "desc": "Gran ídolo dorado/sarcófago." },
+      { "roll": 5, "name": "Cofre de Monedas", "value": "100o", "slots": 1, "desc": "Cofre reforzado de Oro." },
+      { "roll": 6, "name": "Bolsa de Gemas", "value": "50o c/u", "slots": 0, "desc": "1d6 Perlas/Granates." },
+      { "roll": 7, "name": "Arte Raro", "value": "100o", "slots": 1, "desc": "Platería o cristal." },
+      { "roll": 8, "name": "Lingotes de Oro", "value": "250o", "slots": 1, "desc": "Pila de 5 Lingotes." },
+      { "roll": 9, "name": "Joya Real", "value": "200o", "slots": 0, "desc": "Esmeralda/Rubí grande único." },
+      { "roll": 10, "name": "Cosecha de Monstruo", "value": "100o", "slots": 1, "desc": "Órgano/glándula prístina (Raro)." },
+      { "roll": 11, "name": "Reactivos Mágicos", "value": "Reactivos", "slots": 1, "desc": "3 Esencia/Flora Rara." },
+      { "roll": 12, "name": "Biblioteca de Pergaminos", "value": "50o c/u", "slots": 1, "desc": "1d4 Pergaminos de Hechizo." },
+      { "roll": 13, "name": "La Bolsa Pesada", "value": "300o", "slots": 3, "desc": "Saco de 300 monedas de Oro." },
+      { "roll": 14, "name": "Joyería Noble", "value": "250o", "slots": 0, "desc": "Collar de diamantes/corona." },
+      { "roll": 15, "name": "Plano (Común)", "value": "Invaluable", "slots": 0, "desc": "Receta para Objeto Mágico Nivel 1." },
+      { "roll": 16, "name": "Plano (Poco Común)", "value": "Invaluable", "slots": 0, "desc": "Receta para Objeto Mágico Nivel 2." },
+      { "roll": 17, "name": "Curiosidad / Reliquia", "value": "Invaluable", "slots": 1, "desc": "Objeto mágico de utilidad menor." },
+      { "roll": 18, "name": "Arma Mágica", "value": "Invaluable", "slots": 1, "desc": "Arma +1/Efecto totalmente fabricada." },
+      { "roll": 19, "name": "Objeto Maravilloso", "value": "Invaluable", "slots": 1, "desc": "Botas/Capa/Anillo (Nivel 2)." },
+      { "roll": 20, "name": "Rescate de Rey", "value": "1000o", "slots": 1, "desc": "Cofre de Platino/Diamantes." }
+    ]
+  },
+  "commodities": [
+    { "name": "Lingotes Hierro/Plomo", "unit": "Caja", "slots": 4, "value": "10o" },
+    { "name": "Grano/Harina", "unit": "Saco", "slots": 2, "value": "2o" },
+    { "name": "Sal", "unit": "Bloque", "slots": 2, "value": "10o" },
+    { "name": "Tela Común", "unit": "Rollos", "slots": 2, "value": "10o" },
+    { "name": "Alambre de Cobre", "unit": "Carretes", "slots": 1, "value": "5o" },
+    { "name": "Obsidiana", "unit": "Trozos", "slots": 2, "value": "20o" },
+    { "name": "Vino Fino", "unit": "Caja", "slots": 2, "value": "30o" },
+    { "name": "Tabaco", "unit": "Barril", "slots": 1, "value": "15o" },
+    { "name": "Pieles de Monstruo", "unit": "Fardo", "slots": 2, "value": "40o" },
+    { "name": "Lingotes de Plata", "unit": "Barra", "slots": 1, "value": "25o" },
+    { "name": "Especias Exóticas", "unit": "Cofre", "slots": 1, "value": "30o" },
+    { "name": "Seda", "unit": "Rollo", "slots": 1, "value": "40o" },
+    { "name": "Marfil", "unit": "Colmillo", "slots": 2, "value": "80o" },
+    { "name": "Combustible Alquímico", "unit": "Bote", "slots": 1, "value": "50o" },
+    { "name": "Lingotes de Oro", "unit": "Barra", "slots": 1, "value": "100o" },
+    { "name": "Chatarra de Mithril", "unit": "Fragmentos", "slots": 1, "value": "100o" },
+    { "name": "Incienso Raro", "unit": "Bloque", "slots": 0, "value": "50o" },
+    { "name": "Barra de Platino", "unit": "Barra", "slots": 1, "value": "500o" },
+    { "name": "Polvo de Gemas", "unit": "Bolsa", "slots": 0, "value": "100o" },
+    { "name": "Mena de Adamantina", "unit": "Geoda", "slots": 2, "value": "500o" }
+  ],
+  "art_generator": {
+    "materials": [
+      "Obsidiana", "Jade", "Oro", "Hueso", "Plata", "Bronce", "Marfil", "Cristal", "Madera Petrificada", "Porcelana",
+      "Electrum", "Esteatita", "Vidrio", "Coral", "Ámbar", "Mármol", "Cuero", "Cobre", "Perla", "Platino"
+    ],
+    "forms": [
+      "Ídolo", "Máscara", "Cáliz", "Daga", "Collar", "Moneda", "Tablilla", "Peine", "Caja", "Urna",
+      "Anillo", "Pipa", "Botella", "Corona", "Escarabajo", "Busto", "Libro", "Plato", "Orbe", "Sarcófago"
+    ],
+    "subjects": [
+      "La Bestia", "La Calavera", "El Rey", "La Serpiente", "Cuerpos Celestes", "El Guerrero", "El Demonio", "El Ojo", "Geometría", "La Flor",
+      "La Araña", "El Barco", "El Amante", "El Pez", "El Insecto", "El Dios", "El Mapa", "El Dragón", "La Tormenta", "El Vacío"
+    ]
+  },
+  "curios": [
+    { "roll": 1, "name": "Moneda de Susurros", "effect": "Repite las últimas 5 palabras dichas cerca al apretarla." },
+    { "roll": 2, "name": "Linterna de Revelación", "effect": "Luz Brillante (30 pies). Revela criaturas Invisibles como siluetas fantasmales." },
+    { "roll": 3, "name": "Cuerda de Escalada", "effect": "50 pies de seda. Se anuda y mueve hacia arriba a la orden." },
+    { "roll": 4, "name": "Bolsa de Contención", "effect": "Sostiene 50 Espacios/500lbs. Pesa 1 Espacio. Recuperar es una Acción." },
+    { "roll": 5, "name": "Campana de Apertura", "effect": "1/Día. Abre una cerradura o pestillo no mágico instantáneamente." },
+    { "roll": 6, "name": "Polvo de Sequedad", "effect": "Pizca destruye 100 galones de agua (o 4d6 daño a Elementales de Agua)." },
+    { "roll": 7, "name": "Antorcha Eterna", "effect": "Llama fría. Nunca consume combustible. Ilumina como antorcha." },
+    { "roll": 8, "name": "Gafas de la Noche", "effect": "Otorga Visión en la Oscuridad 60 pies mientras se usan." },
+    { "roll": 9, "name": "Vara Inamovible", "effect": "Se fija en el espacio al presionar botón. Sostiene 4,000lbs. CD 25 STR para mover." },
+    { "roll": 10, "name": "Piedras Mensajeras", "effect": "Par. Habla en una para ser oído en la otra (cualquier distancia)." },
+    { "roll": 11, "name": "Decantador de Agua", "effect": "Vierte agua infinita. Modo 'Géiser' derriba objetivos (5 pies)." },
+    { "roll": 12, "name": "Yelmo de Comprensión", "effect": "El usuario puede leer (pero no hablar) cualquier idioma escrito." },
+    { "roll": 13, "name": "Capa del Murciélago", "effect": "Ventaja en Sigilo en luz tenue. 1/Día: Polimorfia en Murciélago (1 hora)." },
+    { "roll": 14, "name": "Anillo de Caída de Pluma", "effect": "El usuario no recibe daño por caídas (Auto-activación)." },
+    { "roll": 15, "name": "Gema de Brillo", "effect": "50 Cargas. 1: Luz. 5: Cegar criatura (Salvación CON). Se desmorona al vaciarse." },
+    { "roll": 16, "name": "Llave Maestra", "effect": "Llave de hueso abre cualquier puerta estándar. 1-de-6 probabilidad de romperse." },
+    { "roll": 17, "name": "Bote Plegable", "effect": "Caja se despliega en bote de remos de 10 pies (o balandro de 20) a la orden." },
+    { "roll": 18, "name": "Botas de Zancada", "effect": "Velocidad no se reduce por Sobrecarga o Terreno Difícil." },
+    { "roll": 19, "name": "Varita de Secretos", "effect": "3 Cargas/Día. Pulsa cuando está a 30 pies de puerta secreta/trampa." },
+    { "roll": 20, "name": "Agujero Portátil", "effect": "Círculo de tela abre pozo extradimensional (6 pies prof.) en cualquier superficie." }
+  ],
+  "magic_effects": {
+    "weapon": {
+      "tier_1": [
+        { "name": "Toque de Ascua", "reagent": "Esencia de Fuego", "effect": "Inflige +1d4 Daño de Fuego." },
+        { "name": "Borde Escarchado", "reagent": "Esencia de Frío", "effect": "Inflige +1d4 Daño de Frío." },
+        { "name": "Chispeante", "reagent": "Esencia de Rayo", "effect": "Inflige +1d4 Daño de Rayo." },
+        { "name": "Recubrimiento Tóxico", "reagent": "Orgánico (Veneno)", "effect": "Inflige +1d4 Daño de Veneno." },
+        { "name": "Grabado Ácido", "reagent": "Orgánico (Ácido)", "effect": "Inflige +1d4 Daño de Ácido." },
+        { "name": "Serrado", "reagent": "Chatarra (Afilada)", "effect": "Crítico: Objetivo gana condición de Sangrado." },
+        { "name": "Contrapesado", "reagent": "Chatarra (Pesada)", "effect": "Crítico: Objetivo es empujado 5 pies." },
+        { "name": "Equilibrado", "reagent": "Chatarra (Ligera)", "effect": "+1 Bono a la Iniciativa." },
+        { "name": "Resplandeciente", "reagent": "Esencia (Luz)", "effect": "Emite Luz Brillante (20 pies)." },
+        { "name": "Silencioso", "reagent": "Esencia (Sombra)", "effect": "Fallos desde Oculto no revelan posición." },
+        { "name": "Retorno", "reagent": "Esencia (Aire)", "effect": "Arrojadiza: Vuelve a la mano inmediatamente." },
+        { "name": "Mata-Bestias", "reagent": "Orgánico (Bestia)", "effect": "+1d4 Daño vs Bestias/Monstruosidades." },
+        { "name": "Mata-Tumbas", "reagent": "Esencia (No-Muerto)", "effect": "+1d4 Daño vs No-Muertos." },
+        { "name": "Mata-Hombres", "reagent": "Botín (Trofeo)", "effect": "+1d4 Daño vs Humanoides." },
+        { "name": "Reforzado", "reagent": "Chatarra (Dura)", "effect": "Inmune a romperse/óxido/ácido." },
+        { "name": "Plateado", "reagent": "Esencia (Espíritu)", "effect": "Cuenta como Plata. +1 Daño vs Cambiaformas/Demonios." },
+        { "name": "Acuático", "reagent": "Orgánico (Agua)", "effect": "Sin Desventaja atacando bajo el agua." },
+        { "name": "Vampírico (Menor)", "reagent": "Orgánico (Sangre)", "effect": "Crítico: Recupera 1 PV." },
+        { "name": "Duelista", "reagent": "Chatarra (Precisión)", "effect": "+1 Daño si no empuñas otra arma/escudo." },
+        { "name": "Afortunado", "reagent": "Esencia (Suerte)", "effect": "1/Día: Vuelve a tirar un dado de daño de 1." }
+      ],
+      "tier_2": [
+        { "name": "Marca de Fuego", "reagent": "Esencia de Fuego", "effect": "Inflige +1d6 Fuego. Crítico: Objetivo Arde." },
+        { "name": "Filo Glacial", "reagent": "Esencia de Frío", "effect": "Inflige +1d6 Frío. Crítico: Velocidad objetivo a la mitad." },
+        { "name": "Golpe Tormenta", "reagent": "Esencia de Rayo", "effect": "Inflige +1d6 Rayo. Crítico: Objetivo pierde Reacción." },
+        { "name": "Colmillo de Víbora", "reagent": "Orgánico (Veneno)", "effect": "Inflige +1d6 Veneno. Crítico: Objetivo Envenenado (1 min)." },
+        { "name": "Corrosivo", "reagent": "Orgánico (Ácido)", "effect": "Inflige +1d6 Ácido. Crítico: Romper Armadura (-1 AS)." },
+        { "name": "Obra Maestra", "reagent": "Chatarra (Metal Raro)", "effect": "+1 a Pruebas de Ataque y Tiradas de Daño." },
+        { "name": "Vampírico", "reagent": "Esencia (Necrótica)", "effect": "Recupera 1 PV en cada golpe." },
+        { "name": "Radiante", "reagent": "Esencia (Sagrada)", "effect": "Inflige +1d6 Radiante. Emite luz solar." },
+        { "name": "Contundente", "reagent": "Esencia (Fuerza)", "effect": "Inflige +1d6 Fuerza. Crítico: Objetivo Derribado." },
+        { "name": "Psíquico", "reagent": "Orgánico (Horror)", "effect": "Inflige +1d6 Psíquico. Crítico: Objetivo Confundido." },
+        { "name": "Cazador", "reagent": "Orgánico (Objetivo)", "effect": "+2d6 Daño vs Familia elegida. Ventaja para Rastrear." },
+        { "name": "Danzante", "reagent": "Esencia (Aire)", "effect": "Acción: Flota/Ataca independientemente (1 min)." },
+        { "name": "Advertencia", "reagent": "Esencia (Adivinación)", "effect": "+2 Iniciativa. Brilla cerca de enemigos." },
+        { "name": "Hiriente", "reagent": "Orgánico (Necrótico)", "effect": "El daño no puede curarse hasta el próximo turno." },
+        { "name": "Defensivo", "reagent": "Chatarra (Blindaje)", "effect": "+1 a Pruebas de Defensa de Parada." },
+        { "name": "Veloz", "reagent": "Esencia (Velocidad)", "effect": "Primera ronda: Realiza un ataque extra." },
+        { "name": "Almacén de Hechizo", "reagent": "Esencia (Arcana)", "effect": "Almacena hechizo de 2 MP. Se lanza al próximo Impacto." },
+        { "name": "Atronador", "reagent": "Esencia (Sonido)", "effect": "Crítico: Onda de choque de 10 pies inflige 1d8 Trueno a todos." },
+        { "name": "Desplazante", "reagent": "Orgánico (Desplazador)", "effect": "Al Impactar: Teletranspórtate 5 pies." },
+        { "name": "Vorpalina Menor", "reagent": "Chatarra (Adamantina)", "effect": "Rango de crítico se expande a 19-20." }
+      ],
+      "tier_3": [
+        { "name": "Infierno", "reagent": "Esencia de Fuego", "effect": "+1d8 Fuego (Ignora Resist). 1/Día: Bola de Fuego al impactar." },
+        { "name": "Corazón de Invierno", "reagent": "Esencia de Frío", "effect": "+1d8 Frío (Ignora Resist). Crítico: Aturdido (Congelado)." },
+        { "name": "Señor del Trueno", "reagent": "Esencia de Rayo", "effect": "+1d8 Rayo. Arca a 2 vecinos (1d8)." },
+        { "name": "Portador de Plaga", "reagent": "Orgánico (Enfermedad)", "effect": "+1d8 Veneno. Impacto: Enfermedad Fatal (Podredumbre)." },
+        { "name": "Aniquilación", "reagent": "Esencia (Entropía)", "effect": "+1d8 Necrótico. 0 PV = Desintegrar." },
+        { "name": "Legendario", "reagent": "Chatarra (Meteorito)", "effect": "+2 a Pruebas de Ataque y Tiradas de Daño." },
+        { "name": "Bebedor de Vida", "reagent": "Orgánico (Vampiro)", "effect": "Cura igual al Daño Necrótico infligido." },
+        { "name": "Hoja Solar", "reagent": "Esencia (Radiante)", "effect": "+1d8 Radiante (+3d8 vs No-Muerto/Demonio)." },
+        { "name": "Rompe-Asedios", "reagent": "Chatarra (Titán)", "effect": "Doble Daño vs Objetos. Ignora Resistencia Física." },
+        { "name": "Rompe-Mentes", "reagent": "Orgánico (Azotamentes)", "effect": "+1d8 Psíquico. Impacto: Objetivo -1d4 en próxima tirada." },
+        { "name": "Exterminador", "reagent": "Orgánico (Objetivo)", "effect": "+3d6 vs Familia. Sin Desventaja contra ellos." },
+        { "name": "Velocidad", "reagent": "Esencia (Tiempo)", "effect": "Acción Bonificada: Haz un ataque extra." },
+        { "name": "Hoja de la Suerte", "reagent": "Esencia (Destino)", "effect": "3 Cargas: Auto-Éxito en tirada." },
+        { "name": "Cercenadora", "reagent": "Chatarra (Navaja)", "effect": "Crítico: Cortar Miembro (+4d6 Daño)." },
+        { "name": "Parada Maestra", "reagent": "Chatarra (Defensa)", "effect": "+2 Parada. Reacciones de Parada infinitas." },
+        { "name": "Etéreo", "reagent": "Esencia (Fantasma)", "effect": "Golpea Etéreo/Invisible. Ignora Escudos." },
+        { "name": "Señor de Hechizos", "reagent": "Esencia (Arcana)", "effect": "Almacena 10 MP de hechizos. Lanza como Acción Bonificada." },
+        { "name": "Explosivo", "reagent": "Orgánico (Volátil)", "effect": "Cada golpe explota: radio 5 pies 1d8 Fuego." },
+        { "name": "Parpadeo", "reagent": "Esencia (Teletransporte)", "effect": "Teletransporte 30 pies tras cada ataque." },
+        { "name": "Vorpalina", "reagent": "Chatarra (Metal Divino)", "effect": "Crítico 19-20. Crítico vs Cabeza = Muerte Instantánea." }
+      ]
+    },
+    "armor": {
+      "tier_1": [
+        { "name": "Chamuscada", "reagent": "Esencia de Fuego", "effect": "RD 2 vs Daño de Fuego." },
+        { "name": "Forrada", "reagent": "Esencia de Frío", "effect": "RD 2 vs Daño de Frío." },
+        { "name": "Aislada", "reagent": "Esencia de Rayo", "effect": "RD 2 vs Daño de Rayo." },
+        { "name": "Endurecida", "reagent": "Chatarra (Placa)", "effect": "Inmune a efectos extra de Golpes Críticos." },
+        { "name": "Ligera", "reagent": "Chatarra (Malla)", "effect": "Peso (Espacios) a la mitad. Dormir en armadura ok." },
+        { "name": "Flotante", "reagent": "Orgánico (Gas)", "effect": "No puedes hundirte. Ventaja en Nadar." },
+        { "name": "Silenciosa", "reagent": "Esencia (Sombra)", "effect": "Elimina Desventaja de Sigilo." },
+        { "name": "Resplandeciente", "reagent": "Esencia (Luz)", "effect": "Comando: Emite Luz Brillante (20 pies)." },
+        { "name": "Con Pinchos", "reagent": "Chatarra (Púas)", "effect": "Agarradores/Atacantes desarmados reciben 1d4 Daño." },
+        { "name": "Reforzada", "reagent": "Chatarra (Dura)", "effect": "Inmune a Romper/Óxido/Ácido." },
+        { "name": "Con Bolsillos", "reagent": "Flora (Tejido)", "effect": "+2 Espacios de Inventario." },
+        { "name": "Heráldica", "reagent": "Botín (Oro)", "effect": "+1 Bono a Pruebas de Influencia (CHA)." },
+        { "name": "Camuflada", "reagent": "Flora (Hoja)", "effect": "Ventaja en Sigilo en terreno específico." },
+        { "name": "Liberación Rápida", "reagent": "Chatarra (Mecanismo)", "effect": "Quitarse armadura como 1 Acción." },
+        { "name": "Estancadora", "reagent": "Flora (Hierba)", "effect": "Ventaja en Salvaciones de Muerte mientras se usa." },
+        { "name": "Antídoto", "reagent": "Orgánico (Veneno)", "effect": "Ventaja vs condición de Envenenado." },
+        { "name": "Recubierta", "reagent": "Orgánico (Corcho)", "effect": "Ventaja vs condición de Quemadura." },
+        { "name": "Resbaladiza", "reagent": "Orgánico (Aceite)", "effect": "Ventaja para Escapar Agarres." },
+        { "name": "Cálida", "reagent": "Flora (Algodón)", "effect": "Inmune a clima de Frío Extremo." },
+        { "name": "Fresca", "reagent": "Flora (Seda)", "effect": "Inmune a clima de Calor Extremo." }
+      ],
+      "tier_2": [
+        { "name": "Guarda de Fuego", "reagent": "Esencia de Fuego", "effect": "RD 3 vs Fuego. Inmune a Quemadura." },
+        { "name": "Guarda de Frío", "reagent": "Esencia de Frío", "effect": "RD 3 vs Frío." },
+        { "name": "Guarda de Tormenta", "reagent": "Esencia de Rayo", "effect": "RD 3 vs Rayo." },
+        { "name": "Guarda de Veneno", "reagent": "Orgánico (Veneno)", "effect": "RD 3 vs Veneno. Inmune a Envenenado." },
+        { "name": "Guarda de Ácido", "reagent": "Orgánico (Ácido)", "effect": "RD 3 vs Ácido. Inmune a Derretir/Romper." },
+        { "name": "Fortificada", "reagent": "Chatarra (Aleación)", "effect": "+1 Puntuación de Armadura (AS)." },
+        { "name": "Vengativa", "reagent": "Chatarra (Navaja)", "effect": "Reacción al ser golpeado cuerpo a cuerpo: Inflige 1d4 Daño." },
+        { "name": "Mithril", "reagent": "Chatarra (Mithril)", "effect": "Cuenta como una categoría más ligera (ej: Pesada->Media)." },
+        { "name": "Borrosa", "reagent": "Esencia (Ilusión)", "effect": "1/Día: 1 min, ataques contra ti tienen Desventaja." },
+        { "name": "Fantasmal", "reagent": "Esencia (Fantasma)", "effect": "Muévete a través de enemigos. Sin Ataques de Oportunidad." },
+        { "name": "Guarda de Hechizos", "reagent": "Esencia (Abjuración)", "effect": "Ventaja en Salvaciones vs Hechizos." },
+        { "name": "Regeneradora", "reagent": "Orgánico (Troll)", "effect": "Bajo 50% PV: Recupera 1 PV/turno." },
+        { "name": "Pluma", "reagent": "Esencia (Aire)", "effect": "Sin Daño de Caída. Planea." },
+        { "name": "Necro-Guarda", "reagent": "Esencia (Espíritu)", "effect": "RD 3 vs Necrótico. Pasivo de No-Muerto hacia ti." },
+        { "name": "Guarda Radiante", "reagent": "Esencia (Sagrada)", "effect": "RD 3 vs Radiante." },
+        { "name": "Guarda Bestial", "reagent": "Orgánico (Bestia)", "effect": "Bestias deben pasar Salvación Voluntad CD 15 para atacarte." },
+        { "name": "Escudo Mental", "reagent": "Orgánico (Mente)", "effect": "RD 3 vs Psíquico. Inmune Telepatía." },
+        { "name": "Rencorosa", "reagent": "Esencia (Ira)", "effect": "Recibir Daño: +1 al próximo Ataque vs ese enemigo." },
+        { "name": "Estable", "reagent": "Chatarra (Giroscopio)", "effect": "Inmune a Derribo/Empuje/Tirón." },
+        { "name": "Adamantina", "reagent": "Chatarra (Adamantina)", "effect": "Inmune a Golpes Críticos. RD 1 vs Físico." }
+      ],
+      "tier_3": [
+        { "name": "Infernal", "reagent": "Esencia de Fuego", "effect": "Resistencia Fuego. Golpeado por melee: Inflige 1d6 Fuego." },
+        { "name": "Invierno", "reagent": "Esencia de Frío", "effect": "Resistencia Frío. Inmune Ralentizar/Restringir." },
+        { "name": "Tormenta", "reagent": "Esencia de Rayo", "effect": "Resistencia Rayo. Reacción: Inflige 1d8 Rayo." },
+        { "name": "Impermeable", "reagent": "Orgánico (Tarrasque)", "effect": "Resistencia (Mitad Daño) a Físico No Mágico." },
+        { "name": "Juggernaut", "reagent": "Chatarra (Titán)", "effect": "+2 Puntuación de Armadura (AS)." },
+        { "name": "Piel de Navaja", "reagent": "Chatarra (Demonio)", "effect": "Golpeado por melee: Atacante recibe 1d6 Físico." },
+        { "name": "Etérea", "reagent": "Esencia (Fase)", "effect": "1/Día: Etereidad (1 min)." },
+        { "name": "Desvanecimiento", "reagent": "Esencia (Invis)", "effect": "1/Día: Invisibilidad (1 hora)." },
+        { "name": "Fénix", "reagent": "Esencia (Vida)", "effect": "Caer a 0 PV: Explota 2d6 Fuego, Recupera 10 PV." },
+        { "name": "Come-Hechizos", "reagent": "Esencia (Nulo)", "effect": "Resistencia a Daño de Hechizos." },
+        { "name": "Reflectante", "reagent": "Chatarra (Espejo)", "effect": "Escudo: Crítico en Defensa vs Hechizo lo refleja." },
+        { "name": "Dragón", "reagent": "Orgánico (Dragón)", "effect": "Resistencia a Elemento. +1 AS. Ventaja vs Aliento." },
+        { "name": "Vampírica", "reagent": "Esencia (Sangre)", "effect": "Matar enemigo: Recupera 5 PV." },
+        { "name": "Titán", "reagent": "Chatarra (Hidráulica)", "effect": "Cuentas como Grande. Puntuación STR se vuelve 22 (+6)." },
+        { "name": "Némesis", "reagent": "Orgánico (Objetivo)", "effect": "+2 Defensa vs Familia. Ventaja en Salvaciones." },
+        { "name": "Fuerza", "reagent": "Esencia (Fuerza)", "effect": "Inicio Combate: Gana 10 PV Temporales." },
+        { "name": "Tiempo", "reagent": "Esencia (Tiempo)", "effect": "1/Día: Vuelve a tirar Salvación fallida." },
+        { "name": "Viviente", "reagent": "Orgánico (Carne)", "effect": "Inmune Romper/Ácido/Críticos. Auto-Reparación." },
+        { "name": "Vuelo", "reagent": "Esencia (Aire)", "effect": "Gana Velocidad de Vuelo igual a Caminar." },
+        { "name": "Invulnerable", "reagent": "Esencia (Divina)", "effect": "1/Día: Inmune a TODO Daño por 1 Ronda." }
+      ]
+    },
+    "wondrous": {
+      "tier_1": [
+        { "name": "Zancudo", "reagent": "Esencia (Aire)", "effect": "+5 Velocidad." },
+        { "name": "Escalador", "reagent": "Orgánico (Araña)", "effect": "Ventaja en Atletismo (Escalar)." },
+        { "name": "Nadador", "reagent": "Orgánico (Pez)", "effect": "Ventaja en Atletismo (Nadar)." },
+        { "name": "Saltador", "reagent": "Orgánico (Rana)", "effect": "Doble distancia de Salto." },
+        { "name": "Habilidad (Atl)", "reagent": "Chatarra (Pesas)", "effect": "Gana Competencia (d4) en Atletismo." },
+        { "name": "Habilidad (Acr)", "reagent": "Chatarra (Eq)", "effect": "Gana Competencia (d4) en Acrobacias." },
+        { "name": "Habilidad (Sig)", "reagent": "Esencia (Sombra)", "effect": "Gana Competencia (d4) en Sigilo." },
+        { "name": "Habilidad (Per)", "reagent": "Orgánico (Ojo)", "effect": "Gana Competencia (d4) en Escrutinio." },
+        { "name": "Habilidad (Sup)", "reagent": "Flora (Brújula)", "effect": "Gana Competencia (d4) en Supervivencia." },
+        { "name": "Habilidad (Inf)", "reagent": "Botín (Joya)", "effect": "Gana Competencia (d4) en Influencia." },
+        { "name": "Iluminador", "reagent": "Esencia (Luz)", "effect": "3/Día: Emitir Luz Brillante (20 pies) por 1 h." },
+        { "name": "Telequinético", "reagent": "Esencia (Fuerza)", "effect": "3/Día: Mover objeto de 5lb hasta 30 pies." },
+        { "name": "Reparador", "reagent": "Chatarra (Herr)", "effect": "3/Día: Reparar pequeña rotura instantáneamente." },
+        { "name": "Brújula", "reagent": "Chatarra (Imán)", "effect": "No puedes perderte en terreno no mágico." },
+        { "name": "Calidez", "reagent": "Esencia (Fuego)", "effect": "Cómodo en temperaturas hasta -20°F." },
+        { "name": "Frescor", "reagent": "Esencia (Hielo)", "effect": "Cómodo en temperaturas hasta 120°F." },
+        { "name": "Limpiador", "reagent": "Esencia (Agua)", "effect": "Toque limpia objeto/criatura instantáneamente." },
+        { "name": "Alarma", "reagent": "Chatarra (Campana)", "effect": "Silbido audible si criatura se acerca a 30 pies." },
+        { "name": "Encendedor", "reagent": "Esencia (Fuego)", "effect": "Toque enciende objetos inflamables al instante." },
+        { "name": "Susurro", "reagent": "Esencia (Aire)", "effect": "3/Día: Enviar mensaje susurrado a 60 pies." }
+      ],
+      "tier_2": [
+        { "name": "Caminante de Araña", "reagent": "Orgánico (Araña)", "effect": "Gana Velocidad de Escalada. Camina en techos." },
+        { "name": "Garganta de Branquia", "reagent": "Orgánico (Branquia)", "effect": "Respira Agua. Gana Velocidad de Nado." },
+        { "name": "Ojo Nocturno", "reagent": "Orgánico (Oscuridad)", "effect": "Gana Visión en la Oscuridad 60 pies." },
+        { "name": "Caída de Pluma", "reagent": "Esencia (Aire)", "effect": "1/Día: Reacción para recibir 0 Daño de Caída." },
+        { "name": "Experto (Habilidad)", "reagent": "Esencia (Habilidad)", "effect": "Mejora un Dado de Competencia a Experto (d6)." },
+        { "name": "Almacenamiento", "reagent": "Esencia (Espacio)", "effect": "Bolsa de Contención: +10 Espacios de Inventario." },
+        { "name": "Alquimia", "reagent": "Flora (Jarra)", "effect": "Produce 1 Reactivo Común por Día." },
+        { "name": "Sanador", "reagent": "Flora (Vida)", "effect": "1/Día: Lanza Curar Heridas (2d6)." },
+        { "name": "Explosivo", "reagent": "Esencia (Fuego)", "effect": "1/Día: Lanza Rayo Abrasador (4d6 Fuego)." },
+        { "name": "Escudo", "reagent": "Chatarra (Fuerza)", "effect": "1/Día: Lanza Escudo (+2 AS)." },
+        { "name": "Invisibilidad", "reagent": "Esencia (Invis)", "effect": "1/Día: Lanza Invisibilidad." },
+        { "name": "Detección", "reagent": "Esencia (Ojo)", "effect": "3/Día: Sentir Magia/Veneno/No-Muertos." },
+        { "name": "Protección", "reagent": "Esencia (Sagrada)", "effect": "+1 Bono a todas las Pruebas de Defensa." },
+        { "name": "Afortunado", "reagent": "Esencia (Suerte)", "effect": "Reserva de Suerte Máxima +1." },
+        { "name": "Pozo de Maná", "reagent": "Esencia (Arcana)", "effect": "Maná Máximo (MP) +2." },
+        { "name": "Vitalidad", "reagent": "Orgánico (Corazón)", "effect": "Aguante Máximo (STA) +1." },
+        { "name": "Almacén de Hechizo", "reagent": "Esencia (Memoria)", "effect": "Almacena un hechizo de 2 MP para uso posterior." },
+        { "name": "Comunicador", "reagent": "Chatarra (Cable)", "effect": "1/Día: Mensaje alcance ilimitado." },
+        { "name": "Disfraz", "reagent": "Esencia (Ilusión)", "effect": "1/Día: Disfrazarse (1 hora)." },
+        { "name": "Descanso", "reagent": "Flora (Incienso)", "effect": "Descanso Largo toma solo 1 Hora." }
+      ],
+      "tier_3": [
+        { "name": "Vuelo", "reagent": "Esencia (Aire)", "effect": "1/Día: Velocidad de Vuelo (1 Hora)." },
+        { "name": "Rayos-X", "reagent": "Esencia (Vacío)", "effect": "1/Día: Ver a través de paredes (1 min)." },
+        { "name": "Visión Verdadera", "reagent": "Esencia (Ojo)", "effect": "Visión Verdadera 30 pies. Ver Invisible/Ilusiones." },
+        { "name": "Teletransporte", "reagent": "Esencia (Deformar)", "effect": "1/Día: Teletransportar grupo 500 pies." },
+        { "name": "Maestría", "reagent": "Esencia (Habilidad)", "effect": "Ventaja en TODAS las pruebas con Habilidad elegida." },
+        { "name": "Regeneración", "reagent": "Orgánico (Troll)", "effect": "Recupera 1d6 PV cada 10 mins." },
+        { "name": "Renacimiento", "reagent": "Esencia (Vida)", "effect": "1/Semana: Lanza Revivir (Muerto < 1 min)." },
+        { "name": "Bola de Fuego", "reagent": "Esencia (Fuego)", "effect": "1/Día: Lanza Bola de Fuego (4d6 AoE)." },
+        { "name": "Relámpago", "reagent": "Esencia (Tormenta)", "effect": "1/Día: Lanza Rayo Relámpago (4d8 Línea)." },
+        { "name": "Control", "reagent": "Esencia (Mente)", "effect": "1/Día: Lanza Dominar Persona." },
+        { "name": "Invocación", "reagent": "Orgánico (Bestia)", "effect": "1/Día: Invoca Lobo Espiritual (1 hr)." },
+        { "name": "Fortaleza", "reagent": "Chatarra (Cubo)", "effect": "1/Día: Choza Diminuta (cúpula 8 hr)." },
+        { "name": "Velocidad", "reagent": "Esencia (Tiempo)", "effect": "1/Día: Prisa (Doble Velocidad, +Acción)." },
+        { "name": "Desplazamiento", "reagent": "Orgánico (Desplazador)", "effect": "Desventaja en ataques contra ti." },
+        { "name": "Reflexión", "reagent": "Chatarra (Espejo)", "effect": "Refleja hechizos en Defensa Crítica." },
+        { "name": "Señor de Hechizos", "reagent": "Esencia (Arcana)", "effect": "Almacena 8 MP en hechizos." },
+        { "name": "Atributo", "reagent": "Esencia (Pura)", "effect": "+1 a un Modificador de Atributo (Puede exceder +5)." },
+        { "name": "Destino", "reagent": "Esencia (Suerte)", "effect": "Reserva de Suerte se refresca a 3 al amanecer." },
+        { "name": "Poder", "reagent": "Esencia (Maná)", "effect": "Maná Máximo (MP) +4." },
+        { "name": "Vigor", "reagent": "Orgánico (Corazón)", "effect": "Aguante Máximo (STA) +2." }
+      ]
+    }
+  }
+}

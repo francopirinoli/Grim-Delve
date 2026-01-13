@@ -150,77 +150,91 @@ export const MonsterBuilder = {
 
     renderInterface: (container) => {
         const data = I18n.getData('monsters');
+        if (!data) return container.innerHTML = "<p>Error: Monster data not loaded.</p>";
+
         const roles = Object.keys(data.chassis);
         const families = Object.keys(data.families);
+        const t = I18n.t; // Localization Helper
 
         const html = `
             <div class="architect-layout">
+                <!-- LEFT: THE LAB -->
                 <div class="architect-controls">
+                    
                     <div class="form-group">
-                        <label class="form-label">Name</label>
+                        <label class="form-label">${t('lbl_name')}</label>
                         <input type="text" id="mb-name" value="${MonsterBuilder.currentMonster.name}">
                     </div>
+
+                    <!-- Image Uploader & Controls -->
                     <div class="form-group" style="background:rgba(0,0,0,0.2); padding:10px; border:1px dashed #444;">
-                        <label class="form-label" style="font-size:0.8rem;">Portrait</label>
+                        <label class="form-label" style="font-size:0.8rem;">${t('lbl_portrait')}</label>
                         <div style="display:flex; gap:5px; margin-bottom:10px;">
                             <input type="text" id="mb-img-url" placeholder="Image URL..." style="flex:1; font-size:0.8rem;">
-                            <button id="btn-upload-img" class="btn-small">📁 Upload</button>
+                            <button id="btn-upload-img" class="btn-small">📁 ${t('lbl_upload')}</button>
                             <input type="file" id="mb-file-input" style="display:none" accept="image/*">
                         </div>
+                        
+                        <!-- Image Adjustments -->
                         <div id="img-controls" style="display:flex; gap:10px; align-items:center;">
                             <div style="flex:1;">
-                                <label style="font-size:0.7rem; color:#aaa;">Zoom</label>
+                                <label style="font-size:0.7rem; color:#aaa;">${t('lbl_zoom')}</label>
                                 <input type="range" id="inp-img-scale" min="0.1" max="3.0" step="0.1" value="1" style="width:100%;">
                             </div>
                             <div style="flex:1;">
-                                <label style="font-size:0.7rem; color:#aaa;">Pan X</label>
+                                <label style="font-size:0.7rem; color:#aaa;">${t('lbl_pan_x')}</label>
                                 <input type="range" id="inp-img-x" min="-200" max="200" step="10" value="0" style="width:100%;">
                             </div>
                             <div style="flex:1;">
-                                <label style="font-size:0.7rem; color:#aaa;">Pan Y</label>
+                                <label style="font-size:0.7rem; color:#aaa;">${t('lbl_pan_y')}</label>
                                 <input type="range" id="inp-img-y" min="-200" max="200" step="10" value="0" style="width:100%;">
                             </div>
-                            <button id="btn-reset-img" class="btn-small" style="height:30px; margin-top:12px;">Reset</button>
+                            <button id="btn-reset-img" class="btn-small" style="height:30px; margin-top:12px;">${t('lbl_reset')}</button>
                         </div>
                     </div>
+
                     <div class="split-view" style="gap:10px; margin-bottom:1rem;">
                         <div>
-                            <label class="form-label">Role</label>
+                            <label class="form-label">${t('lbl_role')}</label>
                             <select id="mb-role">
                                 ${roles.map(r => `<option value="${r}">${r.charAt(0).toUpperCase() + r.slice(1)}</option>`).join('')}
                             </select>
                         </div>
                         <div>
-                            <label class="form-label">Level</label>
+                            <label class="form-label">${t('lbl_level')}</label>
                             <select id="mb-level">
                                 ${Array.from({length:10}, (_, i) => i+1).map(n => `<option value="${n}">${n}</option>`).join('')}
                             </select>
                         </div>
                         <div>
-                            <label class="form-label">Family</label>
+                            <label class="form-label">${t('lbl_family')}</label>
                             <select id="mb-family">
                                 ${families.map(f => `<option value="${f}">${data.families[f].name}</option>`).join('')}
                             </select>
                         </div>
                     </div>
+
+                    <!-- Stats Section -->
                     <div class="info-box" style="margin-bottom:1rem;">
-                        <h4 style="margin-top:0; color:var(--accent-blue); font-size:0.9rem; text-transform:uppercase;">Chassis Stats</h4>
+                        <h4 style="margin-top:0; color:var(--accent-blue); font-size:0.9rem; text-transform:uppercase;">${t('mon_chassis')}</h4>
                         <div class="stat-grid" style="grid-template-columns: repeat(3, 1fr); gap:10px;">
                             <div class="stat-input"><label>HP</label><input type="number" id="mb-hp"></div>
                             <div class="stat-input"><label>AS</label><input type="number" id="mb-as"></div>
                             <div class="stat-input"><label>Speed</label><input type="text" id="mb-speed"></div>
-                            <div class="stat-input"><label>Atk DC</label><input type="number" id="mb-atk"></div>
-                            <div class="stat-input"><label>Def DC</label><input type="number" id="mb-def"></div>
-                            <div class="stat-input"><label>Save DC</label><input type="number" id="mb-save"></div>
+                            <div class="stat-input"><label>Atk</label><input type="number" id="mb-atk"></div>
+                            <div class="stat-input"><label>Def</label><input type="number" id="mb-def"></div>
+                            <div class="stat-input"><label>Save</label><input type="number" id="mb-save"></div>
                         </div>
                         <div style="margin-top:10px;">
                             <label class="form-label">Damage Formula</label>
                             <input type="text" id="mb-dmg">
                         </div>
                     </div>
+
                     <div id="ability-section"></div>
+
                     <div class="custom-builder">
-                        <h4 style="margin-top:0; color:var(--accent-gold); font-size:0.9rem; text-transform:uppercase;">Add Custom Ability</h4>
+                        <h4 style="margin-top:0; color:var(--accent-gold); font-size:0.9rem; text-transform:uppercase;">${t('mon_custom')}</h4>
                         <div class="custom-row">
                             <input type="text" id="cust-name" placeholder="Ability Name" style="flex:2;">
                             <select id="cust-type" style="flex:1;">
@@ -236,18 +250,21 @@ export const MonsterBuilder = {
                         <div class="custom-row">
                             <textarea id="cust-effect" rows="2" placeholder="Effect description..." style="width:100%; background:#111; color:#eee; border:1px solid #444; padding:5px;"></textarea>
                         </div>
-                        <button id="btn-add-custom" class="btn-add">+ Add to Stat Block</button>
+                        <button id="btn-add-custom" class="btn-add">+ ${t('mon_add_btn')}</button>
                     </div>
+
                     <div class="form-group" style="margin-top:1rem;">
-                        <label class="form-label">GM Notes / Loot</label>
+                        <label class="form-label">${t('lbl_notes')}</label>
                         <textarea id="mb-notes" rows="3" style="width:100%; background:var(--bg-input); color:#eee; border:1px solid #333; padding:5px;"></textarea>
                     </div>
                 </div>
+
+                <!-- RIGHT: THE PREVIEW -->
                 <div class="architect-preview">
                     <div id="monster-card-display"></div>
                     <div style="margin-top:1rem; display:flex; gap:10px;">
-                        <button id="btn-print-monster" class="btn-secondary">🖨️ Print</button>
-                        <button id="btn-save-monster" class="btn-primary">💾 Save to Library</button>
+                        <button id="btn-print-monster" class="btn-secondary">🖨️ ${t('btn_print')}</button>
+                        <button id="btn-save-monster" class="btn-primary">💾 ${t('btn_save_lib')}</button>
                     </div>
                 </div>
             </div>

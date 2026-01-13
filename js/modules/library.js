@@ -85,9 +85,9 @@ export const Library = {
 
                 <!-- Action Bar -->
                 <div style="display:flex; justify-content:flex-end; gap:10px; margin-bottom:1rem;">
-                     ${isChar ? `<button class="btn-primary" id="btn-import-char">📥 Import JSON</button>` : ''}
-                     ${isMon ? `<button class="btn-primary" id="btn-import-mon">📥 Import JSON</button>` : ''}
-                     ${isItem ? `<button class="btn-primary" id="btn-import-item">📥 Import JSON</button>` : ''}
+                    ${isChar ? `<button class="btn-primary" id="btn-import-char">📥 ${t('btn_import_json')}</button>` : ''}
+                    ${isMon ? `<button class="btn-primary" id="btn-import-mon">📥 ${t('btn_import_json')}</button>` : ''}
+                    ${isItem ? `<button class="btn-primary" id="btn-import-item">📥 ${t('btn_import_json')}</button>` : ''}
                      <input type="file" id="lib-file-input" style="display:none" accept=".json">
                 </div>
             </div>
@@ -142,8 +142,9 @@ export const Library = {
     },
 
     refreshContent: () => {
+        const t = I18n.t; // Helper
         const grid = document.getElementById('library-grid');
-        grid.innerHTML = '<div style="color:#666; text-align:center; grid-column:1/-1;">Loading...</div>';
+        grid.innerHTML = `<div style="color:#666; text-align:center; grid-column:1/-1;">${t('lib_loading')}</div>`;
 
         if (Library.currentTab === 'characters') Library.renderCharacters(grid);
         else if (Library.currentTab === 'bestiary') Library.renderBestiary(grid);
@@ -170,7 +171,8 @@ export const Library = {
 
     renderCharacters: (grid) => {
         const chars = Storage.getCharacters();
-        const filtered = chars.filter(c => c.name.toLowerCase().includes(Library.filters.search));
+        // Safe filter
+        const filtered = chars.filter(c => c && c.name && c.name.toLowerCase().includes(Library.filters.search));
 
         if (filtered.length === 0) {
             grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:#555;">No characters found.</div>`;
@@ -186,15 +188,16 @@ export const Library = {
                 </div>
                 <div class="lib-card-body">
                     <div class="lib-card-name">${c.name}</div>
-                    <div class="lib-card-meta">Lvl ${c.level} ${c.className}</div>
+                    <div class="lib-card-meta">Lvl ${c.level} ${c.className || 'Adventurer'}</div>
                     
                     <div class="lib-mini-stats">
-                        <div class="lms-box"><div class="lms-label">HP</div><div class="lms-val" style="color:#d32f2f">${c.current.hp}/${c.derived.maxHP}</div></div>
-                        <div class="lms-box"><div class="lms-label">STA</div><div class="lms-val" style="color:#388e3c">${c.current.sta}/${c.derived.maxSTA}</div></div>
-                        <div class="lms-box"><div class="lms-label">MP</div><div class="lms-val" style="color:#1976d2">${c.current.mp}/${c.derived.maxMP}</div></div>
+                        <div class="lms-box"><div class="lms-label">HP</div><div class="lms-val" style="color:#d32f2f">${c.current ? c.current.hp : 0}/${c.derived ? c.derived.maxHP : 0}</div></div>
+                        <div class="lms-box"><div class="lms-label">STA</div><div class="lms-val" style="color:#388e3c">${c.current ? c.current.sta : 0}/${c.derived ? c.derived.maxSTA : 0}</div></div>
+                        <div class="lms-box"><div class="lms-label">MP</div><div class="lms-val" style="color:#1976d2">${c.current ? c.current.mp : 0}/${c.derived ? c.derived.maxMP : 0}</div></div>
                     </div>
                 </div>
                 <div class="lib-card-footer">
+                    <!-- Fixed variables: used c.id instead of i.id -->
                     <button class="lib-btn primary action-play" data-id="${c.id}">▶ Play</button>
                     <button class="lib-btn action-edit" data-id="${c.id}">✏️ Edit</button>
                     <button class="lib-btn delete action-delete" data-id="${c.id}" data-type="char">🗑️</button>
@@ -206,10 +209,82 @@ export const Library = {
         Library.bindCardActions(grid, 'char');
     },
 
+    renderItems: (grid) => {
+        const items = Storage.getLibrary('grim_delve_items') || [];
+        const f = Library.filters;
+
+        const filtered = items.filter(i => {
+            if (f.search && !i.name.toLowerCase().includes(f.search)) return false;
+            if (f.type !== 'all' && i.type !== f.type) return false;
+            return true;
+        });
+
+        if (filtered.length === 0) {
+            grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:#555;">No items found. Create some in the Artificer!</div>`;
+            return;
+        }
+
+        grid.innerHTML = filtered.map(i => {
+            const isMagic = i.isMagic;
+            
+            let imgHTML = `<div class="lib-thumb-placeholder">⚔️</div>`;
+            if (i.imageId) imgHTML = `<img src="" data-img-id="${i.imageId}">`;
+            else if (i.imageUrl) imgHTML = `<img src="${i.imageUrl}">`;
+
+            return `
+                <div class="lib-card item ${isMagic ? 'magic' : ''}">
+                    <div class="lib-card-thumb">
+                        ${imgHTML}
+                    </div>
+                    <div class="lib-card-body">
+                        <div class="lib-card-name">${i.name}</div>
+                        <div class="lib-card-meta">${i.type} • ${i.cost}</div>
+                        <div style="font-size:0.8rem; color:#aaa; flex-grow:1; overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical;">
+                            ${i.description}
+                        </div>
+                    </div>
+                    <div class="lib-card-footer">
+                        <button class="lib-btn primary action-view-item" data-id="${i.id}">👁️ View</button>
+                        <!-- ADDED EDIT BUTTON HERE -->
+                        <button class="lib-btn action-edit" data-id="${i.id}" data-type="item">✏️ Edit</button>
+                        <button class="lib-btn delete action-delete" data-id="${i.id}" data-type="item">🗑️</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        Library.lazyLoadImages(grid);
+        Library.bindCardActions(grid, 'item');
+    },
+
     renderBestiary: (grid) => {
-        // 1. Get Official
+        // 1. Get Official & Normalize Data
         const rawOfficial = I18n.getData('bestiary') || [];
-        const official = rawOfficial.map(m => ({ ...m, source: 'official', id: m.id || m.name })); 
+        const official = rawOfficial.map(m => ({
+            id: m.id,
+            name: m.name,
+            role: m.role.toLowerCase(),
+            family: m.family,
+            level: m.level,
+            source: 'official',
+            imageUrl: m.imageUrl || null, // Ensure field exists
+            // NORMALIZE STATS: Map 'combat' to 'stats' if 'stats' is missing attack data
+            stats: {
+                hp: m.stats.hp,
+                as: m.stats.as,
+                speed: m.stats.speed,
+                // Check if we are using the JSON format (combat.atk_dc) or Builder format (stats.atk)
+                atk: m.combat ? m.combat.atk_dc : m.stats.atk,
+                def: m.combat ? m.combat.def_dc : m.stats.def,
+                save: m.combat ? m.combat.save_dc : m.stats.save,
+                dmg: m.combat ? m.combat.dmg : m.stats.dmg
+            },
+            // Pass through arrays
+            traits: m.abilities ? m.abilities.filter(a => a.type === "Passive" || a.type === "Trait") : m.traits,
+            actions: m.abilities ? m.abilities.filter(a => a.type === "Action" || a.type === "Attack" || a.type === "Magic") : m.actions,
+            danger_abilities: m.abilities ? m.abilities.filter(a => a.type === "Danger") : m.danger_abilities,
+            notes: m.loot ? `Loot: ${m.loot}` : m.notes
+        }));
         
         // 2. Get Custom
         const custom = Storage.getLibrary('grim_monsters') || [];
@@ -229,6 +304,7 @@ export const Library = {
             const isCustom = (m.source !== 'official');
             const roleCap = m.role.charAt(0).toUpperCase() + m.role.slice(1);
             
+            // Image Logic
             let imgHTML = `<div class="lib-thumb-placeholder">💀</div>`;
             if (m.imageId) imgHTML = `<img src="" data-img-id="${m.imageId}">`;
             else if (m.imageUrl) imgHTML = `<img src="${m.imageUrl}">`;
@@ -315,7 +391,7 @@ export const Library = {
        ------------------------------------------------------------------ */
 
     bindCardActions: (grid, type) => {
-        // DELETE
+        // --- DELETE ---
         grid.querySelectorAll('.action-delete').forEach(btn => {
             btn.onclick = (e) => {
                 e.stopPropagation();
@@ -329,7 +405,7 @@ export const Library = {
                     }
                     else if (type === 'item') {
                         let lib = Storage.getLibrary('grim_delve_items');
-                        lib = lib.filter(x => x.id !== id);
+                        lib = lib.filter(x => x.id !== id); 
                         localStorage.setItem('grim_delve_items', JSON.stringify(lib));
                     }
                     Library.refreshContent();
@@ -337,43 +413,68 @@ export const Library = {
             };
         });
 
-        // EDIT (Route to Builder)
+        // --- EDIT ---
         grid.querySelectorAll('.action-edit').forEach(btn => {
             btn.onclick = (e) => {
                 e.stopPropagation();
                 const id = btn.dataset.id;
                 
-                if (type === 'char') {
-                    const char = Storage.getCharacter(id);
-                    CharGen.loadCharacter(char);
-                    document.querySelector('[data-module="chargen"]').click();
-                } else if (type === 'mon') {
+            if (type === 'char') {
+            const char = Storage.getCharacter(id);
+            if (char) {
+                CharGen.loadCharacter(char);
+                // Important: Click the nav button to trigger the module switch
+                const navBtn = document.querySelector('[data-module="chargen"]');
+                if (navBtn) navBtn.click();
+            }
+        }
+                else if (type === 'mon') {
                     const source = btn.dataset.source;
                     let mob;
-                    if (source === 'official') mob = I18n.getData('bestiary').find(m => m.id === id);
-                    else mob = Storage.getLibrary('grim_monsters').find(m => m.id === id);
+                    
+                    if (source === 'official') {
+                        // Official monsters are "Cloned" not edited directly
+                        const raw = I18n.getData('bestiary').find(m => m.id === id);
+                        if(raw) {
+                            // Normalize for Builder
+                            mob = {
+                                ...raw,
+                                source: 'official', // Builder handles this as a clone
+                                stats: {
+                                    hp: raw.stats.hp, as: raw.stats.as, speed: raw.stats.speed,
+                                    atk: raw.combat.atk_dc, def: raw.combat.def_dc, save: raw.combat.save_dc, dmg: raw.combat.dmg
+                                },
+                                traits: raw.abilities.filter(a => a.type === "Passive" || a.type === "Trait"),
+                                actions: raw.abilities.filter(a => a.type === "Action" || a.type === "Attack" || a.type === "Magic"),
+                                danger_abilities: raw.abilities.filter(a => a.type === "Danger"),
+                                notes: raw.loot ? `Loot: ${raw.loot}` : raw.notes
+                            };
+                        }
+                    } else {
+                        mob = Storage.getLibrary('grim_monsters').find(m => m.id === id);
+                    }
                     
                     if(mob) {
                         MonsterBuilder.loadMonster(mob);
                         document.querySelector('[data-module="bestiary"]').click();
                     }
+                } else if (type === 'item') {
+                    const item = Storage.getLibrary('grim_delve_items').find(i => i.id === id);
+                    if(item) {
+                        ItemBuilder.loadItem(item); // We need to add this function to ItemBuilder next!
+                        document.querySelector('[data-module="artificer"]').click();
+                    }
                 }
             };
         });
 
-        // VIEW / PLAY
+        // --- PLAY (Characters) ---
         grid.querySelectorAll('.action-play').forEach(btn => {
             btn.onclick = (e) => {
                 e.stopPropagation();
                 const id = btn.dataset.id;
                 const char = Storage.getCharacter(id);
-                
                 if (char) {
-                    // Switch to CharGen module context visually
-                    const mainNav = document.querySelector('[data-module="chargen"]');
-                    if(mainNav) mainNav.classList.add('active');
-                    
-                    // Initialize Play Mode
                     CharGen.initPlayMode(char);
                 } else {
                     alert("Error: Character not found.");
@@ -381,20 +482,50 @@ export const Library = {
             };
         });
 
+        // --- VIEW (Monsters) ---
         grid.querySelectorAll('.action-view').forEach(btn => {
             btn.onclick = (e) => {
+                e.stopPropagation();
                 const id = btn.dataset.id;
                 const source = btn.dataset.source;
+                
                 let mob;
-                if (source === 'official') mob = I18n.getData('bestiary').find(m => m.id === id);
-                else mob = Storage.getLibrary('grim_monsters').find(m => m.id === id);
+                
+                if (source === 'official') {
+                    // CRITICAL FIX: Normalize Data Structure for Renderer
+                    const raw = I18n.getData('bestiary').find(m => m.id === id);
+                    if(raw) {
+                        mob = {
+                           ...raw,
+                           // Convert 'combat' block to 'stats' block so Renderer can read it
+                           stats: {
+                               hp: raw.stats.hp, 
+                               as: raw.stats.as, 
+                               speed: raw.stats.speed,
+                               atk: raw.combat.atk_dc, 
+                               def: raw.combat.def_dc, 
+                               save: raw.combat.save_dc, 
+                               dmg: raw.combat.dmg
+                           },
+                           traits: raw.abilities.filter(a => a.type === "Passive" || a.type === "Trait"),
+                           actions: raw.abilities.filter(a => a.type === "Action" || a.type === "Attack" || a.type === "Magic"),
+                           danger_abilities: raw.abilities.filter(a => a.type === "Danger"),
+                           notes: raw.loot ? `Loot: ${raw.loot}` : raw.notes
+                        };
+                    }
+                } else {
+                    // Custom monsters are already in the right format
+                    mob = Storage.getLibrary('grim_monsters').find(m => m.id === id);
+                }
                 
                 if(mob) Library.openMonsterModal(mob);
             };
         });
         
+        // --- VIEW (Items) ---
         grid.querySelectorAll('.action-view-item').forEach(btn => {
             btn.onclick = (e) => {
+                e.stopPropagation();
                 const id = btn.dataset.id;
                 const item = Storage.getLibrary('grim_delve_items').find(i => i.id === id);
                 if(item) Library.openItemModal(item);

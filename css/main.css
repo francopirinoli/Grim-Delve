@@ -1907,24 +1907,6 @@ dd {
     position: relative;
 }
 
-/* Visual cue on hover */
-.lib-card:hover::after {
-    content: "👁️ View Stat Block";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: rgba(0, 0, 0, 0.8);
-    color: var(--accent-gold);
-    padding: 10px 20px;
-    border-radius: 20px;
-    font-weight: bold;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.2s;
-    z-index: 10;
-}
-
 .lib-card:hover::after {
     opacity: 1;
 }
@@ -3195,6 +3177,7 @@ dd {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
+    overflow: hidden; 
 }
 
 .lib-card-name {
@@ -3272,12 +3255,11 @@ body.mode-play #sidebar {
 }
 
 body.mode-play #main-content {
-    padding: 0;
-    height: 100vh;
-    overflow-y: auto;
-    background-color: #121212; /* Ensure dark background */
-    display: flex;
-    justify-content: center;
+    display: block !important; /* Reset Flexbox to allow normal scroll */
+    padding: 0 !important;
+    height: 100vh !important;
+    overflow-y: auto !important;
+    background-color: #121212 !important;
 }
 
 /* Floating Toolbar for Play Mode */
@@ -3329,8 +3311,9 @@ body.mode-play:not(:hover) .play-toolbar {
 /* --- SHEET ADJUSTMENTS FOR PLAY MODE --- */
 /* In play mode, center the sheet and add margin for the toolbar */
 body.mode-play .sheet-page {
-    margin-top: 2rem;
-    margin-bottom: 6rem; /* Space for toolbar */
+    margin: 2rem auto 8rem auto !important; /* Top, Right, Bottom, Left */
+    max-width: 850px;
+    width: 95%; /* Responsive width */
 }
 
 /* Hide the "Edit Mode" buttons inside the sheet when playing */
@@ -3388,4 +3371,381 @@ body.mode-play #btn-levelup {
 .icon-btn:hover {
     color: var(--accent-gold);
     border-color: var(--accent-gold);
+}
+
+.view-monster-modal button {
+    background-color: #222 !important;
+    color: #e0e0e0 !important; /* Light text */
+    border: 1px solid #555 !important;
+    font-family: var(--font-header);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 8px 16px;
+    margin: 0 5px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.view-monster-modal button:hover {
+    background-color: var(--accent-gold) !important;
+    color: #121212 !important; /* Dark text on gold */
+    border-color: var(--accent-gold) !important;
+}
+
+/* =========================================
+   PHASE 6: MOBILE RESPONSIVENESS
+   ========================================= */
+
+/* Mobile Menu Button (Hidden on Desktop) */
+#mobile-menu-btn {
+    display: none;
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 2000;
+    background: var(--bg-panel);
+    border: 1px solid var(--accent-gold);
+    color: var(--accent-gold);
+    font-size: 1.5rem;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+}
+
+/* --- TABLET & MOBILE BREAKPOINT (Under 1024px) --- */
+/* --- MOBILE RESPONSIVENESS (Refined) --- */
+@media (max-width: 1024px) {
+    
+    /* 1. Global Layout & Sidebar */
+    #mobile-menu-btn {
+        display: block;
+    }
+
+    #sidebar {
+        position: fixed;
+        left: -280px;
+        top: 0;
+        height: 100vh;
+        z-index: 1500;
+        transition: left 0.3s ease;
+        box-shadow: 5px 0 15px rgba(0,0,0,0.5);
+    }
+
+    #sidebar.open {
+        left: 0;
+    }
+
+    #main-content {
+        padding: 1rem !important; /* Reduce global padding */
+        width: 100%;
+        overflow-x: hidden; /* Prevent horizontal scroll */
+    }
+
+    /* 2. Builders (Monster/Item) - Stack Vertically */
+    .architect-layout, 
+    .artificer-layout,
+    .table-layout {
+        display: flex; /* Switch grid to flex column for easier stacking */
+        flex-direction: column;
+        height: auto;
+        overflow: visible;
+    }
+    
+    .architect-controls, 
+    .forge-controls,
+    .table-sidebar {
+        height: auto;
+        max-height: none; /* Remove height limit */
+        border-right: none;
+        border-bottom: 2px solid var(--accent-gold);
+        padding-bottom: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .item-preview-container,
+    .architect-preview {
+        padding: 0;
+        background: transparent; /* Remove background pattern on mobile for readability */
+    }
+
+    /* 3. Character Creator - Stack Steps on Top */
+    .chargen-layout {
+        flex-direction: column;
+    }
+
+    .chargen-sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+        height: auto;
+    }
+
+    .step-list {
+        display: flex;
+        overflow-x: auto; /* Allow horizontal scroll for steps */
+        gap: 10px;
+        padding-bottom: 5px;
+    }
+
+    .step-item {
+        white-space: nowrap; /* Keep step names on one line */
+        font-size: 0.8rem;
+    }
+
+    .split-view {
+        grid-template-columns: 1fr; /* Stack Inputs above Preview */
+        gap: 2rem;
+    }
+
+    /* 4. Rulebook - Fix Text Cutoff */
+    .rb-layout {
+        flex-direction: column;
+    }
+
+    .rb-toc {
+        width: 100%;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        margin-bottom: 1rem;
+        max-height: 200px; /* Limit TOC height, allow scroll */
+        overflow-y: auto;
+    }
+
+    .rb-content {
+        padding: 0 !important; /* Remove massive padding */
+        width: 100%;
+    }
+
+    .rb-text p {
+        font-size: 0.95rem; /* Slightly smaller text */
+        text-align: left;
+    }
+
+    /* 5. Library - Fix Grid and Header */
+    .lib-static-top {
+        padding: 1rem;
+        position: static; /* Unstick header on mobile to save screen space */
+        height: auto;
+    }
+
+    .lib-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .lib-tabs {
+        width: 100%;
+        overflow-x: auto; /* Scroll tabs if needed */
+    }
+
+    .filter-bar {
+        grid-template-columns: 1fr; /* Stack filters */
+        gap: 10px;
+    }
+    
+    .filter-bar input, .filter-bar select {
+        width: 100%;
+    }
+
+    .library-grid {
+        grid-template-columns: 1fr; /* Single column cards */
+        padding: 1rem 0 4rem 0;
+    }
+
+    /* 6. Play Mode / Character Sheet */
+    body.mode-play .sheet-page {
+        margin: 1rem 0 6rem 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 10px !important;
+        border: none;
+    }
+
+    .p1-body {
+        grid-template-columns: 1fr !important;
+        gap: 1rem;
+    }
+
+    .header-row {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+
+    .header-vitals {
+        width: 100%;
+        grid-template-columns: repeat(4, 1fr); /* Keep vitals horizontal */
+    }
+
+    /* Hide scrollbars */
+    ::-webkit-scrollbar {
+        width: 4px;
+        height: 4px;
+    }
+}
+
+/* =========================================
+   DASHBOARD STYLES
+   ========================================= */
+
+.dashboard-layout {
+    max-width: 900px;
+    margin: 0 auto;
+    padding-bottom: 3rem;
+}
+
+.dash-hero {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    padding: 2rem;
+    background: radial-gradient(circle at center, #252525 0%, #121212 100%);
+    border: 1px solid #333;
+    border-radius: 6px;
+}
+
+.dash-hero h1 {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+    color: var(--accent-gold);
+}
+
+.dash-subtitle {
+    color: #888;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.btn-large {
+    font-size: 1.2rem;
+    padding: 12px 30px;
+    border-radius: 4px;
+    box-shadow: 0 4px 15px rgba(197, 160, 89, 0.2);
+}
+
+/* Action Cards */
+.dash-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.dash-card {
+    background: var(--bg-panel);
+    border: 1px solid #444;
+    padding: 1.5rem;
+    text-align: center;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.dash-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--accent-blue);
+    background: #252525;
+}
+
+.dash-icon {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.dash-card h3 {
+    color: var(--text-main);
+    margin-bottom: 5px;
+    font-size: 1.1rem;
+}
+
+.dash-card p {
+    color: #888;
+    font-size: 0.85rem;
+}
+
+/* Lower Split Section */
+.dash-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.dash-panel {
+    background: rgba(0,0,0,0.2);
+    border: 1px solid #333;
+    padding: 1.5rem;
+    border-radius: 4px;
+}
+
+.dash-panel h3 {
+    color: var(--accent-gold);
+    border-bottom: 1px solid #444;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+/* Stats Bubbles */
+.dash-stats-row {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 100px;
+}
+
+.stat-bubble {
+    text-align: center;
+}
+
+.stat-num {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--text-main);
+    font-family: var(--font-mono);
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: #666;
+    text-transform: uppercase;
+}
+
+/* Recent List */
+.recent-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.recent-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--bg-input);
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.recent-item:hover {
+    background: #333;
+}
+
+.recent-icon { font-size: 1.2rem; }
+.recent-info { flex-grow: 1; }
+.recent-name { font-weight: bold; font-size: 0.95rem; }
+.recent-meta { font-size: 0.75rem; color: #888; font-family: var(--font-mono); }
+
+/* Mobile Stack for Dash */
+@media (max-width: 768px) {
+    .dash-split {
+        grid-template-columns: 1fr;
+    }
 }

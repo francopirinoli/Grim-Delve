@@ -5,7 +5,7 @@
 
 const KEYS = {
     CHARACTERS: 'grim_delve_chars',
-    MONSTERS: 'grim_monsters',
+    MONSTERS: 'grim_monsters', 
     ITEMS: 'grim_delve_items'
 };
 

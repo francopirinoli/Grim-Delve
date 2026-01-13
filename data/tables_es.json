@@ -1,0 +1,287 @@
+{
+  "tables": [
+    {
+      "id": "tbl_whiff_melee",
+      "title": "Pifia en Ataque Cuerpo a Cuerpo",
+      "category": "Combate",
+      "dice": "1d10",
+      "rows": [
+        { "roll": 1, "result": "¡Rotura de Arma! Destruida o rota hasta ser reparada." },
+        { "roll": 2, "result": "¡Torpeza Crítica! Atacas a un aliado adyacente." },
+        { "roll": 3, "result": "¡Sobreextendido! Quedas Derribado y Flanqueado." },
+        { "roll": 4, "result": "¡Arma Caída! Cae al suelo a 10 pies de distancia." },
+        { "roll": 5, "result": "¡Arma Atascada! CD 11 de Fuerza para liberar." },
+        { "roll": 6, "result": "¡Armadura Dañada! -1 AS durante el encuentro." },
+        { "roll": 7, "result": "¡Réplica Enemiga! El enemigo hace un ataque de reacción gratuito." },
+        { "roll": 8, "result": "¡Expuesto! Desventaja en Defensa hasta el próximo turno." },
+        { "roll": 9, "result": "¡Atontado! Solo Acción O Movimiento el próximo turno." },
+        { "roll": 10, "result": "¡Sin Aliento! Pierdes 1d4 de Aguante o quedas Debilitado." }
+      ]
+    },
+    {
+      "id": "tbl_whiff_ranged",
+      "title": "Pifia en Ataque a Distancia",
+      "category": "Combate",
+      "dice": "1d10",
+      "rows": [
+        { "roll": 1, "result": "¡Fallo de Arma! La cuerda se rompe o el mecanismo se atasca." },
+        { "roll": 2, "result": "¡Fuego Amigo! Golpeas al aliado más cercano en la línea de tiro." },
+        { "roll": 3, "result": "¡Munición Derramada! Pierdes 1 Fardo de munición." },
+        { "roll": 4, "result": "¡Posición Revelada! Ya no estás Oculto." },
+        { "roll": 5, "result": "¡Atascado! Gasta una Acción para despejar." },
+        { "roll": 6, "result": "¡Golpe a Cobertura! Destruyes fuente de luz o poción." },
+        { "roll": 7, "result": "¡Avance Enemigo! El objetivo se acerca 15 pies." },
+        { "roll": 8, "result": "¡Expuesto! Desventaja en Defensa." },
+        { "roll": 9, "result": "¡Atontado! El retroceso te golpea." },
+        { "roll": 10, "result": "¡Rebote! Ruido fuerte. +1 Punto de Peligro Extra." }
+      ]
+    },
+    {
+      "id": "tbl_whiff_magic",
+      "title": "Percance Mágico",
+      "category": "Combate",
+      "dice": "1d10",
+      "rows": [
+        { "roll": 1, "result": "¡Catástrofe! 1d10 Daño a ti mismo, Aturdido." },
+        { "roll": 2, "result": "¡Objetivo Erróneo! El hechizo golpea a un objetivo aleatorio." },
+        { "roll": 3, "result": "¡Retroalimentación! Recibes 1d6 Daño por cada MP gastado." },
+        { "roll": 4, "result": "¡Descontrolado! Luces fuera o lamento fuerte." },
+        { "roll": 5, "result": "¡Drenaje de Maná! Pierdes 1d6 MP extra." },
+        { "roll": 6, "result": "¡Grieta Abierta! +1 Punto de Peligro Extra." },
+        { "roll": 7, "result": "¡Auto-Infligido! El hechizo te tiene a ti como objetivo." },
+        { "roll": 8, "result": "¡Enfermedad! Estás Envenenado (1 min)." },
+        { "roll": 9, "result": "¡Choque Mental! Estás Atontado." },
+        { "roll": 10, "result": "¡Fallo! El hechizo falla, MP perdido." }
+      ]
+    },
+    {
+      "id": "tbl_whiff_defense",
+      "title": "Pifia en Defensa",
+      "category": "Combate",
+      "dice": "1d10",
+      "rows": [
+        { "roll": 1, "result": "¡Catastrófico! Recibes daño y quedas Aturdido." },
+        { "roll": 2, "result": "¡Equipo Destruido! Escudo/Arma se rompe o Armadura dañada." },
+        { "roll": 3, "result": "¡Derribado! Golpeado contra el suelo." },
+        { "roll": 4, "result": "¡Romper Armadura! -1 AS durante el encuentro." },
+        { "roll": 5, "result": "¡Empujado! Empujado 10 pies hacia atrás." },
+        { "roll": 6, "result": "¡Expuesto! Flanqueado hasta el próximo turno." },
+        { "roll": 7, "result": "¡Sin Aliento! Pierdes 1d4 Aguante o quedas Atontado." },
+        { "roll": 8, "result": "¡Atontado! Sacudido." },
+        { "roll": 9, "result": "¡Debilitado! Golpe en nervio/músculo." },
+        { "roll": 10, "result": "¡Mal Golpe! Daño normal, sin efecto extra." }
+      ]
+    },
+    {
+      "id": "tbl_dungeon_dressing",
+      "title": "Ambientación de Mazmorra",
+      "category": "Mundo",
+      "dice": "1d10",
+      "rows": [
+        { "roll": 1, "result": "Muebles destrozados y cajas podridas." },
+        { "roll": 2, "result": "Fuente seca (con eco)." },
+        { "roll": 3, "result": "Graffiti extraño (carbón/sangre)." },
+        { "roll": 4, "result": "Estatua decapitada de dios olvidado." },
+        { "roll": 5, "result": "Telarañas gruesas (Inofensivas)." },
+        { "roll": 6, "result": "Campamento viejo (Ceniza fría)." },
+        { "roll": 7, "result": "Gran espejo agrietado." },
+        { "roll": 8, "result": "Goteo de agua y corriente fría." },
+        { "roll": 9, "result": "Mural de guerra antigua." },
+        { "roll": 10, "result": "Esqueleto saqueado señalando un camino." }
+      ]
+    },
+    {
+      "id": "tbl_trap_trigger",
+      "title": "Disparadores de Trampas",
+      "category": "Mundo",
+      "dice": "1d8",
+      "rows": [
+        { "roll": 1, "result": "Placa de Presión (Piedra desigual)." },
+        { "roll": 2, "result": "Cable Trampa (Brillo de luz)." },
+        { "roll": 3, "result": "Aparejo de Puerta (Tensión en manija)." },
+        { "roll": 4, "result": "Runa Arcana (Olor a ozono)." },
+        { "roll": 5, "result": "Sensor (Ojo de vidrio)." },
+        { "roll": 6, "result": "Temporizador (Sonido de tictac)." },
+        { "roll": 7, "result": "Peso (Interacción con objeto)." },
+        { "roll": 8, "result": "Sonido (Cristales resonantes)." }
+      ]
+    },
+    {
+      "id": "tbl_trap_effect",
+      "title": "Efectos de Trampas",
+      "category": "Mundo",
+      "dice": "1d12",
+      "rows": [
+        { "roll": 1, "result": "Proyectil (Prueba de Defensa)." },
+        { "roll": 2, "result": "Foso (Salvación de Reflejos)." },
+        { "roll": 3, "result": "Aguja Venenosa (Salvación de Fortaleza)." },
+        { "roll": 4, "result": "Bloque Cayendo (Salvación de Reflejos)." },
+        { "roll": 5, "result": "Spray Alquímico (Salvación de Reflejos)." },
+        { "roll": 6, "result": "Runa Mágica (Voluntad/Reflejos)." },
+        { "roll": 7, "result": "Red/Lazo (Salvación de Reflejos)." },
+        { "roll": 8, "result": "Alarma (Auto-Activación)." },
+        { "roll": 9, "result": "Nube de Gas (Salvación de Fortaleza)." },
+        { "roll": 10, "result": "Hoja Guadaña (Prueba de Defensa)." },
+        { "roll": 11, "result": "Teletransportador (Salvación de Voluntad)." },
+        { "roll": 12, "result": "Muros Aplastantes (Complejo)." }
+      ]
+    },
+    {
+      "id": "tbl_hazards_phys",
+      "title": "Peligros Físicos",
+      "category": "Mundo",
+      "dice": "1d6",
+      "rows": [
+        { "roll": 1, "result": "Suelo Inestable: CD 13 Reflejos o Caída 10 pies." },
+        { "roll": 2, "result": "Escombros: 2d6 Contundente." },
+        { "roll": 3, "result": "Superficie Resbaladiza: Salvar vs Derribo si Corres." },
+        { "roll": 4, "result": "Agua Corriente: CD 13 Fuerza o arrastrado." },
+        { "roll": 5, "result": "Estrechez: Debes quitar armadura/mochila." },
+        { "roll": 6, "result": "Roca Afilada: Mover > Mitad Velocidad = 1d4 Daño." }
+      ]
+    },
+    {
+      "id": "tbl_hazards_bio",
+      "title": "Peligros Biológicos",
+      "category": "Mundo",
+      "dice": "1d6",
+      "rows": [
+        { "roll": 1, "result": "Gas de Podredumbre: CD 13 Fortaleza o Envenenado." },
+        { "roll": 2, "result": "Moho Amarillo: 2d6 Daño Veneno." },
+        { "roll": 3, "result": "Limo Verde: 1d6 Ácido/turno." },
+        { "roll": 4, "result": "Gusanos de la Podredumbre: Fuego o Muerte en 3 turnos." },
+        { "roll": 5, "result": "Chillón: Auto-activa Encuentro Aleatorio." },
+        { "roll": 6, "result": "Musgo Vampiro: Descansar da Agotamiento." }
+      ]
+    },
+    {
+      "id": "tbl_hazards_elem",
+      "title": "Peligros Elementales",
+      "category": "Mundo",
+      "dice": "1d6",
+      "rows": [
+        { "roll": 1, "result": "Frío Extremo: Salvación Fortaleza/Hora." },
+        { "roll": 2, "result": "Calor Extremo: Necesidad de agua duplicada." },
+        { "roll": 3, "result": "Flujo de Magma: 1d6 (Cerca) o 10d6 (Toque)." },
+        { "roll": 4, "result": "Humos Tóxicos: Condición de Debilitado." },
+        { "roll": 5, "result": "Telarañas: Terreno Difícil + Agarre." },
+        { "roll": 6, "result": "Campo Estático: Armadura metálica recibe 1d4 Rayo." }
+      ]
+    },
+    {
+      "id": "tbl_hazards_mag",
+      "title": "Peligros Mágicos",
+      "category": "Mundo",
+      "dice": "1d6",
+      "rows": [
+        { "roll": 1, "result": "Magia Muerta: Hechizos cuestan doble MP." },
+        { "roll": 2, "result": "Magia Salvaje: Pifia Mágica con 1-3." },
+        { "roll": 3, "result": "Eco Psíquico: CD 13 Voluntad o Atontado." },
+        { "roll": 4, "result": "Pozo de Gravedad: Salto a la mitad." },
+        { "roll": 5, "result": "Suelo Necrótico: Curación a la mitad." },
+        { "roll": 6, "result": "Sangrado Planar: CD 13 Voluntad o Desfase." }
+      ]
+    },
+    {
+      "id": "tbl_loot_1",
+      "title": "Botín: Nivel 1 (Chatarrería)",
+      "category": "Botín",
+      "dice": "1d20",
+      "rows": [
+        { "roll": 1, "result": "Basura (Pelusa/Cuerda)." },
+        { "roll": 2, "result": "Equipo Roto (Chatarra)." },
+        { "roll": 3, "result": "Curiosidad (Carta/Pata)." },
+        { "roll": 4, "result": "Cobre Suelto (2d6 cp)." },
+        { "roll": 5, "name": "Cambio de Bolsillo (4d6 cp)." },
+        { "roll": 6, "result": "Bolsa de Tahúr (50 cp)." },
+        { "roll": 7, "result": "Reactivo Menor." },
+        { "roll": 8, "result": "Diente de Plata (5p)." },
+        { "roll": 9, "result": "Jornal (1d6 p)." },
+        { "roll": 10, "result": "Paga del Soldado (2d6 p)." },
+        { "roll": 11, "result": "Saco Pesado (100 cp)." },
+        { "roll": 12, "result": "Herramienta (Lima/Martillo)." },
+        { "roll": 13, "result": "Consumible (Raciones)." },
+        { "roll": 14, "result": "Brillante (Anillo Plata 1o)." },
+        { "roll": 15, "result": "Bolsillo Oculto (1 Moneda Oro)." },
+        { "roll": 16, "result": "Arte Menor (Talla 1.5o)." },
+        { "roll": 17, "result": "Fuente de Luz (Velas/Aceite)." },
+        { "roll": 18, "result": "Bolsa de Oficial (2d4 o)." },
+        { "roll": 19, "result": "Gema (5o)." },
+        { "roll": 20, "result": "PREMIO GORDO (Tira en Nivel 2)." }
+      ]
+    },
+    {
+      "id": "tbl_loot_2",
+      "title": "Botín: Nivel 2 (El Alijo)",
+      "category": "Botín",
+      "dice": "1d20",
+      "rows": [
+        { "roll": 1, "result": "Trampa de Cobre (500 cp)." },
+        { "roll": 2, "result": "Suministros (Caja)." },
+        { "roll": 3, "result": "Pack de Aventurero." },
+        { "roll": 4, "result": "Arma Estándar." },
+        { "roll": 5, "result": "Alijo de Plata (200p)." },
+        { "roll": 6, "result": "Armadura (Ligera/Media)." },
+        { "roll": 7, "result": "Bien Comercial (Barril)." },
+        { "roll": 8, "result": "Objeto de Arte (25o)." },
+        { "roll": 9, "result": "Bolsa de Monedas (3d6 o)." },
+        { "roll": 10, "result": "Alijo de Alquimista." },
+        { "roll": 11, "result": "Gemas (Bolsa)." },
+        { "roll": 12, "result": "Caja de Pagos (50o)." },
+        { "roll": 13, "result": "Estuche de Pergamino." },
+        { "roll": 14, "result": "Herramienta Maestra." },
+        { "roll": 15, "result": "Bellas Artes (50o)." },
+        { "roll": 16, "result": "Joyería (30o)." },
+        { "roll": 17, "result": "Reactivos Raros." },
+        { "roll": 18, "result": "Lingote de Oro (50o)." },
+        { "roll": 19, "result": "Pociones (1d4)." },
+        { "roll": 20, "result": "PREMIO GORDO (Tira en Nivel 3)." }
+      ]
+    },
+    {
+      "id": "tbl_loot_3",
+      "title": "Botín: Nivel 3 (El Tesoro)",
+      "category": "Botín",
+      "dice": "1d20",
+      "rows": [
+        { "roll": 1, "result": "Trampa de Plata (2000p)." },
+        { "roll": 2, "result": "Comercio a Granel (1d4 Cajas)." },
+        { "roll": 3, "result": "Equipo Maestro." },
+        { "roll": 4, "result": "Tesoro de Arte (150o)." },
+        { "roll": 5, "result": "Cofre de Monedas (100o)." },
+        { "roll": 6, "result": "Bolsa de Gemas (Perlas)." },
+        { "roll": 7, "result": "Arte Raro (100o)." },
+        { "roll": 8, "result": "Lingotes de Oro (250o)." },
+        { "roll": 9, "result": "Joya Real (200o)." },
+        { "roll": 10, "result": "Cosecha de Monstruo." },
+        { "roll": 11, "result": "Reactivos Mágicos." },
+        { "roll": 12, "result": "Biblioteca de Pergaminos." },
+        { "roll": 13, "result": "Bolsa Pesada (300o)." },
+        { "roll": 14, "result": "Joyería Noble." },
+        { "roll": 15, "result": "Plano (Común)." },
+        { "roll": 16, "result": "Plano (Poco Común)." },
+        { "roll": 17, "result": "Curiosidad / Reliquia." },
+        { "roll": 18, "result": "Arma Mágica." },
+        { "roll": 19, "result": "Objeto Maravilloso." },
+        { "roll": 20, "result": "Rescate de Rey (1000o)." }
+      ]
+    },
+    {
+      "id": "tbl_eye_rays",
+      "title": "Rayos Oculares del Observador",
+      "category": "Combate",
+      "dice": "1d8",
+      "rows": [
+        { "roll": 1, "result": "Rayo Abrasador: Prueba de Defensa. Fallo: 2d6 Fuego + Quemadura." },
+        { "roll": 2, "result": "Rayo de Escarcha: Prueba de Defensa. Fallo: 2d6 Frío + Congelado (Velocidad 0)." },
+        { "roll": 3, "result": "Rayo Telequinético: Salvación de Fuerza. Fallo: Lanzado 30 pies, 2d6 Impacto." },
+        { "roll": 4, "result": "Rayo de Miedo: Salvación de Voluntad. Fallo: Asustado 1 min." },
+        { "roll": 5, "result": "Rayo de Encanto: Salvación de Voluntad. Fallo: Hechizado 1 min." },
+        { "roll": 6, "result": "Rayo de Enervación: Salvación de Fortaleza. Fallo: 3d6 Necrótico + Debilitado." },
+        { "roll": 7, "result": "Rayo de Petrificación: Salvación de Fortaleza. Fallo: Restringido (Convirtiéndose en piedra)." },
+        { "roll": 8, "result": "Rayo de Muerte: Salvación de Fortaleza. Fallo: 5d8 Necrótico. (0 PV = Muerte)." }
+      ]
+    }
+  ]
+}
+

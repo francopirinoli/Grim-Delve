@@ -162,22 +162,24 @@ export const ItemBuilder = {
     },
 
     renderInterface: () => {
+        const t = I18n.t; // Localization Helper
+
         const html = `
             <div class="artificer-layout">
                 <!-- LEFT PANEL -->
                 <div class="forge-controls">
                     <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <h2 style="margin:0; border:none;">The Artificer</h2>
+                        <h2 style="margin:0; border:none;">${t('nav_items')}</h2>
                         <div class="mode-toggle">
-                            <button class="btn-small active" id="mode-forge">Forge</button>
-                            <button class="btn-small" id="mode-loot">Loot</button>
+                            <button class="btn-small active" id="mode-forge">${t('item_forge')}</button>
+                            <button class="btn-small" id="mode-loot">${t('item_loot')}</button>
                         </div>
                     </div>
 
                     <!-- FORGE UI -->
                     <div id="forge-ui">
                         <div class="forge-panel">
-                            <h3>1. Base Item</h3>
+                            <h3>1. ${t('item_base')}</h3>
                             <div class="form-group">
                                 <select id="base-cat-select">
                                     <option value="weapon">Category: Weapon</option>
@@ -193,10 +195,10 @@ export const ItemBuilder = {
                         </div>
 
                         <div class="forge-panel" style="flex-grow:1; display:flex; flex-direction:column;">
-                            <h3>2. Blueprint</h3>
+                            <h3>2. ${t('item_blueprint')}</h3>
                             <div class="blueprint-browser">
                                 <div class="blueprint-filter">
-                                    <input type="text" id="bp-search" placeholder="Search Effects..." style="width:100%;">
+                                    <input type="text" id="bp-search" placeholder="${t('item_search_eff')}" style="width:100%;">
                                 </div>
                                 <div id="blueprint-list" class="blueprint-list">
                                     <!-- Populated Dynamically -->
@@ -216,41 +218,41 @@ export const ItemBuilder = {
                             </div>
                         </div>
                          <div class="forge-panel" style="margin-top:1rem; flex-grow:1;">
-                            <h3>Recent Finds</h3>
+                            <h3>${t('dash_recent')}</h3>
                             <div id="loot-log" class="loot-history"></div>
                         </div>
                     </div>
 
                     <!-- EDITOR (Always Visible) -->
                     <div class="forge-panel item-editor">
-                        <h3>Item Editor</h3>
+                        <h3>${t('item_editor')}</h3>
                         
                         <!-- Image Controls -->
                         <div style="background:rgba(0,0,0,0.3); padding:8px; border:1px dashed #444; border-radius:4px; margin-bottom:10px;">
                             <div style="display:flex; gap:5px; margin-bottom:8px;">
                                 <input type="text" id="edit-img-url" placeholder="Image URL..." class="editor-input" style="flex:1;">
-                                <button id="btn-upload-img" class="btn-small" style="font-size:0.7rem;">📁</button>
+                                <button id="btn-upload-img" class="btn-small" style="font-size:0.7rem;">📁 ${t('lbl_upload')}</button>
                                 <input type="file" id="file-upload-item" style="display:none" accept="image/*">
                             </div>
                             <div style="display:grid; grid-template-columns: 1fr 1fr 1fr auto; gap:5px; align-items:center;">
                                 <div>
-                                    <label style="font-size:0.6rem; color:#aaa; display:block;">Zoom</label>
+                                    <label style="font-size:0.6rem; color:#aaa; display:block;">${t('lbl_zoom')}</label>
                                     <input type="range" id="inp-img-scale" min="0.1" max="3.0" step="0.1" value="1" style="width:100%;">
                                 </div>
                                 <div>
-                                    <label style="font-size:0.6rem; color:#aaa; display:block;">X</label>
+                                    <label style="font-size:0.6rem; color:#aaa; display:block;">${t('lbl_pan_x')}</label>
                                     <input type="range" id="inp-img-x" min="-200" max="200" step="10" value="0" style="width:100%;">
                                 </div>
                                 <div>
-                                    <label style="font-size:0.6rem; color:#aaa; display:block;">Y</label>
+                                    <label style="font-size:0.6rem; color:#aaa; display:block;">${t('lbl_pan_y')}</label>
                                     <input type="range" id="inp-img-y" min="-200" max="200" step="10" value="0" style="width:100%;">
                                 </div>
-                                <button id="btn-reset-img" class="btn-small" style="height:24px; margin-top:10px;">↺</button>
+                                <button id="btn-reset-img" class="btn-small" style="height:24px; margin-top:10px;">${t('lbl_reset')}</button>
                             </div>
                         </div>
 
                         <div class="editor-grid two-col">
-                            <input type="text" id="edit-name" class="editor-input" placeholder="Item Name">
+                            <input type="text" id="edit-name" class="editor-input" placeholder="${t('lbl_name')}">
                             <input type="text" id="edit-type" class="editor-input" placeholder="Type">
                         </div>
 
@@ -272,7 +274,7 @@ export const ItemBuilder = {
                             <div style="display:flex; gap:10px; margin-bottom:8px;">
                                 <input type="text" id="edit-magic-name" class="editor-input" placeholder="Magic Prefix/Name" style="flex-grow:1;">
                                 <label style="display:flex; align-items:center; gap:5px; color:#aaa; font-size:0.8rem; white-space:nowrap;">
-                                    <input type="checkbox" id="edit-is-magic"> Magic?
+                                    <input type="checkbox" id="edit-is-magic"> ${t('item_magic_q')}
                                 </label>
                             </div>
                             <textarea id="edit-magic-effect" class="editor-textarea" rows="2" placeholder="Magical Effect Description..."></textarea>
@@ -287,8 +289,8 @@ export const ItemBuilder = {
                         <!-- Card renders here -->
                     </div>
                     <div style="margin-top:10px; text-align:center;">
-                        <button id="btn-save-item" class="btn-primary" style="margin-right:10px;">💾 Save to Library</button>
-                        <button class="btn-secondary" onclick="window.print()">🖨️ Print Card</button>
+                        <button id="btn-save-item" class="btn-primary" style="margin-right:10px;">💾 ${t('btn_save_lib')}</button>
+                        <button class="btn-secondary" onclick="window.print()">🖨️ ${t('btn_print')}</button>
                     </div>
                 </div>
             </div>
@@ -297,7 +299,7 @@ export const ItemBuilder = {
         ItemBuilder.container.innerHTML = html;
         ItemBuilder.attachListeners();
     },
-
+    
     attachListeners: () => {
         // Mode Toggles
         document.getElementById('mode-forge').onclick = () => ItemBuilder.toggleMode('forge');
@@ -714,6 +716,26 @@ export const ItemBuilder = {
         
         localStorage.setItem(KEY, JSON.stringify(lib));
         alert(`Saved ${c.name} to Library.`);
+    },
+
+    /**
+     * Loads an existing item into the editor.
+     */
+    loadItem: (itemData) => {
+        // Deep copy
+        ItemBuilder.currentItem = JSON.parse(JSON.stringify(itemData));
+        
+        // Ensure defaults
+        if (!ItemBuilder.currentItem.imgPos) ItemBuilder.currentItem.imgPos = { x: 0, y: 0, scale: 1.0 };
+        
+        // Refresh UI if the module is active, or sets it up for when it becomes active
+        // We rely on the fact that clicking the nav button calls init(), which calls syncDOMFromState()
+        // But to be safe, if we are already seeing the DOM:
+        const nameInput = document.getElementById('edit-name');
+        if (nameInput) {
+            ItemBuilder.syncDOMFromState();
+            ItemBuilder.renderCard();
+        }
     },
 
     renderCard: async () => {

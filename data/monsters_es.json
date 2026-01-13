@@ -1,0 +1,1626 @@
+{
+  "chassis": {
+    "soldier": [
+      { "lvl": 1, "hp": 17, "as": 2, "speed": 30, "atk_dc": 15, "def_dc": 13, "save_dc": 13, "dmg": "1d8 + 2" },
+      { "lvl": 2, "hp": 24, "as": 2, "speed": 30, "atk_dc": 15, "def_dc": 13, "save_dc": 13, "dmg": "1d8 + 2" },
+      { "lvl": 3, "hp": 31, "as": 2, "speed": 30, "atk_dc": 15, "def_dc": 13, "save_dc": 13, "dmg": "1d8 + 3" },
+      { "lvl": 4, "hp": 38, "as": 2, "speed": 30, "atk_dc": 16, "def_dc": 13, "save_dc": 13, "dmg": "1d8 + 3" },
+      { "lvl": 5, "hp": 47, "as": 2, "speed": 30, "atk_dc": 17, "def_dc": 15, "save_dc": 15, "dmg": "1d10 + 3" },
+      { "lvl": 6, "hp": 54, "as": 2, "speed": 30, "atk_dc": 17, "def_dc": 15, "save_dc": 15, "dmg": "1d10 + 3" },
+      { "lvl": 7, "hp": 61, "as": 2, "speed": 30, "atk_dc": 18, "def_dc": 15, "save_dc": 15, "dmg": "1d10 + 4" },
+      { "lvl": 8, "hp": 68, "as": 2, "speed": 30, "atk_dc": 18, "def_dc": 15, "save_dc": 15, "dmg": "1d10 + 4" },
+      { "lvl": 9, "hp": 77, "as": 2, "speed": 30, "atk_dc": 19, "def_dc": 17, "save_dc": 17, "dmg": "1d12 + 4" },
+      { "lvl": 10, "hp": 84, "as": 2, "speed": 30, "atk_dc": 20, "def_dc": 17, "save_dc": 17, "dmg": "1d12 + 5" }
+    ],
+    "brute": [
+      { "lvl": 1, "hp": 28, "as": 2, "speed": 25, "atk_dc": 16, "def_dc": 11, "save_dc": 16, "dmg": "1d10 + 3" },
+      { "lvl": 2, "hp": 38, "as": 2, "speed": 25, "atk_dc": 16, "def_dc": 11, "save_dc": 16, "dmg": "1d10 + 3" },
+      { "lvl": 3, "hp": 48, "as": 2, "speed": 25, "atk_dc": 16, "def_dc": 11, "save_dc": 16, "dmg": "1d10 + 4" },
+      { "lvl": 4, "hp": 60, "as": 2, "speed": 25, "atk_dc": 17, "def_dc": 11, "save_dc": 17, "dmg": "1d10 + 4" },
+      { "lvl": 5, "hp": 70, "as": 3, "speed": 25, "atk_dc": 18, "def_dc": 12, "save_dc": 18, "dmg": "2d8 + 4" },
+      { "lvl": 6, "hp": 80, "as": 3, "speed": 25, "atk_dc": 18, "def_dc": 13, "save_dc": 18, "dmg": "2d8 + 4" },
+      { "lvl": 7, "hp": 92, "as": 3, "speed": 25, "atk_dc": 19, "def_dc": 13, "save_dc": 19, "dmg": "2d8 + 5" },
+      { "lvl": 8, "hp": 102, "as": 3, "speed": 25, "atk_dc": 19, "def_dc": 13, "save_dc": 19, "dmg": "2d8 + 5" },
+      { "lvl": 9, "hp": 112, "as": 3, "speed": 25, "atk_dc": 20, "def_dc": 14, "save_dc": 20, "dmg": "2d10 + 5" },
+      { "lvl": 10, "hp": 124, "as": 3, "speed": 25, "atk_dc": 21, "def_dc": 14, "save_dc": 21, "dmg": "2d10 + 6" }
+    ],
+    "skirmisher": [
+      { "lvl": 1, "hp": 13, "as": 1, "speed": 40, "atk_dc": 16, "def_dc": 16, "save_dc": 16, "dmg": "1d6 + 2" },
+      { "lvl": 2, "hp": 18, "as": 1, "speed": 40, "atk_dc": 16, "def_dc": 16, "save_dc": 16, "dmg": "1d6 + 2" },
+      { "lvl": 3, "hp": 23, "as": 1, "speed": 40, "atk_dc": 16, "def_dc": 16, "save_dc": 16, "dmg": "1d6 + 3" },
+      { "lvl": 4, "hp": 28, "as": 1, "speed": 40, "atk_dc": 17, "def_dc": 17, "save_dc": 17, "dmg": "1d6 + 3" },
+      { "lvl": 5, "hp": 33, "as": 1, "speed": 40, "atk_dc": 18, "def_dc": 18, "save_dc": 18, "dmg": "2d6 + 3" },
+      { "lvl": 6, "hp": 38, "as": 1, "speed": 40, "atk_dc": 18, "def_dc": 18, "save_dc": 18, "dmg": "2d6 + 3" },
+      { "lvl": 7, "hp": 45, "as": 1, "speed": 40, "atk_dc": 19, "def_dc": 19, "save_dc": 19, "dmg": "2d6 + 4" },
+      { "lvl": 8, "hp": 50, "as": 1, "speed": 40, "atk_dc": 19, "def_dc": 19, "save_dc": 19, "dmg": "2d6 + 4" },
+      { "lvl": 9, "hp": 55, "as": 1, "speed": 40, "atk_dc": 20, "def_dc": 20, "save_dc": 20, "dmg": "2d8 + 4" },
+      { "lvl": 10, "hp": 60, "as": 1, "speed": 40, "atk_dc": 21, "def_dc": 21, "save_dc": 21, "dmg": "2d8 + 5" }
+    ],
+    "controller": [
+      { "lvl": 1, "hp": 12, "as": 0, "speed": 30, "atk_dc": 16, "def_dc": 13, "save_dc": 16, "dmg": "1d6 + 2" },
+      { "lvl": 2, "hp": 16, "as": 0, "speed": 30, "atk_dc": 16, "def_dc": 13, "save_dc": 16, "dmg": "1d6 + 2" },
+      { "lvl": 3, "hp": 20, "as": 0, "speed": 30, "atk_dc": 16, "def_dc": 13, "save_dc": 16, "dmg": "1d8 + 3" },
+      { "lvl": 4, "hp": 24, "as": 0, "speed": 30, "atk_dc": 17, "def_dc": 13, "save_dc": 17, "dmg": "1d8 + 3" },
+      { "lvl": 5, "hp": 28, "as": 0, "speed": 30, "atk_dc": 18, "def_dc": 15, "save_dc": 18, "dmg": "2d6 + 3" },
+      { "lvl": 6, "hp": 32, "as": 0, "speed": 30, "atk_dc": 18, "def_dc": 15, "save_dc": 18, "dmg": "2d6 + 3" },
+      { "lvl": 7, "hp": 36, "as": 0, "speed": 30, "atk_dc": 19, "def_dc": 15, "save_dc": 19, "dmg": "2d8 + 4" },
+      { "lvl": 8, "hp": 40, "as": 0, "speed": 30, "atk_dc": 19, "def_dc": 15, "save_dc": 19, "dmg": "2d8 + 4" },
+      { "lvl": 9, "hp": 44, "as": 0, "speed": 30, "atk_dc": 20, "def_dc": 17, "save_dc": 20, "dmg": "3d6 + 4" },
+      { "lvl": 10, "hp": 48, "as": 0, "speed": 30, "atk_dc": 21, "def_dc": 17, "save_dc": 21, "dmg": "3d6 + 5" }
+    ],
+    "artillery": [
+      { "lvl": 1, "hp": 14, "as": 0, "speed": 30, "atk_dc": 17, "def_dc": 12, "save_dc": 12, "dmg": "1d8 + 2" },
+      { "lvl": 2, "hp": 18, "as": 0, "speed": 30, "atk_dc": 17, "def_dc": 12, "save_dc": 12, "dmg": "1d8 + 2" },
+      { "lvl": 3, "hp": 24, "as": 0, "speed": 30, "atk_dc": 17, "def_dc": 12, "save_dc": 12, "dmg": "1d10 + 3" },
+      { "lvl": 4, "hp": 30, "as": 1, "speed": 30, "atk_dc": 18, "def_dc": 12, "save_dc": 13, "dmg": "1d10 + 3" },
+      { "lvl": 5, "hp": 36, "as": 1, "speed": 30, "atk_dc": 19, "def_dc": 14, "save_dc": 14, "dmg": "2d6 + 3" },
+      { "lvl": 6, "hp": 42, "as": 1, "speed": 30, "atk_dc": 19, "def_dc": 14, "save_dc": 14, "dmg": "2d6 + 3" },
+      { "lvl": 7, "hp": 48, "as": 1, "speed": 30, "atk_dc": 20, "def_dc": 14, "save_dc": 15, "dmg": "2d8 + 4" },
+      { "lvl": 8, "hp": 54, "as": 1, "speed": 30, "atk_dc": 20, "def_dc": 14, "save_dc": 15, "dmg": "2d8 + 4" },
+      { "lvl": 9, "hp": 60, "as": 1, "speed": 30, "atk_dc": 21, "def_dc": 16, "save_dc": 16, "dmg": "3d6 + 4" },
+      { "lvl": 10, "hp": 66, "as": 1, "speed": 30, "atk_dc": 22, "def_dc": 16, "save_dc": 17, "dmg": "3d6 + 5" }
+    ],
+    "lurker": [
+      { "lvl": 1, "hp": 15, "as": 1, "speed": 40, "atk_dc": 15, "def_dc": 14, "save_dc": 14, "dmg": "1d6 + 2" },
+      { "lvl": 2, "hp": 20, "as": 1, "speed": 40, "atk_dc": 15, "def_dc": 14, "save_dc": 14, "dmg": "1d6 + 2" },
+      { "lvl": 3, "hp": 25, "as": 1, "speed": 40, "atk_dc": 15, "def_dc": 14, "save_dc": 14, "dmg": "1d8 + 3" },
+      { "lvl": 4, "hp": 30, "as": 1, "speed": 40, "atk_dc": 16, "def_dc": 14, "save_dc": 15, "dmg": "1d8 + 3" },
+      { "lvl": 5, "hp": 35, "as": 2, "speed": 40, "atk_dc": 17, "def_dc": 16, "save_dc": 16, "dmg": "2d6 + 3" },
+      { "lvl": 6, "hp": 40, "as": 2, "speed": 40, "atk_dc": 17, "def_dc": 16, "save_dc": 16, "dmg": "2d6 + 3" },
+      { "lvl": 7, "hp": 45, "as": 2, "speed": 40, "atk_dc": 18, "def_dc": 16, "save_dc": 17, "dmg": "2d8 + 4" },
+      { "lvl": 8, "hp": 50, "as": 2, "speed": 40, "atk_dc": 18, "def_dc": 16, "save_dc": 17, "dmg": "2d8 + 4" },
+      { "lvl": 9, "hp": 55, "as": 2, "speed": 40, "atk_dc": 19, "def_dc": 18, "save_dc": 18, "dmg": "3d6 + 4" },
+      { "lvl": 10, "hp": 60, "as": 2, "speed": 40, "atk_dc": 20, "def_dc": 18, "save_dc": 19, "dmg": "3d6 + 5" }
+    ],
+    "solo": [
+      { "lvl": 1, "hp": 60, "as": 3, "speed": 30, "atk_dc": 16, "def_dc": 14, "save_dc": 14, "dmg": "1d8 + 3", "acts_twice": true },
+      { "lvl": 2, "hp": 80, "as": 3, "speed": 30, "atk_dc": 16, "def_dc": 14, "save_dc": 14, "dmg": "1d8 + 3", "acts_twice": true },
+      { "lvl": 3, "hp": 100, "as": 3, "speed": 30, "atk_dc": 16, "def_dc": 14, "save_dc": 14, "dmg": "1d10 + 4", "acts_twice": true },
+      { "lvl": 4, "hp": 120, "as": 3, "speed": 30, "atk_dc": 17, "def_dc": 14, "save_dc": 17, "dmg": "1d10 + 4", "acts_twice": true },
+      { "lvl": 5, "hp": 150, "as": 4, "speed": 30, "atk_dc": 18, "def_dc": 16, "save_dc": 18, "dmg": "2d6 + 4", "acts_twice": true },
+      { "lvl": 6, "hp": 180, "as": 4, "speed": 30, "atk_dc": 18, "def_dc": 16, "save_dc": 18, "dmg": "2d6 + 5", "acts_twice": true },
+      { "lvl": 7, "hp": 210, "as": 4, "speed": 30, "atk_dc": 19, "def_dc": 16, "save_dc": 19, "dmg": "2d8 + 5", "acts_twice": true },
+      { "lvl": 8, "hp": 240, "as": 4, "speed": 30, "atk_dc": 19, "def_dc": 16, "save_dc": 19, "dmg": "2d8 + 6", "acts_twice": true },
+      { "lvl": 9, "hp": 270, "as": 5, "speed": 30, "atk_dc": 20, "def_dc": 18, "save_dc": 20, "dmg": "3d6 + 6", "acts_twice": true },
+      { "lvl": 10, "hp": 300, "as": 5, "speed": 30, "atk_dc": 21, "def_dc": 18, "save_dc": 21, "dmg": "3d6 + 7", "acts_twice": true }
+    ],
+    "minion": [
+      { "lvl": 1, "hp": 1, "as": 0, "speed": 30, "atk_dc": 13, "def_dc": 11, "save_dc": 11, "dmg": "2 (Fijo)" },
+      { "lvl": 4, "hp": 1, "as": 0, "speed": 30, "atk_dc": 14, "def_dc": 11, "save_dc": 13, "dmg": "2 (Fijo)" },
+      { "lvl": 7, "hp": 1, "as": 0, "speed": 30, "atk_dc": 16, "def_dc": 13, "save_dc": 15, "dmg": "4 (Fijo)" },
+      { "lvl": 10, "hp": 1, "as": 0, "speed": 30, "atk_dc": 18, "def_dc": 15, "save_dc": 17, "dmg": "6 (Fijo)" }
+    ]
+  },
+  "families": {
+    "folk": {
+      "id": "fam_folk",
+      "name": "El Pueblo",
+      "description": "Personas. Humanos, Elfos, Enanos, Orcos y Goblins. Utilizan equipo, formaciones y tácticas. A diferencia de las bestias, se puede razonar con ellos... o sobornarlos.",
+      "universal_traits": [
+        {
+          "name": "Dependiente de Equipo",
+          "effect": "El poder proviene de armas/armaduras. Si es Desarmado: CD de Ataque -2, Daño se vuelve 1d4. Debe gastar Acción para recuperar arma."
+        },
+        {
+          "name": "Psicología Social",
+          "effect": "Susceptible a Parlamento (Pruebas de Influencia). Si un Líder muere, los Esbirros deben chequear Moral o huir."
+        },
+        {
+          "name": "Saqueable",
+          "effect": "Suelta armas, armaduras y bolsas de monedas (Tira en Tabla de Botín de Pueblo)."
+        }
+      ],
+      "passives": [
+        {
+          "name": "Muro de Escudos",
+          "role": "Soldado",
+          "effect": "Gana +2 CD de Defensa (Total 15) mientras esté adyacente a un aliado con escudo."
+        },
+        {
+          "name": "Tácticas de Manada",
+          "role": "Bruto/Esbirro",
+          "effect": "Gana +1 CD de Ataque si un aliado está adyacente al objetivo."
+        },
+        {
+          "name": "Falange",
+          "role": "Soldado",
+          "effect": "No puede ser Flanqueado mientras esté adyacente a un aliado."
+        },
+        {
+          "name": "Vengativo",
+          "role": "Líder",
+          "effect": "Si un aliado a 30 pies muere, los jugadores tienen Desventaja en Pruebas de Defensa contra el siguiente ataque de este enemigo."
+        },
+        {
+          "name": "Paciencia del Francotirador",
+          "role": "Artillería",
+          "effect": "Si no se mueve, inflige +1d6 de Daño con Ataques a Distancia."
+        },
+        {
+          "name": "Juego de Pies Evasivo",
+          "role": "Hostigador",
+          "effect": "El movimiento no provoca Ataques de Oportunidad."
+        },
+        {
+          "name": "Guarda Arcana",
+          "role": "Lanzador",
+          "effect": "Gana +2 Puntuación de Armadura contra Hechizos y Efectos Mágicos."
+        },
+        {
+          "name": "Concentración",
+          "role": "Lanzador",
+          "effect": "No pierde hechizos al recibir daño a menos que el daño supere 10 en un solo golpe."
+        }
+      ],
+      "actions": [
+        {
+          "name": "Lucha Sucia",
+          "type": "Cuerpo a Cuerpo",
+          "effect": "Al Impactar: Daño Normal. Objetivo debe hacer Salvación de Fortaleza (CD 16) o quedar Cegado 1 ronda."
+        },
+        {
+          "name": "Derribo / Empujón",
+          "type": "Cuerpo a Cuerpo",
+          "effect": "Al Impactar: Mitad de Daño. Objetivo debe hacer Salvación de Reflejos (CD 18) o ser Derribado/Empujado 10 pies."
+        },
+        {
+          "name": "Fuego de Volea",
+          "type": "A Distancia",
+          "effect": "Radio de 10 pies. Todos los enemigos en el área tiran Defensa vs CD de Ataque. Fallo: Recibe Daño de Arma."
+        },
+        {
+          "name": "Ejecutar",
+          "type": "Cuerpo a Cuerpo",
+          "effect": "Objetivo debe estar Derribado o Aturdido. Al Impactar: Daño Crítico."
+        },
+        {
+          "name": "Virote Arcano",
+          "type": "Magia",
+          "effect": "Rango 60 pies. Al Impactar: 1d10 Daño de Fuerza. Ignora Puntuación de Armadura."
+        },
+        {
+          "name": "Rayo Abrasador",
+          "type": "Magia",
+          "effect": "Rango 60 pies. Al Impactar: 2d6 Daño de Fuego + Condición de Quemadura."
+        },
+        {
+          "name": "Retener Persona",
+          "type": "Magia",
+          "effect": "Objetivo hace Salvación de Voluntad. Fallo: Paralizado (Aturdido) por 1 ronda."
+        },
+        {
+          "name": "Plegaria Oscura",
+          "type": "Magia",
+          "effect": "Objetivo hace Salvación de Fortaleza. Fallo: 2d6 Daño Necrótico, Lanzador se cura esa cantidad."
+        },
+        {
+          "name": "Curar Heridas",
+          "type": "Magia",
+          "effect": "Toque Aliado. Aliado recupera 2d8 + Nivel PV."
+        }
+      ],
+      "danger_abilities": [
+        {
+          "name": "¡A por Ellos!",
+          "cost": "1 PP",
+          "effect": "Todos los aliados a 30 pies usan Reacción para moverse hasta su Velocidad hacia un objetivo específico."
+        },
+        {
+          "name": "Fuego Concentrado",
+          "cost": "1 PP",
+          "effect": "Marca a un jugador. Hasta la próxima ronda, todos los ataques contra él tienen +2 CD de Ataque."
+        },
+        {
+          "name": "Granada Cegadora",
+          "cost": "1 PP",
+          "effect": "Jugadores a 20 pies: Salvación de Reflejos o Aturdido 1 ronda."
+        },
+        {
+          "name": "Refuerzos",
+          "cost": "2 PP",
+          "effect": "1d4 Esbirros (Mismo tipo) llegan desde entrada cercana."
+        },
+        {
+          "name": "Furia Desesperada",
+          "cost": "1 PP",
+          "effect": "Disparador: 0 PV. Enemigo queda a 1 PV, toma una Acción inmediata, luego muere."
+        },
+        {
+          "name": "Muro de Acero",
+          "cost": "1 PP",
+          "effect": "Gana Resistencia (Mitad de Daño) a Daño Físico hasta el próximo turno."
+        },
+        {
+          "name": "Disipar en Masa",
+          "cost": "1 PP",
+          "effect": "Todas las mejoras/hechizos activos de jugadores a 60 pies terminan."
+        },
+        {
+          "name": "Retirada Táctica",
+          "cost": "1 PP",
+          "effect": "Todos los aliados se Destraban y mueven Velocidad Completa lejos. Recuperan 1d6 PV."
+        }
+      ],
+      "flavor": {
+        "activity": [
+          "Apostando con dados.", "Afilando armas.", "Comiendo pan duro.", "Durmiendo (Centinela dormido).", "Interrogando prisionero.", "Discutiendo sobre mapas.", "Construyendo defensas.", "Rezando a dios oscuro.", "Contando botín.", "Vendando heridas."
+        ],
+        "visuals": [
+          "Desertores en harapos.", "Cultistas con túnicas.", "Bandidos con trofeos.", "Grupo Rival.", "Guardias Uniformados.", "Tribales Pintados.", "Carroñeros con máscaras.", "Nobles en seda/placa.", "Mercenarios Profesionales.", "Infectados por Plaga."
+        ],
+        "loot": [
+          "Monedas Cobre/Plata.", "Bolsa de tabaco.", "Dados de hueso.", "Mapa crudo.", "Carta de amor.", "Frasco de vino barato.", "Diente de plata (5o).", "Vial de Toxina.", "Llave de Mazmorra.", "Poción Robada.", "Cartel de Recompensa.", "Gema Pequeña."
+        ]
+      }
+    },
+    "beasts": {
+      "id": "fam_beasts",
+      "name": "Las Bestias",
+      "description": "Depredadores naturales. Lobos, osos, arañas y serpientes. Impulsados por hambre, territorio e instinto. Luchan con propósito unificado para proteger la manada o el nido.",
+      "universal_traits": [
+        {
+          "name": "Armamento Natural",
+          "effect": "No pueden ser Desarmados. Las armas son partes del cuerpo (Garras, Colmillos)."
+        },
+        {
+          "name": "Mente Animal",
+          "effect": "Inmune a sobornos o manipulación social compleja. Pueden ser influenciados vía Supervivencia (Manejo de Animales)."
+        },
+        {
+          "name": "Cosechable",
+          "effect": "Sueltan 'Orgánicos' (Pieles, Veneno). Prueba: Supervivencia (WIS) CD 10 + Nivel."
+        }
+      ],
+      "passives": [
+        {
+          "name": "Sentidos Agudos",
+          "role": "Hostigador/Acechador",
+          "effect": "No puede ser Sorprendido. Ventaja en CD de Ataque vs enemigos Ocultos (Olfato/Oído)."
+        },
+        {
+          "name": "Escalar Araña",
+          "role": "Acechador",
+          "effect": "Escala paredes/techos a velocidad completa sin pruebas."
+        },
+        {
+          "name": "Carga",
+          "role": "Bruto/Soldado",
+          "effect": "Si se mueve 20 pies directo hacia el objetivo, gana +1 CD de Ataque este turno."
+        },
+        {
+          "name": "Frenesí de Sangre",
+          "role": "Hostigador/Esbirro",
+          "effect": "Gana +2 CD de Ataque contra objetivos Sangrando o con <50% PV."
+        },
+        {
+          "name": "Anfibio",
+          "role": "Cualquiera",
+          "effect": "Respira agua y Nada a velocidad completa."
+        },
+        {
+          "name": "Tácticas de Manada",
+          "role": "Soldado/Esbirro",
+          "effect": "Gana +1 CD de Ataque si un aliado está adyacente al objetivo."
+        },
+        {
+          "name": "Esquiva Instintiva",
+          "role": "Hostigador",
+          "effect": "Recibe Mitad de Daño de ataques de Área de Efecto (Salvaciones Reflejos)."
+        }
+      ],
+      "actions": [
+        {
+          "name": "Aferrar",
+          "type": "Cuerpo a Cuerpo",
+          "effect": "Al Impactar: Daño Normal. Objetivo Agarrado (Velocidad 0). Si empieza turno Agarrado, daño automático igual a Mod STR."
+        },
+        {
+          "name": "Derribo",
+          "type": "Cuerpo a Cuerpo",
+          "effect": "Al Impactar: Mitad de Daño. Objetivo debe hacer Salvación de Reflejos o ser Derribado."
+        },
+        {
+          "name": "Golpe Venenoso",
+          "type": "Cuerpo a Cuerpo",
+          "effect": "Al Impactar: Daño Normal. Objetivo debe hacer Salvación de Fortaleza o ser Envenenado (1d6/turno) por 1 minuto."
+        },
+        {
+          "name": "Disparo de Telaraña",
+          "type": "A Distancia",
+          "effect": "Rango 30 pies. Al Impactar: Sin Daño. Objetivo Restringido. Escape: Prueba STR CD 13."
+        },
+        {
+          "name": "Desgarrar",
+          "type": "Cuerpo a Cuerpo",
+          "effect": "Al Impactar: Daño Normal. Si el objetivo está herido, gana condición de Sangrado."
+        },
+        {
+          "name": "Rugido Aterrador",
+          "type": "AoE",
+          "effect": "Radio 30 pies. Enemigos deben hacer Salvación de Voluntad. Fallo: Asustado por 1 ronda."
+        }
+      ],
+      "danger_abilities": [
+        {
+          "name": "Rugido Primario",
+          "cost": "1 PP",
+          "effect": "Todos los jugadores a 30 pies: Salvación Voluntad o Asustados 1 ronda."
+        },
+        {
+          "name": "Devorar",
+          "cost": "1 PP",
+          "effect": "Ataca objetivo Agarrado/Derribado. Doble Daño y se Cura por la mitad del daño."
+        },
+        {
+          "name": "Llamada de lo Salvaje",
+          "cost": "1 PP",
+          "effect": "1d4 Esbirros (Misma especie) emergen del entorno al final de la ronda."
+        },
+        {
+          "name": "Azotar",
+          "cost": "1 PP",
+          "effect": "Todos los adyacentes: Salvación Reflejos. Fallo: Daño Mod STR y empujado 10 pies."
+        },
+        {
+          "name": "Saltar",
+          "cost": "1 PP",
+          "effect": "Salta 30 pies al objetivo. Objetivo Salvación Reflejos. Fallo: Daño Normal + Derribado."
+        },
+        {
+          "name": "Enfurecer",
+          "cost": "1 PP",
+          "effect": "Disparador: <50% PV. Limpia condiciones negativas. Toma Acción extra inmediata."
+        },
+        {
+          "name": "Estampida",
+          "cost": "1 PP",
+          "effect": "Mueve hasta Velocidad en línea recta a través de enemigos. Enemigos pasados salvan Reflejos o toman Daño de Arma y caen Derribados."
+        }
+      ],
+      "flavor": {
+        "activity": [
+          "Durmiendo entre huesos.", "Royendo cadáver fresco.", "Acechando (Prueba Sigilo).", "Cuidando crías/huevos.", "Marcando territorio.", "Peleando por carroña.", "Sufriendo enfermedad.", "Afilando garras.", "Vigilando desde alto.", "Jugando con 'juguete'."
+        ],
+        "visuals": [
+          "Sarnoso/Rabioso.", "Alfa/Dire (Crestas óseas).", "Con Púas.", "Ciego/Adaptado a Cueva.", "Fusionado con metal.", "Tocado por Sombra.", "Albino.", "Antiguo/Cicatrices.", "Crecimiento fúngico.", "Mutación Dos Cabezas."
+        ],
+        "loot": [
+          "Piel Intacta (10o).", "Glándula Veneno (20o).", "Anillo Indigesto (50o).", "Garras Afiladas (5o).", "Huevo Raro (100o).", "Glándula Almizcle (15o).", "Seda de Araña (20o).", "Corazón de Monstruo (50o).", "Trofeo de Hueso.", "Collar de Dueño."
+        ]
+      }
+    },
+    "unliving": {
+      "id": "fam_unliving",
+      "name": "Los No-Muertos",
+      "description": "Una violación del orden natural. Esqueletos, zombis, fantasmas y liches. No sienten dolor, miedo ni piedad. Luchar contra ellos es una batalla de desgaste.",
+      "universal_traits": [
+        {
+          "name": "Nervios Muertos",
+          "effect": "Inmune a Envenenado, Sangrado y Agotado. No respiran, comen ni duermen."
+        },
+        {
+          "name": "Vulnerabilidad Impía",
+          "effect": "Reciben Doble Daño de fuentes Radiantes."
+        },
+        {
+          "name": "Cosechable",
+          "effect": "Sueltan 'Esencia' (Polvo de Hueso, Ectoplasma). Prueba: Saber (INT) CD 10 + Nivel."
+        }
+      ],
+      "passives": [
+        {
+          "name": "Fortaleza No-Muerta",
+          "role": "Soldado/Bruto",
+          "effect": "Si el daño lo reduce a 0 PV, hace prueba (CD 5 + Daño). Éxito: Cae a 1 PV. Daño Radiante ignora esto."
+        },
+        {
+          "name": "Hedor",
+          "role": "Bruto",
+          "effect": "Criaturas vivas comenzando turno a 10 pies deben salvar Fortaleza o quedar Debilitadas 1 ronda."
+        },
+        {
+          "name": "Incorpóreo",
+          "role": "Acechador/Controlador",
+          "effect": "Puede moverse a través de objetos. Resistencia (Mitad Daño) a ataques físicos no mágicos."
+        },
+        {
+          "name": "Sentido de Vida",
+          "role": "Acechador",
+          "effect": "Detecta automáticamente criaturas vivas a 60 pies, ignorando Invisibilidad y Sigilo."
+        },
+        {
+          "name": "Resistencia Mágica",
+          "role": "Controlador",
+          "effect": "Gana +2 Puntuación de Armadura contra Hechizos y Efectos Mágicos."
+        },
+        {
+          "name": "Pila de Huesos",
+          "role": "Esbirro/Acechador",
+          "effect": "Indistinguible de un cadáver mientras está tumbado. Ventaja en primer ataque (Emboscada)."
+        },
+        {
+          "name": "Resistencia al Expulsar",
+          "role": "Solo",
+          "effect": "Ventaja en Tiradas de Salvación contra Expulsar No-Muertos o efectos Sagrados."
+        }
+      ],
+      "actions": [
+        {
+          "name": "Golpe Podrido",
+          "type": "Cuerpo a Cuerpo",
+          "effect": "Al Impactar: Daño Normal. Objetivo salva Fortaleza o contrae Enfermedad (No cura natural)."
+        },
+        {
+          "name": "Drenar Vida",
+          "type": "Cuerpo a Cuerpo",
+          "effect": "Al Impactar: Daño Necrótico. El No-Muerto recupera PV igual a mitad del daño."
+        },
+        {
+          "name": "Toque Paralizante",
+          "type": "Cuerpo a Cuerpo",
+          "effect": "Al Impactar: Daño Normal. Objetivo salva Fortaleza o queda Aturdido 1 ronda."
+        },
+        {
+          "name": "Agarre de Tumba",
+          "type": "Cuerpo a Cuerpo",
+          "effect": "Ignora Puntuación de Armadura. Al Impactar: Objetivo Agarrado (Velocidad 0)."
+        },
+        {
+          "name": "Mirada Aterradora",
+          "type": "A Distancia",
+          "effect": "Objetivo salva Voluntad. Fallo: 1d6 Daño Psíquico y Asustado 1 ronda."
+        },
+        {
+          "name": "Virote Necrótico",
+          "type": "Magia",
+          "effect": "Rango (60 pies). Al Impactar: Daño Fuerza/Necrótico. Ignora Puntuación de Armadura."
+        }
+      ],
+      "danger_abilities": [
+        {
+          "name": "Lamento de los Condenados",
+          "cost": "1 PP",
+          "effect": "Enemigos vivos a 30 pies: Salva Voluntad. Fallo: 2d6 Psíquico y Asustado."
+        },
+        {
+          "name": "Levantarse de Nuevo",
+          "cost": "1 PP",
+          "effect": "Disparador: Al ser destruido. Se reensambla/levanta inmediatamente con Mitad PV."
+        },
+        {
+          "name": "Instinto de Horda",
+          "cost": "1 PP",
+          "effect": "Todos los Esbirros No-Muertos a 30 pies se mueven Velocidad Completa hacia jugador más cercano (Sin OA)."
+        },
+        {
+          "name": "Maldición de los Siglos",
+          "cost": "1 PP",
+          "effect": "Objetivo Maldito. No puede recuperar Puntos de Vida o Suerte hasta que se quite la Maldición."
+        },
+        {
+          "name": "Explosión de Cadáver",
+          "cost": "1 PP",
+          "effect": "Disparador: Al ser destruido. Radio 10 pies. 4d6 Daño Necrótico (Reflejos Mitad)."
+        },
+        {
+          "name": "Atadura de Tumba",
+          "cost": "1 PP",
+          "effect": "Manos espectrales en radio 20 pies. Terreno Difícil. Criaturas Restringidas (Salva STR)."
+        },
+        {
+          "name": "Cosecha de Almas",
+          "cost": "1 PP",
+          "effect": "Objetivo con <10 PV. Cae a 0 PV inmediatamente. Si ya en 0, falla 1 Salvación de Muerte."
+        }
+      ],
+      "flavor": {
+        "activity": [
+          "Parado perfectamente quieto.", "Arreglando huesos en patrones.", "Repitiendo una palabra.", "Yaciendo en pila (Emboscada).", "Llorando silenciosamente.", "Royendo hueso seco.", "Arañando una puerta.", "Adorando ídolo oscuro.", "Patrullando ruta antigua.", "Gritando sin aliento."
+        ],
+        "visuals": [
+          "Armadura/hueso fusionado.", "Fugando vapor verde.", "Preservado (Cera/Vendas).", "Miembros rotos/contorsionados.", "Ardiendo con fuego frío.", "Hinchado/Ahogado.", "Incrustado de mineral.", "Sombrío/Indistinto.", "Cubierto de raíces.", "Dorado/Joyas."
+        ],
+        "loot": [
+          "Polvo de Tumba (5o).", "Harina de Hueso (2o).", "Ectoplasma (20o).", "Diente de Oro (5o).", "Anillo de Entierro (15o).", "Moneda Antigua (10o).", "Máscara Funeraria (50o).", "Baratija Maldita (100o).", "Seda de Espectro (25o).", "Vaso Canopo (50o)."
+        ]
+      }
+    },
+    "constructs": {
+      "id": "fam_constructs",
+      "name": "Los Constructos",
+      "description": "Vida artificial. Gólems, armaduras animadas y horrores mecánicos. No sienten dolor ni miedo, siguiendo su programación con perfección absoluta y maquinal.",
+      "universal_traits": [
+        {
+          "name": "Caparazón Inorgánico",
+          "effect": "Inmune a Sangrado, Envenenado, Enfermedad, Agotado, Hechizado y Asustado. No respiran, comen ni duermen."
+        },
+        {
+          "name": "Reparación Requerida",
+          "effect": "No pueden ser curados por magia estándar (Curar Heridas) o Medicina. Requiere hechizo Reparar o pruebas de Artesanía y Maña."
+        },
+        {
+          "name": "Cosechable",
+          "effect": "Sueltan 'Chatarra' (Engranajes, Placas, Aceite). Prueba: Artesanía y Maña (INT) CD 10 + Nivel."
+        }
+      ],
+      "passives": [
+        {
+          "name": "Blindaje Pesado",
+          "role": "Soldado/Bruto",
+          "effect": "La Puntuación de Armadura Base aumenta en +1."
+        },
+        {
+          "name": "Forma Inmutable",
+          "role": "Cualquiera",
+          "effect": "Inmune a Polimorfia/Petrificación. Los Golpes Críticos en su contra cuentan como Golpes Normales (Sin Efecto de Bonificación/Ganancia de Suerte)."
+        },
+        {
+          "name": "Resistencia Mágica",
+          "role": "Soldado/Solo",
+          "effect": "Gana +2 Puntuación de Armadura contra Hechizos y Efectos Mágicos."
+        },
+        {
+          "name": "Cuerpo Peligroso",
+          "role": "Hostigador",
+          "effect": "Cubierto de púas/calor/electricidad. Agarradores o atacantes desarmados reciben 1d4 de Daño."
+        },
+        {
+          "name": "Imparable",
+          "role": "Bruto",
+          "effect": "Ignora Terreno Difícil no mágico. No puede ser Ralentizado o Paralizado por medios físicos."
+        },
+        {
+          "name": "Absorción Elemental",
+          "role": "Solo",
+          "effect": "Inmune a un Elemento (Fuego/Rayo/Ácido). Se cura por la mitad del daño si es golpeado por ese tipo."
+        }
+      ],
+      "actions": [
+        {
+          "name": "Golpe",
+          "type": "Cuerpo a Cuerpo",
+          "effect": "Al Impactar: Daño Alto (Mejora tipo de dado). Fuerza contundente simple."
+        },
+        {
+          "name": "Aplastar",
+          "type": "Cuerpo a Cuerpo",
+          "effect": "Al Impactar: Daño Normal. Objetivo Agarrado. Inicio Turno Agarrado: Recibe Daño Automático igual a Mod STR."
+        },
+        {
+          "name": "Ventilar (Vapor/Fuego)",
+          "type": "AoE",
+          "effect": "Cono de 15 pies. Salvación de Reflejos vs CD de Ataque. Fallo: 2d6 Daño Elemental."
+        },
+        {
+          "name": "Torbellino",
+          "type": "AoE",
+          "effect": "Realiza una Prueba de Ataque contra CADA enemigo adyacente."
+        },
+        {
+          "name": "Arrollar",
+          "type": "Movimiento",
+          "effect": "Mueve velocidad completa a través de enemigos. Hacen Salvación de Reflejos vs CD de Ataque o reciben Daño y caen Derribados."
+        },
+        {
+          "name": "Capturar",
+          "type": "Cuerpo a Cuerpo",
+          "effect": "Al Impactar: Sin Daño. Objetivo Restringido (Red/Esposas). Escape: STR/DEX CD 15."
+        }
+      ],
+      "danger_abilities": [
+        {
+          "name": "Sobrecarga",
+          "cost": "1 PP",
+          "effect": "Toma una Acción Extra inmediata. Al final del turno, el Constructo recibe 1d10 Daño (Sobrecalentamiento)."
+        },
+        {
+          "name": "Autodestrucción",
+          "cost": "1 PP",
+          "effect": "Disparador: 0 PV. Explota. Radio 20 pies. 4d6 Daño Fuego/Fuerza (Reflejos Mitad)."
+        },
+        {
+          "name": "Protocolo de Reparación",
+          "cost": "1 PP",
+          "effect": "Recupera 10 PV y termina una condición negativa (Cegado/Debilitado)."
+        },
+        {
+          "name": "Bloqueo",
+          "cost": "1 PP",
+          "effect": "Crea una barrera (Fuerza/Piedra/Hierro) bloqueando un pasaje de 10 pies o atrapando un objetivo. Durabilidad: 20 PV."
+        },
+        {
+          "name": "Ventilar Refrigerante",
+          "cost": "1 PP",
+          "effect": "Nube de 20 pies de radio. Fuertemente Oscurecida (Ceguera). Empezar turno en nube: Recibe 1d6 Daño Frío."
+        },
+        {
+          "name": "Analizar Patrón",
+          "cost": "1 PP",
+          "effect": "Escanea a un jugador. Gana Ventaja en todas las Pruebas de Ataque contra él por el resto del combate."
+        }
+      ],
+      "flavor": {
+        "activity": [
+          "De pie como estatua.", "Patrullando ruta precisa.", "Limpiando escombros/cadáveres.", "Repitiendo mensaje de advertencia.", "Reparándose (chispas).", "Ventilando vapor rítmicamente.", "Mirando pared (Esperando entrada).", "Marchando al unísono.", "Moliendo engranajes.", "Imitando última vista."
+        ],
+        "visuals": [
+          "Hierro Oxidado (Goteando aceite).", "Mármol Pulido.", "Latón de Relojería (Tic-tac).", "Carne Cosida (Gólem).", "Cristal/Gema (Brillante).", "Mimbre/Madera (Núcleo ardiente).", "Porcelana (Muñeca).", "Obsidiana (Irregular).", "Montón de Chatarra (Magnético).", "Armadura Hueca."
+        ],
+        "loot": [
+          "Engranaje Complejo (10o).", "Pistón Hidráulico (15o).", "Núcleo de Poder (50o).", "Combustible Alquímico (20o).", "Placa Maestra (50o).", "Lente de Foco (25o).", "Cableado de Cobre (5o).", "Arcilla Rúnica (10o).", "Filigrana de Plata (30o).", "Caja Negra (Objeto de Misión)."
+        ]
+      }
+    },
+    "horrors": {
+      "id": "fam_horrors",
+      "name": "Los Horrores",
+      "description": "Aberraciones del Reino Lejano o la tierra profunda. Desafían la biología y la lógica. Luchar contra ellos arriesga la locura tanto como la muerte física.",
+      "universal_traits": [
+        {
+          "name": "Anatomía No Euclidiana",
+          "effect": "No puede ser Flanqueado (inmune a Ataque Furtivo por flanco) y no puede ser Derribado (sin arriba o abajo)."
+        },
+        {
+          "name": "Mente Alienígena",
+          "effect": "Inmune a condiciones de Hechizado y Confundido. Sus pensamientos son demasiado vastos o irregulares para manipular."
+        },
+        {
+          "name": "Cosechable",
+          "effect": "Sueltan 'Curiosidades Prohibidas' (Gemas Alienígenas, Fluido Cerebral). Prueba: Supervivencia (WIS) CD 10 + Nivel."
+        }
+      ],
+      "passives": [
+        {
+          "name": "Amorfo",
+          "role": "Acechador",
+          "effect": "Puede pasar por huecos de 1 pulgada. Ventaja para escapar de Agarres."
+        },
+        {
+          "name": "Regeneración",
+          "role": "Bruto/Soldado",
+          "effect": "Recupera 5 PV al inicio del turno. Detenida por daño de Fuego o Ácido."
+        },
+        {
+          "name": "Aura de Locura",
+          "role": "Controlador/Solo",
+          "effect": "Criaturas comenzando turno a 10 pies deben salvar Voluntad vs CD de Salvación o quedar Atontadas 1 ronda."
+        },
+        {
+          "name": "Resistencia Mágica",
+          "role": "Soldado",
+          "effect": "Gana +2 Puntuación de Armadura contra Hechizos y Efectos Mágicos."
+        },
+        {
+          "name": "Sangre Cáustica",
+          "role": "Bruto",
+          "effect": "Atacantes cuerpo a cuerpo reciben 1d4 Daño Ácido al impactar."
+        }
+      ],
+      "actions": [
+        {
+          "name": "Latigazo de Tentáculo",
+          "type": "Cuerpo a Cuerpo",
+          "effect": "Alcance 10 pies. Al Impactar: Daño Normal y Objetivo Agarrado."
+        },
+        {
+          "name": "Taladro Psíquico",
+          "type": "Magia",
+          "effect": "Rango (60 pies). Al Impactar: Daño Psíquico (Ignora Armadura). Objetivo pierde Concentración."
+        },
+        {
+          "name": "Engullir / Absorber",
+          "type": "Cuerpo a Cuerpo",
+          "effect": "Contra objetivo Agarrado. Mueve al espacio. Objetivo Restringido. Daño Ácido automático al inicio de turno."
+        },
+        {
+          "name": "Mirada de Entropía",
+          "type": "A Distancia",
+          "effect": "Objetivo salva Fortaleza vs CD Salvación. Fallo: Debilitado (Mitad Daño infligido) por 1 minuto."
+        },
+        {
+          "name": "Balbuceo",
+          "type": "AoE",
+          "effect": "Radio 20 pies. Salvación Voluntad vs CD. Fallo: Confundido por 1 ronda."
+        },
+        {
+          "name": "Deformar Carne",
+          "type": "Cuerpo a Cuerpo",
+          "effect": "Al Impactar: Salvación Fortaleza. Fallo: Miembro se vuelve gomoso (Soltar Objeto o Caer Derribado) por 1 minuto."
+        }
+      ],
+      "danger_abilities": [
+        {
+          "name": "Estallido Mental",
+          "cost": "1 PP",
+          "effect": "Cono 30 pies. Salvación Voluntad. Fallo: 3d6 Daño Psíquico (Ignora Armadura) y Aturdido 1 ronda."
+        },
+        {
+          "name": "Deformación Espacial",
+          "cost": "1 PP",
+          "effect": "Teletransporta a sí mismo y una criatura adyacente (Voluntad niega) a cualquier punto en 60 pies."
+        },
+        {
+          "name": "Fisión",
+          "cost": "1 PP",
+          "effect": "Disparador: Recibir daño Cortante/Rayo. Se divide en dos copias. Ambas tienen la Mitad de los PV actuales."
+        },
+        {
+          "name": "Escudo del Vacío",
+          "cost": "1 PP",
+          "effect": "Gana 20 PV Temporales. Mientras el escudo aguante, Inmune a la Magia."
+        },
+        {
+          "name": "Desgarro de Realidad",
+          "cost": "1 PP",
+          "effect": "Zona Radio 20 pies. Gravedad Cero. Criaturas flotan y tienen Desventaja en DEX/Ataques a menos que vuelen/ancladas."
+        },
+        {
+          "name": "Dominar",
+          "cost": "1 PP",
+          "effect": "Objetivo salva Voluntad. Fallo: Hechizado e inmediatamente realiza un Ataque de Reacción contra un aliado."
+        }
+      ],
+      "flavor": {
+        "activity": [
+          "Vibrando la realidad.", "Fusionándose con el terreno.", "Imitando habla al revés.", "Mirando a través de paredes.", "Construyendo nido de vidrio.", "Nadando por el aire.", "Disolviendo víctima.", "Trazando geometría.", "Llorando icor.", "Flotando inmóvil."
+        ],
+        "visuals": [
+          "Gelatina Translucida.", "Geometría No Euclidiana.", "Humanoide Estirado.", "Insectoide/Quitina.", "Gas Cohesivo.", "Fúngico/Mohoso.", "Metal Orgánico.", "Silueta Viviente.", "Anatomía Invertida.", "Masa de Gusanos."
+        ],
+        "loot": [
+          "Gema Alienígena (50o).", "Fluido Cerebral (25o).", "Metal Extraño (20o).", "Geoda Geométrica (30o).", "Glándula Mutagénica (40o).", "Polvo del Vacío (15o).", "Quitina Flexible (20o).", "Espina Resonante (10o).", "Grimorio Macabro (100o).", "Lóbulo Cristalizado (50o)."
+        ]
+      }
+    },
+    "spirits": {
+      "id": "fam_spirits",
+      "name": "Los Espíritus",
+      "description": "Visitantes de otros planos. Elementales, Feéricos, Demonios y Diablos. Siguen una lógica alienígena y están atados por leyes antiguas. Derrotarlos es desterrarlos.",
+      "universal_traits": [
+        {
+          "name": "Resistencia Planar",
+          "effect": "Resistencia (Mitad Daño) a Armas No Mágicas. Vulnerable (Doble Daño) a su Perdición (Plata para Infernales, Hierro Frío para Feéricos, Elemento Opuesto para Elementales)."
+        },
+        {
+          "name": "Disolución",
+          "effect": "Al ser destruidos, se disuelven en ceniza, luz o limo, regresando a su plano (sin cadáver). El equipo cae normalmente."
+        },
+        {
+          "name": "Cosechable",
+          "effect": "Sueltan 'Esencia' (Maná Cristalizado, Núcleos Elementales). Prueba: Saber (INT) CD 10 + Nivel."
+        }
+      ],
+      "passives": [
+        {
+          "name": "Cuerpo Elemental",
+          "role": "Bruto/Hostigador",
+          "effect": "Irradia energía peligrosa. Agarradores o atacantes desarmados reciben 1d6 Daño Elemental."
+        },
+        {
+          "name": "Resistencia Mágica",
+          "role": "Soldado/Controlador",
+          "effect": "Gana +2 Puntuación de Armadura contra Hechizos y Efectos Mágicos."
+        },
+        {
+          "name": "Flotar",
+          "role": "Artillería/Solo",
+          "effect": "Flota 1-5 pies. Ignora Terreno Difícil en suelo y no puede ser Derribado."
+        },
+        {
+          "name": "Glamour",
+          "role": "Hostigador",
+          "effect": "Inicio de Encuentro: Jugadores salvan Voluntad. Fallo: Desventaja en Ataques contra esta unidad (Ilusión/Belleza). Salvación termina."
+        },
+        {
+          "name": "Incorpóreo",
+          "role": "Acechador",
+          "effect": "Puede moverse a través de objetos. Resistencia a ataques físicos no mágicos."
+        }
+      ],
+      "actions": [
+        {
+          "name": "Toque Elemental",
+          "type": "Cuerpo a Cuerpo",
+          "effect": "Ignora Puntuación de Armadura. Inflige Daño Elemental específico (Fuego, Frío, Necrótico)."
+        },
+        {
+          "name": "Golpe de Parpadeo",
+          "type": "Cuerpo a Cuerpo",
+          "effect": "Teletransporte 15 pies inmediatamente antes de atacar. El ataque tiene Ventaja."
+        },
+        {
+          "name": "Encanto / Miedo",
+          "type": "A Distancia",
+          "effect": "Rango 30 pies. Objetivo salva Voluntad. Fallo: Hechizado o Asustado por 1 minuto."
+        },
+        {
+          "name": "Drenar Vida",
+          "type": "Cuerpo a Cuerpo",
+          "effect": "Al Impactar: Daño Necrótico. El Espíritu recupera PV igual a mitad del daño."
+        },
+        {
+          "name": "Posesión",
+          "type": "Magia",
+          "effect": "Objetivo salva Voluntad. Fallo: Dominado. Recibe 1d6 daño Psíquico/turno. Lanzador removido del tablero (dentro del objetivo)."
+        },
+        {
+          "name": "Estallido Elemental",
+          "type": "A Distancia",
+          "effect": "Rango 60 pies. 2d8 Daño Elemental. Salpicadura: Adyacentes salvan Reflejos para Mitad."
+        }
+      ],
+      "danger_abilities": [
+        {
+          "name": "Invocar Parientes",
+          "cost": "1 PP",
+          "effect": "Portal se abre. 1d4 Esbirros (Mefits/Diablillos) aparecen al final de la ronda."
+        },
+        {
+          "name": "Nova",
+          "cost": "1 PP",
+          "effect": "Estallido Radio 20 pies. 3d6 Daño Elemental (Reflejos Mitad)."
+        },
+        {
+          "name": "Cambio de Plano",
+          "cost": "1 PP",
+          "effect": "Teletransporta a sí mismo y una criatura adyacente (Voluntad niega) hasta 60 pies."
+        },
+        {
+          "name": "Polimorfia",
+          "cost": "1 PP",
+          "effect": "Objetivo salva Voluntad. Fallo: Convertido en bicho inofensivo (1 PV, 0 AS, Aturdido) por 1 ronda."
+        },
+        {
+          "name": "Muro Elemental",
+          "cost": "1 PP",
+          "effect": "Crea Muro (20 pies). Fuego/Hielo hace daño; Piedra bloquea movimiento."
+        },
+        {
+          "name": "Posesión",
+          "cost": "1 PP",
+          "effect": "Espíritu se lanza en jugador. Salvación Voluntad. Fallo: Espíritu controla próxima Acción del jugador. Jugador recibe 1d10 Daño Psíquico Interno."
+        }
+      ],
+      "flavor": {
+        "activity": [
+          "Negociando por un alma.", "Bailando en círculo de hongos.", "Consumiendo magia de objeto.", "Torturando un fantasma.", "Manteniendo un portal.", "Imitando voces del grupo.", "Meditando en órbita.", "Construyendo cuerpo de barro.", "Cantando canción dolorosa.", "Durmiendo en lava/hielo."
+        ],
+        "visuals": [
+          "Realidad Glitcheada.", "Luz Geométrica.", "Quimera/Híbrido.", "Humanoide Enmascarado.", "Vacío Estrellado.", "Metal/Fuego Líquido.", "Enjambre de Insectos.", "Armadura Hueca.", "Ojos Angelicales.", "Cristalino."
+        ],
+        "loot": [
+          "Maná Cristalizado (10o).", "Núcleo Elemental (50o).", "Polvo de Hada (20o).", "Cuerno de Demonio (25o).", "Pluma de Ángel (50o).", "Ectoplasma (15o).", "Azufre (5o).", "Carbón Eterno (30o).", "Rayo Embotellado (40o).", "Pergamino de Nombre Verdadero."
+        ]
+      }
+    },
+    "wyrms": {
+      "id": "fam_wyrms",
+      "name": "Las Sierpes",
+      "description": "Dragones, dracos e hidras. Señores del cielo y las cavernas profundas. Poseen una inteligencia cruel, sangre elemental y una obsesión con la riqueza.",
+      "universal_traits": [
+        {
+          "name": "Sangre Dracónica",
+          "effect": "Vinculado a un elemento (Fuego/Frío/Ácido/Rayo/Veneno). Inmune a ese elemento. Vulnerable (Doble Daño) al elemento opuesto."
+        },
+        {
+          "name": "Vuelo",
+          "effect": "A menos que no tengan alas (Dracos/Sierpes de Tierra), tienen una Velocidad de Vuelo igual a su Velocidad de Tierra."
+        },
+        {
+          "name": "El Tesoro",
+          "effect": "Derrotar a una Sierpe otorga 3x Tiradas de Botín. Cosechable: Escamas, Sangre, Cuernos. Prueba: Supervivencia (WIS) CD 10 + Nivel."
+        }
+      ],
+      "passives": [
+        {
+          "name": "Escamas Endurecidas",
+          "role": "Soldado/Bruto",
+          "effect": "La Puntuación de Armadura aumenta en +1."
+        },
+        {
+          "name": "Presencia Aterradora",
+          "role": "Solo",
+          "effect": "Enemigos comenzando turno a 30 pies deben salvar Voluntad vs CD de Salvación o quedar Asustados por 1 ronda."
+        },
+        {
+          "name": "Cola Reactiva",
+          "role": "Soldado/Acechador",
+          "effect": "Si es Flanqueado o un enemigo se mueve adyacente, usa Reacción para hacer un Ataque de Cola inmediato."
+        },
+        {
+          "name": "Multi-Cabeza",
+          "role": "Bruto/Solo",
+          "effect": "Ventaja en Iniciativa/Percepción. Hace 1 Ataque Extra por ronda. Recibir 15+ de daño en un golpe mata una cabeza (CD de Ataque -1)."
+        },
+        {
+          "name": "Resistencia Legendaria",
+          "role": "Solo",
+          "effect": "1/Combate: Si la Sierpe falla una Salvación, puede elegir tener Éxito en su lugar."
+        }
+      ],
+      "actions": [
+        {
+          "name": "Mordisco y Garra",
+          "type": "Cuerpo a Cuerpo",
+          "effect": "Multi-Ataque: Haz Dos Ataques (Mordisco de Daño Alto / Garra de Daño Normal)."
+        },
+        {
+          "name": "Arrebatado",
+          "type": "Cuerpo a Cuerpo",
+          "effect": "Al Impactar: Daño Normal. Objetivo Agarrado. Si Vuela, la Sierpe se mueve 20 pies Arriba, llevando a la víctima."
+        },
+        {
+          "name": "Tragar Entero",
+          "type": "Cuerpo a Cuerpo",
+          "effect": "Objetivo debe estar Agarrado. Al Impactar: Tragado (Removido del tablero). Restringido/Cegado. Auto-Daño cada turno. Escape: Infligir 15 Daño al estómago (CA 10)."
+        },
+        {
+          "name": "Barrido de Cola",
+          "type": "AoE",
+          "effect": "Arco Trasero (10 pies). Salvación Reflejos vs CD de Ataque. Fallo: Daño + Derribado."
+        },
+        {
+          "name": "Mordisco Elemental",
+          "type": "Cuerpo a Cuerpo",
+          "effect": "Ignora Puntuación de Armadura. Inflige Daño Físico + Elemental."
+        },
+        {
+          "name": "Maniobra de Ala",
+          "type": "Movimiento",
+          "effect": "Empuja a todas las criaturas adyacentes 10 pies. Mueve hasta Mitad de Velocidad sin provocar contraataques."
+        }
+      ],
+      "danger_abilities": [
+        {
+          "name": "Arma de Aliento",
+          "cost": "1 PP",
+          "effect": "Cono (30 pies) o Línea (60 pies). Salvación Reflejos vs CD. Fallo: 4d6 Daño Elemental."
+        },
+        {
+          "name": "Rugido de los Antiguos",
+          "cost": "1 PP",
+          "effect": "Radio 60 pies. Salvación Voluntad vs CD. Fallo: Asustado 1 ronda y Soltar Armas."
+        },
+        {
+          "name": "Arrebato al Vuelo",
+          "cost": "1 PP",
+          "effect": "Mueve Velocidad de Vuelo (Sin OA). Agarra un objetivo en el camino. Éxito: Lo carga el resto del movimiento."
+        },
+        {
+          "name": "Aura Elemental",
+          "cost": "1 PP",
+          "effect": "Estallido. Radio 15 pies. 2d6 Daño Elemental (Sin Salvación)."
+        },
+        {
+          "name": "Incinerar / Congelar",
+          "cost": "1 PP",
+          "effect": "Objetivo una criatura. Daño Elemental Automático (Dado de Arma). Aplica Lesión Permanente (ej: Pulmones Quemados, -1 Aguante) hasta curarse."
+        },
+        {
+          "name": "Recuperación Legendaria",
+          "cost": "1 PP",
+          "effect": "Disparador: Cuando Aturdido/Cegado. Termina una condición inmediatamente y toma una Acción de Movimiento."
+        }
+      ],
+      "flavor": {
+        "activity": [
+          "Durmiendo sobre monedas.", "Comiendo presa grande.", "Contando tesoro.", "Discutiendo consigo mismo (Hidra).", "Afilando garras en estatua.", "Bañándose en lava/ácido.", "Vigilando desde pico alto.", "Enseñando a crías.", "Mudando piel (Irritable).", "Cantando canción dracónica profunda."
+        ],
+        "visuals": [
+          "Escamas Oxidadas/Corroídas.", "Cristalino/Translucido.", "Pudriéndose (Dracoliche).", "Mar Profundo (Bioluminiscente).", "Incrustado de Gemas.", "Emplumado (Coatl).", "Obsidiana (Irregular).", "Albino (Habitante de cueva).", "Fúngico/Musgoso.", "Metálico (Oro/Plata)."
+        ],
+        "loot": [
+          "Escama de Dragón (20o).", "Diente de Sierpe (10o).", "Glándula Elemental (50o).", "Sangre de Dragón (25o).", "Gema Indigesta (50o).", "Tesoro de Cobre (Granel).", "Estatua de Mármol (Arte).", "Equipo Maestro.", "Plano Raro.", "Huevo de Dragón (500o+)."
+        ]
+      }
+    },
+    "titans": {
+      "id": "fam_titans",
+      "name": "Los Titanes",
+      "description": "Gigantes, ogros y trolls. Desastres naturales caminantes que dominan el campo de batalla mediante pura masa y alcance. Luchar contra ellos no es un duelo; es un asedio.",
+      "universal_traits": [
+        {
+          "name": "Largo Alcance",
+          "effect": "Alcance Cuerpo a Cuerpo es 10 pies (Grande) o 15 pies (Enorme). Pueden atacar a enemigos que no pueden devolver el golpe."
+        },
+        {
+          "name": "Lanzar Escombros",
+          "effect": "Pueden arrancar rocas/muebles para hacer Ataques a Distancia (60 pies) infligiendo daño de arma estándar."
+        },
+        {
+          "name": "Monstruo de Asedio",
+          "effect": "Inflige Doble Daño a objetos y estructuras. Ignora Terreno Difícil no mágico (escombros)."
+        },
+        {
+          "name": "Botín a Granel",
+          "effect": "La riqueza se lleva en sacos masivos. Alto valor, pero alto coste de espacio (ej: barriles de vino, ganado, mineral crudo)."
+        }
+      ],
+      "passives": [
+        {
+          "name": "Regeneración",
+          "role": "Bruto (Troll)",
+          "effect": "Recupera 10 PV al inicio del turno. Detenida por daño de Fuego o Ácido."
+        },
+        {
+          "name": "Golpe Amplio",
+          "role": "Soldado",
+          "effect": "Al Impactar, inflige Mitad de Daño a otro enemigo adyacente al objetivo."
+        },
+        {
+          "name": "Cráneo Grueso",
+          "role": "Bruto/Esbirro",
+          "effect": "Ventaja en Salvaciones contra Daño Psíquico y condición de Aturdido."
+        },
+        {
+          "name": "Carga de Arrollamiento",
+          "role": "Soldado/Solo",
+          "effect": "Si mueve 20 pies directo al objetivo, el impacto derriba al objetivo (Salvación Reflejos niega)."
+        },
+        {
+          "name": "Paso Seguro",
+          "role": "Artillería/Hostigador",
+          "effect": "No puede ser Empujado o Derribado por criaturas más pequeñas que él."
+        }
+      ],
+      "actions": [
+        {
+          "name": "Aplastar",
+          "type": "Cuerpo a Cuerpo",
+          "effect": "Al Impactar: Daño Normal. Objetivo es automáticamente Derribado."
+        },
+        {
+          "name": "Barrido",
+          "type": "AoE",
+          "effect": "Semicírculo de 10 pies. Defensa vs CD de Ataque. Fallo: Daño Estándar y Empujado 10 pies."
+        },
+        {
+          "name": "Lanzar Víctima",
+          "type": "Cuerpo a Cuerpo",
+          "effect": "Prueba de Agarre. Éxito: Lanza al objetivo 30 pies. Recibe 1d6 por cada 10 pies de Daño de Caída y aterriza Derribado."
+        },
+        {
+          "name": "Morder/Comer",
+          "type": "Cuerpo a Cuerpo",
+          "effect": "Al Impactar: Daño + Se cura por la mitad. Si el objetivo muere, aliados deben Salvar vs Miedo."
+        },
+        {
+          "name": "Pisotón",
+          "type": "AoE",
+          "effect": "Radio 5 pies. Salvación Reflejos vs CD de Ataque. Fallo: Daño Mod STR y Velocidad a la Mitad (1 ronda)."
+        },
+        {
+          "name": "Bramido",
+          "type": "Apoyo",
+          "effect": "Todos los aliados a 30 pies ganan Ventaja en su siguiente Prueba de Ataque."
+        }
+      ],
+      "danger_abilities": [
+        {
+          "name": "Terremoto",
+          "cost": "1 PP",
+          "effect": "Radio 30 pies. Salvación Reflejos vs CD Salvación. Fallo: Derribado. Área se vuelve Terreno Difícil."
+        },
+        {
+          "name": "Colapso de Estructura",
+          "cost": "1 PP",
+          "effect": "Romper pilar/techo. Radio 15 pies. 4d10 Contundente (Reflejos Mitad). Fallo: Restringido (Enterrado)."
+        },
+        {
+          "name": "Furia",
+          "cost": "1 PP",
+          "effect": "1 Minuto. Inflige +1d6 Daño. CD de Defensa reducida en 2."
+        },
+        {
+          "name": "Agarrar y Apretar",
+          "cost": "1 PP",
+          "effect": "Auto-Agarra objetivo en alcance. Inflige daño automático Mod STR al inicio de turnos."
+        },
+        {
+          "name": "Batear",
+          "cost": "1 PP",
+          "effect": "Golpe de jonrón. Salvación Reflejos vs CD Ataque. Fallo: Doble Daño y Empujado 30 pies."
+        },
+        {
+          "name": "Grito de Guerra",
+          "cost": "1 PP",
+          "effect": "Radio 60 pies. Salvación Fortaleza vs CD Salvación. Fallo: Aturdido 1 ronda."
+        }
+      ],
+      "flavor": {
+        "activity": [
+          "Hirviendo estofado en caldero.", "Durmiendo ruidosamente (Ronquidos).", "Pintando pared con barro/sangre.", "Afilando lanza de tronco.", "Discutiendo consigo mismo (Ettin).", "Contando monedas de cobre.", "Royendo huesos de caballo.", "Práctica de lucha.", "Cantando canciones profundas.", "Fascinado por baratija diminuta."
+        ],
+        "visuals": [
+          "Fúngico/Musgoso (Colina).", "Cristalino/Hielo (Escarcha).", "Fundido/Carbón (Fuego).", "Podrido (No-Muerto).", "Armadura de Chatarra.", "Mutado/Cíclope.", "Piel Rúnica (Piedra).", "Sedas Nobles (Nube).", "Bestial/Peludo.", "Piernas Elementales."
+        ],
+        "loot": [
+          "Ganado Aterrorizado (Vivo).", "Barril de Cerveza (2 Espacios).", "Escudo de Rueda de Carro.", "5,000 Monedas de Cobre (50 Espacios).", "Puerta de Bóveda (Chatarra).", "Collar de Yelmos.", "Mena de Plata Cruda (Roca).", "Cerdo Asado.", "Jaula de Cautivos.", "Llave de Hierro Masiva."
+        ]
+      }
+    },
+    "watchers": {
+      "id": "fam_watchers",
+      "name": "Los Observadores",
+      "description": "Inteligencias alienígenas de carne flotante y cristal. Son tiranos de la oscuridad, obsesionados con la observación y el control. No usan armas; miran la realidad y la obligan a doblarse.",
+      "universal_traits": [
+        {
+          "name": "Panóptico",
+          "effect": "No puede ser Flanqueado (Inmune a Ataque Furtivo lateral) y no puede ser Sorprendido."
+        },
+        {
+          "name": "Flotar",
+          "effect": "Flota 1-10 pies. Ignora Terreno Difícil en suelo (grasa/escombros) y no puede ser Derribado a menos que se reduzca a 0 PV."
+        },
+        {
+          "name": "Cosechable",
+          "effect": "Sueltan 'Curiosidades Arcanas' (Lentes, Humores, Córneas). Prueba: Saber (INT) CD 10 + Nivel."
+        }
+      ],
+      "passives": [
+        {
+          "name": "Cono Anti-Magia",
+          "role": "Solo/Controlador",
+          "effect": "Ojo Central proyecta Cono de 30-60 pies. Dentro, ninguna magia funciona. Rota al inicio del turno."
+        },
+        {
+          "name": "Córnea Reflectante",
+          "role": "Soldado/Artillería",
+          "effect": "Si un Ataque de Hechizo a Distancia falla, rebota. El lanzador debe tirar Defensa vs su propia CD de Hechizo o ser golpeado."
+        },
+        {
+          "name": "Vigilancia Paranoica",
+          "role": "Solo/Esbirro",
+          "effect": "Añade Dado de Competencia a Iniciativa. Si actúa primero en Ronda 1, dispara un Rayo como Acción Gratuita."
+        },
+        {
+          "name": "Drenaje de Maná",
+          "role": "Hostigador",
+          "effect": "Criaturas comenzando turno a 20 pies pierden 1d4 MP. Si 0 MP, reciben Daño Psíquico en su lugar."
+        },
+        {
+          "name": "Mirada Distractora",
+          "role": "Soldado",
+          "effect": "Enemigos a 10 pies tienen Desventaja en Pruebas de Ataque (Mirada inquietante)."
+        }
+      ],
+      "actions": [
+        {
+          "name": "Volea de Rayos",
+          "type": "A Distancia",
+          "effect": "Dispara 2 Rayos Aleatorios (Tira d8 en Tabla de Rayos). Puede apuntar a diferentes criaturas."
+        },
+        {
+          "name": "Haz Enfocado",
+          "type": "A Distancia",
+          "effect": "Dispara 1 Tipo de Rayo específico con Ventaja."
+        },
+        {
+          "name": "Fusilamiento Giratorio",
+          "type": "AoE",
+          "effect": "Radio 20 pies. Salvación Reflejos vs CD de Ataque. Fallo: Golpeado por Rayo Aleatorio (Tira d8)."
+        },
+        {
+          "name": "Agarre Telequinético",
+          "type": "A Distancia",
+          "effect": "Objetivo hace Salvación de Fuerza. Fallo: Restringido (Sostenido en aire) y movido 20 pies."
+        },
+        {
+          "name": "Mordisco",
+          "type": "Cuerpo a Cuerpo",
+          "effect": "Al Impactar: Daño Bajo. Objetivo es Agarrado (Bloqueo de mandíbula)."
+        }
+      ],
+      "danger_abilities": [
+        {
+          "name": "Tormenta Prismática",
+          "cost": "1 PP",
+          "effect": "Dispara 4 Rayos Aleatorios a objetivos aleatorios a 60 pies."
+        },
+        {
+          "name": "Pulso Anti-Magia",
+          "cost": "1 PP",
+          "effect": "Disipa todos los efectos mágicos activos/mejoras/invocaciones a 60 pies."
+        },
+        {
+          "name": "Orden del Tirano",
+          "cost": "1 PP",
+          "effect": "Objetivo hace Salvación Voluntad. Fallo: Dominado (1 ronda). Usa Reacción para atacar aliado."
+        },
+        {
+          "name": "Desintegrar",
+          "cost": "1 PP",
+          "effect": "Objetivo recibe 6d10 Daño de Fuerza (Esquiva Mitad). Si 0 PV, convertido en polvo."
+        },
+        {
+          "name": "Cambio de Realidad",
+          "cost": "1 PP",
+          "effect": "Mueve telequinéticamente 3 criaturas/objetos 20 pies instantáneamente (Sin Salvación)."
+        },
+        {
+          "name": "Chasquido Paranoico",
+          "cost": "1 PP",
+          "effect": "Disparador: Cuando dañado. Dispara inmediatamente un Rayo Aleatorio al atacante."
+        }
+      ],
+      "ray_table": [
+        { "roll": 1, "name": "Rayo Abrasador", "effect": "Prueba Defensa. Fallo: 2d6 Fuego + Quemadura." },
+        { "roll": 2, "name": "Rayo de Escarcha", "effect": "Prueba Defensa. Fallo: 2d6 Frío + Velocidad 0 (Congelado)." },
+        { "roll": 3, "name": "Rayo Telequinético", "effect": "Salvación Fuerza. Fallo: Lanzado 30 pies, Derribado, 2d6 Impacto." },
+        { "roll": 4, "name": "Rayo de Miedo", "effect": "Salvación Voluntad. Fallo: Asustado (1 min)." },
+        { "roll": 5, "name": "Rayo de Encanto", "effect": "Salvación Voluntad. Fallo: Hechizado (1 min)." },
+        { "roll": 6, "name": "Rayo de Enervación", "effect": "Salvación Fortaleza. Fallo: 3d6 Necrótico + Debilitado." },
+        { "roll": 7, "name": "Rayo de Petrificación", "effect": "Salvación Fortaleza. Fallo: Restringido (Convirtiéndose en piedra)." },
+        { "roll": 8, "name": "Rayo de Muerte", "effect": "Salvación Fortaleza. Fallo: 5d8 Necrótico (0 PV = Muerte)." }
+      ],
+      "flavor": {
+        "activity": [
+          "Ordenando gemas telequinéticamente.", "Soñando (Deformando realidad).", "Dictando a escriba.", "Diseccionando aventurero.", "Adivinando ubicación lejana.", "Discutiendo con pedúnculos oculares.", "Cronometrando caídas de gravedad.", "Puliendo ojo central.", "Construyendo trampa.", "Durmiendo (Un ojo abierto)."
+        ],
+        "visuals": [
+          "Carnoso/Venoso.", "Mecánico/Latón.", "Geoda Cristalina.", "Muerto (Tirano de la Muerte).", "Tentáculos Eldritch.", "Orbe de Luz Pura.", "Espora Fúngica.", "Mar Profundo (Bioluminiscente).", "Estatua de Piedra.", "Infernal/Ardiendo."
+        ],
+        "loot": [
+          "Lente Central (100o).", "Pedúnculo Ocular (20o).", "Humor Vítreo (50o).", "Lágrima Cristalizada (10o).", "Aventurero Petrificado.", "Anillo Telequinético (50o).", "Pergamino Disipar Magia.", "Geoda Extraña (30o).", "Mapa Perfecto.", "Ojo del Tirano (Artefacto)."
+        ]
+      }
+    },
+    "amorphous": {
+      "id": "fam_amorphous",
+      "name": "Los Amorfos",
+      "description": "Limos, jaleas y lodos. Vida sin estructura. Disuelven materia orgánica y metal por igual. Luchar contra ellos es una pesadilla de corrosión y asfixia.",
+      "universal_traits": [
+        {
+          "name": "Anatomía Líquida",
+          "effect": "Inmune a Flanqueo, Derribo y Agarre. Los Golpes Críticos en su contra cuentan como Golpes Normales (Sin Efecto de Bonificación/Ganancia de Suerte)."
+        },
+        {
+          "name": "Escurrirse",
+          "effect": "Puede moverse a través de huecos tan pequeños como 1 pulgada sin disminuir la velocidad."
+        },
+        {
+          "name": "Visión Ciega",
+          "effect": "Inmune a Ataques de Mirada e Invisibilidad. Siente calor/vibración."
+        },
+        {
+          "name": "Cosechable",
+          "effect": "Sueltan 'Limo Alquímico' y Botín Indigesto. Prueba: Artesanía y Maña (INT) CD 10 + Nivel."
+        }
+      ],
+      "passives": [
+        {
+          "name": "Cuerpo Corrosivo",
+          "role": "Bruto/Soldado",
+          "effect": "Tocar/Agarrar/Atacar desarmado al limo inflige 1d4 Daño Ácido. Armas no mágicas que lo golpean reciben penalización -1."
+        },
+        {
+          "name": "Falsa Apariencia",
+          "role": "Acechador",
+          "effect": "Indistinguible de un objeto/charco mientras está inmóvil. Ventaja en primer ataque (Emboscada)."
+        },
+        {
+          "name": "División",
+          "role": "Bruto",
+          "effect": "Reacción: Al recibir daño Cortante/Rayo, se divide en dos limos más pequeños con la mitad de PV cada uno."
+        },
+        {
+          "name": "Escalador Pegajoso",
+          "role": "Hostigador",
+          "effect": "Escalar Araña. Ventaja en pruebas para mantener Agarre."
+        },
+        {
+          "name": "Absorbente Mágico",
+          "role": "Solo",
+          "effect": "Inmune a Daño de Fuerza (Misil Mágico). Se cura 1 PV por cada punto de daño de Fuerza prevenido."
+        }
+      ],
+      "actions": [
+        {
+          "name": "Engullir",
+          "type": "Cuerpo a Cuerpo",
+          "effect": "Mueve al espacio del objetivo. Objetivo tira Defensa. Fallo: Engullido (Restringido, Cegado, Asfixiándose). Auto-Daño al inicio de turno."
+        },
+        {
+          "name": "Corroer Armadura",
+          "type": "Cuerpo a Cuerpo",
+          "effect": "Al Impactar: Daño Normal. La Puntuación de Armadura del objetivo se reduce en 1 (Permanente hasta Reparar)."
+        },
+        {
+          "name": "Golpe Adhesivo",
+          "type": "Cuerpo a Cuerpo",
+          "effect": "Al Impactar: Arma se pega al Limo. Jugador debe soltar arma o quedar Agarrado."
+        },
+        {
+          "name": "Disparo de Limo",
+          "type": "A Distancia",
+          "effect": "Rango 30 pies. Al Impactar: Objetivo Ralentizado (Velocidad a la mitad, No Correr) hasta limpiarse."
+        },
+        {
+          "name": "Cambio de Forma",
+          "type": "Utilidad",
+          "effect": "Transformarse en objeto del mismo tamaño (Mímico)."
+        }
+      ],
+      "danger_abilities": [
+        {
+          "name": "Mitosis",
+          "cost": "1 PP",
+          "effect": "Disparador: Recibir Daño. Dividirse en dos copias. Cada una tiene la Mitad de los PV actuales."
+        },
+        {
+          "name": "Erupción Violenta",
+          "cost": "1 PP",
+          "effect": "Radio 15 pies. Salvación Reflejos vs CD Ataque. Fallo: 4d6 Daño Ácido y Cegado por limo."
+        },
+        {
+          "name": "Oleada Repentina",
+          "cost": "1 PP",
+          "effect": "Mueve Doble Velocidad. Pasa a través de enemigos sin OA. Enemigos atravesados reciben 2d6 Daño Ácido."
+        },
+        {
+          "name": "Devorar",
+          "cost": "1 PP",
+          "effect": "Constriñe objetivo Engullido/Agarrado. Inflige Doble Daño. Se cura por la mitad de la cantidad infligida."
+        },
+        {
+          "name": "Forma Líquida",
+          "cost": "1 PP",
+          "effect": "Disparador: Aturdido/Restringido. Colapsa y se reforma a 5 pies. Termina todas las condiciones negativas."
+        },
+        {
+          "name": "Rocío Ácido",
+          "cost": "1 PP",
+          "effect": "Cono 20 pies. 3d6 Daño Ácido (Reflejos Mitad). El suelo se vuelve Terreno Difícil."
+        }
+      ],
+      "flavor": {
+        "activity": [
+          "Limpiando suelo (disolviendo basura).", "Goteando del techo.", "Digiriendo esqueleto visible.", "Imitando un cofre.", "Vibrando cerca de magia.", "Fluyendo bajo puerta.", "Burbujeando (Gas fétido).", "Brillando (Bioluminiscente).", "Dividiéndose.", "Estancado como un charco."
+        ],
+        "visuals": [
+          "Cubo Transparente.", "Aceite Negro (Inflamable).", "Verde/Rosa Neón.", "Textura de Piedra (Mímico).", "Coágulo de Sangre.", "Mercurio/Metal Líquido.", "Lodo Fúngico.", "Granizado Congelante.", "Oro Fundido.", "Sombra del Vacío."
+        ],
+        "loot": [
+          "Esqueleto Flotante.", "Estuche de Pergamino Sellado.", "Anillo Mágico (A prueba de ácido).", "Gemas (Indigestas).", "Vial de Vidrio.", "Monedas de Oro Picadas.", "Tablilla de Piedra.", "Arma de Cristal.", "Diente de Oro.", "Limo Alquímico (25o)."
+        ]
+      }
+    },
+    "verdant": {
+      "id": "fam_verdant",
+      "name": "Los Verdantes",
+      "description": "Monstruos planta. Vides asfixiantes, flores carnívoras y colonias de hongos. Son silenciosos, resistentes y reclaman la mazmorra para la naturaleza. Manipulan el terreno y envenenan el aire.",
+      "universal_traits": [
+        {
+          "name": "Biología Botánica",
+          "effect": "Inmune a Hechizado, Sueño y Confundido. No respiran (inmune a asfixia)."
+        },
+        {
+          "name": "Inflamable",
+          "effect": "Vulnerable (Doble Daño) a Daño de Fuego (a menos que sea acuático/basado en roca)."
+        },
+        {
+          "name": "Cosechable",
+          "effect": "Sueltan 'Reactivos Herbales' (Savia, Esporas, Corteza). Prueba: Supervivencia (WIS) CD 10 + Nivel."
+        }
+      ],
+      "passives": [
+        {
+          "name": "Piel Espinosa",
+          "role": "Soldado/Bruto",
+          "effect": "Agarradores o atacantes desarmados reciben 1d4 Daño Perforante."
+        },
+        {
+          "name": "Falsa Apariencia",
+          "role": "Acechador/Esbirro",
+          "effect": "Indistinguible de planta normal mientras está inmóvil. Ventaja en primer ataque (Emboscada)."
+        },
+        {
+          "name": "Suelo Aferrante",
+          "role": "Controlador",
+          "effect": "Suelo a 10 pies es Terreno Difícil (Raíces/Vides)."
+        },
+        {
+          "name": "Regeneración Fotosintética",
+          "role": "Solo",
+          "effect": "Recupera 5 PV al inicio del turno si está en Luz Brillante. Daño de fuego detiene esto por 1 ronda."
+        },
+        {
+          "name": "Esporas Tóxicas",
+          "role": "Bruto/Controlador",
+          "effect": "Criaturas comenzando turno adyacente deben salvar Fortaleza vs CD o quedar Envenenadas 1 ronda."
+        },
+        {
+          "name": "Raíces Profundas",
+          "role": "Soldado",
+          "effect": "No puede ser Derribado o Movido contra su voluntad mientras esté en suelo natural."
+        }
+      ],
+      "actions": [
+        {
+          "name": "Latigazo de Vid",
+          "type": "Cuerpo a Cuerpo",
+          "effect": "Alcance 15 pies. Al Impactar: Daño Normal y Objetivo tirado 10 pies más cerca."
+        },
+        {
+          "name": "Volea de Agujas",
+          "type": "A Distancia",
+          "effect": "Rango 30 pies. Haz Tiradas de Ataque contra hasta Dos objetivos a 5 pies uno del otro."
+        },
+        {
+          "name": "Engullir",
+          "type": "Cuerpo a Cuerpo",
+          "effect": "Objetivo debe estar Agarrado. Tragar objetivo. Restringido, Cegado, Asfixiándose. Auto-Daño al inicio de turno."
+        },
+        {
+          "name": "Polen Hipnótico",
+          "type": "Magia",
+          "effect": "Nube a Distancia. Salvación Voluntad vs CD. Fallo: Atontado (Alucinando). Fallo por 5+: Aturdido (Sueño)."
+        },
+        {
+          "name": "Golpe",
+          "type": "Cuerpo a Cuerpo",
+          "effect": "Al Impactar: Daño Alto. Fuerza contundente simple."
+        }
+      ],
+      "danger_abilities": [
+        {
+          "name": "Enredar",
+          "cost": "1 PP",
+          "effect": "Radio 20 pies. Salvación Reflejos vs CD. Fallo: Restringido (Velocidad 0). Área es Terreno Difícil."
+        },
+        {
+          "name": "Nova de Polen",
+          "cost": "1 PP",
+          "effect": "Radio 15 pies. Salvación Fortaleza vs CD. Fallo: Inconsciente (Sueño) por 1 min o hasta dañado."
+        },
+        {
+          "name": "Crecimiento Rápido",
+          "cost": "1 PP",
+          "effect": "Recupera instantáneamente 15 PV y termina una condición negativa."
+        },
+        {
+          "name": "Bomba de Semillas",
+          "cost": "1 PP",
+          "effect": "Lanza vaina. 1d4 Esbirros (Plagas de Ramitas) aparecen en destino al final de ronda."
+        },
+        {
+          "name": "Muro de Espinas",
+          "cost": "1 PP",
+          "effect": "Crea Muro (20 pies largo). Bloquea visión/movimiento. 2d6 Perforante al pasar."
+        },
+        {
+          "name": "Devorar",
+          "cost": "1 PP",
+          "effect": "Constriñe objetivo Engullido/Agarrado. Inflige Doble Daño. Se cura por la mitad."
+        }
+      ],
+      "flavor": {
+        "activity": [
+          "Pudriéndose en compost.", "Absorbiendo un cadáver.", "Girando hacia el sol.", "Ventilando esporas rítmicamente.", "Crujiendo/Cantando.", "Imitando un arbusto.", "Floreciendo rápidamente.", "Goteando savia pegajosa.", "Tejiendo una jaula.", "Flotando en corriente."
+        ],
+        "visuals": [
+          "Fúngico/Esponjoso.", "Madera Muerta/Quebradizo.", "Pantanoso/Cubierto de Musgo.", "Floral (Pétalos brillantes).", "Espinoso (Cactus).", "Masa de Vides.", "Corteza Blindada.", "Cristalino/Vidrio.", "Pálido/Albino.", "Carbonizado/Quemado."
+        ],
+        "loot": [
+          "Corteza de Hierro (20o).", "Saco de Esporas Tóxicas (15o).", "Tubérculo Raro (Ración).", "Savia Pegajosa (15o).", "Hoja Afilada (5o).", "Musgo Fosforescente (5o).", "Madera Corazón (50o).", "Polen de Parálisis (25o).", "Trozo de Ámbar (30o).", "Semilla Viviente (100o)."
+        ]
+      }
+    },
+    "monstrosities": {
+      "id": "fam_monstrosities",
+      "name": "Las Monstruosidades",
+      "description": "Mutantes e híbridos. Osos lechuza, basiliscos y quimeras. Nacidos de experimentos mágicos o maldiciones, combinan los peores rasgos de múltiples bestias. Son superdepredadores con habilidades antinaturales.",
+      "universal_traits": [
+        {
+          "name": "Mente Híbrida",
+          "effect": "Inmune a Hechizado. No pueden ser calmados o distraídos por pruebas de Supervivencia (a diferencia de Bestias)."
+        },
+        {
+          "name": "Visión en la Oscuridad",
+          "effect": "Pueden ver perfectamente en oscuridad total."
+        },
+        {
+          "name": "Cosechable",
+          "effect": "Sueltan 'Partes de Trofeo' (Picos, Púas, Glándulas). Prueba: Supervivencia (WIS) CD 10 + Nivel."
+        }
+      ],
+      "passives": [
+        {
+          "name": "Desplazamiento",
+          "role": "Hostigador",
+          "effect": "Aparece desplazado de su ubicación real. Ataques en su contra tienen Desventaja. Desactivado por 1 ronda si es golpeado."
+        },
+        {
+          "name": "Sentidos Agudos",
+          "role": "Soldado/Solo",
+          "effect": "Ventaja en Escrutinio. No puede ser Sorprendido."
+        },
+        {
+          "name": "Piel con Púas",
+          "role": "Bruto",
+          "effect": "Agarradores o atacantes desarmados reciben 1d6 Daño Perforante."
+        },
+        {
+          "name": "Abalanzarse",
+          "role": "Bruto/Hostigador",
+          "effect": "Si se mueve 20 pies directo al objetivo y golpea, el objetivo debe salvar Reflejos o ser Derribado."
+        },
+        {
+          "name": "Anfibio / Volador",
+          "role": "Cualquiera",
+          "effect": "Tiene velocidad de Nado o Vuelo igual a velocidad de Tierra (dependiendo del tipo de criatura)."
+        }
+      ],
+      "actions": [
+        {
+          "name": "Multi-Ataque",
+          "type": "Cuerpo a Cuerpo",
+          "effect": "Haz Dos Ataques contra un objetivo. Si ambos impactan, inflige +1d6 Daño extra."
+        },
+        {
+          "name": "Mirada Petrificante",
+          "type": "A Distancia",
+          "effect": "Rango 30 pies. Salvación Fortaleza vs CD. Fallo: Restringido (Convirtiéndose en piedra). Fallo 2da salvación fin de turno: Petrificado."
+        },
+        {
+          "name": "Púas de Cola",
+          "type": "A Distancia",
+          "effect": "Rango 60 pies. Haz Tiradas de Ataque contra hasta 3 objetivos en un área de 10 pies."
+        },
+        {
+          "name": "Abrazo de Oso",
+          "type": "Cuerpo a Cuerpo",
+          "effect": "Objetivo debe estar Agarrado. Inflige daño automático igual a Mod STR + Dado de Competencia."
+        },
+        {
+          "name": "Chillido Sónico",
+          "type": "AoE",
+          "effect": "Cono 15 pies. Daño de Trueno. Criaturas quedan Sordas (Desventaja en Pruebas de Lanzamiento)."
+        }
+      ],
+      "danger_abilities": [
+        {
+          "name": "Furia Feral",
+          "cost": "1 PP",
+          "effect": "1 Minuto. Ventaja en todos los Ataques. Ataques en su contra también tienen Ventaja."
+        },
+        {
+          "name": "Mirada de Piedra",
+          "cost": "1 PP",
+          "effect": "Objetivo a 30 pies. Salvación Fortaleza vs CD. Fallo: Aturdido (Petrificado) hasta curarse."
+        },
+        {
+          "name": "Bombardeo en Picado",
+          "cost": "1 PP",
+          "effect": "Volador solo. Cae sobre objetivo. Inflige Daño Arma + 2d6 Caída. Objetivo Derribado."
+        },
+        {
+          "name": "Arma de Aliento",
+          "cost": "1 PP",
+          "effect": "Cono 15 pies (Fuego/Ácido). 3d6 Daño (Reflejos Mitad)."
+        },
+        {
+          "name": "Cambio de Fase",
+          "cost": "1 PP",
+          "effect": "Disparador: Objetivo de Ataque. Teletransporta 15 pies a espacio vacío. El ataque falla."
+        },
+        {
+          "name": "Chillido Aterrador",
+          "cost": "1 PP",
+          "effect": "Radio 30 pies. Salvación Voluntad vs CD. Fallo: Asustado 1 ronda. Soltar objetos."
+        }
+      ],
+      "flavor": {
+        "activity": [
+          "Afilando pico en piedra.", "Imitando voces de víctimas.", "Anidando con escudos.", "Acechando manada de lobos.", "Glitcheando/Vibrando.", "Comiendo un cofre.", "Mudando piel (Agresivo).", "Jugando con comida viva.", "Vigilando como estatua.", "Mutando visiblemente."
+        ],
+        "visuals": [
+          "Híbrido-Constructo (Cosido).", "Plumas Cristalinas.", "Parecido a No-Muerto (Costillas visibles).", "Infusionado Elemental.", "Piel Rúnica.", "Multi-Extremidades.", "Albino (Cueva).", "Envuelto en Sombras.", "Quitina Blindada.", "Antinaturalmente Hermoso."
+        ],
+        "loot": [
+          "Pico/Cuerno Intacto (20o).", "Ojo Petrificante (50o).", "Piel de Desplazador (50o).", "Púa de Manticora (5o).", "Glándula Mágica (25o).", "Huevo Raro (100o).", "Gemas Indigestas (50o).", "Collar de Mago.", "Pluma de Grifo (10o).", "Corazón de la Bestia (50o)."
+        ]
+      }
+    }
+  }
+}

@@ -9,7 +9,8 @@ import { CharGen } from './modules/chargen.js';
 import { MonsterBuilder } from './modules/monster_builder.js';
 import { Library } from './modules/library.js';
 import { ItemBuilder } from './modules/item_builder.js';
-import { TableLookup } from './modules/table_lookup.js'; // <--- NEW LINE
+import { TableLookup } from './modules/table_lookup.js'; 
+import { Dashboard } from './modules/dashboard.js';
 
 document.addEventListener("DOMContentLoaded", async () => {
     console.log("Grim Delve System Initializing...");
@@ -69,7 +70,17 @@ document.addEventListener("DOMContentLoaded", async () => {
  */
 function initNavigation() {
     const navButtons = document.querySelectorAll('.nav-btn');
+    const sidebar = document.getElementById('sidebar');
+    const menuBtn = document.getElementById('mobile-menu-btn');
 
+    // 1. Mobile Toggle Logic
+    if (menuBtn) {
+        menuBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+        });
+    }
+
+    // 2. Navigation Logic
     navButtons.forEach(btn => {
         btn.addEventListener('click', () => {
             // Remove active class from all
@@ -79,7 +90,22 @@ function initNavigation() {
 
             const moduleName = btn.dataset.module;
             loadModule(moduleName);
+
+            // Auto-Close Sidebar on Mobile
+            if (window.innerWidth <= 1024) {
+                sidebar.classList.remove('open');
+            }
         });
+    });
+
+    // 3. Close Sidebar when clicking outside (Optional Polish)
+    document.addEventListener('click', (e) => {
+        if (window.innerWidth <= 1024 && 
+            sidebar.classList.contains('open') && 
+            !sidebar.contains(e.target) && 
+            !menuBtn.contains(e.target)) {
+            sidebar.classList.remove('open');
+        }
     });
 }
 
@@ -95,34 +121,36 @@ function loadModule(moduleName) {
     contentArea.className = ''; 
     contentArea.scrollTop = 0;  
 
+    // ADD ANIMATION CLASS
+    contentArea.classList.add('fade-in'); 
+
     console.log(`Switching to module: ${moduleName}`);
 
     // 2. Route to Module
     switch(moduleName) {
+        // ... (Existing switch cases remain unchanged) ...
+        case 'dashboard':
         case 'home':
-            Rulebook.init(contentArea);
+            import('./modules/dashboard.js').then(m => m.Dashboard.init(contentArea));
             break;
-        
+        case 'rules':
+            import('./modules/rulebook.js').then(m => m.Rulebook.init(contentArea));
+            break;
         case 'chargen':
-            CharGen.init(contentArea);
+            import('./modules/chargen.js').then(m => m.CharGen.init(contentArea));
             break;
-        
         case 'bestiary':
-            MonsterBuilder.init(contentArea);
+            import('./modules/monster_builder.js').then(m => m.MonsterBuilder.init(contentArea));
             break;
-        
         case 'artificer':
-            ItemBuilder.init(contentArea);
+            import('./modules/item_builder.js').then(m => m.ItemBuilder.init(contentArea));
             break;
-        
         case 'library':
-            Library.init(contentArea);
+            import('./modules/library.js').then(m => m.Library.init(contentArea));
             break;
-            
-        case 'tables': // <--- NEW CASE
-            TableLookup.init(contentArea);
+        case 'tables':
+            import('./modules/table_lookup.js').then(m => m.TableLookup.init(contentArea));
             break;
-
         default:
             contentArea.innerHTML = `<p>Module <strong>${moduleName}</strong> not found.</p>`;
     }

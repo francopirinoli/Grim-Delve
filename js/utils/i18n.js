@@ -1,16 +1,39 @@
 /**
  * i18n.js
- * Localization and Data Management Utility.
- * Handles loading JSON data files and translating UI elements.
+ * Localization, Data Management, and Normalization Utility.
+ * Handles loading JSON data, translating UI, and normalizing data logic.
  */
 
 const UI_DICTIONARY = {
     "en": {
-        "lib_no_char": "No characters found.",
-        "lib_no_item": "No items found.",
-        "lib_loading": "Loading...",
+        // --- GENERIC ---
+        "btn_save": "Save",
+        "btn_cancel": "Cancel",
+        "btn_confirm": "Confirm",
+        "btn_delete": "Delete",
+        "btn_edit": "Edit",
+        "btn_view": "View",
+        "btn_print": "Print",
+        "btn_copy": "Copy",
         "btn_import_json": "Import JSON",
-        // CHARGEN (Wizard & Sheet)
+        "btn_export_json": "Export JSON",
+        "lbl_loading": "Loading...",
+        "lbl_name": "Name",
+        "lbl_desc": "Description",
+        "lbl_effect": "Effect",
+        "lbl_cost": "Cost",
+        "lbl_source": "Source",
+        
+        // --- NAVIGATION ---
+        "nav_dashboard": "Dashboard",
+        "nav_home": "Rules Reference",
+        "nav_chargen": "Character Creator",
+        "nav_bestiary": "Monster Architect",
+        "nav_items": "The Artificer",
+        "nav_library": "My Library",
+        "nav_tables": "Tables & Rolls",
+
+        // --- CHARGEN (WIZARD) ---
         "cg_step_bio": "Origins",
         "cg_step_class": "Class",
         "cg_step_stats": "Attributes",
@@ -19,36 +42,26 @@ const UI_DICTIONARY = {
         "cg_btn_next": "Next",
         "cg_btn_back": "Back",
         "cg_btn_finish": "Finish",
-
-        // Step 1: Bio
         "cg_lbl_identity": "Identity",
-        "cg_lbl_name": "Character Name",
         "cg_lbl_portrait": "Portrait",
         "cg_ph_url": "Paste Image URL...",
         "cg_btn_upload": "Or Upload File",
         "cg_lbl_ancestry": "Ancestry",
         "cg_lbl_background": "Background",
-        "cg_btn_roll_bio": "Roll Random Origins",
+        "cg_btn_roll_bio": "Roll Random Bio",
         "cg_sel_bonus": "Select Bonus",
         "cg_sel_skill": "Select Skill",
         "cg_sel_resist": "Select Resistance",
-
-        // Step 2: Class
         "cg_lbl_arch_a": "Archetype A",
         "cg_lbl_arch_b": "Archetype B",
         "cg_btn_roll_class": "Roll Destiny (2d12)",
         "cg_lbl_talents": "Starting Talents",
         "cg_txt_pure": "Pure Class: Select 2 Talents.",
         "cg_txt_hybrid": "Hybrid Class: Select 1 Talent from EACH.",
-
-        // Step 3: Stats
         "cg_lbl_array": "Stat Array",
         "cg_lbl_manual": "Manual Edit",
         "cg_txt_array": "Assign values to attributes below.",
         "cg_btn_roll_stats": "Roll Array (1d12)",
-        "cg_txt_manual": "Enter modifiers directly.",
-
-        // Step 4: Gear
         "cg_shop_title": "Equipment Shop",
         "cg_tab_wep": "Weapons",
         "cg_tab_arm": "Armor",
@@ -56,11 +69,10 @@ const UI_DICTIONARY = {
         "cg_btn_kit": "Equip Background Gear",
         "cg_lbl_slots": "Inventory Slots",
         "cg_warn_enc": "ENCUMBERED",
+        "cg_currency": "{g}g {s}s {c}c",
 
-        // Step 5: Sheet
+        // --- CHARACTER SHEET ---
         "sheet_levelup": "Level Up",
-        "sheet_save": "Save",
-        "sheet_print": "Print Sheet",
         "sheet_hp": "Hit Points",
         "sheet_mp": "Mana",
         "sheet_sta": "Stamina",
@@ -76,81 +88,108 @@ const UI_DICTIONARY = {
         "sheet_dodge": "Dodge",
         "sheet_parry": "Parry",
         "sheet_block": "Block",
-
-        // Navigation
-        "nav_dashboard": "Dashboard",
-        "nav_home": "Rules Reference",
-        "nav_chargen": "Character Creator",
-        "nav_bestiary": "Monster Architect",
-        "nav_items": "The Artificer",
-        "nav_library": "My Library",
-        "nav_tables": "Tables & Rolls",
+        "sheet_worn": "Worn",
+        "sheet_tools": "Tools",
         
-        // Dashboard
-        "dash_subtitle": "Dark Pulp RPG Companion",
-        "dash_resume": "Resume",
-        "dash_create": "Create New Character",
-        "dash_new_char": "New Hero",
-        "dash_new_char_desc": "Create a character from scratch.",
-        "dash_new_mon": "New Monster",
-        "dash_new_mon_desc": "Forge a beast or boss.",
-        "dash_new_item": "New Item",
-        "dash_new_item_desc": "Craft magical loot.",
-        "dash_rules": "Rules",
-        "dash_rules_desc": "Lookup tables and mechanics.",
-        "dash_stats": "Library Stats",
-        "dash_recent": "Recent Activity",
-        "dash_heroes": "Heroes",
-        "dash_monsters": "Monsters",
-        "dash_items": "Items",
+        // --- ATTRIBUTES & ROLES ---
+        "stat_str": "STR",
+        "stat_dex": "DEX",
+        "stat_con": "CON",
+        "stat_int": "INT",
+        "stat_wis": "WIS",
+        "stat_cha": "CHA",
+        "role_warrior": "Warrior",
+        "role_spellcaster": "Spellcaster",
+        "role_specialist": "Specialist",
 
-        // Library
+        // --- LIBRARY ---
         "lib_tab_char": "Characters",
         "lib_tab_mon": "Bestiary",
         "lib_tab_item": "Items",
         "lib_search": "Search...",
-        "lib_import": "Import JSON",
-        "btn_play": "Play",
-        "btn_edit": "Edit",
-        "btn_view": "View",
-        "btn_copy": "Copy",
-        "btn_delete": "Delete",
-
-        // Builders (Shared)
-        "lbl_name": "Name",
-        "lbl_portrait": "Portrait",
-        "lbl_upload": "Upload",
-        "lbl_zoom": "Zoom",
-        "lbl_pan_x": "Pan X",
-        "lbl_pan_y": "Pan Y",
-        "lbl_reset": "Reset",
-        "lbl_role": "Role",
-        "lbl_level": "Level",
-        "lbl_family": "Family",
-        "lbl_notes": "GM Notes / Loot",
-        "btn_print": "Print",
-        "btn_save_lib": "Save to Library",
-
-        // Monster Builder
-        "mon_chassis": "Chassis Stats",
-        "mon_custom": "Add Custom Ability",
-        "mon_add_btn": "Add to Stat Block",
+        "lib_no_char": "No characters found.",
+        "lib_no_mon": "No monsters found.",
+        "lib_no_item": "No items found.",
         
-        // Item Builder
-        "item_base": "Base Item",
-        "item_blueprint": "Blueprint",
-        "item_search_eff": "Search Effects...",
-        "item_editor": "Item Editor",
-        "item_magic_q": "Magic?",
-        "item_forge": "Forge",
-        "item_loot": "Loot"
+        // --- MONSTER BUILDER ---
+        "mon_lbl_role": "Role",
+        "mon_lbl_level": "Level",
+        "mon_lbl_family": "Family",
+        "mon_chassis": "Chassis Stats",
+        "mon_stat_hp": "HP",
+        "mon_stat_as": "AS",
+        "mon_stat_spd": "Speed",
+        "mon_stat_atk": "Atk DC",
+        "mon_stat_def": "Def DC",
+        "mon_stat_save": "Save DC",
+        "mon_stat_dmg": "Dmg",
+        "mon_sect_traits": "Traits",
+        "mon_sect_actions": "Actions",
+        "mon_sect_danger": "Danger Abilities",
+        "mon_btn_add": "Add Custom Ability",
+        "mon_lbl_custom": "Custom Ability",
+        "mon_type_action": "Action",
+        "mon_type_trait": "Trait",
+        "mon_type_reaction": "Reaction",
+        "mon_type_danger": "Danger (DP)",
+        "mon_lbl_notes": "GM Notes / Loot",
+        "mon_atk_fmt": "Standard Attack. Deals {dmg} damage.",
+        "mon_meta_fmt": "Level {lvl} {family} {role}",
+
+        // --- ITEM BUILDER ---
+        "item_mode_forge": "Forge",
+        "item_mode_loot": "Loot Gen",
+        "item_lbl_base": "Base Item",
+        "item_lbl_blueprint": "Blueprint",
+        "item_lbl_search": "Search Effects...",
+        "item_tier_1": "Common (Tier 1)",
+        "item_tier_2": "Uncommon (Tier 2)",
+        "item_tier_3": "Rare (Tier 3)",
+        "item_btn_loot_1": "Tier 1: Scavenge",
+        "item_btn_loot_2": "Tier 2: Stash",
+        "item_btn_loot_3": "Tier 3: Hoard",
+        "item_lbl_editor": "Item Editor",
+        "item_is_magic": "Is Magic?",
+        "item_req_prefix": "Requires 3x ",
+        "item_cat_weapon": "Weapon",
+        "item_cat_armor": "Armor & Shields",
+        "item_cat_trinket": "Wondrous Item",
+        "item_name_fmt": "{adj} {noun}", // English order: Corrosive Spear
+
+        // --- TABLES ---
+        "tbl_roll": "Roll",
+        "tbl_result": "Result",
+        "tbl_btn_roll": "Roll {dice}"
     },
     "es": {
-        "lib_no_char": "No se encontraron personajes.",
-        "lib_no_item": "No se encontraron objetos.",
-        "lib_loading": "Cargando...",
+        // --- GENERIC ---
+        "btn_save": "Guardar",
+        "btn_cancel": "Cancelar",
+        "btn_confirm": "Confirmar",
+        "btn_delete": "Borrar",
+        "btn_edit": "Editar",
+        "btn_view": "Ver",
+        "btn_print": "Imprimir",
+        "btn_copy": "Copiar",
         "btn_import_json": "Importar JSON",
+        "btn_export_json": "Exportar JSON",
+        "lbl_loading": "Cargando...",
+        "lbl_name": "Nombre",
+        "lbl_desc": "Descripción",
+        "lbl_effect": "Efecto",
+        "lbl_cost": "Coste",
+        "lbl_source": "Fuente",
 
+        // --- NAVIGATION ---
+        "nav_dashboard": "Tablero",
+        "nav_home": "Reglas",
+        "nav_chargen": "Creador de PJs",
+        "nav_bestiary": "Bestiario",
+        "nav_items": "El Artificiero",
+        "nav_library": "Biblioteca",
+        "nav_tables": "Tablas y Dados",
+
+        // --- CHARGEN ---
         "cg_step_bio": "Orígenes",
         "cg_step_class": "Clase",
         "cg_step_stats": "Atributos",
@@ -159,54 +198,43 @@ const UI_DICTIONARY = {
         "cg_btn_next": "Siguiente",
         "cg_btn_back": "Atrás",
         "cg_btn_finish": "Terminar",
-
-        // Step 1: Bio
         "cg_lbl_identity": "Identidad",
-        "cg_lbl_name": "Nombre del Personaje",
         "cg_lbl_portrait": "Retrato",
         "cg_ph_url": "Pegar URL de Imagen...",
         "cg_btn_upload": "O Subir Archivo",
         "cg_lbl_ancestry": "Ascendencia",
         "cg_lbl_background": "Trasfondo",
-        "cg_btn_roll_bio": "Tirar Orígenes Aleatorios",
-        "cg_sel_bonus": "Seleccionar Bono",
-        "cg_sel_skill": "Seleccionar Habilidad",
-        "cg_sel_resist": "Seleccionar Resistencia",
-
-        // Step 2: Class
+        "cg_btn_roll_bio": "Tirar Orígenes",
+        "cg_sel_bonus": "Elegir Bono",
+        "cg_sel_skill": "Elegir Habilidad",
+        "cg_sel_resist": "Elegir Resistencia",
         "cg_lbl_arch_a": "Arquetipo A",
         "cg_lbl_arch_b": "Arquetipo B",
         "cg_btn_roll_class": "Tirar Destino (2d12)",
         "cg_lbl_talents": "Talentos Iniciales",
         "cg_txt_pure": "Clase Pura: Elige 2 Talentos.",
-        "cg_txt_hybrid": "Clase Híbrida: Elige 1 Talento de CADA uno.",
-
-        // Step 3: Stats
+        "cg_txt_hybrid": "Clase Híbrida: Elige 1 de CADA.",
         "cg_lbl_array": "Matriz de Estadísticas",
-        "cg_lbl_manual": "Edición Manual",
-        "cg_txt_array": "Asigna valores a los atributos abajo.",
+        "cg_lbl_manual": "Manual",
+        "cg_txt_array": "Asigna los valores abajo.",
         "cg_btn_roll_stats": "Tirar Matriz (1d12)",
-        "cg_txt_manual": "Introduce modificadores directamente.",
-
-        // Step 4: Gear
-        "cg_shop_title": "Tienda de Equipo",
+        "cg_shop_title": "Tienda",
         "cg_tab_wep": "Armas",
         "cg_tab_arm": "Armadura",
         "cg_tab_gear": "Equipo",
-        "cg_btn_kit": "Equipar Equipo de Trasfondo",
-        "cg_lbl_slots": "Espacios de Inventario",
-        "cg_warn_enc": "SOBRECARGADO",
+        "cg_btn_kit": "Equipar Kit de Trasfondo",
+        "cg_lbl_slots": "Espacios de Inv.",
+        "cg_warn_enc": "SOBRECARGA",
+        "cg_currency": "{g}o {s}p {c}c",
 
-        // Step 5: Sheet
+        // --- SHEET ---
         "sheet_levelup": "Subir Nivel",
-        "sheet_save": "Guardar",
-        "sheet_print": "Imprimir",
         "sheet_hp": "Puntos de Vida",
         "sheet_mp": "Maná",
         "sheet_sta": "Aguante",
         "sheet_luck": "Suerte",
         "sheet_xp": "XP",
-        "sheet_ac": "Puntuación de Armadura",
+        "sheet_ac": "Armadura",
         "sheet_def": "Defensas",
         "sheet_skills": "Habilidades",
         "sheet_attacks": "Ataques",
@@ -215,75 +243,98 @@ const UI_DICTIONARY = {
         "sheet_features": "Rasgos y Talentos",
         "sheet_dodge": "Esquivar",
         "sheet_parry": "Parar",
-        "sheet_block": "Bloquear",
+        "sheet_block": "Bloq.",
+        "sheet_worn": "Puesto",
+        "sheet_tools": "Herramientas",
 
-        // Navigation
-        "nav_dashboard": "Tablero",
-        "nav_home": "Reglas de Juego",
-        "nav_chargen": "Creador de Personajes",
-        "nav_bestiary": "Arquitecto de Monstruos",
-        "nav_items": "El Artificiero",
-        "nav_library": "Mi Biblioteca",
-        "nav_tables": "Tablas y Dados",
+        // --- ATTRIBUTES & ROLES ---
+        "stat_str": "FUE",
+        "stat_dex": "DES",
+        "stat_con": "CON",
+        "stat_int": "INT",
+        "stat_wis": "SAB",
+        "stat_cha": "CAR",
+        "role_warrior": "Guerrero",
+        "role_spellcaster": "Lanzador",
+        "role_specialist": "Especialista",
 
-        // Dashboard
-        "dash_subtitle": "Compañero RPG de Fantasía Oscura",
-        "dash_resume": "Reanudar",
-        "dash_create": "Crear Nuevo Personaje",
-        "dash_new_char": "Nuevo Héroe",
-        "dash_new_char_desc": "Crear un personaje desde cero.",
-        "dash_new_mon": "Nuevo Monstruo",
-        "dash_new_mon_desc": "Forjar una bestia o jefe.",
-        "dash_new_item": "Nuevo Objeto",
-        "dash_new_item_desc": "Crear botín mágico.",
-        "dash_rules": "Reglas",
-        "dash_rules_desc": "Tablas y mecánicas.",
-        "dash_stats": "Estadísticas",
-        "dash_recent": "Actividad Reciente",
-        "dash_heroes": "Héroes",
-        "dash_monsters": "Monstruos",
-        "dash_items": "Objetos",
-
-        // Library
+        // --- LIBRARY ---
         "lib_tab_char": "Personajes",
         "lib_tab_mon": "Bestiario",
         "lib_tab_item": "Objetos",
         "lib_search": "Buscar...",
-        "lib_import": "Importar JSON",
-        "btn_play": "Jugar",
-        "btn_edit": "Editar",
-        "btn_view": "Ver",
-        "btn_copy": "Copiar",
-        "btn_delete": "Borrar",
+        "lib_no_char": "No hay personajes.",
+        "lib_no_mon": "No hay monstruos.",
+        "lib_no_item": "No hay objetos.",
 
-        // Builders (Shared)
-        "lbl_name": "Nombre",
-        "lbl_portrait": "Retrato",
-        "lbl_upload": "Subir",
-        "lbl_zoom": "Zoom",
-        "lbl_pan_x": "Pan X",
-        "lbl_pan_y": "Pan Y",
-        "lbl_reset": "Restablecer",
-        "lbl_role": "Rol",
-        "lbl_level": "Nivel",
-        "lbl_family": "Familia",
-        "lbl_notes": "Notas GM / Botín",
-        "btn_print": "Imprimir",
-        "btn_save_lib": "Guardar en Biblioteca",
-
-        // Monster Builder
+        // --- MONSTER BUILDER ---
+        "mon_lbl_role": "Rol",
+        "mon_lbl_level": "Nivel",
+        "mon_lbl_family": "Familia",
         "mon_chassis": "Estadísticas Base",
-        "mon_custom": "Añadir Habilidad",
-        "mon_add_btn": "Añadir al Bloque",
+        "mon_stat_hp": "PV",
+        "mon_stat_as": "AS",
+        "mon_stat_spd": "Vel",
+        "mon_stat_atk": "Ataque",
+        "mon_stat_def": "Defensa",
+        "mon_stat_save": "Salv.",
+        "mon_stat_dmg": "Daño",
+        "mon_sect_traits": "Rasgos",
+        "mon_sect_actions": "Acciones",
+        "mon_sect_danger": "Habilidades de Peligro",
+        "mon_btn_add": "Añadir Habilidad",
+        "mon_lbl_custom": "Habilidad Personalizada",
+        "mon_type_action": "Acción",
+        "mon_type_trait": "Rasgo",
+        "mon_type_reaction": "Reacción",
+        "mon_type_danger": "Peligro (PP)",
+        "mon_lbl_notes": "Notas GM / Botín",
+        "mon_atk_fmt": "Ataque Estándar. Inflige {dmg} de daño.",
+        "mon_meta_fmt": "{role} {family} de Nivel {lvl}", // Spanish grammar: Soldado Bestia de Nivel 5
 
-        // Item Builder
-        "item_base": "Objeto Base",
-        "item_blueprint": "Plano",
-        "item_search_eff": "Buscar Efectos...",
-        "item_editor": "Editor de Objetos",
-        "item_magic_q": "¿Mágico?",
-        "item_forge": "Forja",
-        "item_loot": "Botín"
+        // --- ITEM BUILDER ---
+        "item_mode_forge": "Forja",
+        "item_mode_loot": "Botín",
+        "item_lbl_base": "Objeto Base",
+        "item_lbl_blueprint": "Plano",
+        "item_lbl_search": "Buscar Efectos...",
+        "item_tier_1": "Común (Nivel 1)",
+        "item_tier_2": "Poco Común (Nivel 2)",
+        "item_tier_3": "Raro (Nivel 3)",
+        "item_btn_loot_1": "Nivel 1: Chatarrería",
+        "item_btn_loot_2": "Nivel 2: Alijo",
+        "item_btn_loot_3": "Nivel 3: Tesoro",
+        "item_lbl_editor": "Editor",
+        "item_is_magic": "¿Mágico?",
+        "item_req_prefix": "Requiere 3x ",
+        "item_cat_weapon": "Arma",
+        "item_cat_armor": "Armadura y Escudos",
+        "item_cat_trinket": "Objeto Maravilloso",
+        "item_name_fmt": "{noun} {adj}", // Spanish order: Lanza Corrosiva
+
+        // --- TABLES ---
+        "tbl_roll": "Tirada",
+        "tbl_result": "Resultado",
+        "tbl_btn_roll": "Tirar {dice}"
+    }
+};
+
+/* --- NORMALIZATION MAPS (For Logic Fixes) --- */
+const SYSTEM_KEYS = {
+    roles: {
+        "guerrero": "Warrior", "warrior": "Warrior",
+        "lanzador": "Spellcaster", "spellcaster": "Spellcaster", 
+        "lanzador de conjuros": "Spellcaster",
+        "especialista": "Specialist", "specialist": "Specialist"
+    },
+    stats: {
+        "fuerza": "STR", "str": "STR",
+        "destreza": "DEX", "dex": "DEX",
+        "constitución": "CON", "con": "CON",
+        "inteligencia": "INT", "int": "INT",
+        "sabiduría": "WIS", "wis": "WIS",
+        "carisma": "CHA", "cha": "CHA",
+        "f": "STR", "d": "DEX", "c": "CON", "i": "INT", "s": "WIS", "car": "CHA" // Short codes
     }
 };
 
@@ -303,7 +354,7 @@ export const I18n = {
 
     init: async () => {
         console.log("Initializing Localization...");
-        await I18n.loadData('en');
+        await I18n.loadData('en'); // Default load
         I18n.updateDOM();
 
         const btnEn = document.getElementById('btn-lang-en');
@@ -349,9 +400,6 @@ export const I18n = {
             
         } catch (error) {
             console.warn(`Failed to load data for language: ${lang}.`, error);
-            if (lang !== 'en') {
-                await I18n.loadData('en');
-            }
         }
     },
 
@@ -367,10 +415,35 @@ export const I18n = {
 
     /**
      * Get a specific UI string.
-     * @param {string} key 
      */
     t: (key) => {
-        return UI_DICTIONARY[I18n.currentLang][key] || `[${key}]`;
+        return UI_DICTIONARY[I18n.currentLang][key] || key;
+    },
+
+    /**
+     * Interpolate variables into a string.
+     * Use {key} in the dictionary string.
+     */
+    fmt: (key, vars = {}) => {
+        let str = UI_DICTIONARY[I18n.currentLang][key] || key;
+        for (const [k, v] of Object.entries(vars)) {
+            str = str.replace(`{${k}}`, v);
+        }
+        return str;
+    },
+
+    /**
+     * Normalizes a localized string back to a System Key.
+     * e.g., "Guerrero" -> "Warrior"
+     */
+    normalize: (type, value) => {
+        if (!value) return null;
+        const lower = String(value).toLowerCase().trim();
+        if (SYSTEM_KEYS[type] && SYSTEM_KEYS[type][lower]) {
+            return SYSTEM_KEYS[type][lower];
+        }
+        // If not found, return the original (assuming it's already a key or unknown)
+        return value;
     },
 
     getData: (type) => {

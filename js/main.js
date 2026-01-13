@@ -13,7 +13,7 @@ import { Dashboard } from './modules/dashboard.js';
 import { Rulebook } from './modules/rulebook.js';
 import { CharGen } from './modules/chargen.js';
 import { MonsterBuilder } from './modules/monster_builder.js';
-import { ItemBuilder } from './item_builder.js';
+import { ItemBuilder } from './modules/item_builder.js'; // <--- FIXED THIS PATH
 import { Library } from './modules/library.js';
 import { TableLookup } from './modules/table_lookup.js';
 
@@ -171,3 +171,4 @@ function setupPersistence() {
         });
     }
 }
+

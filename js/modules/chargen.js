@@ -658,7 +658,7 @@ renderBio: (el) => {
         
         if (!data) return;
 
-        // --- 1. Class Logic (Bilingual Support) ---
+        // --- 1. Class Logic (Normalized) ---
         let isFullWarrior = false;
         let isFullCaster = false;
         let isFullSpecialist = false;
@@ -668,9 +668,13 @@ renderBio: (el) => {
         let archA = null;
         let archB = null;
 
-        // Helper to check role in any language
-        const checkRole = (arch, english, spanish) => {
-            return arch && (arch.role === english || arch.role === spanish);
+        // Helper: Check role using Normalization (Guerrero -> Warrior)
+        const checkRole = (arch, targetRole) => {
+            if (!arch) return false;
+            // Normalize the role from JSON (e.g. "Guerrero") to System Key ("Warrior")
+            const normRole = I18n.normalize('roles', arch.role); 
+            // Compare case-insensitive
+            return normRole && normRole.toLowerCase() === targetRole.toLowerCase();
         };
 
         if (c.archA && c.archB) {
@@ -678,14 +682,14 @@ renderBio: (el) => {
             archB = data.archetypes.find(a => a.id === c.archB);
 
             if (archA && archB) {
-                const isWarA = checkRole(archA, "Warrior", "Guerrero");
-                const isWarB = checkRole(archB, "Warrior", "Guerrero");
+                const isWarA = checkRole(archA, "Warrior");
+                const isWarB = checkRole(archB, "Warrior");
                 
-                const isCastA = checkRole(archA, "Spellcaster", "Lanzador de Conjuros");
-                const isCastB = checkRole(archB, "Spellcaster", "Lanzador de Conjuros");
+                const isCastA = checkRole(archA, "Spellcaster");
+                const isCastB = checkRole(archB, "Spellcaster");
                 
-                const isSpecA = checkRole(archA, "Specialist", "Especialista");
-                const isSpecB = checkRole(archB, "Specialist", "Especialista");
+                const isSpecA = checkRole(archA, "Specialist");
+                const isSpecB = checkRole(archB, "Specialist");
 
                 isFullWarrior = (isWarA && isWarB);
                 isFullCaster = (isCastA && isCastB);
@@ -717,7 +721,7 @@ renderBio: (el) => {
         if (c.level === 1 && (!c.baseHP || c.baseHP === 0)) {
             c.baseHP = Math.max(1, hitDie + con);
         }
-        // Safety for existing chars (ensure minimum)
+        // Safety for existing chars
         if (!c.baseHP) c.baseHP = Math.max(1, hitDie + con);
 
         d.maxHP = c.baseHP;
@@ -725,11 +729,9 @@ renderBio: (el) => {
         // Stamina
         d.maxSTA = 0;
         if (isFullWarrior) {
-            // Sum of two highest physical stats
             const phys = [str, dex, con].sort((a,b) => b - a);
             d.maxSTA = Math.max(1, phys[0] + phys[1]);
         } else if (hasWarrior) {
-            // Highest single physical stat
             d.maxSTA = Math.max(1, str, dex, con);
         }
 
@@ -737,13 +739,12 @@ renderBio: (el) => {
         d.maxMP = 0;
         if (hasCaster) {
             let castMod = 0;
-            // Find casting stat (The JSON uses generic codes "INT", "WIS", "CHA" which are not localized, so this is safe)
+            // Find casting stat by checking Normalized Stat Keys
             const getCastStat = (arch) => {
                 if (!arch || !arch.primary_stats) return 0;
-                // Primary stats array usually has casting stat first for casters
-                // But let's check all mental stats just in case
-                for (let stat of arch.primary_stats) {
-                    if (["INT", "WIS", "CHA"].includes(stat)) return s[stat] || 0;
+                for (let rawStat of arch.primary_stats) {
+                    const normStat = I18n.normalize('stats', rawStat);
+                    if (["INT", "WIS", "CHA"].includes(normStat)) return s[normStat] || 0;
                 }
                 return 0;
             };
@@ -752,7 +753,7 @@ renderBio: (el) => {
             const modB = getCastStat(archB);
             castMod = Math.max(modA, modB);
             
-            // Fallback if no specific stat found (unlikely)
+            // Fallback
             if (castMod === 0) castMod = Math.max(int, wis, cha); 
 
             if (isFullCaster) d.maxMP = ((level + 1) * 2) + castMod;
@@ -776,7 +777,11 @@ renderBio: (el) => {
             if (mods.sta_flat) d.maxSTA += mods.sta_flat;
             if (mods.luck_flat) d.maxLuck += mods.luck_flat;
             if (mods.slots_flat) d.slots += mods.slots_flat;
-            if (mods.sta_mod) d.maxSTA += (s[mods.sta_mod] || 0);
+            
+            if (mods.sta_mod) {
+                const normStat = I18n.normalize('stats', mods.sta_mod);
+                d.maxSTA += (s[normStat] || 0);
+            }
         };
 
         // Ancestry Mods
@@ -823,7 +828,7 @@ renderBio: (el) => {
         // --- 5. Update UI ---
         CharGen.updateStatPreview(hitDie);
     },
-
+    
     // Check if current class synergy feat grants a free talent choice
     checkSynergyGrant: () => {
         const c = CharGen.char;
@@ -1841,50 +1846,38 @@ renderBio: (el) => {
         const d = CharGen.char.derived;
         const s = CharGen.char.stats;
         const el = document.getElementById('stats-preview');
+        const t = I18n.t; // Localization
         
-        // If element doesn't exist, we aren't on Step 3, so stop.
         if (!el) return;
         
         el.innerHTML = `
-            <div class="preview-header" style="color:var(--accent-gold); border-bottom:1px solid #444; margin-bottom:1rem; padding-bottom:5px;">Derived Vitals</div>
+            <div class="preview-header" style="color:var(--accent-gold); border-bottom:1px solid #444; margin-bottom:1rem; padding-bottom:5px;">${t('mon_chassis')}</div>
             
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom: 1rem;">
                 <div class="resource-box" style="border:1px solid var(--accent-crimson); background:rgba(138, 44, 44, 0.1); padding:10px; text-align:center;">
-                    <div style="font-size:0.7rem; color:#aaa; text-transform:uppercase;">Hit Points</div>
+                    <div style="font-size:0.7rem; color:#aaa; text-transform:uppercase;">${t('sheet_hp')}</div>
                     <div style="font-family:var(--font-mono); font-size:1.8rem; font-weight:bold; color:#eee;">${d.maxHP}</div>
-                    <div style="font-size:0.7rem; color:#888;">(Hit Die: d${hitDie})</div>
+                    <div style="font-size:0.7rem; color:#888;">(HD: d${hitDie})</div>
                 </div>
                 <div class="resource-box" style="border:1px solid #eee; background:rgba(255,255,255,0.05); padding:10px; text-align:center;">
-                    <div style="font-size:0.7rem; color:#aaa; text-transform:uppercase;">Inv. Slots</div>
+                    <div style="font-size:0.7rem; color:#aaa; text-transform:uppercase;">${t('cg_lbl_slots')}</div>
                     <div style="font-family:var(--font-mono); font-size:1.8rem; font-weight:bold; color:#eee;">${d.slots}</div>
                 </div>
             </div>
 
             <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:5px;">
                 <div class="resource-box" style="border:1px solid ${d.maxSTA > 0 ? '#388e3c' : '#333'}; padding:8px; text-align:center; opacity: ${d.maxSTA > 0 ? 1 : 0.4};">
-                    <div style="font-size:0.6rem; color:#aaa;">STAMINA</div>
+                    <div style="font-size:0.6rem; color:#aaa;">${t('sheet_sta')}</div>
                     <div style="font-family:var(--font-mono); font-size:1.2rem; font-weight:bold;">${d.maxSTA}</div>
                 </div>
                 <div class="resource-box" style="border:1px solid ${d.maxMP > 0 ? '#1976d2' : '#333'}; padding:8px; text-align:center; opacity: ${d.maxMP > 0 ? 1 : 0.4};">
-                    <div style="font-size:0.6rem; color:#aaa;">MANA</div>
+                    <div style="font-size:0.6rem; color:#aaa;">${t('sheet_mp')}</div>
                     <div style="font-family:var(--font-mono); font-size:1.2rem; font-weight:bold;">${d.maxMP}</div>
                 </div>
                 <div class="resource-box" style="border:1px solid ${d.maxLuck > 1 ? '#fbc02d' : '#333'}; padding:8px; text-align:center; opacity: ${d.maxLuck > 1 ? 1 : 0.6};">
-                    <div style="font-size:0.6rem; color:#aaa;">LUCK</div>
+                    <div style="font-size:0.6rem; color:#aaa;">${t('sheet_luck')}</div>
                     <div style="font-family:var(--font-mono); font-size:1.2rem; font-weight:bold;">${d.maxLuck}</div>
                 </div>
-            </div>
-
-            <div style="margin-top: 1.5rem; border-top:1px dashed #444; padding-top:1rem;">
-                 <div style="font-size:0.8rem; color:#888; text-transform:uppercase; margin-bottom:5px;">Combat Stats</div>
-                 <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-                    <span>Initiative (DEX):</span>
-                    <strong style="font-family:var(--font-mono);">${s.DEX !== null ? (s.DEX >= 0 ? '+'+s.DEX : s.DEX) : '--'}</strong>
-                 </div>
-                 <div style="display:flex; justify-content:space-between;">
-                    <span>Base Defense (DEX):</span>
-                    <strong style="font-family:var(--font-mono);">${s.DEX !== null ? (s.DEX >= 0 ? '+'+s.DEX : s.DEX) : '--'}</strong>
-                 </div>
             </div>
         `;
     },
@@ -2133,11 +2126,22 @@ renderGear: (el) => {
 
     _sanitizeItem: (item) => {
         // Ensure item has a type for logic checks
+        // Normalize checking against localized names
+        const name = item.name.toLowerCase();
+        
         if (!item.type) {
-            if (item.name.toLowerCase().includes("shield")) item.type = "Shield";
+            if (name.includes("shield") || name.includes("escudo")) item.type = "Shield";
             else if (item.as > 0) item.type = "Armor";
             else item.type = "Gear";
         }
+        
+        // Normalize type for internal logic (Armor/Shield/Melee/Ranged)
+        const typeLower = item.type.toLowerCase();
+        if (typeLower.includes("shield") || typeLower.includes("escudo")) item.type = "Shield";
+        else if (typeLower.includes("armor") || typeLower.includes("armadura")) item.type = "Armor";
+        else if (typeLower.includes("melee") || typeLower.includes("cuerpo")) item.type = "Melee";
+        else if (typeLower.includes("ranged") || typeLower.includes("distancia")) item.type = "Ranged";
+
         return item;
     },
 
@@ -2982,6 +2986,7 @@ renderSheet: async (el) => {
     calculateSkills: () => {
         const data = I18n.getData('options');
         const c = CharGen.char;
+        const t = I18n.t; // Localization
         const skillCounts = {}; 
 
         const add = (id) => {
@@ -2989,26 +2994,25 @@ renderSheet: async (el) => {
             skillCounts[id] = (skillCounts[id] || 0) + 1;
         };
 
-        // ... (Existing helper: mapStringToId) ...
         const mapStringToId = (str) => {
             if (!str) return null;
             const s = str.toLowerCase();
-            if (s.includes("athletics")) return "athletics";
-            if (s.includes("acrobatics")) return "acrobatics";
-            if (s.includes("stealth")) return "stealth";
-            if (s.includes("craft")) return "craft";
-            if (s.includes("lore")) return "lore";
-            if (s.includes("investigate")) return "investigate";
-            if (s.includes("scrutiny")) return "scrutiny";
-            if (s.includes("survival")) return "survival";
-            if (s.includes("medicine")) return "medicine";
-            if (s.includes("influence")) return "influence";
-            if (s.includes("deception")) return "deception";
+            if (s.includes("athletics") || s.includes("atletismo")) return "athletics";
+            if (s.includes("acrobatics") || s.includes("acrobacias")) return "acrobatics";
+            if (s.includes("stealth") || s.includes("sigilo")) return "stealth";
+            if (s.includes("craft") || s.includes("artesanía")) return "craft";
+            if (s.includes("lore") || s.includes("saber")) return "lore";
+            if (s.includes("investigate") || s.includes("investigar")) return "investigate";
+            if (s.includes("scrutiny") || s.includes("escrutinio")) return "scrutiny";
+            if (s.includes("survival") || s.includes("supervivencia")) return "survival";
+            if (s.includes("medicine") || s.includes("medicina")) return "medicine";
+            if (s.includes("influence") || s.includes("influencia")) return "influence";
+            if (s.includes("deception") || s.includes("engaño")) return "deception";
             if (s.includes("intimidat")) return "intimidation";
             return null;
         };
 
-        // 1. Ancestry Skills (Standard logic)
+        // 1. Ancestry Skills
         if (c.ancestry && c.ancestryFeatIndex !== null) {
             const anc = data.ancestries.find(a => a.id === c.ancestry);
             const feat = anc.feats[c.ancestryFeatIndex];
@@ -3018,14 +3022,13 @@ renderSheet: async (el) => {
             }
         }
 
-        // 2. Background Skills (Standard logic)
+        // 2. Background Skills
         if (c.background) {
             const bg = data.backgrounds.find(b => b.id === c.background);
             if (bg && bg.skill) add(mapStringToId(bg.skill));
         }
 
-        // 3. Archetype Base Skills (Standard logic)
-        // ... (Keep existing logic for looking up arch.proficiencies.skills) ...
+        // 3. Archetype Base Skills
         if (c.archA) {
             const arch = data.archetypes.find(a => a.id === c.archA);
             if (arch && arch.proficiencies && arch.proficiencies.skills) {
@@ -3039,26 +3042,24 @@ renderSheet: async (el) => {
             }
         }
 
-        // 4. TALENT CHOICES (NEW)
-        // Iterate through selected talents. If they have a 'choice' that is a skill ID, apply it.
+        // 4. Talent Choices
         c.talents.forEach(t => {
             if (t.flags && t.flags.select_skill && t.choice) {
-                add(t.choice); // e.g., 'stealth'
+                add(t.choice);
             }
-            // Some talents might force a skill (rare in this system, but possible)
             if (t.modifiers && t.modifiers.skill_train) {
                 add(t.modifiers.skill_train);
             }
         });
-        
 
-        // Format Output (Die Calculation)
+        // 5. Build Localized List
+        // We define the list here to ensure the ORDER is consistent
         const fullList = [
             {id: "athletics", name: "Athletics", stat: "STR"},
             {id: "acrobatics", name: "Acrobatics", stat: "DEX"},
-            {id: "stealth", name: "Stealth & Thievery", stat: "DEX"},
-            {id: "craft", name: "Craft & Tinker", stat: "INT"},
-            {id: "lore", name: "Lore & Knowledge", stat: "INT"},
+            {id: "stealth", name: "Stealth", stat: "DEX"},
+            {id: "craft", name: "Craft", stat: "INT"},
+            {id: "lore", name: "Lore", stat: "INT"},
             {id: "investigate", name: "Investigate", stat: "INT"},
             {id: "scrutiny", name: "Scrutiny", stat: "WIS"},
             {id: "survival", name: "Survival", stat: "WIS"},
@@ -3068,20 +3069,47 @@ renderSheet: async (el) => {
             {id: "intimidation", name: "Intimidation", stat: "CHA"}
         ];
 
+        // Map over the list and apply localization
         return fullList.map(sk => {
             const count = skillCounts[sk.id] || 0;
             let die = "-";
             if (count === 1) die = "d4"; // Trained
             if (count >= 2) die = "d6";  // Expert
             
+            // Localize Name and Stat
+            // Note: We use the IDs (e.g. 'athletics') to fetch the localized key if I added it to UI_Dictionary
+            // Since I didn't explicitly add skill names in the previous step, I will map them to the stat keys or raw values
+            // Ideally, update i18n with specific skill keys later.
+            // For now, I will capitalize and return the English ID or a simple map
+            
+            const localizedName = {
+                "athletics": "Athletics / Atletismo",
+                "acrobatics": "Acrobatics / Acrobacias",
+                "stealth": "Stealth / Sigilo",
+                "craft": "Craft / Artesanía",
+                "lore": "Lore / Saber",
+                "investigate": "Investigate / Investigar",
+                "scrutiny": "Scrutiny / Escrutinio",
+                "survival": "Survival / Supervivencia",
+                "medicine": "Medicine / Medicina",
+                "influence": "Influence / Influencia",
+                "deception": "Deception / Engaño",
+                "intimidation": "Intimidation / Intimidación"
+            }[sk.id];
+
+            // Localize Stat (STR -> FUE)
+            const localizedStat = t(`stat_${sk.stat.toLowerCase()}`);
+
             return {
-                ...sk,
+                id: sk.id,
+                name: localizedName, 
+                stat: localizedStat,
                 count: count,
                 die: die
             };
         });
     },
-
+    
     /* ------------------------------------------------------------------
        LOGIC: LEVEL UP SYSTEM
        ------------------------------------------------------------------ */
@@ -3379,4 +3407,5 @@ renderSheet: async (el) => {
             alert(`Level Up Complete! You are now Level ${newLevel}.\nHP Increased by ${hpGain}.`);
         }
     },
+
 };

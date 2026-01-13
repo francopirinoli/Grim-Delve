@@ -1,18 +1,18 @@
 /**
  * monster_builder.js
  * The Architect Tool for GMs to create, edit, and save stat blocks.
- * v3.3: Refactored Renderer for Library Use
+ * v3.5: Localized and Refactored
  */
 
 import { I18n } from '../utils/i18n.js';
 import { Storage } from '../utils/storage.js';
 import { ImageStore } from '../utils/image_store.js';
 
-// --- NEW EXPORT: SHARED RENDERER ---
+// --- SHARED RENDERER ---
 export const MonsterRenderer = {
     /**
      * Generates the HTML string for the Parchment Stat Block.
-     * v3.5: Localized
+     * Use I18n.t() for labels and I18n.fmt() for dynamic sentences.
      */
     getHTML: (m, imageSrc) => {
         const t = I18n.t;
@@ -35,7 +35,7 @@ export const MonsterRenderer = {
             m.custom_abilities.forEach(c => {
                 if (c.type === 'Trait') traits.push(c);
                 else if (c.type === 'Danger') dangers.push(c);
-                else actions.push(c); // Actions and Reactions
+                else actions.push(c); 
             });
         }
 
@@ -47,10 +47,13 @@ export const MonsterRenderer = {
             </div>
         `).join('');
 
-        // Dynamic Strings
-        // Translate Role and Family names if they match dictionary keys (e.g., 'role_soldier'), otherwise keep original
-        const roleName = t(`role_${m.role.toLowerCase()}`) !== `role_${m.role.toLowerCase()}` ? t(`role_${m.role.toLowerCase()}`) : m.role;
-        // Capitalize Family for display if not in dictionary
+        // Dynamic Strings - Handle Translation
+        // Try to translate role. If key missing, use original string.
+        const rawRole = m.role.toLowerCase();
+        const roleKey = `role_${rawRole}`;
+        const roleName = t(roleKey) !== roleKey ? t(roleKey) : m.role;
+
+        // Capitalize Family
         const familyName = m.family.charAt(0).toUpperCase() + m.family.slice(1);
 
         const metaLine = fmt('mon_meta_fmt', { 
@@ -118,7 +121,7 @@ export const MonsterBuilder = {
     dragState: { isDragging: false, startX: 0, startY: 0, initialImgX: 0, initialImgY: 0 },
 
     init: (container) => {
-        MonsterBuilder.(container);
+        MonsterBuilder.renderInterface(container);
         if (!MonsterBuilder.currentMonster.id) {
             MonsterBuilder.updateCalculation();
         } else {
@@ -209,7 +212,11 @@ export const MonsterBuilder = {
                         <div>
                             <label class="form-label">${t('mon_lbl_role')}</label>
                             <select id="mb-role">
-                                ${roles.map(r => `<option value="${r}">${t('role_' + r) || r}</option>`).join('')}
+                                ${roles.map(r => {
+                                    const key = 'role_' + r;
+                                    const label = t(key) !== key ? t(key) : r;
+                                    return `<option value="${r}">${label}</option>`;
+                                }).join('')}
                             </select>
                         </div>
                         <div>
@@ -441,16 +448,12 @@ export const MonsterBuilder = {
         const data = I18n.getData('monsters');
         const t = I18n.t;
         
-        // Safety check if family key changed or data missing
         if (!data || !data.families[familyKey]) return;
 
         const fam = data.families[familyKey];
         const container = document.getElementById('ability-section');
         if(!container) return;
 
-        // We do NOT reset m.traits/actions here to preserve state during family swaps if possible,
-        // or let updateCalculation handle the reset.
-        
         const createAccordion = (title, items, typeKey, isOpen) => {
             if (!items || items.length === 0) return '';
             const badgeId = `badge-${typeKey}`;
@@ -462,10 +465,6 @@ export const MonsterBuilder = {
             `;
             items.forEach((item, idx) => {
                 const cid = `chk-${typeKey}-${idx}`;
-                // Determine if checked based on name matching in current monster state
-                // This preserves selections even if UI redraws
-                const isChecked = false; // Logic handled by syncCheckboxes usually
-                
                 html += `
                     <div class="picker-item">
                         <input type="checkbox" id="${cid}" data-type="${typeKey}" data-idx="${idx}">
@@ -481,7 +480,6 @@ export const MonsterBuilder = {
         };
 
         let html = "";
-        // Use dictionary keys for headers
         html += createAccordion(t('mon_sect_traits'), fam.universal_traits, "traits", false);
         html += createAccordion(t('mon_sect_traits') + " (" + fam.name + ")", fam.passives, "passives", true);
         html += createAccordion(t('mon_sect_actions'), fam.actions, "actions", true);
@@ -493,7 +491,6 @@ export const MonsterBuilder = {
             chk.addEventListener('change', () => MonsterBuilder.scanSelections());
         });
 
-        // Re-sync checks based on current data
         MonsterBuilder.syncCheckboxes();
     },
 
@@ -516,7 +513,11 @@ export const MonsterBuilder = {
         const data = I18n.getData('monsters');
         const fam = data.families[m.family];
 
-        m.traits = []; m.actions = []; m.danger_abilities = [];
+        // Reset arrays, keep customs
+        m.traits = []; 
+        m.actions = []; 
+        m.danger_abilities = [];
+        
         const counts = { traits: 0, passives: 0, actions: 0, danger: 0 };
 
         document.querySelectorAll('.arch-content input:checked').forEach(chk => {
@@ -564,19 +565,16 @@ export const MonsterBuilder = {
         const container = document.getElementById('monster-card-display');
         if (!container) return;
 
-        // Resolve Image
         let src = m.imageUrl;
         if (m.imageId) src = await ImageStore.getUrl(m.imageId);
 
-        // Generate HTML using Shared Renderer
         container.innerHTML = MonsterRenderer.getHTML(m, src);
 
-        // Bind Custom Delete Buttons
         container.querySelectorAll('.del-custom').forEach(btn => {
             btn.addEventListener('click', (e) => MonsterBuilder.removeCustomAbility(parseInt(e.target.dataset.id)));
         });
 
-        // --- BIND IMAGE DRAG INTERACTIONS ---
+        // Image Drag
         const imgBox = container.querySelector('.sb-image-container');
         if (imgBox) {
             imgBox.addEventListener('mousedown', (e) => {
@@ -633,5 +631,7 @@ export const MonsterBuilder = {
         localStorage.setItem('grim_monsters', JSON.stringify(lib));
         alert(`Saved ${m.name} to Library.`);
     }
+};
 
 };
+

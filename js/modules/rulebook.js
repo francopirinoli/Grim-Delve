@@ -24,28 +24,29 @@ export const Rulebook = {
     },
 
     init: (container) => {
-        // Add CSS class for specific rulebook layout
         container.classList.add('rulebook-container');
         Rulebook.renderLayout(container);
     },
 
     renderLayout: (container) => {
         const data = I18n.getData('rules');
-        if (!data) return;
+        const t = I18n.t;
+
+        if (!data) return container.innerHTML = `<p>${t('lbl_loading')}</p>`;
 
         // 1. The Shell
         const html = `
             <div class="rb-layout">
                 <nav class="rb-toc">
                     <div class="rb-search-box">
-                        <input type="text" id="rb-search" placeholder="Search Rules...">
+                        <input type="text" id="rb-search" placeholder="${t('lib_search')}">
                     </div>
                     <ul id="rb-toc-list"></ul>
                 </nav>
                 <article class="rb-content" id="rb-viewer">
                     <div class="rb-placeholder">
-                        <h3>Grim Delve Rulebook</h3>
-                        <p>Select a section to begin reading.</p>
+                        <h3>Grim Delve</h3>
+                        <p>${t('nav_home')}</p>
                     </div>
                 </article>
             </div>
@@ -79,7 +80,6 @@ export const Rulebook = {
             </li>
         `).join('');
         
-        // Bind clicks for chapter loading (headings)
         list.querySelectorAll('.toc-header').forEach((header, index) => {
             header.addEventListener('click', () => {
                 Rulebook.loadChapter(data[index].id);
@@ -111,20 +111,15 @@ export const Rulebook = {
         viewer.innerHTML = html;
         viewer.scrollTop = 0;
 
-        // Attach interactive elements
         Rulebook.attachTableRollers(viewer);
     },
 
     scrollToSection: (sectionId) => {
-        // Find the chapter containing this section
         const data = I18n.getData('rules');
         const chapter = data.find(c => c.sections.some(s => s.id === sectionId));
         
         if (chapter) {
-            // Load chapter if not already there (optimization check omitted for brevity)
             Rulebook.loadChapter(chapter.id);
-            
-            // Scroll to section
             setTimeout(() => {
                 const el = document.getElementById(sectionId);
                 if (el) el.scrollIntoView({ behavior: 'smooth' });
@@ -135,9 +130,8 @@ export const Rulebook = {
     processContent: (text) => {
         let processed = text;
         
-        // 1. Inject Keywords
+        // 1. Inject Keywords (Could be localized if keywords dictionary is moved to I18n)
         for (const [key, desc] of Object.entries(Rulebook.keywords)) {
-            // Matches whole word, global
             const regex = new RegExp(`\\b(${key})\\b`, 'g'); 
             processed = processed.replace(regex, `<span class="keyword" title="${desc}">$1</span>`);
         }
@@ -159,15 +153,21 @@ export const Rulebook = {
         if (text.includes('[[DYNAMIC_CHASSIS_TABLES]]')) processed = processed.replace('[[DYNAMIC_CHASSIS_TABLES]]', Rulebook.generateChassisTables());
         if (text.includes('[[DYNAMIC_FAMILY_REFERENCE]]')) processed = processed.replace('[[DYNAMIC_FAMILY_REFERENCE]]', Rulebook.generateFamilyReference());
         
+        // Loot Tables (NEW)
+        if (text.includes('[[DYNAMIC_LOOT_TABLE_1]]')) processed = processed.replace('[[DYNAMIC_LOOT_TABLE_1]]', Rulebook.generateLootTable('tier_1'));
+        if (text.includes('[[DYNAMIC_LOOT_TABLE_2]]')) processed = processed.replace('[[DYNAMIC_LOOT_TABLE_2]]', Rulebook.generateLootTable('tier_2'));
+        if (text.includes('[[DYNAMIC_LOOT_TABLE_3]]')) processed = processed.replace('[[DYNAMIC_LOOT_TABLE_3]]', Rulebook.generateLootTable('tier_3'));
+
         return processed;
     },
 
-    /* --- DYNAMIC GENERATORS: CHAR OPTIONS --- */
+    /* --- DYNAMIC GENERATORS (Localized Headers) --- */
     
     generateAncestryTable: () => {
+        const t = I18n.t;
         const opts = I18n.getData('options');
         if (!opts) return "<em>Data missing.</em>";
-        let html = `<table class="table"><thead><tr><th>Ancestry</th><th>Desc</th><th>Key Trait Example</th></tr></thead><tbody>`;
+        let html = `<table class="table"><thead><tr><th>${t('cg_lbl_ancestry')}</th><th>${t('lbl_desc')}</th><th>${t('mon_type_trait')}</th></tr></thead><tbody>`;
         opts.ancestries.forEach(a => {
             const feat = a.feats && a.feats.length > 0 ? a.feats[0].name : "-";
             html += `<tr><td><strong>${a.name}</strong></td><td>${a.description}</td><td>${feat}</td></tr>`;
@@ -177,9 +177,10 @@ export const Rulebook = {
     },
 
     generateBackgroundTable: () => {
+        const t = I18n.t;
         const opts = I18n.getData('options');
         if (!opts) return "<em>Data missing.</em>";
-        let html = `<table class="table"><thead><tr><th>Background</th><th>Skill</th><th>Special Ability</th></tr></thead><tbody>`;
+        let html = `<table class="table"><thead><tr><th>${t('cg_lbl_background')}</th><th>${t('sheet_skills')}</th><th>${t('mon_type_trait')}</th></tr></thead><tbody>`;
         opts.backgrounds.forEach(b => {
             html += `<tr><td><strong>${b.name}</strong></td><td>${b.skill}</td><td><strong>${b.feat.name}:</strong> ${b.feat.effect}</td></tr>`;
         });
@@ -188,9 +189,11 @@ export const Rulebook = {
     },
 
     generateArchetypeTable: () => {
+        const t = I18n.t;
         const opts = I18n.getData('options');
         if (!opts) return "<em>Data missing.</em>";
-        let html = `<table class="table"><thead><tr><th>Archetype</th><th>Role</th><th>Resource</th><th>Focus</th></tr></thead><tbody>`;
+        // Header: Archetype | Role | Resource | Desc
+        let html = `<table class="table"><thead><tr><th>${t('cg_lbl_arch_a')}</th><th>${t('mon_lbl_role')}</th><th>Resource</th><th>${t('lbl_desc')}</th></tr></thead><tbody>`;
         opts.archetypes.forEach(a => {
             html += `<tr><td><strong>${a.name}</strong></td><td>${a.role}</td><td>${a.resource}</td><td>${a.description}</td></tr>`;
         });
@@ -199,6 +202,7 @@ export const Rulebook = {
     },
 
     generateClassTable: () => {
+        const t = I18n.t;
         const opts = I18n.getData('options');
         if (!opts) return "<em>Data missing.</em>";
         
@@ -207,9 +211,9 @@ export const Rulebook = {
         let html = `<table class="table">
             <thead>
                 <tr>
-                    <th>Class Name</th>
+                    <th>${t('cg_step_class')}</th>
                     <th>Type</th>
-                    <th>Archetypes</th>
+                    <th>${t('cg_lbl_arch_a')} + ${t('cg_lbl_arch_b')}</th>
                 </tr>
             </thead>
             <tbody>`;
@@ -218,15 +222,19 @@ export const Rulebook = {
             const archA = opts.archetypes.find(a => a.name === c.components[0]);
             const archB = opts.archetypes.find(a => a.name === c.components[1]);
 
-            let type = "Hybrid Class"; 
+            let type = "Hybrid"; 
             let style = "color:var(--text-muted);"; 
 
             if (archA && archB) {
+                // Determine type based on Normalized Roles to allow translation
+                const roleA = I18n.normalize('roles', archA.role);
+                const roleB = I18n.normalize('roles', archB.role);
+
                 if (archA.id === archB.id) {
-                    type = "Pure Class";
+                    type = "Pure";
                     style = "color:var(--accent-gold); font-weight:bold;";
-                } else if (archA.role === archB.role) {
-                    type = `Full ${archA.role}`;
+                } else if (roleA === roleB) {
+                    type = `Full ${archA.role}`; // Uses displayed role name
                     style = "color:var(--accent-blue); font-weight:bold;";
                 }
             }
@@ -245,9 +253,10 @@ export const Rulebook = {
     /* --- DYNAMIC GENERATORS: ITEMS --- */
 
     generateArmorTable: () => {
+        const t = I18n.t;
         const data = I18n.getData('items');
         if (!data) return "<em>Data missing.</em>";
-        let html = `<table class="table"><thead><tr><th>Armor</th><th>AS</th><th>Slots</th><th>Cost</th><th>Notes</th></tr></thead><tbody>`;
+        let html = `<table class="table"><thead><tr><th>${t('item_cat_armor')}</th><th>${t('mon_stat_as')}</th><th>${t('cg_lbl_slots')}</th><th>${t('lbl_cost')}</th><th>${t('lbl_desc')}</th></tr></thead><tbody>`;
         data.armor.forEach(i => {
             html += `<tr><td><strong>${i.name}</strong></td><td>${i.as}</td><td>${i.slots}</td><td>${i.cost}</td><td><span style="font-size:0.85em">${i.penalty || i.description || "-"}</span></td></tr>`;
         });
@@ -256,9 +265,10 @@ export const Rulebook = {
     },
 
     generateWeaponTable: () => {
+        const t = I18n.t;
         const data = I18n.getData('items');
         if (!data) return "<em>Data missing.</em>";
-        let html = `<table class="table"><thead><tr><th>Weapon</th><th>Dmg</th><th>Slots</th><th>Cost</th><th>Properties</th></tr></thead><tbody>`;
+        let html = `<table class="table"><thead><tr><th>${t('item_cat_weapon')}</th><th>${t('mon_stat_dmg')}</th><th>${t('cg_lbl_slots')}</th><th>${t('lbl_cost')}</th><th>Tags</th></tr></thead><tbody>`;
         data.weapons.forEach(w => {
             const tags = w.tags ? w.tags.join(', ') : '-';
             html += `<tr><td><strong>${w.name}</strong></td><td>${w.damage}</td><td>${w.slots}</td><td>${w.cost}</td><td><span style="font-size:0.85em">${tags}</span></td></tr>`;
@@ -268,6 +278,7 @@ export const Rulebook = {
     },
 
     generateGearTable: () => {
+        const t = I18n.t;
         const data = I18n.getData('items');
         if (!data) return "<em>Data missing.</em>";
         
@@ -280,7 +291,7 @@ export const Rulebook = {
 
         let html = "";
         for (const [type, items] of Object.entries(groups)) {
-            html += `<h4>${type}</h4><table class="table"><thead><tr><th>Item</th><th>Slots</th><th>Cost</th><th>Effect</th></tr></thead><tbody>`;
+            html += `<h4>${type}</h4><table class="table"><thead><tr><th>${t('lbl_name')}</th><th>${t('cg_lbl_slots')}</th><th>${t('lbl_cost')}</th><th>${t('lbl_effect')}</th></tr></thead><tbody>`;
             items.forEach(i => {
                  html += `<tr><td><strong>${i.name}</strong></td><td>${i.slots}</td><td>${i.cost}</td><td><span style="font-size:0.85em">${i.effect || i.description}</span></td></tr>`;
             });
@@ -290,9 +301,10 @@ export const Rulebook = {
     },
 
     generateReagentTable: () => {
+        const t = I18n.t;
         const data = I18n.getData('items');
         if (!data) return "<em>Data missing.</em>";
-        let html = `<table class="table"><thead><tr><th>Reagent</th><th>Type</th><th>Cost (Mats)</th><th>DC</th><th>Effect</th></tr></thead><tbody>`;
+        let html = `<table class="table"><thead><tr><th>Reagent</th><th>Type</th><th>${t('lbl_cost')}</th><th>DC</th><th>${t('lbl_effect')}</th></tr></thead><tbody>`;
         data.reagents.forEach(r => {
             html += `<tr><td><strong>${r.name}</strong></td><td>${r.type}</td><td>${r.cost}</td><td>${r.craft_dc}</td><td><span style="font-size:0.85em">${r.effect}</span></td></tr>`;
         });
@@ -300,20 +312,47 @@ export const Rulebook = {
         return html;
     },
 
+    /* --- DYNAMIC GENERATORS: LOOT --- */
+    
+    generateLootTable: (tier) => {
+        const t = I18n.t;
+        const data = I18n.getData('items');
+        if (!data || !data.loot_tables[tier]) return "<em>Loot Data Missing</em>";
+        
+        const table = data.loot_tables[tier];
+        let html = `<table class="table"><thead><tr><th width="50">${t('tbl_roll')}</th><th>${t('lbl_name')}</th><th>${t('lbl_cost')}</th><th>${t('cg_lbl_slots')}</th></tr></thead><tbody>`;
+        
+        table.forEach(r => {
+            html += `<tr>
+                <td><strong>${r.roll}</strong></td>
+                <td>${r.name}</td>
+                <td>${r.value}</td>
+                <td>${r.slots}</td>
+            </tr>`;
+        });
+        
+        html += `</tbody></table>`;
+        return html;
+    },
+
     /* --- DYNAMIC GENERATORS: MONSTERS --- */
 
     generateChassisTables: () => {
+        const t = I18n.t;
         const data = I18n.getData('monsters');
         if (!data || !data.chassis) return "<em>Data missing.</em>";
 
         let html = "";
         for (const [role, levels] of Object.entries(data.chassis)) {
-            const roleName = role.charAt(0).toUpperCase() + role.slice(1);
-            html += `<h4>${roleName}</h4>`;
+            // Localize Role Name
+            const roleName = t('role_' + role) !== ('role_' + role) ? t('role_' + role) : role;
+            const displayRole = roleName.charAt(0).toUpperCase() + roleName.slice(1);
+            
+            html += `<h4>${displayRole}</h4>`;
             html += `<table class="table" style="font-size:0.85rem;">`;
             html += `<thead><tr>
-                <th>Lvl</th><th>HP</th><th>AS</th><th>Spd</th>
-                <th>Atk DC</th><th>Def DC</th><th>Save DC</th><th>Dmg</th>
+                <th>${t('mon_lbl_level')}</th><th>${t('mon_stat_hp')}</th><th>${t('mon_stat_as')}</th><th>${t('mon_stat_spd')}</th>
+                <th>${t('mon_stat_atk')}</th><th>${t('mon_stat_def')}</th><th>${t('mon_stat_save')}</th><th>${t('mon_stat_dmg')}</th>
             </tr></thead><tbody>`;
             
             levels.forEach(stat => {
@@ -334,6 +373,7 @@ export const Rulebook = {
     },
 
     generateFamilyReference: () => {
+        const t = I18n.t;
         const data = I18n.getData('monsters');
         if (!data || !data.families) return "<em>Data missing.</em>";
 
@@ -344,27 +384,13 @@ export const Rulebook = {
             html += `<p><em>${fam.description}</em></p>`;
 
             if (fam.universal_traits) {
-                html += `<h5>Universal Traits</h5><ul>`;
-                fam.universal_traits.forEach(t => {
-                    html += `<li><strong>${t.name}:</strong> ${t.effect}</li>`;
+                html += `<h5>${t('mon_sect_traits')}</h5><ul>`;
+                fam.universal_traits.forEach(trait => {
+                    html += `<li><strong>${trait.name}:</strong> ${trait.effect}</li>`;
                 });
                 html += `</ul>`;
             }
-
-            const harvestTrait = fam.universal_traits.find(t => t.name === "Harvestable");
-            if (harvestTrait) {
-                 html += `<div style="background:rgba(255,255,255,0.05); padding:5px; border-left:3px solid var(--accent-blue); margin:10px 0; font-size:0.9rem;"><strong>Harvesting:</strong> ${harvestTrait.effect}</div>`;
-            }
             
-            // Briefly list sample danger abilities
-            if (fam.danger_abilities) {
-                 html += `<h5>Signature Danger Abilities</h5><ul style="font-size:0.9rem;">`;
-                 fam.danger_abilities.slice(0, 3).forEach(ab => {
-                     html += `<li><strong>${ab.name} (${ab.cost}):</strong> ${ab.effect}</li>`;
-                 });
-                 html += `<li><em>...and more.</em></li></ul>`;
-            }
-
             html += `</div>`;
         }
         return html;
@@ -404,12 +430,10 @@ export const Rulebook = {
             const cellText = rows[i].cells[0].textContent.trim();
             let isMatch = false;
             
-            // Handle "1-4" ranges or "1"
             if (cellText.includes('-')) {
                 const [min, max] = cellText.split('-').map(n => parseInt(n));
                 if (rollVal >= min && rollVal <= max) isMatch = true;
             } else {
-                // Handle "1 (Nat 1)" vs "1"
                 const num = parseInt(cellText);
                 if (!isNaN(num) && num === rollVal) isMatch = true;
             }
@@ -417,8 +441,6 @@ export const Rulebook = {
             if (isMatch) {
                 rows[i].classList.add('highlight-row');
                 rows[i].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                // Simple toast for feedback
-                // alert(`Roll: ${rollVal}\nResult: ${rows[i].cells[1].textContent}`); 
                 break;
             }
         }

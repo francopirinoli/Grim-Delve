@@ -632,6 +632,3 @@ export const MonsterBuilder = {
         alert(`Saved ${m.name} to Library.`);
     }
 };
-
-};
-

@@ -12,22 +12,22 @@ import { ImageStore } from '../utils/image_store.js';
 export const ItemRenderer = {
     /**
      * Generates the HTML string for the Item Card.
-     * @param {Object} c - The item data object.
-     * @param {String|null} imageSrc - Resolved URL for the image (if any).
-     * @returns {String} HTML content.
+     * v3.5: Localized
      */
     getHTML: (c, imageSrc) => {
+        const t = I18n.t; // Localization
+
         // Stats Logic
         let statsHtml = '';
-        if (c.damage) statsHtml += `<div class="ic-stat-box"><div class="ic-label">Damage</div><div class="ic-val">${c.damage}</div></div>`;
-        if (c.armor) statsHtml += `<div class="ic-stat-box"><div class="ic-label">Armor</div><div class="ic-val">${c.armor}</div></div>`;
-        statsHtml += `<div class="ic-stat-box"><div class="ic-label">Slots</div><div class="ic-val">${c.slots}</div></div>`;
-        statsHtml += `<div class="ic-stat-box"><div class="ic-label">Value</div><div class="ic-val">${c.cost}</div></div>`;
+        if (c.damage) statsHtml += `<div class="ic-stat-box"><div class="ic-label">${t('mon_stat_dmg')}</div><div class="ic-val">${c.damage}</div></div>`;
+        if (c.armor) statsHtml += `<div class="ic-stat-box"><div class="ic-label">${t('sheet_ac')}</div><div class="ic-val">${c.armor}</div></div>`;
+        statsHtml += `<div class="ic-stat-box"><div class="ic-label">${t('lbl_cost')}</div><div class="ic-val">${c.cost}</div></div>`;
+        statsHtml += `<div class="ic-stat-box"><div class="ic-label">${t('cg_lbl_slots')}</div><div class="ic-val">${c.slots}</div></div>`;
 
         // Tags
         let tagsHtml = '';
         if (c.tags && c.tags.trim() !== "") {
-            tagsHtml = `<div class="ic-tags">${c.tags.split(',').map(t => `<span class="ic-tag">${t.trim()}</span>`).join('')}</div>`;
+            tagsHtml = `<div class="ic-tags">${c.tags.split(',').map(tag => `<span class="ic-tag">${tag.trim()}</span>`).join('')}</div>`;
         }
 
         // Magic
@@ -45,7 +45,6 @@ export const ItemRenderer = {
         // Image Handling
         let imgHtml = '';
         if (imageSrc) {
-            // Apply positioning if available
             const pos = c.imgPos || { x: 0, y: 0, scale: 1.0 };
             const style = `transform: translate(${pos.x}px, ${pos.y}px) scale(${pos.scale});`;
             
@@ -162,7 +161,7 @@ export const ItemBuilder = {
     },
 
     renderInterface: () => {
-        const t = I18n.t; // Localization Helper
+        const t = I18n.t;
 
         const html = `
             <div class="artificer-layout">
@@ -171,20 +170,20 @@ export const ItemBuilder = {
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <h2 style="margin:0; border:none;">${t('nav_items')}</h2>
                         <div class="mode-toggle">
-                            <button class="btn-small active" id="mode-forge">${t('item_forge')}</button>
-                            <button class="btn-small" id="mode-loot">${t('item_loot')}</button>
+                            <button class="btn-small active" id="mode-forge">${t('item_mode_forge')}</button>
+                            <button class="btn-small" id="mode-loot">${t('item_mode_loot')}</button>
                         </div>
                     </div>
 
                     <!-- FORGE UI -->
                     <div id="forge-ui">
                         <div class="forge-panel">
-                            <h3>1. ${t('item_base')}</h3>
+                            <h3>1. ${t('item_lbl_base')}</h3>
                             <div class="form-group">
                                 <select id="base-cat-select">
-                                    <option value="weapon">Category: Weapon</option>
-                                    <option value="armor">Category: Armor & Shields</option>
-                                    <option value="trinket">Category: Wondrous Item</option>
+                                    <option value="weapon">${t('item_cat_weapon')}</option>
+                                    <option value="armor">${t('item_cat_armor')}</option>
+                                    <option value="trinket">${t('item_cat_trinket')}</option>
                                 </select>
                             </div>
                             <div class="form-group" style="margin-bottom:0;">
@@ -195,10 +194,10 @@ export const ItemBuilder = {
                         </div>
 
                         <div class="forge-panel" style="flex-grow:1; display:flex; flex-direction:column;">
-                            <h3>2. ${t('item_blueprint')}</h3>
+                            <h3>2. ${t('item_lbl_blueprint')}</h3>
                             <div class="blueprint-browser">
                                 <div class="blueprint-filter">
-                                    <input type="text" id="bp-search" placeholder="${t('item_search_eff')}" style="width:100%;">
+                                    <input type="text" id="bp-search" placeholder="${t('item_lbl_search')}" style="width:100%;">
                                 </div>
                                 <div id="blueprint-list" class="blueprint-list">
                                     <!-- Populated Dynamically -->
@@ -212,9 +211,9 @@ export const ItemBuilder = {
                         <div class="forge-panel">
                             <h3>Loot Tables</h3>
                             <div class="loot-btn-grid">
-                                <button class="btn-loot tier-1" data-tier="tier_1">Tier 1<br><span>Scavenge</span></button>
-                                <button class="btn-loot tier-2" data-tier="tier_2">Tier 2<br><span>Stash</span></button>
-                                <button class="btn-loot tier-3" data-tier="tier_3">Tier 3<br><span>Hoard</span></button>
+                                <button class="btn-loot tier-1" data-tier="tier_1">${t('item_btn_loot_1')}</button>
+                                <button class="btn-loot tier-2" data-tier="tier_2">${t('item_btn_loot_2')}</button>
+                                <button class="btn-loot tier-3" data-tier="tier_3">${t('item_btn_loot_3')}</button>
                             </div>
                         </div>
                          <div class="forge-panel" style="margin-top:1rem; flex-grow:1;">
@@ -225,12 +224,12 @@ export const ItemBuilder = {
 
                     <!-- EDITOR (Always Visible) -->
                     <div class="forge-panel item-editor">
-                        <h3>${t('item_editor')}</h3>
+                        <h3>${t('item_lbl_editor')}</h3>
                         
                         <!-- Image Controls -->
                         <div style="background:rgba(0,0,0,0.3); padding:8px; border:1px dashed #444; border-radius:4px; margin-bottom:10px;">
                             <div style="display:flex; gap:5px; margin-bottom:8px;">
-                                <input type="text" id="edit-img-url" placeholder="Image URL..." class="editor-input" style="flex:1;">
+                                <input type="text" id="edit-img-url" placeholder="${t('cg_ph_url')}" class="editor-input" style="flex:1;">
                                 <button id="btn-upload-img" class="btn-small" style="font-size:0.7rem;">📁 ${t('lbl_upload')}</button>
                                 <input type="file" id="file-upload-item" style="display:none" accept="image/*">
                             </div>
@@ -257,28 +256,28 @@ export const ItemBuilder = {
                         </div>
 
                         <div class="editor-grid">
-                            <input type="text" id="edit-damage" class="editor-input" placeholder="Dmg">
-                            <input type="text" id="edit-armor" class="editor-input" placeholder="AS">
-                            <input type="number" id="edit-slots" class="editor-input" placeholder="Slots">
-                            <input type="text" id="edit-cost" class="editor-input" placeholder="Val">
+                            <input type="text" id="edit-damage" class="editor-input" placeholder="${t('mon_stat_dmg')}">
+                            <input type="text" id="edit-armor" class="editor-input" placeholder="${t('mon_stat_as')}">
+                            <input type="number" id="edit-slots" class="editor-input" placeholder="${t('cg_lbl_slots')}">
+                            <input type="text" id="edit-cost" class="editor-input" placeholder="${t('lbl_cost')}">
                         </div>
 
                         <div style="margin-bottom:8px;">
-                             <input type="text" id="edit-tags" class="editor-input" placeholder="Tags (Comma separated)">
+                             <input type="text" id="edit-tags" class="editor-input" placeholder="Tags">
                         </div>
 
-                        <textarea id="edit-desc" class="editor-textarea" rows="2" placeholder="Description..."></textarea>
+                        <textarea id="edit-desc" class="editor-textarea" rows="2" placeholder="${t('lbl_desc')}"></textarea>
                         
                         <!-- Magic Section -->
                         <div style="border-top:1px dashed #444; padding-top:10px; margin-top:10px;">
                             <div style="display:flex; gap:10px; margin-bottom:8px;">
                                 <input type="text" id="edit-magic-name" class="editor-input" placeholder="Magic Prefix/Name" style="flex-grow:1;">
                                 <label style="display:flex; align-items:center; gap:5px; color:#aaa; font-size:0.8rem; white-space:nowrap;">
-                                    <input type="checkbox" id="edit-is-magic"> ${t('item_magic_q')}
+                                    <input type="checkbox" id="edit-is-magic"> ${t('item_is_magic')}
                                 </label>
                             </div>
-                            <textarea id="edit-magic-effect" class="editor-textarea" rows="2" placeholder="Magical Effect Description..."></textarea>
-                            <input type="text" id="edit-craft-req" class="editor-input" placeholder="Crafting Cost" style="margin-top:8px;">
+                            <textarea id="edit-magic-effect" class="editor-textarea" rows="2" placeholder="${t('lbl_effect')}"></textarea>
+                            <input type="text" id="edit-craft-req" class="editor-input" placeholder="${t('lbl_cost')}" style="margin-top:8px;">
                         </div>
                     </div>
                 </div>
@@ -521,6 +520,7 @@ export const ItemBuilder = {
         const list = document.getElementById('blueprint-list');
         const cat = ItemBuilder.state.baseCategory;
         const filter = ItemBuilder.state.filterText;
+        const t = I18n.t;
 
         list.innerHTML = '';
 
@@ -530,9 +530,9 @@ export const ItemBuilder = {
         else effectsObj = data.magic_effects.wondrous;
 
         const tiers = [
-            { id: 'tier_1', label: 'Common (Tier 1)', open: true },
-            { id: 'tier_2', label: 'Uncommon (Tier 2)', open: false },
-            { id: 'tier_3', label: 'Rare (Tier 3)', open: false }
+            { id: 'tier_1', label: t('item_tier_1'), open: true },
+            { id: 'tier_2', label: t('item_tier_2'), open: false },
+            { id: 'tier_3', label: t('item_tier_3'), open: false }
         ];
 
         tiers.forEach(tier => {
@@ -545,7 +545,6 @@ export const ItemBuilder = {
             );
 
             if (visibleItems.length > 0) {
-                // Collapsible Details
                 const details = document.createElement('details');
                 details.className = 'blueprint-details';
                 if (filter || tier.open) details.open = true;
@@ -580,9 +579,13 @@ export const ItemBuilder = {
 
     applyBlueprint: (effect) => {
         const c = ItemBuilder.currentItem;
+        const t = I18n.t;
+        const fmt = I18n.fmt;
+
         c.magicName = effect.name;
         c.magicEffect = effect.effect;
-        c.craftReq = `Requires 3x ${effect.reagent}`;
+        // Localized requirement string
+        c.craftReq = t('item_req_prefix') + effect.reagent;
         c.isMagic = true;
 
         const sel = document.getElementById('base-item-select');
@@ -590,7 +593,9 @@ export const ItemBuilder = {
         if (sel.selectedIndex > 0) {
              baseName = sel.options[sel.selectedIndex].text.split(' (')[0];
         }
-        c.name = `${effect.name} ${baseName}`;
+
+        // Localized Name Construction (Adjective Noun vs Noun Adjective)
+        c.name = fmt('item_name_fmt', { adj: effect.name, noun: baseName });
 
         ItemBuilder.syncDOMFromState();
         ItemBuilder.renderCard();
@@ -796,4 +801,5 @@ export const ItemBuilder = {
             });
         }
     }
+
 };

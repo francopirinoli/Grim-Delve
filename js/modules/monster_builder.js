@@ -12,19 +12,17 @@ import { ImageStore } from '../utils/image_store.js';
 export const MonsterRenderer = {
     /**
      * Generates the HTML string for the Parchment Stat Block.
-     * @param {Object} m - The monster data object.
-     * @param {String|null} imageSrc - Resolved URL for the image (if any).
-     * @returns {String} HTML content.
+     * v3.5: Localized
      */
     getHTML: (m, imageSrc) => {
+        const t = I18n.t;
+        const fmt = I18n.fmt;
+
         // Image Handling
         let imgHtml = '';
         if (imageSrc) {
-            // Apply positioning if available, default otherwise
             const pos = m.imgPos || { x: 0, y: 0, scale: 1.0 };
             const style = `transform: translate(${pos.x}px, ${pos.y}px) scale(${pos.scale});`;
-            // Note: draggable="false" allows the user to scroll/drag the container in the editor, 
-            // but in View mode (Library), it will just be static.
             imgHtml = `<div class="sb-image-container"><img src="${imageSrc}" style="${style}" draggable="false"></div>`;
         }
 
@@ -49,36 +47,49 @@ export const MonsterRenderer = {
             </div>
         `).join('');
 
+        // Dynamic Strings
+        // Translate Role and Family names if they match dictionary keys (e.g., 'role_soldier'), otherwise keep original
+        const roleName = t(`role_${m.role.toLowerCase()}`) !== `role_${m.role.toLowerCase()}` ? t(`role_${m.role.toLowerCase()}`) : m.role;
+        // Capitalize Family for display if not in dictionary
+        const familyName = m.family.charAt(0).toUpperCase() + m.family.slice(1);
+
+        const metaLine = fmt('mon_meta_fmt', { 
+            lvl: m.level, 
+            role: roleName, 
+            family: familyName 
+        });
+
+        const attackLine = fmt('mon_atk_fmt', { dmg: `<strong>${m.stats.dmg}</strong>` });
+
         return `
             <div class="stat-block-classic">
                 <div class="sb-name-bar">${m.name}</div>
-                <div class="sb-meta">Level ${m.level} ${m.family.charAt(0).toUpperCase() + m.family.slice(1)} ${m.role.charAt(0).toUpperCase() + m.role.slice(1)}</div>
+                <div class="sb-meta">${metaLine}</div>
                 
                 ${imgHtml}
 
                 <div class="sb-red-line"></div>
                 <div class="sb-stats-grid">
-                    <div class="sb-stat-box"><span class="sb-stat-val" style="color:#8a2c2c;">${m.stats.hp}</span><span>HP</span></div>
-                    <div class="sb-stat-box"><span class="sb-stat-val">${m.stats.as}</span><span>Armor</span></div>
-                    <div class="sb-stat-box"><span class="sb-stat-val">${m.stats.speed}</span><span>Speed</span></div>
+                    <div class="sb-stat-box"><span class="sb-stat-val" style="color:#8a2c2c;">${m.stats.hp}</span><span>${t('mon_stat_hp')}</span></div>
+                    <div class="sb-stat-box"><span class="sb-stat-val">${m.stats.as}</span><span>${t('mon_stat_as')}</span></div>
+                    <div class="sb-stat-box"><span class="sb-stat-val">${m.stats.speed}</span><span>${t('mon_stat_spd')}</span></div>
                 </div>
                 <div class="sb-stats-grid" style="background:rgba(0,0,0,0.05); padding:5px;">
-                    <div class="sb-stat-box"><span>ATK DC</span><span class="sb-stat-val">${m.stats.atk}</span></div>
-                    <div class="sb-stat-box"><span>DEF DC</span><span class="sb-stat-val">${m.stats.def}</span></div>
-                    <div class="sb-stat-box"><span>SAVE DC</span><span class="sb-stat-val">${m.stats.save}</span></div>
+                    <div class="sb-stat-box"><span>${t('mon_stat_atk')}</span><span class="sb-stat-val">${m.stats.atk}</span></div>
+                    <div class="sb-stat-box"><span>${t('mon_stat_def')}</span><span class="sb-stat-val">${m.stats.def}</span></div>
+                    <div class="sb-stat-box"><span>${t('mon_stat_save')}</span><span class="sb-stat-val">${m.stats.save}</span></div>
                 </div>
                 <div class="sb-red-line"></div>
 
                 <div class="sb-property">
-                    <span class="sb-prop-name">Standard Attack.</span>
-                    <span class="sb-prop-text">Deals <strong>${m.stats.dmg}</strong> damage.</span>
+                    <span class="sb-prop-text">${attackLine}</span>
                 </div>
 
-                ${traits.length > 0 ? `<div class="sb-section-header">Traits</div>${renderRow(traits)}` : ''}
-                ${actions.length > 0 ? `<div class="sb-section-header">Actions</div>${renderRow(actions)}` : ''}
-                ${dangers.length > 0 ? `<div class="sb-danger-section"><div class="sb-danger-title">Danger Abilities</div>${renderRow(dangers)}</div>` : ''}
+                ${traits.length > 0 ? `<div class="sb-section-header">${t('mon_sect_traits')}</div>${renderRow(traits)}` : ''}
+                ${actions.length > 0 ? `<div class="sb-section-header">${t('mon_sect_actions')}</div>${renderRow(actions)}` : ''}
+                ${dangers.length > 0 ? `<div class="sb-danger-section"><div class="sb-danger-title">${t('mon_sect_danger')}</div>${renderRow(dangers)}</div>` : ''}
                 
-                ${m.notes ? `<div class="sb-red-line"></div><div class="sb-property" style="font-style:italic; font-size:0.9em;"><strong>GM Notes:</strong> ${m.notes}</div>` : ''}
+                ${m.notes ? `<div class="sb-red-line"></div><div class="sb-property" style="font-style:italic; font-size:0.9em;"><strong>${t('mon_lbl_notes')}:</strong> ${m.notes}</div>` : ''}
             </div>
         `;
     }
@@ -107,7 +118,7 @@ export const MonsterBuilder = {
     dragState: { isDragging: false, startX: 0, startY: 0, initialImgX: 0, initialImgY: 0 },
 
     init: (container) => {
-        MonsterBuilder.renderInterface(container);
+        MonsterBuilder.(container);
         if (!MonsterBuilder.currentMonster.id) {
             MonsterBuilder.updateCalculation();
         } else {
@@ -150,11 +161,12 @@ export const MonsterBuilder = {
 
     renderInterface: (container) => {
         const data = I18n.getData('monsters');
-        if (!data) return container.innerHTML = "<p>Error: Monster data not loaded.</p>";
+        const t = I18n.t;
+
+        if (!data) return container.innerHTML = `<p>${t('lbl_loading')}</p>`;
 
         const roles = Object.keys(data.chassis);
         const families = Object.keys(data.families);
-        const t = I18n.t; // Localization Helper
 
         const html = `
             <div class="architect-layout">
@@ -168,10 +180,10 @@ export const MonsterBuilder = {
 
                     <!-- Image Uploader & Controls -->
                     <div class="form-group" style="background:rgba(0,0,0,0.2); padding:10px; border:1px dashed #444;">
-                        <label class="form-label" style="font-size:0.8rem;">${t('lbl_portrait')}</label>
+                        <label class="form-label" style="font-size:0.8rem;">${t('cg_lbl_portrait')}</label>
                         <div style="display:flex; gap:5px; margin-bottom:10px;">
-                            <input type="text" id="mb-img-url" placeholder="Image URL..." style="flex:1; font-size:0.8rem;">
-                            <button id="btn-upload-img" class="btn-small">📁 ${t('lbl_upload')}</button>
+                            <input type="text" id="mb-img-url" placeholder="${t('cg_ph_url')}" style="flex:1; font-size:0.8rem;">
+                            <button id="btn-upload-img" class="btn-small">📁 ${t('cg_btn_upload')}</button>
                             <input type="file" id="mb-file-input" style="display:none" accept="image/*">
                         </div>
                         
@@ -195,19 +207,19 @@ export const MonsterBuilder = {
 
                     <div class="split-view" style="gap:10px; margin-bottom:1rem;">
                         <div>
-                            <label class="form-label">${t('lbl_role')}</label>
+                            <label class="form-label">${t('mon_lbl_role')}</label>
                             <select id="mb-role">
-                                ${roles.map(r => `<option value="${r}">${r.charAt(0).toUpperCase() + r.slice(1)}</option>`).join('')}
+                                ${roles.map(r => `<option value="${r}">${t('role_' + r) || r}</option>`).join('')}
                             </select>
                         </div>
                         <div>
-                            <label class="form-label">${t('lbl_level')}</label>
+                            <label class="form-label">${t('mon_lbl_level')}</label>
                             <select id="mb-level">
                                 ${Array.from({length:10}, (_, i) => i+1).map(n => `<option value="${n}">${n}</option>`).join('')}
                             </select>
                         </div>
                         <div>
-                            <label class="form-label">${t('lbl_family')}</label>
+                            <label class="form-label">${t('mon_lbl_family')}</label>
                             <select id="mb-family">
                                 ${families.map(f => `<option value="${f}">${data.families[f].name}</option>`).join('')}
                             </select>
@@ -218,15 +230,15 @@ export const MonsterBuilder = {
                     <div class="info-box" style="margin-bottom:1rem;">
                         <h4 style="margin-top:0; color:var(--accent-blue); font-size:0.9rem; text-transform:uppercase;">${t('mon_chassis')}</h4>
                         <div class="stat-grid" style="grid-template-columns: repeat(3, 1fr); gap:10px;">
-                            <div class="stat-input"><label>HP</label><input type="number" id="mb-hp"></div>
-                            <div class="stat-input"><label>AS</label><input type="number" id="mb-as"></div>
-                            <div class="stat-input"><label>Speed</label><input type="text" id="mb-speed"></div>
-                            <div class="stat-input"><label>Atk</label><input type="number" id="mb-atk"></div>
-                            <div class="stat-input"><label>Def</label><input type="number" id="mb-def"></div>
-                            <div class="stat-input"><label>Save</label><input type="number" id="mb-save"></div>
+                            <div class="stat-input"><label>${t('mon_stat_hp')}</label><input type="number" id="mb-hp"></div>
+                            <div class="stat-input"><label>${t('mon_stat_as')}</label><input type="number" id="mb-as"></div>
+                            <div class="stat-input"><label>${t('mon_stat_spd')}</label><input type="text" id="mb-speed"></div>
+                            <div class="stat-input"><label>${t('mon_stat_atk')}</label><input type="number" id="mb-atk"></div>
+                            <div class="stat-input"><label>${t('mon_stat_def')}</label><input type="number" id="mb-def"></div>
+                            <div class="stat-input"><label>${t('mon_stat_save')}</label><input type="number" id="mb-save"></div>
                         </div>
                         <div style="margin-top:10px;">
-                            <label class="form-label">Damage Formula</label>
+                            <label class="form-label">${t('mon_stat_dmg')}</label>
                             <input type="text" id="mb-dmg">
                         </div>
                     </div>
@@ -234,27 +246,27 @@ export const MonsterBuilder = {
                     <div id="ability-section"></div>
 
                     <div class="custom-builder">
-                        <h4 style="margin-top:0; color:var(--accent-gold); font-size:0.9rem; text-transform:uppercase;">${t('mon_custom')}</h4>
+                        <h4 style="margin-top:0; color:var(--accent-gold); font-size:0.9rem; text-transform:uppercase;">${t('mon_lbl_custom')}</h4>
                         <div class="custom-row">
-                            <input type="text" id="cust-name" placeholder="Ability Name" style="flex:2;">
+                            <input type="text" id="cust-name" placeholder="${t('lbl_name')}" style="flex:2;">
                             <select id="cust-type" style="flex:1;">
-                                <option value="Action">Action</option>
-                                <option value="Trait">Trait</option>
-                                <option value="Reaction">Reaction</option>
-                                <option value="Danger">Danger (DP)</option>
+                                <option value="Action">${t('mon_type_action')}</option>
+                                <option value="Trait">${t('mon_type_trait')}</option>
+                                <option value="Reaction">${t('mon_type_reaction')}</option>
+                                <option value="Danger">${t('mon_type_danger')}</option>
                             </select>
                         </div>
                         <div class="custom-row" id="cust-cost-row" style="display:none;">
-                            <input type="text" id="cust-cost" placeholder="Cost (e.g. 1 DP)" value="1 DP">
+                            <input type="text" id="cust-cost" placeholder="${t('lbl_cost')} (e.g. 1 DP)" value="1 DP">
                         </div>
                         <div class="custom-row">
-                            <textarea id="cust-effect" rows="2" placeholder="Effect description..." style="width:100%; background:#111; color:#eee; border:1px solid #444; padding:5px;"></textarea>
+                            <textarea id="cust-effect" rows="2" placeholder="${t('lbl_desc')}" style="width:100%; background:#111; color:#eee; border:1px solid #444; padding:5px;"></textarea>
                         </div>
-                        <button id="btn-add-custom" class="btn-add">+ ${t('mon_add_btn')}</button>
+                        <button id="btn-add-custom" class="btn-add">+ ${t('mon_btn_add')}</button>
                     </div>
 
                     <div class="form-group" style="margin-top:1rem;">
-                        <label class="form-label">${t('lbl_notes')}</label>
+                        <label class="form-label">${t('mon_lbl_notes')}</label>
                         <textarea id="mb-notes" rows="3" style="width:100%; background:var(--bg-input); color:#eee; border:1px solid #333; padding:5px;"></textarea>
                     </div>
                 </div>
@@ -427,16 +439,18 @@ export const MonsterBuilder = {
 
     renderAbilityPickers: (familyKey) => {
         const data = I18n.getData('monsters');
+        const t = I18n.t;
+        
+        // Safety check if family key changed or data missing
+        if (!data || !data.families[familyKey]) return;
+
         const fam = data.families[familyKey];
         const container = document.getElementById('ability-section');
         if(!container) return;
 
-        // Reset arrays, keep customs
-        const m = MonsterBuilder.currentMonster;
-        m.traits = [];
-        m.actions = [];
-        m.danger_abilities = [];
-
+        // We do NOT reset m.traits/actions here to preserve state during family swaps if possible,
+        // or let updateCalculation handle the reset.
+        
         const createAccordion = (title, items, typeKey, isOpen) => {
             if (!items || items.length === 0) return '';
             const badgeId = `badge-${typeKey}`;
@@ -448,11 +462,13 @@ export const MonsterBuilder = {
             `;
             items.forEach((item, idx) => {
                 const cid = `chk-${typeKey}-${idx}`;
-                const isChecked = (typeKey === 'traits'); 
+                // Determine if checked based on name matching in current monster state
+                // This preserves selections even if UI redraws
+                const isChecked = false; // Logic handled by syncCheckboxes usually
                 
                 html += `
                     <div class="picker-item">
-                        <input type="checkbox" id="${cid}" data-type="${typeKey}" data-idx="${idx}" ${isChecked ? 'checked' : ''}>
+                        <input type="checkbox" id="${cid}" data-type="${typeKey}" data-idx="${idx}">
                         <div class="picker-content">
                             <div class="picker-name">${item.name} <span style="font-weight:normal; font-size:0.8em; color:#888;">${item.type || ""}</span></div>
                             <div class="picker-desc">${item.effect}</div>
@@ -465,10 +481,11 @@ export const MonsterBuilder = {
         };
 
         let html = "";
-        html += createAccordion("Universal Traits", fam.universal_traits, "traits", false);
-        html += createAccordion("Passive Traits", fam.passives, "passives", true);
-        html += createAccordion("Actions", fam.actions, "actions", true);
-        html += createAccordion("Danger Abilities", fam.danger_abilities, "danger", false);
+        // Use dictionary keys for headers
+        html += createAccordion(t('mon_sect_traits'), fam.universal_traits, "traits", false);
+        html += createAccordion(t('mon_sect_traits') + " (" + fam.name + ")", fam.passives, "passives", true);
+        html += createAccordion(t('mon_sect_actions'), fam.actions, "actions", true);
+        html += createAccordion(t('mon_sect_danger'), fam.danger_abilities, "danger", false);
 
         container.innerHTML = html;
 
@@ -476,7 +493,8 @@ export const MonsterBuilder = {
             chk.addEventListener('change', () => MonsterBuilder.scanSelections());
         });
 
-        MonsterBuilder.scanSelections();
+        // Re-sync checks based on current data
+        MonsterBuilder.syncCheckboxes();
     },
 
     syncCheckboxes: () => {
@@ -615,4 +633,5 @@ export const MonsterBuilder = {
         localStorage.setItem('grim_monsters', JSON.stringify(lib));
         alert(`Saved ${m.name} to Library.`);
     }
+
 };

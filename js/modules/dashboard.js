@@ -1,15 +1,13 @@
 /**
  * dashboard.js
  * The Home Screen / Command Center.
- * Displays quick actions, recent activity, and library stats.
- * v3.1: Localized
+ * v3.5: Localized
  */
 
 import { Storage } from '../utils/storage.js';
 import { CharGen } from './chargen.js';
 import { MonsterBuilder } from './monster_builder.js';
 import { ItemBuilder } from './item_builder.js';
-import { Library } from './library.js'; // Helper for routing if needed
 import { I18n } from '../utils/i18n.js';
 
 export const Dashboard = {
@@ -26,17 +24,17 @@ export const Dashboard = {
         const monsters = Storage.getLibrary('grim_monsters');
         const items = Storage.getLibrary('grim_delve_items');
 
-        // 2. Find "Last Played" Character
+        // 2. Find "Last Played" Character (Sort by modified date)
         const lastChar = chars.sort((a, b) => new Date(b.modified) - new Date(a.modified))[0];
 
         // 3. Aggregate Recent History (Top 5 most recently created/modified)
         const history = [
-            ...chars.map(c => ({...c, type: 'char', date: new Date(c.modified)})),
-            ...monsters.map(m => ({...m, type: 'mon', date: new Date(m.id.split('_')[1] || 0)})), 
-            ...items.map(i => ({...i, type: 'item', date: new Date(i.id.split('_')[1] || 0)}))
+            ...chars.map(c => ({...c, type: 'char', date: new Date(c.modified || Date.now())})),
+            ...monsters.map(m => ({...m, type: 'mon', date: new Date(m.id.split('_')[1] || Date.now())})), 
+            ...items.map(i => ({...i, type: 'item', date: new Date(i.id.split('_')[1] || Date.now())}))
         ].sort((a, b) => b.date - a.date).slice(0, 5);
 
-        // 4. Localization Shortcut
+        // 4. Localization Helper
         const t = I18n.t;
 
         // 5. Build HTML
@@ -121,21 +119,36 @@ export const Dashboard = {
         const t = I18n.t;
         let icon = '❓';
         let label = item.name;
-        let action = 'Edited';
+        let action = t('btn_edit');
         
-        // Icon logic
-        if (item.type === 'char') { icon = '👤'; action = `Lvl ${item.level} ${item.className || 'Hero'}`; }
-        if (item.type === 'mon') { icon = '💀'; action = item.role; }
-        if (item.type === 'item') { icon = '⚔️'; action = item.type; }
+        // Icon logic & Localization of Types
+        if (item.type === 'char') { 
+            icon = '👤'; 
+            // Handle class name safely
+            const cls = item.className || 'Adventurer';
+            label = `${item.name} <span style="font-size:0.8em; color:#666;">(Lvl ${item.level} ${cls})</span>`;
+        }
+        if (item.type === 'mon') { 
+            icon = '💀'; 
+            // Translate Role if possible
+            const roleKey = 'role_' + (item.role || '').toLowerCase();
+            const roleName = t(roleKey) !== roleKey ? t(roleKey) : item.role;
+            label = `${item.name} <span style="font-size:0.8em; color:#666;">(${roleName})</span>`;
+        }
+        if (item.type === 'item') { 
+            icon = '⚔️'; 
+            label = `${item.name} <span style="font-size:0.8em; color:#666;">(${item.type})</span>`;
+        }
 
         return `
             <div class="recent-item" data-type="${item.type}" data-id="${item.id}">
-                <span class="recent-icon">${icon}</span>
-                <div class="recent-info">
-                    <div class="recent-name">${label}</div>
-                    <div class="recent-meta">${action}</div>
+                <div style="display:flex; align-items:center; gap:10px; flex-grow:1;">
+                    <span class="recent-icon">${icon}</span>
+                    <div class="recent-info">
+                        <div class="recent-name">${label}</div>
+                    </div>
                 </div>
-                <button class="btn-small">${t('btn_edit')}</button>
+                <button class="btn-small">${action}</button>
             </div>
         `;
     },
@@ -145,8 +158,12 @@ export const Dashboard = {
         const resumeBtn = document.getElementById('btn-dash-resume');
         if (resumeBtn && lastChar) {
             resumeBtn.onclick = () => {
-                // Determine logic: Play Mode or Edit? Let's go to Play Mode for instant gratification.
-                document.querySelector('[data-module="chargen"]').classList.add('active'); // Highlight sidebar
+                // Switch Nav Highlight
+                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                const charBtn = document.querySelector('[data-module="chargen"]');
+                if(charBtn) charBtn.classList.add('active');
+                
+                // Load Char
                 CharGen.initPlayMode(lastChar);
             };
         }
@@ -160,13 +177,12 @@ export const Dashboard = {
         document.getElementById('card-new-char').onclick = () => document.querySelector('[data-module="chargen"]').click();
         
         document.getElementById('card-new-mon').onclick = () => {
-            // Reset builder state
-            MonsterBuilder.currentMonster.id = null; 
+            MonsterBuilder.currentMonster.id = null; // Reset
             document.querySelector('[data-module="bestiary"]').click();
         };
 
         document.getElementById('card-new-item').onclick = () => {
-            ItemBuilder.currentItem.id = null;
+            ItemBuilder.currentItem.id = null; // Reset
             document.querySelector('[data-module="artificer"]').click();
         };
 

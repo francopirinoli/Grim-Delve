@@ -2,10 +2,53 @@
  * i18n.js
  * Localization, Data Management, and Normalization Utility.
  * Handles loading JSON data, translating UI, and normalizing data logic.
+ * v4.0: Comprehensive Dictionary & Robust Normalization
  */
 
 const UI_DICTIONARY = {
     "en": {
+        "lbl_commodity": "Commodity",
+        "lbl_unit": "Unit",
+        "lbl_value": "Value",
+        "lbl_material": "Material",
+        "lbl_form": "Form",
+        "lbl_subject": "Subject",
+        "lbl_reagent": "Reagent",
+        "tag_melee": "Melee",
+        "tag_ranged": "Ranged",
+        "tag_finesse": "Finesse",
+        "tag_light": "Light",
+        "tag_heavy": "Heavy",
+        "tag_two_handed": "Two-Handed",
+        "tag_reach": "Reach",
+        "tag_thrown": "Thrown",
+        "tag_loading": "Loading",
+        "tag_precise": "Precise",
+        "tag_sunder": "Sunder",
+        "tag_messy": "Messy",
+        "tag_guard": "Guard",
+        "tag_brace": "Brace",
+        "wep_unarmed": "Unarmed Strike",
+        "lbl_class_lvl": "Class Lvl",
+        "lbl_archetype": "Archetype",
+        "lbl_worn": "Worn",
+        "lbl_unarmored": "Unarmored",
+        "cg_lbl_anc_feat": "Ancestry Feat",
+        "cg_lbl_skill_training": "Skill Training",
+        "cg_lbl_wealth": "Starting Wealth",
+        "cg_lbl_starting_gear": "Starting Gear",
+        "cg_lbl_synergy_lvl": "Level {lvl} Synergy",
+        "cg_lbl_role": "Role",
+        "cg_lbl_resource": "Resource",
+        "cg_lbl_stats": "Stats",
+        "cg_lbl_skill": "Skill",
+        "cg_lbl_weapons": "Weapons",
+        "cg_lbl_armor": "Armor",
+        "cg_lbl_selected": "{current}/{max} Selected",
+        "cg_lbl_talents_header": "{name} Talents",
+        "sheet_origin_traits": "Origin Traits",
+        "sheet_class_features": "Class Features",
+        "sheet_arch_talents": "Archetype Talents",
         // --- GENERIC ---
         "btn_save": "Save",
         "btn_cancel": "Cancel",
@@ -23,6 +66,7 @@ const UI_DICTIONARY = {
         "lbl_effect": "Effect",
         "lbl_cost": "Cost",
         "lbl_source": "Source",
+        "lbl_level": "Level", // Added based on report
         
         // --- NAVIGATION ---
         "nav_dashboard": "Dashboard",
@@ -32,6 +76,24 @@ const UI_DICTIONARY = {
         "nav_items": "The Artificer",
         "nav_library": "My Library",
         "nav_tables": "Tables & Rolls",
+
+        // --- DASHBOARD ---
+        "dash_subtitle": "Dark Pulp RPG Companion",
+        "dash_resume": "Resume",
+        "dash_create": "Create New Character",
+        "dash_new_char": "New Hero",
+        "dash_new_char_desc": "Create a character from scratch.",
+        "dash_new_mon": "New Monster",
+        "dash_new_mon_desc": "Forge a beast or boss.",
+        "dash_new_item": "New Item",
+        "dash_new_item_desc": "Craft magical loot.",
+        "dash_rules": "Rules",
+        "dash_rules_desc": "Lookup tables and mechanics.",
+        "dash_stats": "Library Stats",
+        "dash_heroes": "Heroes",
+        "dash_monsters": "Monsters",
+        "dash_items": "Items",
+        "dash_recent": "Recent Activity",
 
         // --- CHARGEN (WIZARD) ---
         "cg_step_bio": "Origins",
@@ -43,12 +105,14 @@ const UI_DICTIONARY = {
         "cg_btn_back": "Back",
         "cg_btn_finish": "Finish",
         "cg_lbl_identity": "Identity",
+        "cg_lbl_name": "Character Name",
         "cg_lbl_portrait": "Portrait",
         "cg_ph_url": "Paste Image URL...",
         "cg_btn_upload": "Or Upload File",
         "cg_lbl_ancestry": "Ancestry",
+        "cg_lbl_anc_feat": "Ancestry Feat",
         "cg_lbl_background": "Background",
-        "cg_btn_roll_bio": "Roll Random Bio",
+        "cg_btn_roll_bio": "Roll Random Origins",
         "cg_sel_bonus": "Select Bonus",
         "cg_sel_skill": "Select Skill",
         "cg_sel_resist": "Select Resistance",
@@ -67,12 +131,20 @@ const UI_DICTIONARY = {
         "cg_tab_arm": "Armor",
         "cg_tab_gear": "Gear",
         "cg_btn_kit": "Equip Background Gear",
+        "cg_btn_kit_added": "Gear Added",
         "cg_lbl_slots": "Inventory Slots",
         "cg_warn_enc": "ENCUMBERED",
         "cg_currency": "{g}g {s}s {c}c",
+        "cg_derived_vitals": "Derived Vitals",
+        "cg_combat_stats": "Combat Stats",
+        "cg_initiative": "Initiative",
+        "cg_base_def": "Base Defense",
+        "cg_class_features": "Class Features",
 
         // --- CHARACTER SHEET ---
         "sheet_levelup": "Level Up",
+        "sheet_save": "Save",
+        "sheet_print": "Print Sheet",
         "sheet_hp": "Hit Points",
         "sheet_mp": "Mana",
         "sheet_sta": "Stamina",
@@ -85,6 +157,9 @@ const UI_DICTIONARY = {
         "sheet_inv": "Inventory",
         "sheet_notes": "Notes",
         "sheet_features": "Features & Talents",
+        "sheet_origin_traits": "Origin Traits",
+        "sheet_class_features": "Class Features",
+        "sheet_arch_talents": "Archetype Talents",
         "sheet_dodge": "Dodge",
         "sheet_parry": "Parry",
         "sheet_block": "Block",
@@ -162,6 +237,48 @@ const UI_DICTIONARY = {
         "tbl_btn_roll": "Roll {dice}"
     },
     "es": {
+        "lbl_commodity": "Mercancía",
+        "lbl_unit": "Unidad",
+        "lbl_value": "Valor",
+        "lbl_material": "Material",
+        "lbl_form": "Forma",
+        "lbl_subject": "Sujeto",
+        "lbl_reagent": "Reactivo",
+        "tag_melee": "Cuerpo a Cuerpo",
+        "tag_ranged": "A Distancia",
+        "tag_finesse": "Sutil",
+        "tag_light": "Ligera",
+        "tag_heavy": "Pesada",
+        "tag_two_handed": "A Dos Manos",
+        "tag_reach": "Alcance",
+        "tag_thrown": "Arrojadiza",
+        "tag_loading": "Recarga",
+        "tag_precise": "Precisa",
+        "tag_sunder": "Hender",
+        "tag_messy": "Desordenada",
+        "tag_guard": "Guardia",
+        "tag_brace": "Preparar",
+        "wep_unarmed": "Golpe Desarmado",
+        "lbl_class_lvl": "Nivel de Clase",
+        "lbl_archetype": "Arquetipo",
+        "lbl_worn": "Puesto",
+        "lbl_unarmored": "Sin Armadura",
+        "cg_lbl_anc_feat": "Talento Ancestral",
+        "cg_lbl_skill_training": "Entrenamiento de Habilidad",
+        "cg_lbl_wealth": "Riqueza Inicial",
+        "cg_lbl_starting_gear": "Equipo Inicial",
+        "cg_lbl_synergy_lvl": "Sinergia Nivel {lvl}",
+        "cg_lbl_role": "Rol",
+        "cg_lbl_resource": "Recurso",
+        "cg_lbl_stats": "Estadísticas",
+        "cg_lbl_skill": "Habilidad",
+        "cg_lbl_weapons": "Armas",
+        "cg_lbl_armor": "Armadura",
+        "cg_lbl_selected": "{current}/{max} Seleccionados",
+        "cg_lbl_talents_header": "Talentos de {name}",
+        "sheet_origin_traits": "Rasgos de Origen",
+        "sheet_class_features": "Rasgos de Clase",
+        "sheet_arch_talents": "Talentos de Arquetipo",
         // --- GENERIC ---
         "btn_save": "Guardar",
         "btn_cancel": "Cancelar",
@@ -179,6 +296,7 @@ const UI_DICTIONARY = {
         "lbl_effect": "Efecto",
         "lbl_cost": "Coste",
         "lbl_source": "Fuente",
+        "lbl_level": "Nivel",
 
         // --- NAVIGATION ---
         "nav_dashboard": "Tablero",
@@ -188,6 +306,24 @@ const UI_DICTIONARY = {
         "nav_items": "El Artificiero",
         "nav_library": "Biblioteca",
         "nav_tables": "Tablas y Dados",
+
+        // --- DASHBOARD ---
+        "dash_subtitle": "Compañero RPG de Fantasía Oscura",
+        "dash_resume": "Reanudar",
+        "dash_create": "Crear Nuevo Personaje",
+        "dash_new_char": "Nuevo Héroe",
+        "dash_new_char_desc": "Crear un personaje desde cero.",
+        "dash_new_mon": "Nuevo Monstruo",
+        "dash_new_mon_desc": "Forjar una bestia o jefe.",
+        "dash_new_item": "Nuevo Objeto",
+        "dash_new_item_desc": "Crear botín mágico.",
+        "dash_rules": "Reglas",
+        "dash_rules_desc": "Tablas y mecánicas.",
+        "dash_stats": "Estadísticas",
+        "dash_heroes": "Héroes",
+        "dash_monsters": "Monstruos",
+        "dash_items": "Objetos",
+        "dash_recent": "Actividad Reciente",
 
         // --- CHARGEN ---
         "cg_step_bio": "Orígenes",
@@ -199,10 +335,12 @@ const UI_DICTIONARY = {
         "cg_btn_back": "Atrás",
         "cg_btn_finish": "Terminar",
         "cg_lbl_identity": "Identidad",
+        "cg_lbl_name": "Nombre del Personaje",
         "cg_lbl_portrait": "Retrato",
         "cg_ph_url": "Pegar URL de Imagen...",
         "cg_btn_upload": "O Subir Archivo",
         "cg_lbl_ancestry": "Ascendencia",
+        "cg_lbl_anc_feat": "Talento Ancestral",
         "cg_lbl_background": "Trasfondo",
         "cg_btn_roll_bio": "Tirar Orígenes",
         "cg_sel_bonus": "Elegir Bono",
@@ -223,12 +361,20 @@ const UI_DICTIONARY = {
         "cg_tab_arm": "Armadura",
         "cg_tab_gear": "Equipo",
         "cg_btn_kit": "Equipar Kit de Trasfondo",
+        "cg_btn_kit_added": "Equipo Añadido",
         "cg_lbl_slots": "Espacios de Inv.",
         "cg_warn_enc": "SOBRECARGA",
         "cg_currency": "{g}o {s}p {c}c",
+        "cg_derived_vitals": "Vitales Derivados",
+        "cg_combat_stats": "Estadísticas de Combate",
+        "cg_initiative": "Iniciativa",
+        "cg_base_def": "Defensa Base",
+        "cg_class_features": "Rasgos de Clase",
 
         // --- SHEET ---
         "sheet_levelup": "Subir Nivel",
+        "sheet_save": "Guardar",
+        "sheet_print": "Imprimir",
         "sheet_hp": "Puntos de Vida",
         "sheet_mp": "Maná",
         "sheet_sta": "Aguante",
@@ -241,6 +387,9 @@ const UI_DICTIONARY = {
         "sheet_inv": "Inventario",
         "sheet_notes": "Notas",
         "sheet_features": "Rasgos y Talentos",
+        "sheet_origin_traits": "Rasgos de Origen",
+        "sheet_class_features": "Rasgos de Clase",
+        "sheet_arch_talents": "Talentos de Arquetipo",
         "sheet_dodge": "Esquivar",
         "sheet_parry": "Parar",
         "sheet_block": "Bloq.",
@@ -427,22 +576,22 @@ export const I18n = {
     fmt: (key, vars = {}) => {
         let str = UI_DICTIONARY[I18n.currentLang][key] || key;
         for (const [k, v] of Object.entries(vars)) {
+            // Replace {key} with value
             str = str.replace(`{${k}}`, v);
         }
         return str;
     },
 
-    /**
-     * Normalizes a localized string back to a System Key.
-     * e.g., "Guerrero" -> "Warrior"
-     */
     normalize: (type, value) => {
         if (!value) return null;
-        const lower = String(value).toLowerCase().trim();
+        let lower = String(value).toLowerCase().trim();
+        
+        // Strip prefixes if present (e.g., "role_guerrero" -> "guerrero")
+        if (lower.startsWith('role_')) lower = lower.replace('role_', '');
+
         if (SYSTEM_KEYS[type] && SYSTEM_KEYS[type][lower]) {
             return SYSTEM_KEYS[type][lower];
         }
-        // If not found, return the original (assuming it's already a key or unknown)
         return value;
     },
 

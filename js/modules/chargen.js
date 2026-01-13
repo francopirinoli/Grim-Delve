@@ -231,7 +231,8 @@ export const CharGen = {
      */
     renderStep: () => {
         const container = document.getElementById('step-container');
-        container.innerHTML = ''; // Clear previous content
+        const t = I18n.t; // Localization
+        container.innerHTML = ''; 
 
         // Visual Update of Sidebar
         document.querySelectorAll('.step-item').forEach(el => {
@@ -244,10 +245,9 @@ export const CharGen = {
         
         if (prevBtn && nextBtn) {
             prevBtn.disabled = (CharGen.currentStep === 1);
-            // FIX: Always reset Next button to Enabled by default.
-            // Specific steps (like Step 3) can disable it again in their render function if conditions aren't met.
             nextBtn.disabled = false; 
-            nextBtn.textContent = (CharGen.currentStep === 5) ? "Finish" : "Next";
+            // FIX: Localized button text
+            nextBtn.textContent = (CharGen.currentStep === 5) ? t('cg_btn_finish') : t('cg_btn_next');
         }
 
         // Router for Steps
@@ -323,8 +323,6 @@ renderBio: (el) => {
         const t = I18n.t;
         
         // Skill Helper (Localized manually here for the dropdowns)
-        // In a full polish pass, these names should also come from the dictionary, 
-        // but for now we ensure the logic keys match the system.
         const allSkills = [
             {id: "athletics", name: "Athletics (STR)"},
             {id: "acrobatics", name: "Acrobatics (DEX)"},
@@ -381,9 +379,9 @@ renderBio: (el) => {
 
                     <!-- Dynamic Feat Selector -->
                     <div class="form-group" id="feat-group" style="display:none; border-left: 2px solid var(--accent-blue); padding-left: 10px;">
-                        <label class="form-label">Ancestry Feat</label>
+                        <label class="form-label">${t('cg_lbl_anc_feat')}</label>
                         <select id="sel-anc-feat">
-                            <option value="">-- Choose One --</option>
+                            <option value="">-- ${t('btn_view')} --</option>
                         </select>
                         <div id="feat-desc-tiny" style="font-size:0.8rem; color:#888; margin-top:5px; font-style:italic;"></div>
                     </div>
@@ -392,28 +390,28 @@ renderBio: (el) => {
                     <div id="ancestry-options" style="display:none; margin-bottom:1.5rem; padding:10px; border:1px dashed var(--accent-gold); border-radius:4px;">
                         <label class="form-label" style="font-size:0.9rem;">${t('cg_sel_bonus')}</label>
                         <select id="sel-anc-choice">
-                            <option value="">-- Select --</option>
-                            <option value="hp_flat">+4 HP</option>
-                            <option value="mp_flat">+2 MP</option>
-                            <option value="sta_flat">+1 STA</option>
-                            <option value="slots_flat">+1 Slot</option>
+                            <option value="">-- ${t('btn_view')} --</option>
+                            <option value="hp_flat">+4 ${t('mon_stat_hp')}</option>
+                            <option value="mp_flat">+2 ${t('sheet_mp')}</option>
+                            <option value="sta_flat">+1 ${t('sheet_sta')}</option>
+                            <option value="slots_flat">+1 ${t('cg_lbl_slots')}</option>
                         </select>
                     </div>
 
-                    <!-- Dynamic Skill Choice (RESTORED TO FIX CRASH) -->
+                    <!-- Dynamic Skill Choice -->
                     <div id="ancestry-skill-options" style="display:none; margin-bottom:1.5rem; padding:10px; border:1px dashed var(--accent-blue); border-radius:4px;">
                         <label class="form-label" style="font-size:0.9rem;">${t('cg_sel_skill')}</label>
                         <select id="sel-anc-skill">
-                            <option value="">-- Select --</option>
+                            <option value="">-- ${t('btn_view')} --</option>
                             <!-- Populated dynamically -->
                         </select>
                     </div>
 
-                    <!-- Dynamic Element Choice (RESTORED TO FIX CRASH) -->
+                    <!-- Dynamic Element Choice -->
                     <div id="ancestry-element-options" style="display:none; margin-bottom:1.5rem; padding:10px; border:1px dashed var(--accent-crimson); border-radius:4px;">
                         <label class="form-label" style="font-size:0.9rem;">${t('cg_sel_resist')}</label>
                         <select id="sel-anc-element">
-                            <option value="">-- Select --</option>
+                            <option value="">-- ${t('btn_view')} --</option>
                             <!-- Populated dynamically -->
                         </select>
                     </div>
@@ -421,7 +419,7 @@ renderBio: (el) => {
                     <div class="form-group">
                         <label class="form-label">${t('cg_lbl_background')}</label>
                         <select id="sel-background">
-                            <option value="">-- Select --</option>
+                            <option value="">-- ${t('btn_view')} --</option>
                             ${data.backgrounds.map(b => `<option value="${b.id}">${b.name}</option>`).join('')}
                         </select>
                     </div>
@@ -432,7 +430,7 @@ renderBio: (el) => {
                 <!-- Preview Card -->
                 <div class="info-column">
                     <div id="bio-preview" class="preview-card">
-                        <p class="text-muted" style="text-align:center; margin-top:2rem;">Select options to view details.</p>
+                        <p class="text-muted" style="text-align:center; margin-top:2rem;">${t('lbl_desc')}</p>
                     </div>
                 </div>
             </div>
@@ -463,7 +461,8 @@ renderBio: (el) => {
         // 4. Define Helper Functions (Scoped to this render)
 
         const populateFeats = (ancId) => {
-            featSelect.innerHTML = '<option value="">-- Choose One --</option>';
+            // Localize option placeholder
+            featSelect.innerHTML = `<option value="">-- ${t('btn_view')} --</option>`;
             if (!ancId) {
                 featGroup.style.display = 'none';
                 return;
@@ -506,7 +505,7 @@ renderBio: (el) => {
                     // Element Resistance Choice
                     if (mods.select_element && elemDiv) {
                         elemDiv.style.display = 'block';
-                        elemSelect.innerHTML = '<option value="">-- Select --</option>';
+                        elemSelect.innerHTML = `<option value="">-- ${t('btn_view')} --</option>`;
                         mods.select_element.forEach(el => {
                             const opt = document.createElement('option');
                             opt.value = el; opt.textContent = el;
@@ -519,7 +518,7 @@ renderBio: (el) => {
                     // Skill Choice
                     if (mods.select_skill && skillDiv) {
                         skillDiv.style.display = 'block';
-                        skillSelect.innerHTML = '<option value="">-- Select --</option>';
+                        skillSelect.innerHTML = `<option value="">-- ${t('btn_view')} --</option>`;
                         // Filter skills based on "any" or specific array in JSON
                         let options = (mods.select_skill === "any") ? allSkills : allSkills.filter(s => mods.select_skill.includes(s.id));
                         
@@ -994,9 +993,10 @@ renderBio: (el) => {
         const ancId = CharGen.char.ancestry;
         const bgId = CharGen.char.background;
         const previewEl = document.getElementById('bio-preview');
+        const t = I18n.t; // Localization
         
         if (!ancId && !bgId) {
-            previewEl.innerHTML = '<p style="color:#666; text-align:center; margin-top:2rem;">Select an Ancestry and Background to view traits.</p>';
+            previewEl.innerHTML = `<p class="text-muted" style="text-align:center; margin-top:2rem;">${t('lbl_desc')}</p>`;
             return;
         }
 
@@ -1010,7 +1010,7 @@ renderBio: (el) => {
                     <div class="preview-section">
                         <div class="preview-header">${anc.name}</div>
                         <div class="preview-text"><em>${anc.description}</em></div>
-                        <div class="preview-label" style="margin-top:10px;">Ancestry Feats (Choose 1 later):</div>
+                        <div class="preview-label" style="margin-top:10px;">${t('cg_lbl_anc_feat')}:</div>
                         <ul style="padding-left: 20px; font-size: 0.85rem;">
                             ${anc.feats.map(f => `<li><strong>${f.name}:</strong> ${f.effect}</li>`).join('')}
                         </ul>
@@ -1023,6 +1023,13 @@ renderBio: (el) => {
         if (bgId) {
             const bg = data.backgrounds.find(b => b.id === bgId);
             if (bg) {
+                // Localize Gear List
+                const gearList = bg.gear.map(g => {
+                    // Try to translate if it's a known item, otherwise keep original
+                    // For now, keep original string as item data might not be loaded here
+                    return g; 
+                }).join(', ');
+
                 html += `
                     <div class="preview-section" style="border-top: 1px solid #333; padding-top: 1rem;">
                         <div class="preview-header">${bg.name}</div>
@@ -1030,11 +1037,11 @@ renderBio: (el) => {
                         
                         <div class="split-view" style="gap: 10px; margin-top:10px;">
                             <div>
-                                <div class="preview-label">Skill Training</div>
+                                <div class="preview-label">${t('cg_lbl_skill_training')}</div>
                                 <div class="preview-text">${bg.skill}</div>
                             </div>
                             <div>
-                                <div class="preview-label">Starting Wealth</div>
+                                <div class="preview-label">${t('cg_lbl_wealth')}</div>
                                 <div class="preview-text">${bg.gear[bg.gear.length-1]}</div> 
                             </div>
                         </div>
@@ -1044,7 +1051,7 @@ renderBio: (el) => {
                             <div>${bg.feat.effect}</div>
                         </div>
 
-                        <div class="preview-label" style="margin-top:10px;">Starting Gear:</div>
+                        <div class="preview-label" style="margin-top:10px;">${t('cg_lbl_starting_gear')}:</div>
                         <div class="preview-text" style="font-size: 0.8rem;">${bg.gear.slice(0, -1).join(', ')}</div>
                     </div>
                 `;
@@ -1154,10 +1161,12 @@ renderBio: (el) => {
         const idB = CharGen.char.archB;
         const previewEl = document.getElementById('class-preview');
         const talentUI = document.getElementById('talent-selection-ui');
+        const t = I18n.t;
+        const fmt = I18n.fmt;
 
         // 1. Validation
         if (!idA || !idB) {
-            previewEl.innerHTML = '<p style="color:#666; text-align:center; margin-top:2rem;">Select two Archetypes to reveal your Class.</p>';
+            previewEl.innerHTML = `<p style="color:#666; text-align:center; margin-top:2rem;">${t('lbl_desc')}</p>`;
             talentUI.style.display = 'none';
             return;
         }
@@ -1179,23 +1188,28 @@ renderBio: (el) => {
         CharGen.char.className = foundClass.name;
 
         // --- HELPER: Render Archetype Detail Block ---
-        const renderArchDetail = (arch) => `
+        const renderArchDetail = (arch) => {
+            // Translate stats array [STR, DEX] -> [FUE, DES]
+            const translatedStats = arch.primary_stats.map(s => t('stat_' + I18n.normalize('stats', s).toLowerCase())).join(', ');
+
+            return `
             <div style="padding:10px; font-size:0.85rem; color:#ccc; border-top:1px solid #444;">
                 <div style="margin-bottom:8px; font-style:italic;">${arch.description}</div>
                 
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px; margin-bottom:8px; font-family:var(--font-mono); font-size:0.75rem;">
-                    <div><span style="color:var(--accent-blue);">Role:</span> ${arch.role}</div>
-                    <div><span style="color:var(--accent-blue);">Resource:</span> ${arch.resource}</div>
-                    <div><span style="color:var(--accent-blue);">Stats:</span> ${arch.primary_stats.join(', ')}</div>
-                    <div><span style="color:var(--accent-blue);">Skill:</span> ${arch.proficiencies.skills.join(', ')}</div>
+                    <div><span style="color:var(--accent-blue);">${t('cg_lbl_role')}:</span> ${t('role_' + I18n.normalize('roles', arch.role).toLowerCase())}</div>
+                    <div><span style="color:var(--accent-blue);">${t('cg_lbl_resource')}:</span> ${arch.resource}</div>
+                    <div><span style="color:var(--accent-blue);">${t('cg_lbl_stats')}:</span> ${translatedStats}</div>
+                    <div><span style="color:var(--accent-blue);">${t('cg_lbl_skill')}:</span> ${arch.proficiencies.skills.join(', ')}</div>
                 </div>
 
                 <div style="font-size:0.75rem;">
-                    <div><strong style="color:var(--text-muted);">Weapons:</strong> ${arch.proficiencies.weapons.join(', ')}</div>
-                    <div><strong style="color:var(--text-muted);">Armor:</strong> ${arch.proficiencies.armor.join(', ')}</div>
+                    <div><strong style="color:var(--text-muted);">${t('cg_lbl_weapons')}:</strong> ${arch.proficiencies.weapons.join(', ')}</div>
+                    <div><strong style="color:var(--text-muted);">${t('cg_lbl_armor')}:</strong> ${arch.proficiencies.armor.join(', ')}</div>
                 </div>
             </div>
-        `;
+            `;
+        };
 
         // --- HELPER: Render Synergy Feats ---
         let featsHtml = '';
@@ -1209,7 +1223,7 @@ renderBio: (el) => {
                 featsHtml += `
                     <div style="margin-bottom:10px; padding-bottom:10px; border-bottom:1px dashed #444; last-child:border-bottom:none;">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2px;">
-                            <span style="font-size:0.75rem; color:${badgeColor}; font-weight:bold; text-transform:uppercase;">Level ${feat.level} Synergy</span>
+                            <span style="font-size:0.75rem; color:${badgeColor}; font-weight:bold; text-transform:uppercase;">${fmt('cg_lbl_synergy_lvl', {lvl: feat.level})}</span>
                             ${feat.cost ? `<span style="font-size:0.7rem; color:#666;">${feat.cost}</span>` : ''}
                         </div>
                         <div style="font-weight:bold; font-size:0.9rem; color:var(--text-main);">${feat.name}</div>
@@ -1230,7 +1244,7 @@ renderBio: (el) => {
                 
                 <!-- Section 1: Synergy Feats (Open by Default) -->
                 <details class="accordion-box" open>
-                    <summary class="accordion-header">Class Features (Synergy)</summary>
+                    <summary class="accordion-header">${t('cg_class_features')}</summary>
                     <div class="accordion-content">
                         ${featsHtml}
                     </div>
@@ -1238,13 +1252,13 @@ renderBio: (el) => {
 
                 <!-- Section 2: Archetype A -->
                 <details class="accordion-box">
-                    <summary class="accordion-header">${archA.name} <span style="font-size:0.7em; opacity:0.7;">${archA.role}</span></summary>
+                    <summary class="accordion-header">${archA.name}</summary>
                     ${renderArchDetail(archA)}
                 </details>
 
                 <!-- Section 3: Archetype B -->
                 <details class="accordion-box">
-                    <summary class="accordion-header">${archB.name} <span style="font-size:0.7em; opacity:0.7;">${archB.role}</span></summary>
+                    <summary class="accordion-header">${archB.name}</summary>
                     ${renderArchDetail(archB)}
                 </details>
             </div>
@@ -1359,15 +1373,17 @@ renderBio: (el) => {
         const container = document.getElementById('talent-columns');
         const instruct = document.getElementById('talent-instruction');
         const isPure = (archA.id === archB.id);
+        const t = I18n.t;
+        const fmt = I18n.fmt;
         
         container.innerHTML = '';
 
         // Helper to render a list
         const makeList = (arch, colId) => {
-            let html = `<div class="talent-col" id="${colId}"><h4>${arch.name} Talents</h4>`;
+            // Localize header: "Soldier Talents" -> "Talentos de Soldado"
+            let html = `<div class="talent-col" id="${colId}"><h4>${fmt('cg_lbl_talents_header', {name: arch.name})}</h4>`;
             arch.talents.forEach((t, idx) => {
                 const isSelected = CharGen.char.talents.some(sel => sel.name === t.name);
-                // FIX: Removed onclick, added data attributes
                 html += `
                     <div class="talent-opt ${isSelected ? 'selected' : ''}" 
                          data-arch="${arch.id}" 
@@ -1386,19 +1402,18 @@ renderBio: (el) => {
         };
 
         if (isPure) {
-            instruct.textContent = "Pure Class: Select 2 Talents from your Archetype.";
+            instruct.textContent = t('cg_txt_pure');
             container.innerHTML = makeList(archA, 'col-pure');
             container.style.gridTemplateColumns = "1fr";
         } else {
-            instruct.textContent = "Hybrid Class: Select 1 Talent from EACH Archetype.";
+            instruct.textContent = t('cg_txt_hybrid');
             container.innerHTML = makeList(archA, 'col-a') + makeList(archB, 'col-b');
             container.style.gridTemplateColumns = "1fr 1fr";
         }
 
-        // FIX: Attach Event Listeners via JS to handle Scope
         container.querySelectorAll('.talent-opt').forEach(el => {
             el.addEventListener('click', (e) => {
-                const target = e.currentTarget; // Important: currentTarget gets the div with data attrs
+                const target = e.currentTarget; 
                 const archId = target.dataset.arch;
                 const idx = parseInt(target.dataset.idx);
                 const colId = target.dataset.col;
@@ -1407,6 +1422,19 @@ renderBio: (el) => {
         });
         
         CharGen.updateTalentCount();
+    },
+
+    updateTalentCount: () => {
+        const countEl = document.getElementById('talent-count');
+        const count = CharGen.char.talents.length;
+        const limit = (CharGen.char.archA === CharGen.char.archB) ? 2 : 2; // Actually creation limit is always 2
+        const t = I18n.t;
+        const fmt = I18n.fmt;
+        
+        if(countEl) {
+            countEl.textContent = fmt('cg_lbl_selected', {current: count, max: limit});
+            countEl.style.color = (count === limit) ? 'var(--accent-gold)' : 'var(--text-muted)';
+        }
     },
 
     toggleTalent: (archId, talentIdx, colId) => {
@@ -1514,6 +1542,9 @@ renderBio: (el) => {
     renderStats: (el) => {
         const t = I18n.t;
         const isManual = CharGen.statState.manualMode;
+        
+        // Define stats explicitly for iteration
+        const statKeys = ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'];
 
         const html = `
             <div class="split-view">
@@ -1538,9 +1569,9 @@ renderBio: (el) => {
                     </div>
 
                     <div class="stat-grid">
-                        ${['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'].map(stat => `
+                        ${statKeys.map(stat => `
                             <div class="stat-box ${!isManual ? 'interactive' : ''} ${CharGen.char.stats[stat] !== null ? 'filled' : ''}" data-stat="${stat}">
-                                <label style="color:var(--accent-gold); font-weight:bold; display:block; margin-bottom:5px;">${stat}</label>
+                                <label style="color:var(--accent-gold); font-weight:bold; display:block; margin-bottom:5px;">${t('stat_' + stat.toLowerCase())}</label>
                                 ${isManual 
                                     ? `<input type="number" class="manual-input" data-stat="${stat}" value="${CharGen.char.stats[stat] || 0}">`
                                     : `<div class="stat-value-display">${CharGen.char.stats[stat] !== null ? (CharGen.char.stats[stat] >= 0 ? '+'+CharGen.char.stats[stat] : CharGen.char.stats[stat]) : '--'}</div>`
@@ -1557,45 +1588,34 @@ renderBio: (el) => {
         el.innerHTML = html;
 
         // --- Event Listeners ---
-        
-        // Manual Toggle
         document.getElementById('toggle-manual').addEventListener('change', (e) => {
             CharGen.statState.manualMode = e.target.checked;
             CharGen.statState.assignedIndices = {};
-            // Reset stats on toggle to avoid confusion
             CharGen.char.stats = { STR: null, DEX: null, CON: null, INT: null, WIS: null, CHA: null };
             CharGen.renderStats(el);
         });
 
         if (!isManual) {
-            // Roller
             document.getElementById('btn-roll-stats').addEventListener('click', CharGen.rollStats);
-            
-            // Pool Buttons
             el.querySelectorAll('.pool-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const idx = parseInt(e.target.dataset.idx);
                     CharGen.statState.selectedValIndex = idx;
-                    CharGen.renderStats(el); // Re-render to show selection state
+                    CharGen.renderStats(el);
                 });
             });
-
-            // Grid Boxes
             el.querySelectorAll('.stat-box').forEach(box => {
                 box.addEventListener('click', () => CharGen.assignStatFromPool(box.dataset.stat));
             });
         } else {
-            // Manual Inputs
             el.querySelectorAll('.manual-input').forEach(input => {
                 input.addEventListener('input', (e) => {
                     CharGen.char.stats[e.target.dataset.stat] = parseInt(e.target.value) || 0;
-                    CharGen.calculateDerived(); // Live update
+                    CharGen.calculateDerived(); 
                     CharGen.validateStats();
                 });
             });
         }
-
-        // Trigger initial calculation to populate the preview box immediately
         CharGen.calculateDerived();
         CharGen.validateStats();
     },
@@ -1703,7 +1723,6 @@ renderBio: (el) => {
         
         if (!data) return;
 
-        // --- 1. Class Logic ---
         let isFullWarrior = false;
         let isFullCaster = false;
         let isFullSpecialist = false;
@@ -1713,18 +1732,32 @@ renderBio: (el) => {
         let archA = null;
         let archB = null;
 
+        // --- ROBUST ROLE CHECKING ---
+        // Instead of checking the string "Warrior", we check the ID prefix or specific IDs
+        // Assuming IDs are like "arch_soldier", "arch_brute" etc.
+        // We map IDs to Roles manually here to be 100% safe against translation errors.
+        
+        const ROLE_MAP = {
+            "arch_soldier": "Warrior", "arch_brute": "Warrior", "arch_guardian": "Warrior", "arch_skirmisher": "Warrior",
+            "arch_arcanist": "Spellcaster", "arch_occultist": "Spellcaster", "arch_priest": "Spellcaster", "arch_primalist": "Spellcaster",
+            "arch_rogue": "Specialist", "arch_warden": "Specialist", "arch_leader": "Specialist", "arch_crafter": "Specialist"
+        };
+
         if (c.archA && c.archB) {
             archA = data.archetypes.find(a => a.id === c.archA);
             archB = data.archetypes.find(a => a.id === c.archB);
 
             if (archA && archB) {
-                isFullWarrior = (archA.role === "Warrior" && archB.role === "Warrior");
-                isFullCaster = (archA.role === "Spellcaster" && archB.role === "Spellcaster");
-                isFullSpecialist = (archA.role === "Specialist" && archB.role === "Specialist");
+                const roleA = ROLE_MAP[c.archA];
+                const roleB = ROLE_MAP[c.archB];
+
+                isFullWarrior = (roleA === "Warrior" && roleB === "Warrior");
+                isFullCaster = (roleA === "Spellcaster" && roleB === "Spellcaster");
+                isFullSpecialist = (roleA === "Specialist" && roleB === "Specialist");
                 
-                hasWarrior = (archA.role === "Warrior" || archB.role === "Warrior");
-                hasCaster = (archA.role === "Spellcaster" || archB.role === "Spellcaster");
-                hasSpecialist = (archA.role === "Specialist" || archB.role === "Specialist");
+                hasWarrior = (roleA === "Warrior" || roleB === "Warrior");
+                hasCaster = (roleA === "Spellcaster" || roleB === "Spellcaster");
+                hasSpecialist = (roleA === "Specialist" || roleB === "Specialist");
             }
         }
 
@@ -1766,11 +1799,25 @@ renderBio: (el) => {
         d.maxMP = 0;
         if (hasCaster) {
             let castMod = 0;
-            // Find casting stat
-            if(archA && ["INT","WIS","CHA"].some(st => archA.primary_stats.includes(st))) castMod = Math.max(castMod, s[archA.primary_stats[0]]||0);
-            if(archB && ["INT","WIS","CHA"].some(st => archB.primary_stats.includes(st))) castMod = Math.max(castMod, s[archB.primary_stats[0]]||0);
+            // Primary Stats are arrays strings ["STR", "DEX"]. 
+            // In Spanish JSON they might be ["FUE", "DES"] if translated.
+            // We need to Normalize the stat key.
             
-            if (castMod === 0) castMod = Math.max(int, wis, cha); // Fallback
+            const getCastStat = (arch) => {
+                if (!arch || !arch.primary_stats) return 0;
+                for (let rawStat of arch.primary_stats) {
+                    const normStat = I18n.normalize('stats', rawStat); // "FUE" -> "STR"
+                    if (["INT", "WIS", "CHA"].includes(normStat)) return s[normStat] || 0;
+                }
+                return 0;
+            };
+
+            const modA = getCastStat(archA);
+            const modB = getCastStat(archB);
+            castMod = Math.max(modA, modB);
+            
+            // Fallback
+            if (castMod === 0) castMod = Math.max(int, wis, cha); 
 
             if (isFullCaster) d.maxMP = ((level + 1) * 2) + castMod;
             else d.maxMP = (level + 1) + castMod;
@@ -1793,7 +1840,11 @@ renderBio: (el) => {
             if (mods.sta_flat) d.maxSTA += mods.sta_flat;
             if (mods.luck_flat) d.maxLuck += mods.luck_flat;
             if (mods.slots_flat) d.slots += mods.slots_flat;
-            if (mods.sta_mod) d.maxSTA += (s[mods.sta_mod] || 0);
+            
+            if (mods.sta_mod) {
+                const normStat = I18n.normalize('stats', mods.sta_mod);
+                d.maxSTA += (s[normStat] || 0);
+            }
         };
 
         // Ancestry Mods
@@ -1838,7 +1889,6 @@ renderBio: (el) => {
         if (d.slots < 8) d.slots = 8;
 
         // --- 5. Update UI ---
-        // This is the critical line that was missing in previous iterations
         CharGen.updateStatPreview(hitDie);
     },
 
@@ -1889,6 +1939,7 @@ renderBio: (el) => {
 renderGear: (el) => {
         const t = I18n.t;
         const w = CharGen.char.currency || { g: 0, s: 0, c: 0 };
+        const fmt = I18n.fmt;
         
         const html = `
             <div class="split-view">
@@ -1897,7 +1948,7 @@ renderGear: (el) => {
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
                             <h3 style="margin:0;">${t('cg_shop_title')}</h3>
                             <div id="wallet-display" style="font-family:var(--font-mono); font-size:1.1rem; color:var(--accent-gold);">
-                                💰 ${w.g}g ${w.s}s ${w.c}c
+                                💰 ${fmt('cg_currency', {g: w.g, s: w.s, c: w.c})}
                             </div>
                         </div>
                         <div class="shop-tabs">
@@ -1925,9 +1976,6 @@ renderGear: (el) => {
             </div>
         `;
         el.innerHTML = html;
-
-        // ... (Listeners remain same as before, see renderGear original code) ...
-        // Re-attach listeners for tabs, add buttons, and background gear logic.
         
         // Shop Tab Switching
         el.querySelectorAll('.tab-btn').forEach(btn => {
@@ -1943,7 +1991,7 @@ renderGear: (el) => {
         const hasBgItems = CharGen.char.inventory.some(i => i.type === "Background");
         if(hasBgItems) {
             bgBtn.disabled = true;
-            bgBtn.textContent = "✅ Gear Added";
+            bgBtn.textContent = `✅ ${t('cg_btn_kit_added')}`;
         } else {
             bgBtn.addEventListener('click', () => {
                 CharGen.equipBackgroundGear(); 
@@ -2057,21 +2105,22 @@ renderGear: (el) => {
     parseCostToCopper: (costStr) => {
         if (!costStr || costStr === "-") return 0;
 
-        // Normalize: lowercase, remove commas
         const clean = String(costStr).toLowerCase().replace(/,/g, '').trim();
 
-        // Regex: Capture numeric value and the unit identifier
-        // matches "50" then "g", "silver", "cp", etc.
-        const match = clean.match(/(\d+)\s*([a-z]+)/);
+        // Regex: Capture number and unit
+        const match = clean.match(/(\d+)\s*([a-zñ]+)/); // added ñ for 'año' edge cases, mainly just [a-z]
         
         if (!match) return 0;
 
         const val = parseInt(match[1], 10);
-        const unit = match[2]; // g, s, c, gold, silver, copper
+        const unit = match[2]; 
 
-        if (unit.startsWith('g')) return val * 100; // 1 Gold = 100 Copper
-        if (unit.startsWith('s')) return val * 10;  // 1 Silver = 10 Copper
-        return val; // Default to Copper
+        // Gold / Oro
+        if (unit.startsWith('g') || unit.startsWith('o')) return val * 100;
+        // Silver / Plata
+        if (unit.startsWith('s') || unit.startsWith('p')) return val * 10;
+        
+        return val; // Default Copper
     },
 
     // Convert character's current wealth to total Copper
@@ -2150,24 +2199,24 @@ renderGear: (el) => {
         const options = I18n.getData('options');
         const bg = options.backgrounds.find(b => b.id === bgId);
         const itemsData = I18n.getData('items');
+        const t = I18n.t;
 
         if (!bg || !bg.gear) return;
 
         let currentCopper = 0;
-        // Check if we already have these items to avoid duplicates
         const existingNames = CharGen.char.inventory.map(i => i.name);
 
         bg.gear.forEach(gearStr => {
-            // Money Check
-            if (gearStr.match(/(gold|silver|copper)/i)) {
+            // FIX: Check for English OR Spanish currency terms
+            // Matches: gold, silver, copper, oro, plata, cobre
+            if (gearStr.match(/(gold|silver|copper|oro|plata|cobre)/i)) {
                 currentCopper += CharGen.parseCostToCopper(gearStr);
-                return;
+                return; // Stop processing this string, it's money, not an item
             }
 
-            // prevent duplicates of background gear
             if (existingNames.includes(gearStr)) return;
 
-            // Name Parsing
+            // Name Parsing (Remove parenthesis details for lookup)
             const cleanName = gearStr.replace(/\s*\(.*?\)\s*/g, '').trim();
             
             // DB Lookup
@@ -2180,7 +2229,6 @@ renderGear: (el) => {
             if (dbItem) {
                 finalItem = JSON.parse(JSON.stringify(dbItem));
                 finalItem.cost = "-";
-                // Keep the flavor text name (e.g. "Rations (3 Days)")
                 finalItem.name = gearStr; 
             } else {
                 let slots = 0;
@@ -2196,21 +2244,16 @@ renderGear: (el) => {
                 };
             }
 
-            // Sanitize Type
             finalItem = CharGen._sanitizeItem(finalItem);
-
-            // Auto-Equip Logic
             finalItem.equipped = false;
-            const inv = CharGen.char.inventory;
             
+            // Auto-Equip Logic
+            const inv = CharGen.char.inventory;
             if (finalItem.type === "Melee" || finalItem.type === "Ranged") {
-                // Equip if we don't have a weapon equipped
                 if (!inv.some(i => (i.type === "Melee" || i.type === "Ranged") && i.equipped)) finalItem.equipped = true;
             } else if (finalItem.type === "Shield") {
-                // Equip if we don't have a shield
                 if (!inv.some(i => i.type === "Shield" && i.equipped)) finalItem.equipped = true;
             } else if (finalItem.type === "Armor") {
-                // Equip if we don't have armor
                 if (!inv.some(i => i.type === "Armor" && i.equipped)) finalItem.equipped = true;
             }
 
@@ -2221,11 +2264,10 @@ renderGear: (el) => {
         const currentTotal = CharGen.getWalletTotal();
         CharGen.updateWallet(currentTotal + currentCopper);
 
-        // Update Button
         const btn = document.getElementById('btn-bg-gear');
         if (btn) {
             btn.disabled = true;
-            btn.innerHTML = "✅ Added";
+            btn.textContent = `✅ ${t('cg_btn_kit_added')}`;
             btn.classList.remove('roll-btn');
             btn.classList.add('btn-secondary');
         }
@@ -2420,6 +2462,7 @@ renderSheet: async (el) => {
         const c = CharGen.char;
         const data = I18n.getData('options');
         const t = I18n.t; // Localization Helper
+        const fmt = I18n.fmt;
         
         // 1. Calculations & Sanity Checks
         CharGen.calculateDerived();
@@ -2438,7 +2481,6 @@ renderSheet: async (el) => {
         const background = data.backgrounds.find(b => b.id === c.background) || { name: "Unknown", feat: { name: "-", effect: "-" } };
         const cls = data.classes.find(cl => cl.id === c.classId) || { name: "Unknown", synergy_feats: [] };
         
-        // Archetype Names
         const archA = data.archetypes.find(a => a.id === c.archA)?.name || "Archetype A";
         const archB = data.archetypes.find(a => a.id === c.archB)?.name || "Archetype B";
         
@@ -2469,15 +2511,16 @@ renderSheet: async (el) => {
             ],
             classSynergy: cls.synergy_feats.filter(f => f.level <= c.level).map(f => ({
                 name: f.name,
-                source: `Class Lvl ${f.level}`,
+                source: fmt('mon_meta_fmt', {role: t('lbl_class_lvl'), lvl: f.level, family: '', role: ''}).replace('  ', ' ').trim(), 
                 effect: f.effect,
                 cost: f.cost
             })),
-            archetype: c.talents.map(t => ({
-                name: t.name,
-                source: t.sourceName || "Archetype",
-                effect: t.choice ? `${t.effect} <em>(${t.choice})</em>` : t.effect,
-                cost: t.cost
+            // FIX: Renamed iterator from 't' to 'tal' to avoid shadowing the translation function
+            archetype: c.talents.map(tal => ({
+                name: tal.name,
+                source: tal.sourceName || t('lbl_archetype'),
+                effect: tal.choice ? `${tal.effect} <em>(${tal.choice})</em>` : tal.effect,
+                cost: tal.cost
             }))
         };
 
@@ -2494,7 +2537,7 @@ renderSheet: async (el) => {
 
         const renderAttr = (stat, val) => `
             <div class="attr-cell">
-                <div class="attr-name">${stat}</div>
+                <div class="attr-name">${t('stat_' + stat.toLowerCase())}</div>
                 <div class="attr-num">${val >= 0 ? '+'+val : val}</div>
             </div>
         `;
@@ -2532,7 +2575,7 @@ renderSheet: async (el) => {
                         </div>
                         
                         <div class="char-subtitle">
-                            <span style="color:var(--accent-crimson); font-weight:bold;">${t('lbl_level')} ${c.level} ${c.className}</span>
+                            <span style="color:var(--accent-crimson); font-weight:bold;">${fmt('mon_meta_fmt', {lvl: c.level, family: c.className, role: ''})}</span>
                             <span class="sub-detail">(${archA} + ${archB})</span>
                         </div>
                         <div class="char-subtitle text-muted">
@@ -2572,8 +2615,8 @@ renderSheet: async (el) => {
                         </div>
 
                         <div class="worn-gear-section">
-                            <strong>Worn:</strong>
-                            <span class="worn-text">${equippedArmor.length ? equippedArmor.map(a => `${a.name} (AS ${a.as})`).join(', ') : 'Unarmored'}</span>
+                            <strong>${t('sheet_worn')}:</strong>
+                            <span class="worn-text">${equippedArmor.length ? equippedArmor.map(a => `${a.name} (${t('mon_stat_as')} ${a.as})`).join(', ') : t('lbl_unarmored')}</span>
                         </div>
 
                         <div class="panel-header" style="margin-top:1.5rem;">${t('sheet_skills')}</div>
@@ -2587,7 +2630,7 @@ renderSheet: async (el) => {
                             `).join('')}
                         </table>
                         <div class="profs-text">
-                            <strong>Tools:</strong> ${CharGen._getToolProfs(c, background).join(', ') || "-"}
+                            <strong>${t('sheet_tools')}:</strong> ${CharGen._getToolProfs(c, background).join(', ') || "-"}
                         </div>
                     </div>
 
@@ -2595,13 +2638,13 @@ renderSheet: async (el) => {
                     <div class="p1-right">
                         <div class="panel-header">${t('sheet_attacks')}</div>
                         <table class="weapons-compact">
-                            <thead><tr><th>Name</th><th>Atk</th><th>Dmg</th><th>Tags</th></tr></thead>
+                            <thead><tr><th>${t('lbl_name')}</th><th>${t('mon_stat_atk')}</th><th>${t('mon_stat_dmg')}</th><th>Tags</th></tr></thead>
                             <tbody>
                                 <tr>
-                                    <td>Unarmed</td>
+                                    <td>${t('wep_unarmed')}</td>
                                     <td>${(c.stats.STR || 0) >= 0 ? '+' : ''}${c.stats.STR || 0}</td>
                                     <td>1d4 ${(c.stats.STR || 0) >= 0 ? '+' : ''}${c.stats.STR || 0}</td>
-                                    <td class="tags">Melee</td>
+                                    <td class="tags">${t('tag_melee')}</td>
                                 </tr>
                                 ${weapons.map(w => CharGen._renderWeaponRow(w, c.stats)).join('')}
                             </tbody>
@@ -2644,7 +2687,7 @@ renderSheet: async (el) => {
                 <h2 class="page-title">${t('sheet_features')}</h2>
                 
                 <div class="feature-group">
-                    <h3 class="group-header">Origin Traits</h3>
+                    <h3 class="group-header">${t('sheet_origin_traits')}</h3>
                     <div class="feat-grid">
                         ${feats.origin.map(f => `
                             <div class="feat-card">
@@ -2658,7 +2701,7 @@ renderSheet: async (el) => {
                 </div>
 
                 <div class="feature-group">
-                    <h3 class="group-header">Class Features (${c.className})</h3>
+                    <h3 class="group-header">${t('sheet_class_features')} (${c.className})</h3>
                     <div class="feat-grid">
                         ${feats.classSynergy.map(f => `
                             <div class="feat-card class-feat">
@@ -2674,16 +2717,16 @@ renderSheet: async (el) => {
                 </div>
 
                 <div class="feature-group">
-                    <h3 class="group-header">Archetype Talents</h3>
+                    <h3 class="group-header">${t('sheet_arch_talents')}</h3>
                     <div class="feat-grid">
-                        ${feats.archetype.map(t => `
+                        ${feats.archetype.map(tal => `
                             <div class="feat-card">
                                 <div class="feat-top">
-                                    <span class="f-name">${t.name}</span>
-                                    <span class="f-source">${t.source}</span>
+                                    <span class="f-name">${tal.name}</span>
+                                    <span class="f-source">${tal.source}</span>
                                 </div>
-                                <div class="f-body">${t.effect}</div>
-                                ${t.cost ? `<div class="f-cost">${t.cost}</div>` : ''}
+                                <div class="f-body">${tal.effect}</div>
+                                ${tal.cost ? `<div class="f-cost">${tal.cost}</div>` : ''}
                             </div>
                         `).join('')}
                     </div>
@@ -2697,8 +2740,9 @@ renderSheet: async (el) => {
     },
 
     _renderWeaponRow: (w, stats) => {
+        const t = I18n.t;
         const isFinesse = (w.tags && w.tags.includes("Finesse")) || w.type === 'Ranged';
-        const isRanged = w.type === 'Ranged';
+        const isRanged = w.type === 'Ranged' || w.type === 'A Distancia';
         let atkMod = stats.STR || 0;
         
         if (isRanged) atkMod = stats.DEX || 0;
@@ -2706,11 +2750,17 @@ renderSheet: async (el) => {
         
         const sign = atkMod >= 0 ? '+' : '';
         
+        // Translate Tags
+        const translatedTags = w.tags ? w.tags.map(tag => {
+            const key = "tag_" + tag.toLowerCase().replace(/ /g, "_").replace(/-/g, "_");
+            return t(key) !== key ? t(key) : tag;
+        }).join(', ') : '';
+
         return `<tr>
             <td>${w.name}</td>
             <td>${sign}${atkMod}</td>
             <td>${w.damage} ${sign}${atkMod}</td>
-            <td class="tags">${w.tags ? w.tags.join(', ') : ''}</td>
+            <td class="tags">${translatedTags}</td>
         </tr>`;
     },
 

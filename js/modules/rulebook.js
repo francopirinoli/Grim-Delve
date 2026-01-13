@@ -34,7 +34,6 @@ export const Rulebook = {
 
         if (!data) return container.innerHTML = `<p>${t('lbl_loading')}</p>`;
 
-        // 1. The Shell
         const html = `
             <div class="rb-layout">
                 <nav class="rb-toc">
@@ -53,13 +52,10 @@ export const Rulebook = {
         `;
         container.innerHTML = html;
 
-        // 2. Populate TOC
         Rulebook.renderTOC(data);
 
-        // 3. Search Listener
         document.getElementById('rb-search').addEventListener('input', Rulebook.handleSearch);
 
-        // 4. Load first chapter by default
         if(data.length > 0) Rulebook.loadChapter(data[0].id);
     },
 
@@ -130,7 +126,7 @@ export const Rulebook = {
     processContent: (text) => {
         let processed = text;
         
-        // 1. Inject Keywords (Could be localized if keywords dictionary is moved to I18n)
+        // 1. Inject Keywords
         for (const [key, desc] of Object.entries(Rulebook.keywords)) {
             const regex = new RegExp(`\\b(${key})\\b`, 'g'); 
             processed = processed.replace(regex, `<span class="keyword" title="${desc}">$1</span>`);
@@ -153,10 +149,19 @@ export const Rulebook = {
         if (text.includes('[[DYNAMIC_CHASSIS_TABLES]]')) processed = processed.replace('[[DYNAMIC_CHASSIS_TABLES]]', Rulebook.generateChassisTables());
         if (text.includes('[[DYNAMIC_FAMILY_REFERENCE]]')) processed = processed.replace('[[DYNAMIC_FAMILY_REFERENCE]]', Rulebook.generateFamilyReference());
         
-        // Loot Tables (NEW)
+        // Loot Tables
         if (text.includes('[[DYNAMIC_LOOT_TABLE_1]]')) processed = processed.replace('[[DYNAMIC_LOOT_TABLE_1]]', Rulebook.generateLootTable('tier_1'));
         if (text.includes('[[DYNAMIC_LOOT_TABLE_2]]')) processed = processed.replace('[[DYNAMIC_LOOT_TABLE_2]]', Rulebook.generateLootTable('tier_2'));
         if (text.includes('[[DYNAMIC_LOOT_TABLE_3]]')) processed = processed.replace('[[DYNAMIC_LOOT_TABLE_3]]', Rulebook.generateLootTable('tier_3'));
+
+        // NEW: Chapter 11 Tables
+        if (text.includes('[[DYNAMIC_COMMODITIES]]')) processed = processed.replace('[[DYNAMIC_COMMODITIES]]', Rulebook.generateCommoditiesTable());
+        if (text.includes('[[DYNAMIC_ART_GENERATOR]]')) processed = processed.replace('[[DYNAMIC_ART_GENERATOR]]', Rulebook.generateArtTable());
+        if (text.includes('[[DYNAMIC_CURIOS]]')) processed = processed.replace('[[DYNAMIC_CURIOS]]', Rulebook.generateCuriosTable());
+        
+        if (text.includes('[[DYNAMIC_MAGIC_ARMOR]]')) processed = processed.replace('[[DYNAMIC_MAGIC_ARMOR]]', Rulebook.generateMagicTable('armor'));
+        if (text.includes('[[DYNAMIC_MAGIC_WEAPONS]]')) processed = processed.replace('[[DYNAMIC_MAGIC_WEAPONS]]', Rulebook.generateMagicTable('weapon'));
+        if (text.includes('[[DYNAMIC_MAGIC_WONDROUS]]')) processed = processed.replace('[[DYNAMIC_MAGIC_WONDROUS]]', Rulebook.generateMagicTable('wondrous'));
 
         return processed;
     },
@@ -192,8 +197,7 @@ export const Rulebook = {
         const t = I18n.t;
         const opts = I18n.getData('options');
         if (!opts) return "<em>Data missing.</em>";
-        // Header: Archetype | Role | Resource | Desc
-        let html = `<table class="table"><thead><tr><th>${t('cg_lbl_arch_a')}</th><th>${t('mon_lbl_role')}</th><th>Resource</th><th>${t('lbl_desc')}</th></tr></thead><tbody>`;
+        let html = `<table class="table"><thead><tr><th>${t('cg_lbl_arch_a')}</th><th>${t('mon_lbl_role')}</th><th>${t('cg_lbl_resource')}</th><th>${t('lbl_desc')}</th></tr></thead><tbody>`;
         opts.archetypes.forEach(a => {
             html += `<tr><td><strong>${a.name}</strong></td><td>${a.role}</td><td>${a.resource}</td><td>${a.description}</td></tr>`;
         });
@@ -226,7 +230,6 @@ export const Rulebook = {
             let style = "color:var(--text-muted);"; 
 
             if (archA && archB) {
-                // Determine type based on Normalized Roles to allow translation
                 const roleA = I18n.normalize('roles', archA.role);
                 const roleB = I18n.normalize('roles', archB.role);
 
@@ -234,7 +237,7 @@ export const Rulebook = {
                     type = "Pure";
                     style = "color:var(--accent-gold); font-weight:bold;";
                 } else if (roleA === roleB) {
-                    type = `Full ${archA.role}`; // Uses displayed role name
+                    type = `Full ${archA.role}`;
                     style = "color:var(--accent-blue); font-weight:bold;";
                 }
             }
@@ -249,8 +252,6 @@ export const Rulebook = {
         html += `</tbody></table>`;
         return html;
     },
-
-    /* --- DYNAMIC GENERATORS: ITEMS --- */
 
     generateArmorTable: () => {
         const t = I18n.t;
@@ -304,7 +305,7 @@ export const Rulebook = {
         const t = I18n.t;
         const data = I18n.getData('items');
         if (!data) return "<em>Data missing.</em>";
-        let html = `<table class="table"><thead><tr><th>Reagent</th><th>Type</th><th>${t('lbl_cost')}</th><th>DC</th><th>${t('lbl_effect')}</th></tr></thead><tbody>`;
+        let html = `<table class="table"><thead><tr><th>${t('lbl_reagent')}</th><th>Type</th><th>${t('lbl_cost')}</th><th>DC</th><th>${t('lbl_effect')}</th></tr></thead><tbody>`;
         data.reagents.forEach(r => {
             html += `<tr><td><strong>${r.name}</strong></td><td>${r.type}</td><td>${r.cost}</td><td>${r.craft_dc}</td><td><span style="font-size:0.85em">${r.effect}</span></td></tr>`;
         });
@@ -312,15 +313,13 @@ export const Rulebook = {
         return html;
     },
 
-    /* --- DYNAMIC GENERATORS: LOOT --- */
-    
     generateLootTable: (tier) => {
         const t = I18n.t;
         const data = I18n.getData('items');
         if (!data || !data.loot_tables[tier]) return "<em>Loot Data Missing</em>";
         
         const table = data.loot_tables[tier];
-        let html = `<table class="table"><thead><tr><th width="50">${t('tbl_roll')}</th><th>${t('lbl_name')}</th><th>${t('lbl_cost')}</th><th>${t('cg_lbl_slots')}</th></tr></thead><tbody>`;
+        let html = `<table class="table"><thead><tr><th width="50">d20</th><th>${t('lbl_name')}</th><th>${t('lbl_value')}</th><th>${t('cg_lbl_slots')}</th></tr></thead><tbody>`;
         
         table.forEach(r => {
             html += `<tr>
@@ -332,6 +331,99 @@ export const Rulebook = {
         });
         
         html += `</tbody></table>`;
+        return html;
+    },
+
+    /* --- NEW CHAPTER 11 GENERATORS --- */
+
+    generateCommoditiesTable: () => {
+        const t = I18n.t;
+        const data = I18n.getData('items');
+        if (!data || !data.commodities) return "<em>Data Missing</em>";
+
+        let html = `<table class="table"><thead><tr><th width="50">d20</th><th>${t('lbl_commodity')}</th><th>${t('lbl_unit')}</th><th>${t('cg_lbl_slots')}</th><th>${t('lbl_value')}</th></tr></thead><tbody>`;
+        
+        data.commodities.forEach((c, idx) => {
+            html += `<tr>
+                <td><strong>${idx + 1}</strong></td>
+                <td>${c.name}</td>
+                <td>${c.unit}</td>
+                <td>${c.slots}</td>
+                <td>${c.value}</td>
+            </tr>`;
+        });
+        
+        html += `</tbody></table>`;
+        return html;
+    },
+
+    generateArtTable: () => {
+        const t = I18n.t;
+        const data = I18n.getData('items');
+        if (!data || !data.art_generator) return "<em>Data Missing</em>";
+
+        const gen = data.art_generator;
+        let html = `<table class="table"><thead><tr><th width="50">d20</th><th>${t('lbl_material')}</th><th>${t('lbl_form')}</th><th>${t('lbl_subject')}</th></tr></thead><tbody>`;
+        
+        for (let i = 0; i < 20; i++) {
+            html += `<tr>
+                <td><strong>${i + 1}</strong></td>
+                <td>${gen.materials[i] || '-'}</td>
+                <td>${gen.forms[i] || '-'}</td>
+                <td>${gen.subjects[i] || '-'}</td>
+            </tr>`;
+        }
+        
+        html += `</tbody></table>`;
+        return html;
+    },
+
+    generateCuriosTable: () => {
+        const t = I18n.t;
+        const data = I18n.getData('items');
+        if (!data || !data.curios) return "<em>Data Missing</em>";
+
+        let html = `<table class="table"><thead><tr><th width="50">d20</th><th>${t('lbl_name')}</th><th>${t('lbl_effect')}</th></tr></thead><tbody>`;
+        
+        data.curios.forEach(c => {
+            html += `<tr>
+                <td><strong>${c.roll}</strong></td>
+                <td>${c.name}</td>
+                <td><span style="font-size:0.85em">${c.effect}</span></td>
+            </tr>`;
+        });
+        
+        html += `</tbody></table>`;
+        return html;
+    },
+
+    generateMagicTable: (type) => {
+        const t = I18n.t;
+        const data = I18n.getData('items');
+        if (!data || !data.magic_effects[type]) return "<em>Data Missing</em>";
+
+        const tiers = ['tier_1', 'tier_2', 'tier_3'];
+        const tierLabels = [t('item_tier_1'), t('item_tier_2'), t('item_tier_3')];
+        let html = "";
+
+        tiers.forEach((tierKey, idx) => {
+            const items = data.magic_effects[type][tierKey];
+            if (!items) return;
+
+            html += `<h4>${tierLabels[idx]}</h4>`;
+            html += `<table class="table"><thead><tr><th width="50">d20</th><th>${t('lbl_name')}</th><th>${t('lbl_reagent')}</th><th>${t('lbl_effect')}</th></tr></thead><tbody>`;
+            
+            items.forEach((item, rIdx) => {
+                html += `<tr>
+                    <td><strong>${rIdx + 1}</strong></td>
+                    <td>${item.name}</td>
+                    <td style="color:var(--accent-gold); font-size:0.8em;">${item.reagent}</td>
+                    <td><span style="font-size:0.85em">${item.effect}</span></td>
+                </tr>`;
+            });
+            html += `</tbody></table>`;
+        });
+
         return html;
     },
 
@@ -402,18 +494,27 @@ export const Rulebook = {
         const tables = container.querySelectorAll('table');
         tables.forEach(table => {
             const th = table.querySelector('th');
-            // Check for dice string (d6, d12, etc)
-            if (th && /[dD]\d+/.test(th.textContent)) {
-                const diceStr = th.textContent.match(/[dD]\d+/)[0];
-                const btn = document.createElement('button');
-                btn.className = 'roll-btn-table';
-                btn.innerHTML = `🎲 ${diceStr}`;
-                btn.onclick = (e) => {
-                    e.stopPropagation();
-                    Rulebook.rollTable(table, diceStr);
-                };
-                th.innerHTML = '';
-                th.appendChild(btn);
+            // Check for dice string (d6, d12, etc) inside the first header
+            // OR if the first header IS the dice string (e.g. "d20")
+            if (th) {
+                let diceStr = null;
+                const txt = th.textContent.trim();
+                
+                if (/[dD]\d+/.test(txt)) {
+                    diceStr = txt.match(/[dD]\d+/)[0];
+                }
+
+                if (diceStr) {
+                    const btn = document.createElement('button');
+                    btn.className = 'roll-btn-table';
+                    btn.innerHTML = `🎲 ${diceStr}`;
+                    btn.onclick = (e) => {
+                        e.stopPropagation();
+                        Rulebook.rollTable(table, diceStr);
+                    };
+                    th.innerHTML = '';
+                    th.appendChild(btn);
+                }
             }
         });
     },
@@ -430,6 +531,7 @@ export const Rulebook = {
             const cellText = rows[i].cells[0].textContent.trim();
             let isMatch = false;
             
+            // Handle range "1-2"
             if (cellText.includes('-')) {
                 const [min, max] = cellText.split('-').map(n => parseInt(n));
                 if (rollVal >= min && rollVal <= max) isMatch = true;

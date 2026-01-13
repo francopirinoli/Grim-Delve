@@ -94,11 +94,14 @@ function initNavigation() {
 function loadModule(moduleName) {
     const contentArea = document.getElementById('main-content');
     
-    // 1. Reset State
+    // 1. Reset State (CRITICAL FIX)
     contentArea.innerHTML = '';
     contentArea.scrollTop = 0;
     
-    // Remove specific class hooks if present
+    // Wipe ALL classes from the main content div to prevent layout bleed
+    contentArea.className = ''; 
+    
+    // Also remove Body-level classes (like Play Mode)
     document.body.classList.remove('mode-play'); 
 
     // 2. Route to Module

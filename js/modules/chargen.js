@@ -2460,7 +2460,7 @@ renderSheet: async (container) => {
         layout.className = 'char-manager-layout';
         
         // 2. Render The HUD (Header & Vitals) - Always visible
-        layout.appendChild(CharGen.renderHUD());
+        layout.appendChild(CharGen.());
 
         // 3. Render Navigation Tabs
         layout.appendChild(CharGen.renderTabs());
@@ -2495,6 +2495,7 @@ renderSheet: async (container) => {
     renderHUD: () => {
         const c = CharGen.char;
         const t = I18n.t;
+        const data = I18n.getData('options'); // Needed for name lookups
         
         // Calculate percentages
         const hpPct = c.derived.maxHP > 0 ? Math.min(100, (c.current.hp / c.derived.maxHP) * 100) : 0;
@@ -2502,33 +2503,46 @@ renderSheet: async (container) => {
         const staPct = c.derived.maxSTA > 0 ? Math.min(100, (c.current.sta / c.derived.maxSTA) * 100) : 0;
         const luckPct = c.derived.maxLuck > 0 ? Math.min(100, (c.current.luck / c.derived.maxLuck) * 100) : 0;
 
-        const roleKey = `role_${c.role || 'warrior'}`; 
+        // Lookup Names
+        const anc = data.ancestries.find(a => a.id === c.ancestry);
+        const bg = data.backgrounds.find(b => b.id === c.background);
+        const archA = data.archetypes.find(a => a.id === c.archA);
+        const archB = data.archetypes.find(a => a.id === c.archB);
+
+        const ancName = anc ? anc.name : "Unknown";
+        const bgName = bg ? bg.name : "Unknown";
+        const archAName = archA ? archA.name : "Archetype A";
+        const archBName = archB ? archB.name : "Archetype B";
         const className = c.className || "Adventurer";
 
         const div = document.createElement('div');
         div.className = 'char-hud';
         div.innerHTML = `
             <!-- Top Row: Name & Controls -->
-            <div class="hud-header">
-                <input type="text" class="edit-name" value="${c.name}" data-field="name" placeholder="Name">
+            <div class="hud-top">
+                <input type="text" class="edit-name" value="${c.name}" data-field="name" placeholder="${t('cg_lbl_name')}">
                 <div class="hud-controls">
                     <button id="btn-print-trigger" class="btn-icon" title="${t('btn_print')}">🖨️</button>
                     <button id="btn-save-trigger" class="btn-icon" title="${t('btn_save')}">💾</button>
                 </div>
             </div>
 
-            <!-- Second Row: Meta Data (Level, Class, XP) -->
-            <div class="hud-sub-header">
-                <div class="meta-group">
-                    <span class="meta-label">Lvl</span>
-                    <input type="number" class="edit-tiny" value="${c.level}" data-field="level">
+            <!-- Second Row: Bio & Meta -->
+            <div class="hud-bio-row">
+                <div class="bio-group">
+                    <span class="bio-main">${ancName} ${bgName}</span>
+                    <span class="bio-sub">${className} (${archAName} + ${archBName})</span>
                 </div>
-                <div class="meta-divider">|</div>
-                <div class="meta-text">${className}</div>
-                <div class="meta-divider">|</div>
                 <div class="meta-group">
-                    <span class="meta-label">XP</span>
-                    <span class="meta-val">${c.current.xp} / 10</span>
+                    <div class="meta-pill">
+                        <span class="lbl">Lvl</span>
+                        <input type="number" class="edit-tiny" value="${c.level}" data-field="level">
+                    </div>
+                    <div class="meta-pill">
+                        <span class="lbl">XP</span>
+                        <input type="number" class="edit-tiny" value="${c.current.xp}" data-vital="xp">
+                        <span class="static">/ 10</span>
+                    </div>
                 </div>
             </div>
 
@@ -2536,9 +2550,9 @@ renderSheet: async (container) => {
             <div class="hud-vitals-grid">
                 <!-- HP -->
                 <div class="vital-card red">
-                    <div class="vital-top">
-                        <span class="vital-title">${t('sheet_hp')}</span>
-                        <div class="vital-inputs">
+                    <div class="vital-header">
+                        <span class="v-title">${t('sheet_hp')}</span>
+                        <div class="v-inputs">
                             <input type="number" class="v-cur" value="${c.current.hp}" data-vital="hp">
                             <span class="sep">/</span>
                             <input type="number" class="v-max" value="${c.derived.maxHP}" data-vital="maxHP">
@@ -2549,9 +2563,9 @@ renderSheet: async (container) => {
 
                 <!-- STA -->
                 <div class="vital-card green">
-                    <div class="vital-top">
-                        <span class="vital-title">${t('sheet_sta')}</span>
-                        <div class="vital-inputs">
+                    <div class="vital-header">
+                        <span class="v-title">${t('sheet_sta')}</span>
+                        <div class="v-inputs">
                             <input type="number" class="v-cur" value="${c.current.sta}" data-vital="sta">
                             <span class="sep">/</span>
                             <input type="number" class="v-max" value="${c.derived.maxSTA}" data-vital="maxSTA">
@@ -2562,9 +2576,9 @@ renderSheet: async (container) => {
 
                 <!-- MP -->
                 <div class="vital-card blue">
-                    <div class="vital-top">
-                        <span class="vital-title">${t('sheet_mp')}</span>
-                        <div class="vital-inputs">
+                    <div class="vital-header">
+                        <span class="v-title">${t('sheet_mp')}</span>
+                        <div class="v-inputs">
                             <input type="number" class="v-cur" value="${c.current.mp}" data-vital="mp">
                             <span class="sep">/</span>
                             <input type="number" class="v-max" value="${c.derived.maxMP}" data-vital="maxMP">
@@ -2575,9 +2589,9 @@ renderSheet: async (container) => {
                 
                 <!-- LUCK -->
                 <div class="vital-card gold">
-                    <div class="vital-top">
-                        <span class="vital-title">${t('sheet_luck')}</span>
-                        <div class="vital-inputs">
+                    <div class="vital-header">
+                        <span class="v-title">${t('sheet_luck')}</span>
+                        <div class="v-inputs">
                             <input type="number" class="v-cur" value="${c.current.luck}" data-vital="luck">
                             <span class="sep">/</span>
                             <input type="number" class="v-max" value="${c.derived.maxLuck}" data-vital="maxLuck">
@@ -3970,6 +3984,7 @@ renderTabMain: (container) => {
     },
 
 };
+
 
 
 

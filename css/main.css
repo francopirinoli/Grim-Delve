@@ -1,3 +1,9 @@
+@media screen {
+    .print-only, #print-sheet-root {
+        display: none !important;
+    }
+}
+
 :root {
     /* Color Palette */
     --bg-dark: #121212;
@@ -4341,4 +4347,5 @@ input.res-input:focus { border-bottom: 1px solid #fff !important; }
     resize: none;
 }
 .notes-editor:focus { outline: none; border-color: #555; }
+
 

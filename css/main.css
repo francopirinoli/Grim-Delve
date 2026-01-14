@@ -4270,5 +4270,36 @@ body.mode-play #btn-levelup {
     padding: 8px;
 }
 
+/* --- BIO & NOTES TAB --- */
+.bio-card {
+    background: #252525;
+    border: 1px solid #444;
+    padding: 15px;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
 
+.bio-portrait {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background: #000;
+    border: 1px solid #555;
+    border-radius: 4px;
+    overflow: hidden;
+}
 
+.bio-details label {
+    font-size: 0.7rem;
+    color: var(--accent-blue);
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 2px;
+}
+
+.bio-val {
+    font-size: 1rem;
+    color: #eee;
+    font-family: var(--font-body);
+}

@@ -4348,4 +4348,101 @@ input.res-input:focus { border-bottom: 1px solid #fff !important; }
 }
 .notes-editor:focus { outline: none; border-color: #555; }
 
+/* --- FEATURES & TALENTS TAB --- */
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    padding-bottom: 2rem;
+}
+
+.feature-card {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 4px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: transform 0.2s;
+    position: relative;
+    overflow: hidden;
+}
+
+.feature-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+/* Color Coding Borders based on Type */
+.feature-card.passive { border-left: 4px solid #4a6fa5; } /* Blue for Passive */
+.feature-card.action { border-left: 4px solid #8a2c2c; }  /* Red for Action/Attack */
+.feature-card.reaction { border-left: 4px solid #c5a059; } /* Gold for Reaction */
+.feature-card.utility { border-left: 4px solid #444; }    /* Grey for Utility */
+
+.feat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1px solid #2a2a2a;
+    padding-bottom: 8px;
+    margin-bottom: 5px;
+}
+
+.feat-title {
+    font-family: var(--font-header);
+    color: #e0e0e0;
+    font-size: 1.1rem;
+    font-weight: bold;
+    line-height: 1.2;
+}
+
+.feat-cost {
+    background: #2a2a2a;
+    color: var(--accent-gold);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    padding: 2px 6px;
+    border-radius: 3px;
+    white-space: nowrap;
+    margin-left: 10px;
+    border: 1px solid #444;
+}
+
+.feat-meta {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: #666;
+    display: flex;
+    justify-content: space-between;
+}
+
+.feat-source { font-weight: bold; color: var(--accent-blue); }
+
+.feat-desc {
+    font-size: 0.9rem;
+    color: #ccc;
+    line-height: 1.5;
+    flex-grow: 1;
+}
+
+.feat-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.feat-tag {
+    font-size: 0.65rem;
+    background: #111;
+    color: #888;
+    padding: 2px 6px;
+    border-radius: 2px;
+    border: 1px solid #333;
+    text-transform: uppercase;
+}
+
+
 

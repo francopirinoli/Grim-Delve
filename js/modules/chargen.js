@@ -2644,104 +2644,95 @@ renderSheet: async (container) => {
         }
     },
 
-    // --- PLACEHOLDERS FOR NEXT STEPS ---
-    
 renderTabMain: (container) => {
-        const c = CharGen.char;
-        const t = I18n.t;
-        
-        // Ensure derived stats are fresh based on current gear/stats
-        CharGen.recalcAll(); 
+    const c = CharGen.char;
+    const t = I18n.t;
+    
+    CharGen.recalcAll(); 
 
-        const armorScore = CharGen.calculateArmorScore();
-        const def = c.defenses;
+    const armorScore = CharGen.calculateArmorScore();
+    const def = c.defenses;
 
-        container.innerHTML = `
-            <div class="manager-grid">
-                
-                <!-- COLUMN 1: ATTRIBUTES -->
-                <div class="mgr-col">
-                    <h4 class="mgr-header">${t('cg_step_stats')}</h4>
-                    <div class="mgr-attr-grid">
-                        ${['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'].map(stat => `
-                            <div class="mgr-attr-box">
-                                <label>${t('stat_' + stat.toLowerCase())}</label>
-                                <input type="number" class="attr-input" data-stat="${stat}" value="${c.stats[stat] || 0}">
-                            </div>
-                        `).join('')}
-                    </div>
-
-                    <h4 class="mgr-header" style="margin-top:1.5rem;">${t('sheet_def')}</h4>
-                    <div class="mgr-def-row">
-                        <div class="mgr-stat-pill">
-                            <span class="label">${t('sheet_ac')}</span>
-                            <span class="value">${armorScore}</span>
+    container.innerHTML = `
+        <div class="manager-grid">
+            
+            <!-- LEFT COLUMN: STATS -->
+            <div class="mgr-col">
+                <div class="mgr-header">${t('cg_step_stats')}</div>
+                <div class="attr-grid">
+                    ${['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'].map(stat => `
+                        <div class="attr-card">
+                            <span class="attr-label">${t('stat_' + stat.toLowerCase())}</span>
+                            <input type="number" class="attr-input" data-stat="${stat}" value="${c.stats[stat] || 0}">
                         </div>
-                        <div class="mgr-stat-pill">
-                            <span class="label">${t('cg_initiative')}</span>
-                            <span class="value">${(c.stats.DEX || 0) >= 0 ? '+' : ''}${c.stats.DEX || 0}</span>
-                        </div>
-                         <div class="mgr-stat-pill">
-                            <span class="label">${t('mon_stat_spd')}</span>
-                            <span class="value">30'</span>
-                        </div>
-                    </div>
-                    <div class="mgr-def-list">
-                        <div class="def-item">
-                            <span>${t('sheet_dodge')}</span>
-                            <strong>${def.dodge.val >= 0 ? '+' : ''}${def.dodge.val} ${def.dodge.die !== '-' ? '('+def.dodge.die+')' : ''}</strong>
-                        </div>
-                        <div class="def-item">
-                            <span>${t('sheet_parry')}</span>
-                            <strong>${def.parry.val !== null ? (def.parry.val >= 0 ? '+'+def.parry.val : def.parry.val) : '--'}</strong>
-                        </div>
-                        <div class="def-item">
-                            <span>${t('sheet_block')}</span>
-                            <strong>${def.block.val !== null ? (def.block.val >= 0 ? '+'+def.block.val : def.block.val) : '--'}</strong>
-                        </div>
-                    </div>
+                    `).join('')}
                 </div>
 
-                <!-- COLUMN 2: COMBAT & SKILLS -->
-                <div class="mgr-col">
-                    <h4 class="mgr-header">${t('sheet_attacks')}</h4>
-                    <div class="mgr-attack-list">
-                        ${CharGen.renderAttackButtons()}
-                    </div>
+                <div class="mgr-header">${t('sheet_def')}</div>
+                <div class="defense-row">
+                    <div class="def-cell"><span class="def-label">${t('sheet_ac')}</span><div class="def-val">${armorScore}</div></div>
+                    <div class="def-cell"><span class="def-label">${t('cg_initiative')}</span><div class="def-val">${(c.stats.DEX || 0) >= 0 ? '+' : ''}${c.stats.DEX || 0}</div></div>
+                    <div class="def-cell"><span class="def-label">${t('mon_stat_spd')}</span><div class="def-val">30'</div></div>
+                </div>
 
-                    <h4 class="mgr-header" style="margin-top:1.5rem;">${t('sheet_skills')}</h4>
-                    <div class="mgr-skill-list">
-                        ${CharGen.renderSkillButtons()}
+                <div class="reaction-list">
+                    <div class="reaction-item">
+                        <span>${t('sheet_dodge')} (DEX)</span>
+                        <strong>${def.dodge.val >= 0 ? '+' : ''}${def.dodge.val} ${def.dodge.die !== '-' ? '('+def.dodge.die+')' : ''}</strong>
+                    </div>
+                    <div class="reaction-item">
+                        <span>${t('sheet_parry')} (STR)</span>
+                        <strong>${def.parry.val !== null ? (def.parry.val >= 0 ? '+'+def.parry.val : def.parry.val) : '--'}</strong>
+                    </div>
+                    <div class="reaction-item">
+                        <span>${t('sheet_block')} (CON)</span>
+                        <strong>${def.block.val !== null ? (def.block.val >= 0 ? '+'+def.block.val : def.block.val) : '--'}</strong>
                     </div>
                 </div>
             </div>
-        `;
 
-        // Bind Inputs
-        container.querySelectorAll('.attr-input').forEach(input => {
-            input.addEventListener('change', (e) => {
-                const stat = e.target.dataset.stat;
-                const val = parseInt(e.target.value) || 0;
-                CharGen.char.stats[stat] = val;
-                
-                // Trigger Recalc and Re-render to update dependent stats (HP, AC, Attacks)
-                CharGen.recalcAll();
-                CharGen.renderTabMain(container);
-                
-                // Update HUD vitals if CON/STR changed (HP/Slots)
-                const hud = CharGen.renderHUD();
-                document.querySelector('.char-hud').replaceWith(hud);
-                CharGen.attachManagerListeners();
-            });
-        });
+            <!-- RIGHT COLUMN: COMBAT -->
+            <div class="mgr-col">
+                <div class="mgr-header">
+                    <span>${t('sheet_attacks')}</span>
+                </div>
+                <div class="attack-list">
+                    ${CharGen.renderAttackButtons()}
+                </div>
 
-        // Bind Rolls (Placeholder for now)
-        container.querySelectorAll('.roll-action').forEach(btn => {
-            btn.addEventListener('click', () => {
-                alert(`Rolling ${btn.dataset.name}... (Dice Module Coming Soon)`);
-            });
+                <div class="mgr-header" style="margin-top: 1.5rem;">${t('sheet_skills')}</div>
+                <div class="skills-grid">
+                    ${CharGen.renderSkillButtons()}
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Re-bind Inputs
+    container.querySelectorAll('.attr-input').forEach(input => {
+        input.addEventListener('change', (e) => {
+            const stat = e.target.dataset.stat;
+            const val = parseInt(e.target.value) || 0;
+            CharGen.char.stats[stat] = val;
+            
+            CharGen.recalcAll();
+            CharGen.renderTabMain(container);
+            
+            // Refresh HUD
+            const hud = CharGen.renderHUD();
+            document.querySelector('.char-hud').replaceWith(hud);
+            CharGen.attachManagerListeners();
         });
-    },
+    });
+
+    // Re-bind Attack Rolls
+    container.querySelectorAll('.attack-card').forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Placeholder for Dice Roller integration
+            console.log(`Attack with ${btn.dataset.name}`);
+        });
+    });
+}
 
     renderAttackButtons: () => {
         const c = CharGen.char;
@@ -2797,22 +2788,20 @@ renderTabMain: (container) => {
         return html;
     },
 
-    renderSkillButtons: () => {
-        const skills = CharGen.calculateSkills();
-        return skills.map(s => {
-            const dieColor = s.die === 'd6' ? 'var(--accent-gold)' : (s.die === 'd4' ? 'var(--accent-blue)' : '#555');
-            const weight = s.count > 0 ? 'bold' : 'normal';
-            const opacity = s.count > 0 ? '1' : '0.6';
-            
-            return `
-                <div class="skill-row" style="opacity:${opacity}">
-                    <span style="font-weight:${weight}">${s.name}</span>
-                    <span style="font-family:var(--font-mono); color:${dieColor};">${s.die !== '-' ? '+' + s.die : ''}</span>
-                </div>
-            `;
-        }).join('');
-    },
-
+renderSkillButtons: () => {
+    const skills = CharGen.calculateSkills();
+    return skills.map(s => {
+        const isTrained = s.count > 0;
+        const dieClass = s.die === 'd6' ? 'expert' : (s.die === 'd4' ? 'trained' : '');
+        
+        return `
+            <div class="skill-row">
+                <span class="skill-name" style="${isTrained ? 'color:#eee;' : 'color:#666;'}">${s.name}</span>
+                <span class="skill-die ${dieClass}">${s.die !== '-' ? '+' + s.die : ''}</span>
+            </div>
+        `;
+    }).join('');
+},
 
     renderTabInventory: (container) => {
         const c = CharGen.char;
@@ -4016,6 +4005,7 @@ renderTabMain: (container) => {
     },
 
 };
+
 
 
 

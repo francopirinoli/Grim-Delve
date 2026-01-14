@@ -2997,8 +2997,134 @@ renderHUD: () => {
     },
 
     renderTabFeatures: (container) => {
-        container.innerHTML = `<div style="padding:20px; text-align:center;">Features List Coming Soon...</div>`;
-    },
+    const c = CharGen.char;
+    const t = I18n.t;
+    const data = I18n.getData('options');
+
+    // --- 1. Gather Data ---
+    const allFeatures = [];
+
+    // A. Ancestry Feat
+    if (c.ancestry && data.ancestries) {
+        const anc = data.ancestries.find(a => a.id === c.ancestry);
+        if (anc && c.ancestryFeatIndex !== null && anc.feats[c.ancestryFeatIndex]) {
+            const feat = anc.feats[c.ancestryFeatIndex];
+            allFeatures.push({
+                name: feat.name,
+                source: `${t('cg_lbl_ancestry')}: ${anc.name}`,
+                type: "Passive",
+                desc: feat.effect,
+                tags: feat.modifiers ? ["Stat Bonus"] : []
+            });
+        }
+    }
+
+    // B. Background Feat
+    if (c.background && data.backgrounds) {
+        const bg = data.backgrounds.find(b => b.id === c.background);
+        if (bg && bg.feat) {
+            allFeatures.push({
+                name: bg.feat.name,
+                source: `${t('cg_lbl_background')}: ${bg.name}`,
+                type: "Passive",
+                desc: bg.feat.effect,
+                tags: ["Utility"]
+            });
+        }
+    }
+
+    // C. Class Synergy Feats (Level Based)
+    if (c.classId && data.classes) {
+        const cls = data.classes.find(x => x.id === c.classId);
+        if (cls && cls.synergy_feats) {
+            cls.synergy_feats.forEach(f => {
+                if (f.level <= c.level) {
+                    allFeatures.push({
+                        name: f.name,
+                        source: `${t('cg_step_class')} (Lvl ${f.level})`,
+                        type: f.type || "Passive", // e.g. "Action", "Reaction"
+                        cost: f.cost,
+                        desc: f.effect,
+                        tags: f.stat_options ? ["Stat Choice"] : []
+                    });
+                }
+            });
+        }
+    }
+
+    // D. Selected Archetype Talents
+    if (c.talents && c.talents.length > 0) {
+        c.talents.forEach(tal => {
+            allFeatures.push({
+                name: tal.name,
+                source: tal.sourceName || t('sheet_arch_talents'),
+                type: tal.type || "Talent",
+                cost: tal.cost,
+                desc: tal.effect,
+                tags: tal.tags || [],
+                choice: tal.choice // If they made a choice (e.g. Skill Specialization)
+            });
+        });
+    }
+
+    // --- 2. Helper: Determine CSS Class ---
+    const getTypeClass = (type, tags) => {
+        const tLower = (type || "").toLowerCase();
+        const tagsStr = (tags || []).join(" ").toLowerCase();
+        
+        if (tLower.includes("reaction") || tagsStr.includes("reaction")) return "reaction";
+        if (tLower.includes("action") || tLower.includes("attack") || tLower.includes("spell")) return "action";
+        if (tLower.includes("passive")) return "passive";
+        return "utility"; // Default
+    };
+
+    // --- 3. Render HTML ---
+    if (allFeatures.length === 0) {
+        container.innerHTML = `<div style="padding:2rem; text-align:center; color:#666;">No features found. Complete Character Creation first.</div>`;
+        return;
+    }
+
+    container.innerHTML = `
+        <div class="manager-grid" style="grid-template-columns: 1fr;">
+            <div class="mgr-header">${t('sheet_features')}</div>
+            <div class="features-grid">
+                ${allFeatures.map(f => {
+                    const cssClass = getTypeClass(f.type, f.tags);
+                    const costHtml = f.cost && f.cost !== "-" ? `<span class="feat-cost">${f.cost}</span>` : "";
+                    
+                    // Format Tags
+                    let tagsHtml = "";
+                    if(f.tags && f.tags.length > 0) {
+                        tagsHtml = `<div class="feat-tags">${f.tags.map(tag => `<span class="feat-tag">${tag}</span>`).join('')}</div>`;
+                    }
+
+                    // Append Choice info if present (e.g. "Selected: Athletics")
+                    let descHtml = f.desc;
+                    if(f.choice) {
+                        descHtml += ` <em style="color:var(--accent-gold); display:block; margin-top:5px;">Selection: ${f.choice}</em>`;
+                    }
+
+                    return `
+                        <div class="feature-card ${cssClass}">
+                            <div class="feat-header">
+                                <span class="feat-title">${f.name}</span>
+                                ${costHtml}
+                            </div>
+                            <div class="feat-meta">
+                                <span class="feat-source">${f.source}</span>
+                                <span>${f.type}</span>
+                            </div>
+                            <div class="feat-desc">
+                                ${descHtml}
+                            </div>
+                            ${tagsHtml}
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        </div>
+    `;
+},
 
     renderTabNotes: async (container) => {
     const c = CharGen.char;
@@ -3992,6 +4118,7 @@ renderHUD: () => {
     },
 
 };
+
 
 
 

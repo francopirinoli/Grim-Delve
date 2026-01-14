@@ -4053,3 +4053,108 @@ body.mode-play #btn-levelup {
         padding: 1rem;
     }
 }
+
+/* --- INVENTORY MANAGER --- */
+
+.wealth-edit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.wealth-edit label {
+    font-size: 0.6rem;
+    color: #888;
+    text-transform: uppercase;
+}
+
+.currency-input {
+    width: 50px;
+    background: #000;
+    border: 1px solid #444;
+    color: var(--accent-gold);
+    text-align: center;
+    font-family: var(--font-mono);
+    padding: 4px;
+}
+
+.inv-table-header {
+    display: flex;
+    padding: 10px;
+    background: #222;
+    border-bottom: 2px solid #333;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: #aaa;
+    font-weight: bold;
+}
+
+.inv-manager-row {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #222;
+    background: rgba(255,255,255,0.02);
+    transition: background 0.2s;
+}
+
+.inv-manager-row:hover {
+    background: rgba(255,255,255,0.05);
+}
+
+.inv-manager-row.equipped {
+    border-left: 3px solid var(--accent-gold);
+    background: rgba(197, 160, 89, 0.05);
+}
+
+.inv-name {
+    font-weight: bold;
+    color: #eee;
+    font-size: 0.95rem;
+}
+
+.inv-meta {
+    font-size: 0.75rem;
+    color: #777;
+}
+
+.btn-icon-small {
+    background: transparent;
+    border: 1px solid #444;
+    color: #ccc;
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+}
+
+.btn-icon-small:hover {
+    border-color: var(--accent-gold);
+    color: white;
+}
+
+/* Shop Modal Tweaks */
+.add-shop-item {
+    background: var(--accent-blue);
+    color: white;
+    border: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+.add-shop-item:hover { background: #5a8fc5; }
+
+/* Custom Item Input in Modal */
+#cust-item-name, #cust-item-slots {
+    background: #222;
+    border: 1px solid #444;
+    color: white;
+    padding: 8px;
+}

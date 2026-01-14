@@ -3769,79 +3769,110 @@ body.mode-play #btn-levelup {
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
 }
 
-/* Row 1: Header */
-.hud-header {
+/* 1. Header (Name & Tools) */
+.hud-top {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #222;
-    padding-bottom: 5px;
 }
 
 .edit-name {
     background: transparent;
     border: none;
+    border-bottom: 1px solid transparent;
     color: var(--accent-gold);
     font-family: var(--font-header);
-    font-size: 1.8rem;
+    font-size: 2rem;
     font-weight: bold;
-    width: 100%;
+    width: auto;
+    min-width: 200px;
+    max-width: 100%;
     padding: 0;
+    margin: 0;
 }
-.edit-name:focus { outline: none; border-bottom: 1px solid #444; }
+.edit-name:focus { border-bottom-color: #555; outline: none; }
 
-/* Row 2: Sub-Header (Level, Class, XP) */
-.hud-sub-header {
+.hud-controls {
     display: flex;
-    align-items: center;
-    gap: 15px;
+    gap: 10px;
+}
+
+/* 2. Bio Row (Ancestry, Class, Level) */
+.hud-bio-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-bottom: 1px solid #222;
+    padding-bottom: 10px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.bio-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.bio-main {
+    font-size: 1.1rem;
+    color: #eee;
+    font-weight: bold;
+}
+
+.bio-sub {
+    font-size: 0.85rem;
     color: #888;
     font-family: var(--font-mono);
-    font-size: 0.85rem;
 }
 
 .meta-group {
     display: flex;
-    align-items: center;
-    gap: 5px;
+    gap: 15px;
 }
 
-.meta-label {
+.meta-pill {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: #1a1a1a;
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 1px solid #333;
+}
+
+.meta-pill .lbl {
+    font-size: 0.65rem;
     text-transform: uppercase;
-    font-size: 0.7rem;
-    color: #555;
+    color: #666;
     font-weight: bold;
 }
 
 .edit-tiny {
-    background: #222;
-    border: 1px solid #333;
+    background: transparent;
+    border: none;
     color: white;
-    width: 40px;
+    width: 30px;
     text-align: center;
-    border-radius: 3px;
     font-family: var(--font-mono);
-    padding: 2px 0;
+    font-size: 1rem;
+    padding: 0;
 }
+.edit-tiny:focus { outline: none; border-bottom: 1px solid var(--accent-gold); }
 
-.meta-divider { color: #333; }
-.meta-text { color: #ddd; font-weight: bold; }
-.meta-val { color: #aaa; }
+.static { font-size: 0.9rem; color: #666; }
 
-/* Row 3: Vitals Grid */
+/* 3. Vitals Grid */
 .hud-vitals-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 15px;
-    margin-top: 5px;
 }
 
-/* Vital Cards */
 .vital-card {
-    background: #1a1a1a;
+    background: #181818;
     border: 1px solid #333;
     border-radius: 4px;
     padding: 6px 10px;
@@ -3850,13 +3881,13 @@ body.mode-play #btn-levelup {
     gap: 4px;
 }
 
-.vital-top {
+.vital-header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
+    align-items: center;
 }
 
-.vital-title {
+.v-title {
     font-size: 0.65rem;
     text-transform: uppercase;
     color: #777;
@@ -3864,38 +3895,50 @@ body.mode-play #btn-levelup {
     letter-spacing: 0.5px;
 }
 
-.vital-inputs {
+/* Fix Input Sizing & Overlap */
+.v-inputs {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     gap: 2px;
 }
 
-/* Inputs for HP/MP etc */
 .v-cur {
-    width: 40px;
+    width: 40px; /* Constrain width */
     background: transparent;
     border: none;
     color: white;
     font-family: var(--font-mono);
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     font-weight: bold;
     text-align: right;
     padding: 0;
 }
-.v-cur:focus { outline: none; background: #222; }
+.v-cur:focus { outline: none; border-bottom: 1px solid white; }
 
-.sep { color: #555; font-size: 0.9rem; }
+.sep { color: #555; font-size: 1rem; margin: 0 2px; }
 
 .v-max {
-    width: 30px;
+    width: 30px; /* Constrain width */
     background: transparent;
     border: none;
     color: #666;
     font-family: var(--font-mono);
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     text-align: left;
     padding: 0;
 }
+.v-max:focus { outline: none; border-bottom: 1px solid #666; }
+
+/* Colors */
+.vital-card.red { border-left: 3px solid var(--accent-crimson); }
+.vital-card.green { border-left: 3px solid #388e3c; }
+.vital-card.blue { border-left: 3px solid #1976d2; }
+.vital-card.gold { border-left: 3px solid var(--accent-gold); }
+
+.vital-card.red .v-cur { color: #ffcccc; }
+.vital-card.green .v-cur { color: #ccffcc; }
+.vital-card.blue .v-cur { color: #cce5ff; }
+.vital-card.gold .v-cur { color: #ffeb99; }
 
 /* Progress Bars */
 .progress-bar {
@@ -3912,15 +3955,14 @@ body.mode-play #btn-levelup {
 .vital-card.blue .fill { background: #1976d2; }
 .vital-card.gold .fill { background: var(--accent-gold); }
 
-/* --- RESPONSIVE MOBILE HUD --- */
+/* Mobile */
 @media (max-width: 768px) {
     .hud-vitals-grid {
-        grid-template-columns: 1fr 1fr; /* 2x2 grid on mobile */
+        grid-template-columns: 1fr 1fr;
     }
-    
-    .hud-sub-header {
-        flex-wrap: wrap;
-        gap: 10px;
+    .hud-bio-row {
+        flex-direction: column;
+        align-items: flex-start;
     }
 }
 
@@ -4233,4 +4275,5 @@ body.mode-play #btn-levelup {
     color: white;
     padding: 8px;
 }
+
 

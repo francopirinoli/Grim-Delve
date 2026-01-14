@@ -1,143 +1,319 @@
-/* --- REPLACE CONTENTS OF css/print.css --- */
+/* ==========================================================================
+   A4 PRINT STYLESHEET (Grim Delve)
+   ========================================================================== */
 
 @media print {
+    /* 1. Page Setup */
     @page {
         size: A4 portrait;
-        margin: 0.5cm;
+        margin: 0.8cm;
     }
 
+    /* 2. Global Resets for Paper */
     body {
         background-color: white !important;
         color: black !important;
-        font-family: serif;
-        font-size: 10pt;
+        font-family: 'Georgia', 'Times New Roman', serif; /* Serif reads better on paper */
+        font-size: 11pt;
+        line-height: 1.3;
+        width: 100%;
+        height: auto;
+        margin: 0;
+        padding: 0;
+        overflow: visible !important;
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
-        height: auto;
-        overflow: visible;
     }
 
-    /* 1. HIDE ALL APP UI */
+    /* 3. Hide ALL Screen UI Elements */
     #sidebar, 
-    .chargen-sidebar, 
-    .chargen-footer, 
-    .char-tabs, 
     .char-hud, 
+    .char-tabs, 
     .char-tab-content, 
+    .chargen-sidebar,
+    .chargen-footer,
     #mobile-menu-btn, 
     .play-toolbar,
     .modal-overlay,
-    button {
+    button,
+    .btn-icon,
+    ::-webkit-scrollbar {
         display: none !important;
     }
 
-    /* 2. SHOW PRINT CONTAINER */
-    /* Ensure the parent container is visible */
-    #app-container, #main-content, .chargen-layout, .chargen-content, .char-manager-layout {
+    /* 4. Force Visibility of Print Container */
+    /* We must ensure the parents of .print-only are visible, or it won't show */
+    #app-container, 
+    #main-content, 
+    .chargen-layout, 
+    .chargen-content, 
+    .char-manager-layout {
         display: block !important;
-        width: 100% !important;
+        visibility: visible !important;
         height: auto !important;
+        width: 100% !important;
         margin: 0 !important;
         padding: 0 !important;
-        overflow: visible !important;
         background: white !important;
+        position: static !important;
+        overflow: visible !important;
     }
 
+    /* Reveal the actual print content */
     .print-only {
         display: block !important;
         width: 100%;
     }
 
-    /* --- PAGE LAYOUT --- */
+    /* =========================================
+       PRINT LAYOUT CLASSES (.p-*)
+       ========================================= */
+
+    /* Page Breaks */
     .print-page {
         width: 100%;
-        height: 275mm; /* A4 printable height */
+        min-height: 95vh; /* Ensure it takes up a full page */
         position: relative;
         page-break-after: always;
-        border: none;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
     }
-    
+
     .print-page:last-child {
         page-break-after: auto;
     }
 
-    /* --- STYLING FOR PRINT --- */
-    .p-header {
-        background: #000 !important;
-        color: #fff !important;
-        text-transform: uppercase;
-        font-weight: bold;
-        text-align: center;
-        padding: 3px;
+    /* --- SHARED COMPONENTS --- */
+    
+    .p-box {
+        border: 2px solid #000;
+        padding: 8px;
+        position: relative;
         margin-bottom: 10px;
+        background: white;
+    }
+
+    .p-header {
+        background: #000;
+        color: #fff;
+        font-family: sans-serif;
+        font-weight: bold;
+        text-transform: uppercase;
+        padding: 4px 0;
+        font-size: 10pt;
+        text-align: center;
+        margin: -8px -8px 8px -8px; /* Bleed to edge of p-box */
         border: 1px solid #000;
     }
 
-    .p-box {
-        border: 2px solid #000;
-        padding: 5px;
-        margin-bottom: 10px;
+    /* --- PAGE 1: COMBAT SHEET --- */
+
+    /* Identity Strip (Name, Class, Level) */
+    .p-identity {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        border-bottom: 4px solid #000;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
     }
 
-    /* Attributes Strip */
+    .p-id-field {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .p-id-label {
+        font-size: 8pt;
+        text-transform: uppercase;
+        color: #666;
+        font-weight: bold;
+    }
+
+    .p-id-val {
+        font-size: 16pt;
+        font-weight: bold;
+        font-family: sans-serif;
+        line-height: 1;
+    }
+
+    /* Attributes Strip (STR, DEX, etc.) */
     .p-attributes {
         display: grid;
         grid-template-columns: repeat(6, 1fr);
         border: 2px solid #000;
-        margin-bottom: 15px;
+        margin-bottom: 20px;
+        background: #f0f0f0; /* Light grey for contrast */
     }
+
     .p-attr-cell {
         border-right: 1px solid #000;
         text-align: center;
         padding: 5px;
     }
     .p-attr-cell:last-child { border-right: none; }
-    .p-attr-val { font-size: 1.5em; font-weight: bold; display: block; }
-    .p-attr-name { font-size: 0.8em; text-transform: uppercase; }
 
-    /* Identity */
-    .p-identity {
-        display: flex;
-        justify-content: space-between;
-        border-bottom: 3px solid #000;
-        margin-bottom: 15px;
-        padding-bottom: 5px;
+    .p-attr-name {
+        font-weight: bold;
+        display: block;
+        font-size: 9pt;
+        text-transform: uppercase;
     }
-    .p-id-val { font-size: 1.5em; font-weight: bold; }
 
-    /* Vitals */
+    .p-attr-val {
+        font-size: 18pt;
+        font-weight: bold;
+        display: block;
+        font-family: sans-serif;
+    }
+
+    /* Two Column Main Grid */
+    .p-grid-main {
+        display: grid;
+        grid-template-columns: 1fr 1.6fr; /* Left Col (Defense/Skills), Right Col (Vitals/Attacks) */
+        gap: 20px;
+    }
+
+    /* --- RIGHT COLUMN (Vitals) --- */
     .p-vitals {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: 1fr 1fr 1fr 1fr;
         gap: 10px;
-        margin-bottom: 15px;
+        margin-bottom: 20px;
     }
+
     .p-vital-box {
         border: 2px solid #000;
         text-align: center;
         padding: 5px;
+        height: 60px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
     }
-    .p-vital-val { font-size: 1.5em; font-weight: bold; }
 
-    /* Grid Layouts */
-    .p-grid-main {
+    .p-vital-box h4 {
+        margin: 0;
+        font-size: 8pt;
+        text-transform: uppercase;
+        background: #ddd;
+    }
+
+    .p-vital-val {
+        font-size: 20pt;
+        font-weight: bold;
+        font-family: sans-serif;
+    }
+
+    /* --- LEFT COLUMN (Defense/Skills) --- */
+    .p-defense-grid {
         display: grid;
-        grid-template-columns: 1fr 1.5fr;
-        gap: 20px;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 5px;
+        text-align: center;
+        margin-bottom: 10px;
     }
 
-    /* Tables */
-    .p-table { width: 100%; border-collapse: collapse; font-size: 0.9em; }
-    .p-table th { border-bottom: 2px solid #000; text-align: left; }
-    .p-table td { border-bottom: 1px solid #ccc; padding: 2px 0; }
+    .p-ac-large {
+        grid-column: 1 / -1; /* Armor Class takes full width */
+        border: 3px solid #000;
+        padding: 10px;
+        font-size: 24pt;
+        font-weight: bold;
+        margin-bottom: 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        line-height: 1;
+    }
     
-    /* Skills */
-    .die { font-family: monospace; font-weight: bold; text-align: right; }
+    .p-ac-large span {
+        font-size: 9pt;
+        font-weight: normal;
+        text-transform: uppercase;
+        margin-top: 5px;
+    }
 
-    /* Inventory */
-    .p-inv-list { column-count: 2; font-size: 0.85em; }
-    .p-inv-item { display: flex; justify-content: space-between; border-bottom: 1px dotted #ccc; }
+    .p-def-small {
+        border: 1px solid #000;
+        padding: 5px;
+    }
+    .p-def-small small {
+        display: block;
+        font-size: 7pt;
+        text-transform: uppercase;
+        border-bottom: 1px solid #ccc;
+        margin-bottom: 2px;
+    }
+
+    /* Standard Table Styling */
+    .p-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 10pt;
+    }
+
+    .p-table th {
+        border-bottom: 2px solid #000;
+        text-align: left;
+        font-size: 9pt;
+        text-transform: uppercase;
+        padding: 2px;
+    }
+
+    .p-table td {
+        border-bottom: 1px solid #ccc;
+        padding: 4px 2px;
+        vertical-align: top;
+    }
+
+    /* Attack Table Tweaks */
+    .p-table td.die { 
+        text-align: right; 
+        font-weight: bold; 
+        font-family: monospace; 
+    }
+
+    /* --- PAGE 2: INVENTORY & FEATURES --- */
     
-    /* Colors to Black/White */
-    * { text-shadow: none !important; box-shadow: none !important; }
+    /* Features Grid (Talents) */
+    .p-features-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .p-feat-card {
+        border: 1px solid #000;
+        padding: 8px;
+        font-size: 9pt;
+        break-inside: avoid; /* Prevent splitting across pages */
+    }
+
+    .p-feat-name {
+        font-weight: bold;
+        display: block;
+        border-bottom: 1px dotted #000;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+        background: #eee;
+        padding: 2px;
+    }
+
+    /* Inventory List */
+    .p-inv-list {
+        column-count: 2;
+        column-gap: 1cm;
+        font-size: 9pt;
+    }
+
+    .p-inv-item {
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 1px dotted #999;
+        margin-bottom: 2px;
+        break-inside: avoid;
+    }
 }

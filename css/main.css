@@ -3825,6 +3825,37 @@ body.mode-play #btn-levelup {
     align-items: stretch;
 }
 
+input.edit-name {
+    background: transparent !important;
+    border: none !important;
+    border-bottom: 1px solid #333 !important;
+    color: var(--accent-gold);
+    font-family: var(--font-header);
+    font-size: 2rem;
+    font-weight: 700;
+    width: 100%;
+    max-width: 500px;
+    padding: 0 0 5px 0 !important;
+    height: auto !important;
+}
+input.edit-name:focus { outline: none; border-bottom-color: var(--accent-gold) !important; }
+
+input.lvl-input, input.input-minimal {
+    background: transparent !important;
+    border: none !important;
+    border-bottom: 1px solid transparent !important;
+    color: #fff;
+    font-family: var(--font-mono);
+    font-size: 1.2rem;
+    font-weight: bold;
+    width: 40px !important; /* Force width */
+    text-align: center;
+    padding: 0 !important;
+    margin: 0 !important;
+    height: auto !important;
+}
+input.lvl-input:focus { border-bottom-color: var(--accent-gold) !important; }
+
 /* Level Capsule */
 .level-capsule {
     display: flex;
@@ -3832,9 +3863,10 @@ body.mode-play #btn-levelup {
     background: #181818;
     border: 1px solid #333;
     border-radius: 4px;
-    padding: 0 15px;
+    padding: 5px 15px;
     gap: 15px;
     min-width: 180px;
+    height: 50px; /* Fixed height for consistency */
 }
 
 .lvl-group {
@@ -3878,8 +3910,17 @@ body.mode-play #btn-levelup {
     position: relative;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    height: 65px;
+    justify-content: center;
+    height: 70px;
+}
+
+.res-values {
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-end;
+    gap: 5px;
+    z-index: 2;
+    margin-top: -5px; /* Pull up slightly */
 }
 
 .res-card.red { border-left: 4px solid #8a2c2c; }
@@ -3895,12 +3936,25 @@ body.mode-play #btn-levelup {
     letter-spacing: 0.5px;
 }
 
-.res-values {
-    display: flex;
-    align-items: baseline;
-    justify-content: flex-end;
-    gap: 5px;
-    z-index: 2; /* Above progress bar */
+input.res-input {
+    background: transparent !important;
+    border: none !important;
+    border-bottom: 1px solid transparent !important;
+    color: #fff;
+    font-family: var(--font-mono);
+    font-size: 1.8rem; /* Large font */
+    font-weight: bold;
+    text-align: right;
+    width: 60px !important;
+    padding: 0 !important;
+    height: 35px !important;
+}
+input.res-input:focus { border-bottom: 1px solid #fff !important; }
+
+.res-max {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    color: #555;
 }
 
 .res-input {
@@ -4287,3 +4341,4 @@ body.mode-play #btn-levelup {
     resize: none;
 }
 .notes-editor:focus { outline: none; border-color: #555; }
+

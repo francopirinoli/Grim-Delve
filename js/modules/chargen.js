@@ -3026,7 +3026,7 @@ renderHUD: () => {
                 </div>
                 <div>
                     <div class="bio-field">
-                        <span class="bio-label">${t('cg_lbl_class')}</span>
+                        <span class="bio-label">${t('cg_step_class')}</span>
                         <div class="bio-text">${c.className}</div>
                     </div>
                     <div class="bio-field">
@@ -3992,6 +3992,7 @@ renderHUD: () => {
     },
 
 };
+
 
 
 

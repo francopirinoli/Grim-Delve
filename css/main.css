@@ -3754,302 +3754,327 @@ body.mode-play #btn-levelup {
    CHARACTER MANAGER (REFACTORED)
    ========================================= */
 
-/* --- LAYOUT CONTAINER --- */
+/* --- LAYOUT & HUD --- */
 .char-manager-layout {
     display: flex;
     flex-direction: column;
     height: 100%;
     overflow: hidden;
-    background-color: var(--bg-dark);
+    background-color: #121212;
 }
 
-/* --- 1. HUD (HEADS UP DISPLAY) --- */
+/* Ensure Print View is HIDDEN on screen */
+.print-only { 
+    display: none !important; 
+}
+
 .char-hud {
-    background: #111;
+    background: #0a0a0a;
     border-bottom: 1px solid #333;
-    padding: 1rem 2rem;
+    padding: 15px 25px;
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    gap: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
     z-index: 10;
 }
 
-/* Identity Row */
+/* Row 1: Identity */
 .hud-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-end;
 }
+
+.hud-identity { width: 100%; }
 
 .edit-name {
     background: transparent;
     border: none;
-    border-bottom: 1px solid transparent;
+    border-bottom: 1px solid #333;
     color: var(--accent-gold);
     font-family: var(--font-header);
-    font-size: 2rem;
+    font-size: 2.2rem;
     font-weight: 700;
     width: 100%;
-    max-width: 400px;
-    padding: 0;
-    transition: border 0.2s;
+    max-width: 500px;
+    padding: 0 0 5px 0;
+    line-height: 1;
 }
-.edit-name:focus { outline: none; border-bottom: 1px solid #555; }
-.edit-name::placeholder { opacity: 0.3; font-style: italic; }
+.edit-name:focus { outline: none; border-bottom-color: var(--accent-gold); }
 
 .hud-subtitle {
-    color: var(--text-muted);
-    font-size: 0.85rem;
+    color: #888;
+    font-size: 0.8rem;
     font-family: var(--font-mono);
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
+    margin-top: 5px;
 }
 
-/* Controls (Save/Print) */
-.hud-controls { display: flex; gap: 10px; }
-.btn-icon {
-    background: transparent;
-    border: 1px solid #444;
-    color: #888;
-    width: 32px; height: 32px;
-    border-radius: 4px;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.2s;
-}
-.btn-icon:hover { border-color: var(--accent-gold); color: var(--accent-gold); }
-
-/* Vitals Row (Level, XP, HP, Etc) */
+/* Row 2: Vitals */
 .hud-vitals-row {
-    display: grid;
-    grid-template-columns: 200px 1fr; /* Level/XP on left, Pools on right */
-    gap: 2rem;
-    align-items: center;
+    display: flex;
+    gap: 20px;
+    align-items: stretch;
 }
 
-/* Level/XP Capsule */
+/* Level Capsule */
 .level-capsule {
     display: flex;
     align-items: center;
-    background: #1a1a1a;
+    background: #181818;
     border: 1px solid #333;
     border-radius: 4px;
-    padding: 5px 10px;
-    gap: 10px;
-    font-family: var(--font-mono);
-    font-size: 0.8rem;
-}
-.level-capsule input {
-    background: transparent; border: none; color: white;
-    width: 40px; text-align: center; font-weight: bold;
+    padding: 0 15px;
+    gap: 15px;
+    min-width: 180px;
 }
 
-/* Resource Pools (HP/STA/MP/LUCK) */
+.lvl-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.lvl-label {
+    font-size: 0.6rem;
+    color: #666;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.lvl-input {
+    background: transparent;
+    border: none;
+    color: white;
+    font-family: var(--font-mono);
+    font-size: 1.2rem;
+    font-weight: bold;
+    width: 40px;
+    padding: 0;
+}
+.lvl-input:focus { outline: none; color: var(--accent-gold); }
+
+/* Resource Cards */
 .resource-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: 1fr 1fr 1fr 1fr;
     gap: 15px;
+    flex-grow: 1;
 }
 
 .res-card {
-    background: #1a1a1a;
+    background: #181818;
     border: 1px solid #333;
     border-radius: 4px;
-    padding: 5px 10px;
+    padding: 8px 12px;
     position: relative;
-    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 65px;
 }
 
-/* Resource Colors */
-.res-card.red { border-left: 3px solid var(--accent-crimson); }
-.res-card.green { border-left: 3px solid #388e3c; }
-.res-card.blue { border-left: 3px solid #1976d2; }
-.res-card.gold { border-left: 3px solid var(--accent-gold); }
+.res-card.red { border-left: 4px solid #8a2c2c; }
+.res-card.green { border-left: 4px solid #388e3c; }
+.res-card.blue { border-left: 4px solid #1976d2; }
+.res-card.gold { border-left: 4px solid #c5a059; }
 
-.res-header {
-    display: flex;
-    justify-content: space-between;
+.res-label {
     font-size: 0.65rem;
+    color: #888;
     text-transform: uppercase;
-    color: #666;
     font-weight: bold;
-    margin-bottom: 2px;
+    letter-spacing: 0.5px;
 }
 
 .res-values {
     display: flex;
     align-items: baseline;
-    font-family: var(--font-mono);
+    justify-content: flex-end;
+    gap: 5px;
+    z-index: 2; /* Above progress bar */
 }
 
 .res-input {
     background: transparent;
     border: none;
-    color: white;
-    font-size: 1.2rem;
+    color: #fff;
+    font-family: var(--font-mono);
+    font-size: 1.6rem;
     font-weight: bold;
-    width: 40px;
     text-align: right;
+    width: 60px;
     padding: 0;
+    margin: 0;
 }
-.res-input:focus { outline: none; border-bottom: 1px solid #555; }
-.res-max { color: #555; font-size: 0.9rem; margin-left: 2px; }
+.res-input:focus { outline: none; border-bottom: 1px solid #fff; }
 
-/* Progress Bar inside Card */
+.res-max {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    color: #555;
+}
+
+/* Progress Bar Background */
 .res-bar {
     position: absolute;
-    bottom: 0; left: 0; height: 3px;
-    background: #444; width: 100%;
+    bottom: 0; left: 0;
+    height: 4px;
+    width: 100%;
+    background: #222;
 }
-.res-fill { height: 100%; transition: width 0.3s; }
-.res-card.red .res-fill { background: var(--accent-crimson); }
+.res-fill { height: 100%; transition: width 0.3s ease; }
+.res-card.red .res-fill { background: #8a2c2c; }
 .res-card.green .res-fill { background: #388e3c; }
 .res-card.blue .res-fill { background: #1976d2; }
-.res-card.gold .res-fill { background: var(--accent-gold); }
+.res-card.gold .res-fill { background: #c5a059; }
 
-
-/* --- 2. NAVIGATION TABS --- */
+/* --- TABS --- */
 .char-tabs {
     display: flex;
-    background: #151515;
+    background: #111;
     border-bottom: 1px solid #333;
-    padding: 0 2rem;
-    gap: 2rem;
+    padding: 0 25px;
+    gap: 30px;
 }
 
 .char-tab-btn {
     background: transparent;
     border: none;
     border-bottom: 3px solid transparent;
-    color: #888;
-    padding: 12px 0;
+    color: #666;
+    padding: 15px 0;
     font-family: var(--font-header);
     font-size: 0.9rem;
+    font-weight: bold;
     cursor: pointer;
     transition: all 0.2s;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
 }
-
-.char-tab-btn:hover { color: #e0e0e0; }
+.char-tab-btn:hover { color: #ccc; }
 .char-tab-btn.active { color: var(--accent-gold); border-bottom-color: var(--accent-gold); }
 
-
-/* --- 3. MAIN CONTENT AREA --- */
+/* --- MAIN CONTENT GRID --- */
 .char-tab-content {
     flex-grow: 1;
     overflow-y: auto;
     padding: 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
-    width: 100%;
 }
 
 .manager-grid {
     display: grid;
-    grid-template-columns: 320px 1fr; /* Fixed Left, Fluid Right */
-    gap: 2rem;
-    align-items: start;
+    grid-template-columns: 350px 1fr; /* Fixed Left sidebar, Flexible Right */
+    gap: 3rem;
+    max-width: 1400px;
+    margin: 0 auto;
 }
 
-/* SECTION HEADERS */
+.mgr-col { display: flex; flex-direction: column; gap: 2rem; }
+
 .mgr-header {
     font-family: var(--font-header);
     color: var(--accent-gold);
-    font-size: 1rem;
+    font-size: 1.1rem;
     border-bottom: 1px solid #333;
-    padding-bottom: 5px;
-    margin-bottom: 1rem;
-    margin-top: 0; /* Reset */
-    display: flex;
-    justify-content: space-between;
+    padding-bottom: 8px;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
-/* --- COLUMN 1: STATS & DEFENSE --- */
+/* Attributes Grid */
 .attr-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr; /* 2 Columns for Attributes */
+    grid-template-columns: 1fr 1fr;
     gap: 10px;
-    margin-bottom: 2rem;
 }
 
 .attr-card {
     background: #1a1a1a;
     border: 1px solid #333;
     border-radius: 4px;
-    padding: 10px;
-    text-align: center;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
 }
 
-.attr-label {
-    display: block;
-    color: #666;
+.attr-lbl {
     font-size: 0.7rem;
+    color: #666;
     font-weight: bold;
+    margin-bottom: 5px;
     text-transform: uppercase;
 }
 
 .attr-val {
     background: transparent;
-    border: none;
-    color: #e0e0e0;
+    border: 1px solid #333;
+    border-radius: 4px;
+    color: #eee;
     font-family: var(--font-mono);
     font-size: 1.4rem;
     font-weight: bold;
-    width: 100%;
+    width: 60px;
+    text-align: center;
+    padding: 5px;
+}
+.attr-val:focus { border-color: var(--accent-gold); outline: none; }
+
+/* Defenses Row */
+.def-row {
+    display: flex;
+    gap: 10px;
+}
+
+.def-card {
+    flex: 1;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 4px;
+    padding: 10px;
     text-align: center;
 }
-.attr-val:focus { outline: none; color: var(--accent-gold); }
 
-/* Defenses */
-.defense-row {
+.def-label { font-size: 0.65rem; color: var(--accent-blue); text-transform: uppercase; display: block; }
+.def-val { font-family: var(--font-mono); font-size: 1.5rem; font-weight: bold; color: #fff; margin: 5px 0; }
+
+/* Skills List (New Grid Look) */
+.skills-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 30px; /* Horizontal gap only */
+}
+
+.skill-row {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 10px;
-    background: #1a1a1a;
-    padding: 10px;
-    border-radius: 4px;
-    border: 1px solid #333;
+    padding: 8px 0;
+    border-bottom: 1px solid #222;
+    align-items: center;
 }
 
-.def-cell { text-align: center; flex: 1; border-right: 1px solid #333; }
-.def-cell:last-child { border-right: none; }
-.def-label { font-size: 0.65rem; color: var(--accent-blue); text-transform: uppercase; display: block;}
-.def-val { font-size: 1.2rem; font-weight: bold; font-family: var(--font-mono); }
+.skill-name { font-size: 0.9rem; color: #888; transition: color 0.2s; }
+.skill-val { font-family: var(--font-mono); font-weight: bold; color: #444; }
 
-.reaction-list {
-    background: rgba(0,0,0,0.2);
-    border: 1px solid #333;
-    border-radius: 4px;
-    padding: 0 10px;
-}
-.reaction-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 0;
-    border-bottom: 1px dashed #333;
-    font-size: 0.9rem;
-}
-.reaction-item:last-child { border-bottom: none; }
-
-
-/* --- COLUMN 2: COMBAT ACTIONS & SKILLS --- */
+/* Highlight Trained Skills */
+.skill-row.trained .skill-name { color: #ccc; }
+.skill-row.trained .skill-val { color: var(--accent-blue); }
+.skill-row.expert .skill-name { color: white; }
+.skill-row.expert .skill-val { color: var(--accent-gold); }
 
 /* Attack Cards */
-.attack-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-bottom: 2rem;
-}
-
 .attack-card {
     background: #1a1a1a;
     border: 1px solid #333;
-    border-left: 3px solid #555;
-    padding: 12px 15px;
+    border-left: 3px solid #444;
+    padding: 15px;
+    margin-bottom: 10px;
     border-radius: 4px;
     display: flex;
     justify-content: space-between;
@@ -4061,110 +4086,19 @@ body.mode-play #btn-levelup {
 .attack-card:hover {
     background: #222;
     border-left-color: var(--accent-gold);
-    transform: translateX(2px);
+    transform: translateX(3px);
 }
 
 .atk-main { display: flex; flex-direction: column; }
-.atk-name { font-weight: bold; font-size: 1rem; color: #eee; }
-.atk-tags { font-size: 0.75rem; color: #888; font-style: italic; }
-
+.atk-name { font-weight: bold; font-size: 1.1rem; color: #e0e0e0; display: block; }
+.atk-tags { font-size: 0.75rem; color: #777; font-style: italic; }
 .atk-roll { text-align: right; }
 .atk-bonus { color: var(--accent-gold); font-family: var(--font-mono); font-weight: bold; font-size: 0.9rem; display: block; }
-.atk-dmg { color: #ccc; font-family: var(--font-mono); font-size: 1rem; font-weight: bold; }
+.atk-dmg { color: #ccc; font-family: var(--font-mono); font-size: 1.1rem; font-weight: bold; display: block; }
 
-/* Skills Grid (Compact) */
-.skills-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr; /* 2 Columns for Skills */
-    gap: 0 20px; /* 0 vertical gap, 20px horizontal gap */
-    background: #1a1a1a;
-    border: 1px solid #333;
-    padding: 15px;
-    border-radius: 4px;
-}
-
-.skill-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 6px 0;
-    border-bottom: 1px solid #2a2a2a;
-    font-size: 0.85rem;
-}
-
-.skill-name { color: #ccc; }
-.skill-die { font-family: var(--font-mono); color: #555; font-weight: bold; }
-.skill-die.trained { color: var(--accent-blue); }
-.skill-die.expert { color: var(--accent-gold); }
-
-
-/* --- INVENTORY TAB STYLES --- */
-.inv-grid-layout {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-}
-
-.inv-header-bar {
-    background: #222;
-    padding: 10px;
-    display: flex;
-    justify-content: space-between;
-    border-radius: 4px;
-    margin-bottom: 10px;
-    font-weight: bold;
-    color: #888;
-    font-size: 0.8rem;
-    text-transform: uppercase;
-}
-
-.inv-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 10px;
-    border-bottom: 1px solid #333;
-    background: rgba(255,255,255,0.02);
-}
-.inv-row:hover { background: rgba(255,255,255,0.05); }
-
-/* --- RESPONSIVE MOBILE --- */
+/* Responsive */
 @media (max-width: 1024px) {
-    .char-hud { padding: 1rem; }
-    .hud-vitals-row { grid-template-columns: 1fr; gap: 1rem; }
-    .resource-grid { grid-template-columns: 1fr 1fr; }
-    
     .manager-grid { grid-template-columns: 1fr; }
-    .skills-grid { grid-template-columns: 1fr; }
-    .inv-grid-layout { grid-template-columns: 1fr; }
+    .resource-grid { grid-template-columns: 1fr 1fr; }
+    .hud-vitals-row { flex-direction: column; }
 }
-
-/* --- FLOATING ACTION BAR (Play Mode) --- */
-.play-toolbar {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: rgba(18, 18, 18, 0.9);
-    border: 1px solid var(--accent-gold);
-    padding: 8px 16px;
-    border-radius: 30px;
-    display: flex;
-    gap: 15px;
-    backdrop-filter: blur(5px);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-    z-index: 100;
-}
-
-.play-btn {
-    background: transparent;
-    border: none;
-    color: #e0e0e0;
-    font-family: var(--font-header);
-    font-size: 0.9rem;
-    cursor: pointer;
-    display: flex; align-items: center; gap: 5px;
-    transition: color 0.2s;
-}
-.play-btn:hover { color: var(--accent-gold); }
-.play-btn.save { color: var(--accent-blue); }
-.play-btn.exit { color: var(--accent-crimson); border-left: 1px solid #444; padding-left: 15px; }

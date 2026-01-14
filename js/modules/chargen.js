@@ -2636,10 +2636,173 @@ renderSheet: async (container) => {
 
     // --- PLACEHOLDERS FOR NEXT STEPS ---
     
-    renderTabMain: (container) => {
-        container.innerHTML = `<div style="padding:20px; text-align:center;">Main Stats Coming Soon...</div>`;
-        // Phase 4 will fill this
+renderTabMain: (container) => {
+        const c = CharGen.char;
+        const t = I18n.t;
+        
+        // Ensure derived stats are fresh based on current gear/stats
+        CharGen.recalcAll(); 
+
+        const armorScore = CharGen.calculateArmorScore();
+        const def = c.defenses;
+
+        container.innerHTML = `
+            <div class="manager-grid">
+                
+                <!-- COLUMN 1: ATTRIBUTES -->
+                <div class="mgr-col">
+                    <h4 class="mgr-header">${t('cg_step_stats')}</h4>
+                    <div class="mgr-attr-grid">
+                        ${['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'].map(stat => `
+                            <div class="mgr-attr-box">
+                                <label>${t('stat_' + stat.toLowerCase())}</label>
+                                <input type="number" class="attr-input" data-stat="${stat}" value="${c.stats[stat] || 0}">
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <h4 class="mgr-header" style="margin-top:1.5rem;">${t('sheet_def')}</h4>
+                    <div class="mgr-def-row">
+                        <div class="mgr-stat-pill">
+                            <span class="label">${t('sheet_ac')}</span>
+                            <span class="value">${armorScore}</span>
+                        </div>
+                        <div class="mgr-stat-pill">
+                            <span class="label">${t('cg_initiative')}</span>
+                            <span class="value">${(c.stats.DEX || 0) >= 0 ? '+' : ''}${c.stats.DEX || 0}</span>
+                        </div>
+                         <div class="mgr-stat-pill">
+                            <span class="label">${t('mon_stat_spd')}</span>
+                            <span class="value">30'</span>
+                        </div>
+                    </div>
+                    <div class="mgr-def-list">
+                        <div class="def-item">
+                            <span>${t('sheet_dodge')}</span>
+                            <strong>${def.dodge.val >= 0 ? '+' : ''}${def.dodge.val} ${def.dodge.die !== '-' ? '('+def.dodge.die+')' : ''}</strong>
+                        </div>
+                        <div class="def-item">
+                            <span>${t('sheet_parry')}</span>
+                            <strong>${def.parry.val !== null ? (def.parry.val >= 0 ? '+'+def.parry.val : def.parry.val) : '--'}</strong>
+                        </div>
+                        <div class="def-item">
+                            <span>${t('sheet_block')}</span>
+                            <strong>${def.block.val !== null ? (def.block.val >= 0 ? '+'+def.block.val : def.block.val) : '--'}</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- COLUMN 2: COMBAT & SKILLS -->
+                <div class="mgr-col">
+                    <h4 class="mgr-header">${t('sheet_attacks')}</h4>
+                    <div class="mgr-attack-list">
+                        ${CharGen.renderAttackButtons()}
+                    </div>
+
+                    <h4 class="mgr-header" style="margin-top:1.5rem;">${t('sheet_skills')}</h4>
+                    <div class="mgr-skill-list">
+                        ${CharGen.renderSkillButtons()}
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Bind Inputs
+        container.querySelectorAll('.attr-input').forEach(input => {
+            input.addEventListener('change', (e) => {
+                const stat = e.target.dataset.stat;
+                const val = parseInt(e.target.value) || 0;
+                CharGen.char.stats[stat] = val;
+                
+                // Trigger Recalc and Re-render to update dependent stats (HP, AC, Attacks)
+                CharGen.recalcAll();
+                CharGen.renderTabMain(container);
+                
+                // Update HUD vitals if CON/STR changed (HP/Slots)
+                const hud = CharGen.renderHUD();
+                document.querySelector('.char-hud').replaceWith(hud);
+                CharGen.attachManagerListeners();
+            });
+        });
+
+        // Bind Rolls (Placeholder for now)
+        container.querySelectorAll('.roll-action').forEach(btn => {
+            btn.addEventListener('click', () => {
+                alert(`Rolling ${btn.dataset.name}... (Dice Module Coming Soon)`);
+            });
+        });
     },
+
+    renderAttackButtons: () => {
+        const c = CharGen.char;
+        const t = I18n.t;
+        
+        // 1. Unarmed
+        const str = c.stats.STR || 0;
+        let html = `
+            <button class="attack-card roll-action" data-name="Unarmed">
+                <div class="atk-info">
+                    <span class="atk-name">${t('wep_unarmed')}</span>
+                    <span class="atk-hit">Atk: ${str >= 0 ? '+' : ''}${str}</span>
+                </div>
+                <div class="atk-dmg">1d4 ${str >= 0 ? '+' : ''}${str}</div>
+            </button>
+        `;
+
+        // 2. Equipped Weapons
+        const weapons = c.inventory.filter(i => (i.type === 'Melee' || i.type === 'Ranged') && i.equipped);
+        
+        weapons.forEach(w => {
+            const isFinesse = w.tags && (w.tags.includes("Finesse") || w.tags.includes("Sutil"));
+            const isRanged = w.type === 'Ranged' || w.type === 'A Distancia';
+            
+            let mod = c.stats.STR || 0;
+            if (isRanged) mod = c.stats.DEX || 0;
+            else if (isFinesse) mod = Math.max(c.stats.STR || 0, c.stats.DEX || 0);
+            
+            const sign = mod >= 0 ? '+' : '';
+            
+            // Translate tags for display
+            const tagStr = w.tags ? w.tags.map(tag => {
+                const key = "tag_" + tag.toLowerCase().replace(/ /g, "_");
+                return t(key) !== key ? t(key) : tag;
+            }).join(', ') : '';
+
+            html += `
+                <button class="attack-card roll-action" data-name="${w.name}">
+                    <div class="atk-info">
+                        <span class="atk-name">${w.name}</span>
+                        <span class="atk-tags">${tagStr}</span>
+                    </div>
+                    <div class="atk-stats">
+                        <span class="atk-hit">Atk ${sign}${mod}</span>
+                        <span class="atk-dmg">${w.damage} ${sign}${mod}</span>
+                    </div>
+                </button>
+            `;
+        });
+
+        if (weapons.length === 0) html += `<div class="text-muted" style="font-size:0.8rem; padding:5px;">No weapons equipped.</div>`;
+
+        return html;
+    },
+
+    renderSkillButtons: () => {
+        const skills = CharGen.calculateSkills();
+        return skills.map(s => {
+            const dieColor = s.die === 'd6' ? 'var(--accent-gold)' : (s.die === 'd4' ? 'var(--accent-blue)' : '#555');
+            const weight = s.count > 0 ? 'bold' : 'normal';
+            const opacity = s.count > 0 ? '1' : '0.6';
+            
+            return `
+                <div class="skill-row" style="opacity:${opacity}">
+                    <span style="font-weight:${weight}">${s.name}</span>
+                    <span style="font-family:var(--font-mono); color:${dieColor};">${s.die !== '-' ? '+' + s.die : ''}</span>
+                </div>
+            `;
+        }).join('');
+    },
+
 
     renderTabInventory: (container) => {
         container.innerHTML = `<div style="padding:20px; text-align:center;">Inventory Manager Coming Soon...</div>`;
@@ -3423,4 +3586,5 @@ renderSheet: async (container) => {
     },
 
 };
+
 

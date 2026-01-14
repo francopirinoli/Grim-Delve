@@ -2732,7 +2732,7 @@ renderTabMain: (container) => {
             console.log(`Attack with ${btn.dataset.name}`);
         });
     });
-}
+},
 
     renderAttackButtons: () => {
         const c = CharGen.char;
@@ -4005,6 +4005,7 @@ renderSkillButtons: () => {
     },
 
 };
+
 
 
 

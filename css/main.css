@@ -3903,3 +3903,153 @@ body.mode-play #btn-levelup {
     .print-only { display: block; }
     .char-manager-layout > :not(.print-only) { display: none; }
 }
+
+/* --- MANAGER: MAIN TAB --- */
+
+.manager-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr; /* Attributes Left, Actions Right */
+    gap: 2rem;
+    padding: 1.5rem;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.mgr-header {
+    font-family: var(--font-header);
+    color: var(--accent-gold);
+    border-bottom: 1px solid #333;
+    padding-bottom: 5px;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+}
+
+/* Attribute Grid */
+.mgr-attr-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+}
+
+.mgr-attr-box {
+    background: #252525;
+    border: 1px solid #444;
+    border-radius: 4px;
+    padding: 8px;
+    text-align: center;
+}
+
+.mgr-attr-box label {
+    font-size: 0.7rem;
+    color: #888;
+    display: block;
+    margin-bottom: 2px;
+}
+
+.attr-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1.4rem;
+    font-weight: bold;
+    text-align: center;
+    font-family: var(--font-mono);
+}
+.attr-input:focus { outline: none; color: var(--accent-gold); }
+
+/* Defense Row */
+.mgr-def-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.mgr-stat-pill {
+    flex: 1;
+    background: #222;
+    border: 1px solid #444;
+    border-radius: 4px;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.mgr-stat-pill .label { font-size: 0.6rem; color: #aaa; text-transform: uppercase; }
+.mgr-stat-pill .value { font-size: 1.2rem; font-weight: bold; }
+
+.mgr-def-list {
+    background: rgba(0,0,0,0.2);
+    border-radius: 4px;
+    padding: 10px;
+}
+
+.def-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    border-bottom: 1px dashed #333;
+    font-size: 0.9rem;
+}
+.def-item:last-child { border: none; }
+
+/* Attack Buttons */
+.mgr-attack-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.attack-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #252525;
+    border: 1px solid #444;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+    width: 100%;
+}
+
+.attack-card:hover {
+    background: #333;
+    border-color: var(--accent-crimson);
+    transform: translateX(2px);
+}
+
+.atk-info { display: flex; flex-direction: column; }
+.atk-name { font-weight: bold; font-size: 1rem; color: #eee; }
+.atk-tags { font-size: 0.7rem; color: #888; }
+
+.atk-stats { text-align: right; }
+.atk-hit { display: block; font-size: 0.8rem; color: var(--accent-gold); font-family: var(--font-mono); }
+.atk-dmg { display: block; font-size: 1rem; font-weight: bold; font-family: var(--font-mono); }
+
+/* Skills List */
+.mgr-skill-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px 15px;
+}
+
+.skill-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    padding: 3px 0;
+    border-bottom: 1px solid #222;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+    .manager-grid {
+        grid-template-columns: 1fr; /* Stack columns */
+        gap: 1rem;
+        padding: 1rem;
+    }
+}

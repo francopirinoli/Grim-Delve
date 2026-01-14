@@ -3765,89 +3765,164 @@ body.mode-play #btn-levelup {
 .char-hud {
     background: #111;
     border-bottom: 1px solid #333;
-    padding: 10px 15px;
+    padding: 15px 20px;
     flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
-.hud-top-row {
+/* Row 1: Header */
+.hud-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
+    border-bottom: 1px solid #222;
+    padding-bottom: 5px;
 }
 
-.hud-name input {
+.edit-name {
     background: transparent;
     border: none;
     color: var(--accent-gold);
     font-family: var(--font-header);
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     font-weight: bold;
     width: 100%;
+    padding: 0;
 }
-.hud-name input:focus { border-bottom: 1px solid #555; outline: none; }
+.edit-name:focus { outline: none; border-bottom: 1px solid #444; }
 
-.hud-meta {
-    font-size: 0.8rem;
+/* Row 2: Sub-Header (Level, Class, XP) */
+.hud-sub-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
     color: #888;
     font-family: var(--font-mono);
+    font-size: 0.85rem;
+}
+
+.meta-group {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.meta-label {
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    color: #555;
+    font-weight: bold;
 }
 
 .edit-tiny {
     background: #222;
-    border: 1px solid #444;
+    border: 1px solid #333;
     color: white;
     width: 40px;
     text-align: center;
     border-radius: 3px;
+    font-family: var(--font-mono);
+    padding: 2px 0;
 }
 
-/* Vital Bars */
+.meta-divider { color: #333; }
+.meta-text { color: #ddd; font-weight: bold; }
+.meta-val { color: #aaa; }
+
+/* Row 3: Vitals Grid */
 .hud-vitals-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 10px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-top: 5px;
 }
 
-.vital-bar-group {
-    background: #222;
-    border-radius: 4px;
-    padding: 4px 8px;
+/* Vital Cards */
+.vital-card {
+    background: #1a1a1a;
     border: 1px solid #333;
+    border-radius: 4px;
+    padding: 6px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 
-.vital-label {
+.vital-top {
     display: flex;
     justify-content: space-between;
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    color: #aaa;
-    margin-bottom: 2px;
+    align-items: flex-end;
 }
 
-.vital-nums input {
+.vital-title {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    color: #777;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+.vital-inputs {
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+}
+
+/* Inputs for HP/MP etc */
+.v-cur {
+    width: 40px;
     background: transparent;
     border: none;
     color: white;
-    width: 30px;
-    text-align: center;
-    font-weight: bold;
     font-family: var(--font-mono);
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-align: right;
+    padding: 0;
+}
+.v-cur:focus { outline: none; background: #222; }
+
+.sep { color: #555; font-size: 0.9rem; }
+
+.v-max {
+    width: 30px;
+    background: transparent;
+    border: none;
+    color: #666;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    text-align: left;
     padding: 0;
 }
 
+/* Progress Bars */
 .progress-bar {
-    height: 6px;
-    background: #111;
-    border-radius: 3px;
+    height: 4px;
+    background: #000;
+    width: 100%;
+    border-radius: 2px;
     overflow: hidden;
 }
-
 .progress-bar .fill { height: 100%; transition: width 0.3s ease; }
-.vital-bar-group.red .fill { background: var(--accent-crimson); }
-.vital-bar-group.green .fill { background: #388e3c; }
-.vital-bar-group.blue .fill { background: #1976d2; }
-.vital-bar-group.gold .fill { background: var(--accent-gold); }
+
+.vital-card.red .fill { background: var(--accent-crimson); }
+.vital-card.green .fill { background: #388e3c; }
+.vital-card.blue .fill { background: #1976d2; }
+.vital-card.gold .fill { background: var(--accent-gold); }
+
+/* --- RESPONSIVE MOBILE HUD --- */
+@media (max-width: 768px) {
+    .hud-vitals-grid {
+        grid-template-columns: 1fr 1fr; /* 2x2 grid on mobile */
+    }
+    
+    .hud-sub-header {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+}
 
 /* --- TABS --- */
 .char-tabs {
@@ -4158,3 +4233,4 @@ body.mode-play #btn-levelup {
     color: white;
     padding: 8px;
 }
+

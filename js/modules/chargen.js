@@ -2796,90 +2796,81 @@ renderHUD: () => {
     },
 
     renderTabInventory: (container) => {
-        const c = CharGen.char;
-        const t = I18n.t;
-        const fmt = I18n.fmt;
-
-        // Calculate Slots
-        let currentSlots = 0;
-        c.inventory.forEach(i => currentSlots += (i.slots || 0));
-        currentSlots = Math.round(currentSlots * 100) / 100;
-        const maxSlots = c.derived.slots;
-        const pct = Math.min(100, (currentSlots / maxSlots) * 100);
-        const barColor = currentSlots > maxSlots ? 'var(--accent-crimson)' : 'var(--accent-gold)';
-
-        container.innerHTML = `
-            <div class="manager-grid">
-                <!-- TOP BAR: WEALTH & CAPACITY -->
-                <div style="grid-column: 1 / -1; display:flex; gap:20px; align-items:center; margin-bottom:1rem; background:#111; padding:10px; border:1px solid #333;">
-                    <div class="wealth-edit">
-                        <label>Gold</label>
-                        <input type="number" class="currency-input" data-type="g" value="${c.currency.g}">
-                    </div>
-                    <div class="wealth-edit">
-                        <label>Silver</label>
-                        <input type="number" class="currency-input" data-type="s" value="${c.currency.s}">
-                    </div>
-                    <div class="wealth-edit">
-                        <label>Copper</label>
-                        <input type="number" class="currency-input" data-type="c" value="${c.currency.c}">
-                    </div>
-                    
-                    <div style="flex-grow:1; margin-left:20px;">
-                        <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:2px;">
-                            <span>${t('cg_lbl_slots')}</span>
-                            <span style="color:${barColor}">${currentSlots} / ${maxSlots}</span>
-                        </div>
-                        <div class="progress-bar"><div class="fill" style="width:${pct}%; background:${barColor}"></div></div>
-                    </div>
-
-                    <button id="btn-open-shop" class="btn-primary" style="font-size:0.9rem;">🛒 ${t('btn_shop')}</button>
-                </div>
-
-                <!-- INVENTORY LIST -->
-                <div style="grid-column: 1 / -1;">
-                    <div class="inv-table-header">
-                        <span style="flex:2">${t('inv_header_name')}</span>
-                        <span style="width:60px; text-align:center;">${t('inv_header_slots')}</span>
-                        <span style="width:100px; text-align:right;">${t('inv_header_actions')}</span>
-                    </div>
-                    <div id="inv-manager-list">
-                        ${c.inventory.length === 0 ? `<div class="text-muted p-2">${t('inv_empty')}</div>` : ''}
-                        ${c.inventory.map((item, idx) => CharGen.renderManagerRow(item, idx)).join('')}
-                    </div>
-                </div>
+    const c = CharGen.char;
+    const t = I18n.t;
+    
+    // Calculate Capacity
+    let currentSlots = c.inventory.reduce((sum, i) => sum + (i.slots || 0), 0);
+    const maxSlots = c.derived.slots || 10;
+    
+    container.innerHTML = `
+        <div class="wealth-bar">
+            <div class="wealth-item">
+                <label>Gold</label>
+                <input type="number" class="wealth-input" data-type="g" value="${c.currency.g}">
             </div>
-        `;
+            <div class="wealth-item">
+                <label>Silver</label>
+                <input type="number" class="wealth-input" data-type="s" value="${c.currency.s}">
+            </div>
+            <div class="wealth-item">
+                <label>Copper</label>
+                <input type="number" class="wealth-input" data-type="c" value="${c.currency.c}">
+            </div>
+            <div style="flex-grow:1; text-align:right; font-family:var(--font-mono); font-size:0.9rem; color:#888;">
+                Capacity: <span style="color:${currentSlots > maxSlots ? 'var(--accent-crimson)' : 'white'}">${currentSlots} / ${maxSlots}</span>
+            </div>
+            <button id="btn-open-shop" class="btn-primary" style="margin-left:20px;">🛒 ${t('btn_shop')}</button>
+        </div>
 
-        // Bind Listeners
-        
-        // Currency
-        container.querySelectorAll('.currency-input').forEach(input => {
-            input.addEventListener('change', (e) => {
-                c.currency[e.target.dataset.type] = parseInt(e.target.value) || 0;
-            });
-        });
+        <div class="inv-grid-layout">
+            <div class="inv-header-bar">
+                <span style="flex:2">Item Name</span>
+                <span style="width:80px; text-align:center;">Slots</span>
+                <span style="width:100px; text-align:right;">Actions</span>
+            </div>
+            <div id="inv-list">
+                ${c.inventory.map((item, idx) => `
+                    <div class="inv-manager-row">
+                        <div class="col-name">
+                            <span class="inv-name" style="${item.equipped ? 'color:var(--accent-gold)' : ''}">${item.name} ${item.equipped ? ' (E)' : ''}</span>
+                            <span class="inv-meta">${item.type} &bull; ${item.damage || item.as ? (item.damage || 'AS ' + item.as) : 'Item'}</span>
+                        </div>
+                        <div class="col-slots">${item.slots}</div>
+                        <div class="col-actions">
+                            ${(item.type === 'Melee' || item.type === 'Ranged' || item.type === 'Armor' || item.type === 'Shield') ? 
+                                `<button class="btn-icon-small action-equip" data-idx="${idx}" title="Equip/Unequip">${item.equipped ? '✅' : '🛡️'}</button>` : ''}
+                            <button class="btn-icon-small action-delete" data-idx="${idx}" title="Delete">🗑️</button>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
 
-        // Shop Modal
-        document.getElementById('btn-open-shop').onclick = CharGen.openShopModal;
-
-        // Row Actions (Equip/Delete)
-        container.querySelectorAll('.action-equip').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                CharGen.toggleEquip(e.target.dataset.idx); // Existing logic
-                CharGen.renderTabInventory(container); // Re-render to update UI
-            });
-        });
-
-        container.querySelectorAll('.action-delete').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                if(confirm(t('btn_confirm') + "?")) {
-                    CharGen.removeFromInventory(e.target.dataset.idx); // Existing logic
-                    CharGen.renderTabInventory(container);
-                }
-            });
-        });
-    },
+    // Listeners
+    container.querySelectorAll('.wealth-input').forEach(inp => {
+        inp.addEventListener('change', (e) => c.currency[e.target.dataset.type] = parseInt(e.target.value) || 0);
+    });
+    
+    document.getElementById('btn-open-shop').onclick = CharGen.openShopModal;
+    
+    container.querySelectorAll('.action-equip').forEach(btn => {
+        btn.onclick = (e) => {
+            CharGen.toggleEquip(e.target.dataset.idx);
+            CharGen.renderTabInventory(container); // Re-render to show change
+        };
+    });
+    
+    container.querySelectorAll('.action-delete').forEach(btn => {
+        btn.onclick = (e) => {
+            if(confirm('Delete item?')) {
+                CharGen.removeFromInventory(e.target.dataset.idx);
+                CharGen.renderTabInventory(container);
+            }
+        };
+    });
+},
 
     renderManagerRow: (item, idx) => {
         const t = I18n.t;
@@ -3010,52 +3001,56 @@ renderHUD: () => {
     },
 
     renderTabNotes: async (container) => {
-         const c = CharGen.char;
-         const t = I18n.t;
-         const data = I18n.getData('options');
+    const c = CharGen.char;
+    const t = I18n.t;
+    const data = I18n.getData('options');
 
-         // Lookup Names
-         const archA = data.archetypes.find(a => a.id === c.archA)?.name || "Archetype A";
-         const archB = data.archetypes.find(a => a.id === c.archB)?.name || "Archetype B";
-         
-         let src = c.imageUrl;
-         if (c.imageId) {
-            const { ImageStore } = await import('../utils/image_store.js');
-            src = await ImageStore.getUrl(c.imageId);
-         }
-         const placeholderImg = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='%23333'%3E%3Ctext x='50' y='50' font-size='40' text-anchor='middle' dy='.3em' fill='%23555'%3E👤%3C/text%3E%3C/svg%3E`;
+    // Get Class/Ancestry Names
+    const ancName = data.ancestries.find(a => a.id === c.ancestry)?.name || "-";
+    const bgName = data.backgrounds.find(b => b.id === c.background)?.name || "-";
+    
+    // Resolve Image
+    let imgHTML = `<div class="portrait-placeholder">👤</div>`;
+    if (c.imageUrl) imgHTML = `<img src="${c.imageUrl}">`;
+    else if (c.imageId) {
+        const { ImageStore } = await import('../utils/image_store.js');
+        const url = await ImageStore.getUrl(c.imageId);
+        if(url) imgHTML = `<img src="${url}">`;
+    }
 
-         container.innerHTML = `
-            <div class="manager-grid">
-                <div class="mgr-col">
-                    <div class="bio-card">
-                        <div class="bio-portrait">
-                            <img src="${src || placeholderImg}" style="width:100%; height:100%; object-fit:cover; border-radius:4px;">
-                        </div>
-                        <div class="bio-details">
-                            <label>${t('cg_lbl_class')}</label>
-                            <div class="bio-val">${c.className} (${archA} + ${archB})</div>
-                            
-                            <label style="margin-top:10px;">${t('cg_lbl_ancestry')}</label>
-                            <div class="bio-val">${c.ancestryChoice || '-'}</div>
-
-                            <label style="margin-top:10px;">${t('cg_lbl_background')}</label>
-                            <div class="bio-val">${c.background || '-'}</div>
-                        </div>
+    container.innerHTML = `
+        <div class="bio-layout">
+            <div class="bio-sidebar">
+                <div class="portrait-frame">
+                    ${imgHTML}
+                </div>
+                <div>
+                    <div class="bio-field">
+                        <span class="bio-label">${t('cg_lbl_class')}</span>
+                        <div class="bio-text">${c.className}</div>
+                    </div>
+                    <div class="bio-field">
+                        <span class="bio-label">${t('cg_lbl_ancestry')}</span>
+                        <div class="bio-text">${ancName}</div>
+                    </div>
+                    <div class="bio-field">
+                        <span class="bio-label">${t('cg_lbl_background')}</span>
+                        <div class="bio-text">${bgName}</div>
                     </div>
                 </div>
-                <div class="mgr-col">
-                    <h4 class="mgr-header">${t('sheet_notes')}</h4>
-                    <textarea id="live-notes" class="editor-textarea" style="height:400px; font-size:1rem; background:#222; border:1px solid #444; color:#eee; padding:10px; width:100%; resize:none;">${c.notes || ''}</textarea>
-                </div>
             </div>
-         `;
-         
-         container.querySelector('#live-notes').addEventListener('input', (e) => {
-             c.notes = e.target.value;
-         });
-    },
+            
+            <div class="bio-main">
+                <div class="mgr-header">${t('sheet_notes')}</div>
+                <textarea id="char-notes-input" class="notes-editor" placeholder="Character backstory, session notes, or inventory details...">${c.notes || ''}</textarea>
+            </div>
+        </div>
+    `;
 
+    document.getElementById('char-notes-input').addEventListener('input', (e) => {
+        c.notes = e.target.value;
+    });
+},
     renderPrintVersion: (container) => {
         const c = CharGen.char;
         const t = I18n.t;
@@ -3997,6 +3992,7 @@ renderHUD: () => {
     },
 
 };
+
 
 
 

@@ -2495,82 +2495,93 @@ renderSheet: async (container) => {
     renderHUD: () => {
         const c = CharGen.char;
         const t = I18n.t;
-        const fmt = I18n.fmt;
         
-        // Calculate percentages for bars
-        const hpPct = Math.min(100, (c.current.hp / c.derived.maxHP) * 100);
+        // Calculate percentages
+        const hpPct = c.derived.maxHP > 0 ? Math.min(100, (c.current.hp / c.derived.maxHP) * 100) : 0;
         const mpPct = c.derived.maxMP > 0 ? Math.min(100, (c.current.mp / c.derived.maxMP) * 100) : 0;
         const staPct = c.derived.maxSTA > 0 ? Math.min(100, (c.current.sta / c.derived.maxSTA) * 100) : 0;
         const luckPct = c.derived.maxLuck > 0 ? Math.min(100, (c.current.luck / c.derived.maxLuck) * 100) : 0;
 
-        // Construct Class Name safely
-        const roleKey = `role_${c.role || 'warrior'}`; // Fallback
+        const roleKey = `role_${c.role || 'warrior'}`; 
         const className = c.className || "Adventurer";
 
         const div = document.createElement('div');
         div.className = 'char-hud';
         div.innerHTML = `
-            <div class="hud-top-row">
-                <div class="hud-identity">
-                    <div class="hud-name">
-                        <input type="text" class="edit-transparent" value="${c.name}" data-field="name">
-                    </div>
-                    <div class="hud-meta">
-                        Lvl <input type="number" class="edit-tiny" value="${c.level}" data-field="level"> 
-                        ${className} <span class="text-muted">(${c.current.xp}/10 XP)</span>
-                    </div>
-                </div>
+            <!-- Top Row: Name & Controls -->
+            <div class="hud-header">
+                <input type="text" class="edit-name" value="${c.name}" data-field="name" placeholder="Name">
                 <div class="hud-controls">
                     <button id="btn-print-trigger" class="btn-icon" title="${t('btn_print')}">🖨️</button>
                     <button id="btn-save-trigger" class="btn-icon" title="${t('btn_save')}">💾</button>
                 </div>
             </div>
 
+            <!-- Second Row: Meta Data (Level, Class, XP) -->
+            <div class="hud-sub-header">
+                <div class="meta-group">
+                    <span class="meta-label">Lvl</span>
+                    <input type="number" class="edit-tiny" value="${c.level}" data-field="level">
+                </div>
+                <div class="meta-divider">|</div>
+                <div class="meta-text">${className}</div>
+                <div class="meta-divider">|</div>
+                <div class="meta-group">
+                    <span class="meta-label">XP</span>
+                    <span class="meta-val">${c.current.xp} / 10</span>
+                </div>
+            </div>
+
+            <!-- Third Row: Vitals Grid -->
             <div class="hud-vitals-grid">
                 <!-- HP -->
-                <div class="vital-bar-group red">
-                    <div class="vital-label">
-                        <span>${t('sheet_hp')}</span>
-                        <span class="vital-nums">
-                            <input type="number" class="edit-vital" value="${c.current.hp}" data-vital="hp"> / 
-                            <input type="number" class="edit-vital-max" value="${c.derived.maxHP}" data-vital="maxHP">
-                        </span>
+                <div class="vital-card red">
+                    <div class="vital-top">
+                        <span class="vital-title">${t('sheet_hp')}</span>
+                        <div class="vital-inputs">
+                            <input type="number" class="v-cur" value="${c.current.hp}" data-vital="hp">
+                            <span class="sep">/</span>
+                            <input type="number" class="v-max" value="${c.derived.maxHP}" data-vital="maxHP">
+                        </div>
                     </div>
                     <div class="progress-bar"><div class="fill" style="width:${hpPct}%"></div></div>
                 </div>
 
                 <!-- STA -->
-                <div class="vital-bar-group green">
-                    <div class="vital-label">
-                        <span>${t('sheet_sta')}</span>
-                        <span class="vital-nums">
-                            <input type="number" class="edit-vital" value="${c.current.sta}" data-vital="sta"> / 
-                            <input type="number" class="edit-vital-max" value="${c.derived.maxSTA}" data-vital="maxSTA">
-                        </span>
+                <div class="vital-card green">
+                    <div class="vital-top">
+                        <span class="vital-title">${t('sheet_sta')}</span>
+                        <div class="vital-inputs">
+                            <input type="number" class="v-cur" value="${c.current.sta}" data-vital="sta">
+                            <span class="sep">/</span>
+                            <input type="number" class="v-max" value="${c.derived.maxSTA}" data-vital="maxSTA">
+                        </div>
                     </div>
                     <div class="progress-bar"><div class="fill" style="width:${staPct}%"></div></div>
                 </div>
 
                 <!-- MP -->
-                <div class="vital-bar-group blue">
-                    <div class="vital-label">
-                        <span>${t('sheet_mp')}</span>
-                        <span class="vital-nums">
-                            <input type="number" class="edit-vital" value="${c.current.mp}" data-vital="mp"> / 
-                            <input type="number" class="edit-vital-max" value="${c.derived.maxMP}" data-vital="maxMP">
-                        </span>
+                <div class="vital-card blue">
+                    <div class="vital-top">
+                        <span class="vital-title">${t('sheet_mp')}</span>
+                        <div class="vital-inputs">
+                            <input type="number" class="v-cur" value="${c.current.mp}" data-vital="mp">
+                            <span class="sep">/</span>
+                            <input type="number" class="v-max" value="${c.derived.maxMP}" data-vital="maxMP">
+                        </div>
                     </div>
                     <div class="progress-bar"><div class="fill" style="width:${mpPct}%"></div></div>
                 </div>
                 
                 <!-- LUCK -->
-                <div class="vital-bar-group gold">
-                    <div class="vital-label">
-                        <span>${t('sheet_luck')}</span>
-                        <span class="vital-nums">
-                            <input type="number" class="edit-vital" value="${c.current.luck}" data-vital="luck"> / 
-                            <input type="number" class="edit-vital-max" value="${c.derived.maxLuck}" data-vital="maxLuck">
-                        </span>
+                <div class="vital-card gold">
+                    <div class="vital-top">
+                        <span class="vital-title">${t('sheet_luck')}</span>
+                        <div class="vital-inputs">
+                            <input type="number" class="v-cur" value="${c.current.luck}" data-vital="luck">
+                            <span class="sep">/</span>
+                            <input type="number" class="v-max" value="${c.derived.maxLuck}" data-vital="maxLuck">
+                        </div>
                     </div>
                     <div class="progress-bar"><div class="fill" style="width:${luckPct}%"></div></div>
                 </div>
@@ -3959,6 +3970,7 @@ renderTabMain: (container) => {
     },
 
 };
+
 
 
 

@@ -4444,76 +4444,106 @@ input.res-input:focus { border-bottom: 1px solid #fff !important; }
     text-transform: uppercase;
 }
 
-/* --- MOBILE FIXES --- */
+/* =========================================
+   MOBILE & LAYOUT FIXES (v4.1)
+   ========================================= */
 
-/* 1. Make Tabs Scrollable */
-.char-tabs {
+/* 1. Force the Layout Container to fill screen without scroll */
+.char-manager-layout {
     display: flex;
-    flex-wrap: nowrap; /* Prevent stacking */
-    overflow-x: auto;  /* Allow horizontal scroll */
-    -webkit-overflow-scrolling: touch; /* Smooth scroll iOS */
-    background: #111;
-    border-bottom: 1px solid #333;
-    padding: 0 10px;
-    gap: 10px;
-    scrollbar-width: none; /* Hide scrollbar Firefox */
+    flex-direction: column;
+    height: 100vh; /* Occupy full viewport height */
+    overflow: hidden; /* Prevent window scroll, force internal scroll */
+    background-color: #121212;
 }
 
-.char-tabs::-webkit-scrollbar { display: none; /* Hide scrollbar Chrome/Safari */ }
+/* 2. Prevent Header/Tabs from collapsing */
+.char-hud, .char-tabs {
+    flex-shrink: 0; 
+}
+
+/* 3. Make Content Area Scrollable */
+.char-tab-content {
+    flex-grow: 1;
+    overflow-y: auto; /* Only this part scrolls vertically */
+    height: 0; /* Flexbox trick to ensure scrolling works */
+    padding: 1rem; /* Reduce padding on mobile */
+    -webkit-overflow-scrolling: touch;
+}
+
+/* --- MOBILE TABS (Horizontal Scroll) --- */
+.char-tabs {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto; /* Horizontal scroll */
+    white-space: nowrap;
+    background: #0a0a0a;
+    border-bottom: 1px solid #333;
+    padding: 0;
+    gap: 0;
+    width: 100%;
+}
 
 .char-tab-btn {
     flex: 0 0 auto; /* Don't shrink */
-    white-space: nowrap;
-    padding: 15px 10px;
-    font-size: 0.85rem;
+    padding: 15px 20px; /* Large touch target */
+    font-size: 0.9rem;
+    color: #888;
+    border-bottom: 3px solid transparent;
 }
 
-/* 2. Responsive Inventory List */
+.char-tab-btn.active {
+    color: var(--accent-gold);
+    border-bottom-color: var(--accent-gold);
+    background: rgba(197, 160, 89, 0.05);
+}
+
+/* --- MOBILE HUD OPTIMIZATION (Compacting) --- */
 @media (max-width: 768px) {
-    /* Hide the Desktop Header */
-    .inv-header-bar {
-        display: none; 
+    .char-hud {
+        padding: 10px;
+        gap: 10px;
+        max-height: 50vh; /* Never take more than half screen */
+        overflow-y: auto; /* Scroll HUD if it gets too huge */
     }
 
-    /* Transform Row into Card */
-    .inv-manager-row {
-        display: grid;
-        grid-template-columns: 1fr auto;
-        grid-template-areas: 
-            "name slots"
-            "meta actions";
-        gap: 5px;
-        padding: 12px;
-        border-bottom: 1px solid #333;
-        background: #1a1a1a;
-        margin-bottom: 5px;
-        border-radius: 4px;
+    .hud-header {
+        flex-direction: row; /* Keep Name and Buttons side-by-side */
+        align-items: center;
     }
 
-    .col-name { 
-        grid-area: name; 
-        flex: 1;
+    .edit-name {
+        font-size: 1.5rem; /* Smaller name on mobile */
+        max-width: 200px;
     }
 
-    /* Position Slots count top right */
-    .col-slots { 
-        grid-area: slots; 
-        width: auto;
-        text-align: right;
-        font-weight: bold;
-        color: var(--accent-gold);
-    }
-    .col-slots::after { content: ' Slot'; font-size: 0.7em; font-weight: normal; color: #666; }
-
-    /* Meta text moves to second line */
-    .inv-meta {
-        grid-area: meta;
+    /* Force Vitals into a 2x2 Grid instead of a 1-column stack */
+    .resource-grid {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important; /* 2 Columns */
+        gap: 8px !important;
     }
 
-    /* Actions buttons move to bottom right */
-    .col-actions {
-        grid-area: actions;
-        width: auto;
-        justify-content: flex-end;
+    .res-card {
+        height: 60px; /* Shorter cards */
+        padding: 5px 8px;
+    }
+
+    .res-input {
+        font-size: 1.4rem; /* Smaller numbers */
+    }
+
+    /* Hide the Level Capsule on very small screens if needed, 
+       or make it compact */
+    .level-capsule {
+        padding: 5px;
+        min-width: auto;
+        justify-content: center;
+        margin-bottom: 10px;
+    }
+    
+    .hud-vitals-row {
+        flex-direction: column;
+        gap: 10px;
     }
 }

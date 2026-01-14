@@ -2631,6 +2631,7 @@ renderHUD: () => {
         const c = CharGen.char;
         const t = I18n.t;
         
+        // Calculate latest stats before rendering
         CharGen.recalcAll(); 
 
         const armorScore = CharGen.calculateArmorScore();
@@ -2675,7 +2676,9 @@ renderHUD: () => {
 
                 <!-- RIGHT COL: Actions & Skills -->
                 <div class="mgr-col">
-                    <div class="mgr-header">${t('sheet_attacks')}</div>
+                    <div class="mgr-header">
+                        <span>${t('sheet_attacks')}</span>
+                    </div>
                     <div class="attack-list">
                         ${CharGen.renderAttackButtons()}
                     </div>
@@ -2688,42 +2691,49 @@ renderHUD: () => {
             </div>
         `;
         
-        // Re-bind Inputs for Attribute changes
+        // 1. Re-bind Inputs for Attribute changes
         container.querySelectorAll('.attr-input').forEach(input => {
             input.addEventListener('change', (e) => {
                 const stat = e.target.dataset.stat;
                 const val = parseInt(e.target.value) || 0;
                 CharGen.char.stats[stat] = val;
+                
                 CharGen.recalcAll();
-                // Refresh full sheet to update dependent stats (HP/Attacks)
+                // We re-render the whole sheet to update dependent stats (like HP or Attack bonuses)
+                // that rely on the attribute you just changed.
                 CharGen.renderSheet(CharGen.container);
             });
         });
-    },
 
-    // Re-bind Attack Rolls
-    container.querySelectorAll('.attack-card').forEach(btn => {
-        btn.addEventListener('click', () => {
-            // Placeholder for Dice Roller integration
-            console.log(`Attack with ${btn.dataset.name}`);
+        // 2. Re-bind Attack Rolls (Moved INSIDE the function)
+        container.querySelectorAll('.attack-card').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Placeholder for Dice Roller integration
+                // In the future, this will call Dice.rollCheck()
+                const name = btn.dataset.name;
+                console.log(`Rolled Attack for: ${name}`);
+                alert(`Rolling attack for ${name}... (Check console)`);
+            });
         });
-    });
-},
+    },
 
     renderAttackButtons: () => {
         const c = CharGen.char;
         const t = I18n.t;
         
-        // 1. Unarmed
+        // 1. Unarmed Strike
         const str = c.stats.STR || 0;
         let html = `
-            <button class="attack-card roll-action" data-name="Unarmed">
-                <div class="atk-info">
+            <div class="attack-card roll-action" data-name="Unarmed">
+                <div class="atk-main">
                     <span class="atk-name">${t('wep_unarmed')}</span>
-                    <span class="atk-hit">Atk: ${str >= 0 ? '+' : ''}${str}</span>
+                    <span class="atk-tags">Melee</span>
                 </div>
-                <div class="atk-dmg">1d4 ${str >= 0 ? '+' : ''}${str}</div>
-            </button>
+                <div class="atk-roll">
+                    <span class="atk-bonus">Atk: ${str >= 0 ? '+' : ''}${str}</span>
+                    <span class="atk-dmg">1d4 ${str >= 0 ? '+' : ''}${str}</span>
+                </div>
+            </div>
         `;
 
         // 2. Equipped Weapons
@@ -2733,38 +2743,41 @@ renderHUD: () => {
             const isFinesse = w.tags && (w.tags.includes("Finesse") || w.tags.includes("Sutil"));
             const isRanged = w.type === 'Ranged' || w.type === 'A Distancia';
             
+            // Determine Modifier
             let mod = c.stats.STR || 0;
             if (isRanged) mod = c.stats.DEX || 0;
             else if (isFinesse) mod = Math.max(c.stats.STR || 0, c.stats.DEX || 0);
             
             const sign = mod >= 0 ? '+' : '';
             
-            // Translate tags for display
+            // Translate tags
             const tagStr = w.tags ? w.tags.map(tag => {
                 const key = "tag_" + tag.toLowerCase().replace(/ /g, "_");
                 return t(key) !== key ? t(key) : tag;
             }).join(', ') : '';
 
             html += `
-                <button class="attack-card roll-action" data-name="${w.name}">
-                    <div class="atk-info">
+                <div class="attack-card roll-action" data-name="${w.name}">
+                    <div class="atk-main">
                         <span class="atk-name">${w.name}</span>
                         <span class="atk-tags">${tagStr}</span>
                     </div>
-                    <div class="atk-stats">
-                        <span class="atk-hit">Atk ${sign}${mod}</span>
+                    <div class="atk-roll">
+                        <span class="atk-bonus">Atk ${sign}${mod}</span>
                         <span class="atk-dmg">${w.damage} ${sign}${mod}</span>
                     </div>
-                </button>
+                </div>
             `;
         });
 
-        if (weapons.length === 0) html += `<div class="text-muted" style="font-size:0.8rem; padding:5px;">No weapons equipped.</div>`;
+        if (weapons.length === 0) {
+            html += `<div style="font-size:0.8rem; color:#666; padding:5px; font-style:italic;">Equip weapons in Inventory tab.</div>`;
+        }
 
         return html;
     },
 
-renderSkillButtons: () => {
+    renderSkillButtons: () => {
         const skills = CharGen.calculateSkills();
         return skills.map(s => {
             const isTrained = s.count > 0;
@@ -3982,6 +3995,7 @@ renderSkillButtons: () => {
     },
 
 };
+
 
 
 

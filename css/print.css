@@ -1,181 +1,82 @@
-/* ==========================================================================
-   A4 PRINT STYLESHEET (Grim Delve v4.0)
-   ========================================================================== */
-
-/* Hide by default on screen */
-.print-only { display: none; }
+/* Update print.css */
 
 @media print {
     @page {
         size: A4 portrait;
-        margin: 0.8cm;
+        margin: 0.5cm;
     }
 
-    /* 1. Reset & Hide App UI */
     body {
         background-color: white !important;
         color: black !important;
-        font-family: 'Inter', sans-serif;
-        font-size: 10pt; /* Dense data requires smaller font */
-        line-height: 1.3;
-        width: 100%;
+        font-family: serif;
+        font-size: 11pt;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
         height: auto;
         overflow: visible;
     }
 
-    #sidebar, .char-hud, .char-tabs, .char-tab-content, 
-    #mobile-menu-btn, .modal-overlay {
+    /* Hide UI Elements */
+    #sidebar, .char-tabs, .char-hud, #mobile-menu-btn, .play-toolbar, .btn-icon, .roll-btn {
         display: none !important;
     }
 
-    /* 2. Show Print Container */
-    .print-only {
-        display: block !important;
-        width: 100%;
+    /* Reset Main Content for Print */
+    #main-content {
+        padding: 0 !important;
+        margin: 0 !important;
+        background: white !important;
+        overflow: visible !important;
     }
 
-    /* --- PAGE LAYOUT --- */
-    .print-page {
-        width: 100%;
-        height: 270mm; /* Approx printable area of A4 */
-        position: relative;
-        page-break-after: always;
-        display: flex;
-        flex-direction: column;
-        gap: 0.5cm;
-    }
-
-    .print-page:last-child {
-        page-break-after: auto;
-    }
-
-    /* --- SHARED COMPONENTS --- */
-    
-    /* Boxes */
-    .p-box {
+    /* Force the Manager Grid to be visible and black/white friendly */
+    .manager-grid {
+        display: grid !important;
+        grid-template-columns: 1fr 1.5fr !important;
+        gap: 1cm !important;
         border: 2px solid #000;
-        padding: 5px;
-        position: relative;
+        padding: 10px;
     }
 
-    .p-header {
-        background: #000;
-        color: #fff;
-        font-family: 'Cinzel', serif;
-        font-weight: bold;
-        text-transform: uppercase;
-        padding: 2px 5px;
-        font-size: 0.9em;
-        margin: -5px -5px 5px -5px; /* Bleed to edge */
-        text-align: center;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
+    /* Styling adjustments for ink saving and readability */
+    .attr-card, .reaction-list, .attack-card, .skills-grid, .defense-row {
+        background: white !important;
+        border: 1px solid #000 !important;
+        color: black !important;
+        page-break-inside: avoid;
+        box-shadow: none !important;
     }
 
-    /* --- PAGE 1: COMBAT SHEET --- */
+    /* Attributes circles */
+    .attr-input {
+        color: black !important;
+        font-size: 1.5rem !important;
+        border: 1px solid #000 !important;
+        border-radius: 50%;
+        width: 40px; height: 40px;
+        display: flex; align-items: center; justify-content: center;
+        margin: 0 auto;
+    }
 
-    /* Identity Strip */
-    .p-identity {
-        display: grid;
-        grid-template-columns: 2fr 1fr 1fr 1fr;
-        gap: 10px;
-        border-bottom: 2px solid #000;
+    .atk-name, .skill-name { color: black !important; }
+    .atk-bonus, .atk-dmg, .skill-die { color: #000 !important; font-weight: bold; }
+    
+    /* Vitals Row manual reconstruction for print */
+    .hud-vitals-row {
+        display: flex !important;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        border-bottom: 2px solid black;
         padding-bottom: 10px;
     }
-    .p-id-field { display: flex; flex-direction: column; }
-    .p-id-label { font-size: 0.6em; text-transform: uppercase; color: #555; }
-    .p-id-val { font-size: 1.2em; font-weight: bold; font-family: 'Cinzel', serif; }
-
-    /* Attributes Strip */
-    .p-attributes {
-        display: grid;
-        grid-template-columns: repeat(6, 1fr);
-        background: #eee;
-        border: 1px solid #000;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-    }
-    .p-attr-cell {
-        border-right: 1px solid #000;
-        text-align: center;
-        padding: 5px;
-    }
-    .p-attr-cell:last-child { border-right: none; }
-    .p-attr-name { font-weight: bold; display: block; font-size: 0.8em; }
-    .p-attr-val { font-size: 1.4em; font-weight: bold; font-family: 'Fira Code', monospace; }
-
-    /* Main Grid */
-    .p-grid-main {
-        display: grid;
-        grid-template-columns: 1fr 1.6fr; /* Left: Defense/Skills, Right: Vitals/Attacks */
-        gap: 1cm;
-        flex-grow: 1;
-    }
-
-    /* Vitals Row */
-    .p-vitals {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr 1fr;
-        gap: 5px;
-        margin-bottom: 15px;
-    }
-    .p-vital-box {
-        border: 2px solid #000;
-        text-align: center;
-        padding: 5px;
-    }
-    .p-vital-box h4 { margin: 0; font-size: 0.7em; }
-    .p-vital-val { font-size: 1.5em; font-weight: bold; display: block; margin-top: 5px; }
-
-    /* Tables */
-    .p-table { width: 100%; border-collapse: collapse; font-size: 0.9em; margin-bottom: 10px; }
-    .p-table th { border-bottom: 2px solid #000; text-align: left; font-size: 0.7em; }
-    .p-table td { border-bottom: 1px solid #ccc; padding: 3px 0; }
-    .p-table .die { text-align: right; font-weight: bold; font-family: 'Fira Code', monospace; }
-
-    /* Armor/Defense Section */
-    .p-defense-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        gap: 5px;
-        text-align: center;
-        margin-bottom: 10px;
-    }
-    .p-ac-large {
-        grid-column: 1 / -1;
-        border: 3px solid #000;
-        padding: 5px;
-        font-size: 2em;
-        font-weight: bold;
-    }
-
-    /* --- PAGE 2: NARRATIVE & GEAR --- */
     
-    /* Features Grid */
-    .p-features-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
+    .res-card {
+        border: 1px solid black !important;
+        background: white !important;
+        color: black !important;
+        width: 100px;
     }
-    .p-feat-card {
-        border: 1px solid #aaa;
-        padding: 5px;
-        font-size: 0.85em;
-        break-inside: avoid;
-        margin-bottom: 5px;
-    }
-    .p-feat-name { font-weight: bold; display: block; border-bottom: 1px dotted #ccc; }
     
-    /* Inventory List */
-    .p-inv-list {
-        column-count: 2;
-        column-gap: 1cm;
-        font-size: 0.85em;
-    }
-    .p-inv-item {
-        display: flex;
-        justify-content: space-between;
-        border-bottom: 1px solid #eee;
-        margin-bottom: 2px;
-    }
+    .res-input { color: black !important; }
 }

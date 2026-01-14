@@ -187,8 +187,8 @@ export const CharGen = {
         CharGen.container.appendChild(sheetContainer);
 
         // 3. Render the Sheet Logic directly
-        // We use .then() because renderSheet is async (image loading)
-        CharGen.renderSheet(sheetContainer).then(() => {
+        // We use .then() because  is async (image loading)
+        CharGen.(sheetContainer).then(() => {
             console.log("Play Mode: Sheet Rendered. Attaching listeners...");
             CharGen._attachSheetListeners(); // Ensure listeners attach after render
         });
@@ -2458,285 +2458,249 @@ renderGear: (el) => {
        STEP 5: FINAL SHEET
        ------------------------------------------------------------------ */
 
-renderSheet: async (el) => {
+renderSheet: async (container) => {
+        // Ensure calculations are up to date
+        CharGen.calculateDerived();
+        CharGen.calculateDefenses();
+        CharGen.calculateArmorScore();
+        
+        // Clear container
+        container.innerHTML = '';
+        
+        // 1. Create Layout Structure
+        const layout = document.createElement('div');
+        layout.className = 'char-manager-layout';
+        
+        // 2. Render The HUD (Header & Vitals) - Always visible
+        layout.appendChild(CharGen.renderHUD());
+
+        // 3. Render Navigation Tabs
+        layout.appendChild(CharGen.renderTabs());
+
+        // 4. Render Content Area (Dynamic based on active tab)
+        const contentArea = document.createElement('div');
+        contentArea.id = 'char-manager-content';
+        contentArea.className = 'char-tab-content';
+        layout.appendChild(contentArea);
+        
+        // 5. Hidden Print Container (For PDF generation)
+        const printArea = document.createElement('div');
+        printArea.id = 'print-sheet-root';
+        printArea.className = 'print-only';
+        layout.appendChild(printArea);
+
+        container.appendChild(layout);
+
+        // 6. Initialize Default Tab (Main/Combat)
+        CharGen.switchTab('main');
+        
+        // 7. Render Print Version in background (so ctrl+p works immediately)
+        CharGen.renderPrintVersion(printArea);
+        
+        // 8. Attach Listeners
+        CharGen.attachManagerListeners();
+    },
+
+    /**
+     * Renders the Top Bar: Identity and Vitals
+     */
+    renderHUD: () => {
         const c = CharGen.char;
-        const data = I18n.getData('options');
-        const t = I18n.t; // Localization Helper
+        const t = I18n.t;
         const fmt = I18n.fmt;
         
-        // 1. Calculations & Sanity Checks
-        CharGen.calculateDerived();
-        CharGen.calculateDefenses(); 
-        const armorScore = CharGen.calculateArmorScore();
-        const def = c.defenses; 
-        const skillsList = CharGen.calculateSkills();
+        // Calculate percentages for bars
+        const hpPct = Math.min(100, (c.current.hp / c.derived.maxHP) * 100);
+        const mpPct = c.derived.maxMP > 0 ? Math.min(100, (c.current.mp / c.derived.maxMP) * 100) : 0;
+        const staPct = c.derived.maxSTA > 0 ? Math.min(100, (c.current.sta / c.derived.maxSTA) * 100) : 0;
+        const luckPct = c.derived.maxLuck > 0 ? Math.min(100, (c.current.luck / c.derived.maxLuck) * 100) : 0;
 
-        if (c.current.hp === null) c.current.hp = c.derived.maxHP;
-        if (c.current.mp === null) c.current.mp = c.derived.maxMP;
-        if (c.current.sta === null) c.current.sta = c.derived.maxSTA;
-        if (c.current.luck === null) c.current.luck = c.derived.maxLuck;
+        // Construct Class Name safely
+        const roleKey = `role_${c.role || 'warrior'}`; // Fallback
+        const className = c.className || "Adventurer";
 
-        // 2. Metadata Lookup
-        const ancestry = data.ancestries.find(a => a.id === c.ancestry) || { name: "Unknown", feats:[] };
-        const background = data.backgrounds.find(b => b.id === c.background) || { name: "Unknown", feat: { name: "-", effect: "-" } };
-        const cls = data.classes.find(cl => cl.id === c.classId) || { name: "Unknown", synergy_feats: [] };
-        
-        const archA = data.archetypes.find(a => a.id === c.archA)?.name || "Archetype A";
-        const archB = data.archetypes.find(a => a.id === c.archB)?.name || "Archetype B";
-        
-        let ancFeat = { name: "Attribute Bonus", effect: "Raw stats." };
-        if (c.ancestryFeatIndex !== null && ancestry.feats && ancestry.feats[c.ancestryFeatIndex]) {
-            ancFeat = ancestry.feats[c.ancestryFeatIndex];
-        }
+        const div = document.createElement('div');
+        div.className = 'char-hud';
+        div.innerHTML = `
+            <div class="hud-top-row">
+                <div class="hud-identity">
+                    <div class="hud-name">
+                        <input type="text" class="edit-transparent" value="${c.name}" data-field="name">
+                    </div>
+                    <div class="hud-meta">
+                        Lvl <input type="number" class="edit-tiny" value="${c.level}" data-field="level"> 
+                        ${className} <span class="text-muted">(${c.current.xp}/10 XP)</span>
+                    </div>
+                </div>
+                <div class="hud-controls">
+                    <button id="btn-print-trigger" class="btn-icon" title="${t('btn_print')}">🖨️</button>
+                    <button id="btn-save-trigger" class="btn-icon" title="${t('btn_save')}">💾</button>
+                </div>
+            </div>
 
-        // 3. Inventory Sorting
-        const weapons = c.inventory.filter(i => (i.type === 'Melee' || i.type === 'Ranged') && i.equipped);
-        const equippedArmor = c.inventory.filter(i => (i.type === 'Armor' || i.type === 'Shield') && i.equipped);
-        const backpack = c.inventory.filter(i => !i.equipped);
+            <div class="hud-vitals-grid">
+                <!-- HP -->
+                <div class="vital-bar-group red">
+                    <div class="vital-label">
+                        <span>${t('sheet_hp')}</span>
+                        <span class="vital-nums">
+                            <input type="number" class="edit-vital" value="${c.current.hp}" data-vital="hp"> / 
+                            <input type="number" class="edit-vital-max" value="${c.derived.maxHP}" data-vital="maxHP">
+                        </span>
+                    </div>
+                    <div class="progress-bar"><div class="fill" style="width:${hpPct}%"></div></div>
+                </div>
+
+                <!-- STA -->
+                <div class="vital-bar-group green">
+                    <div class="vital-label">
+                        <span>${t('sheet_sta')}</span>
+                        <span class="vital-nums">
+                            <input type="number" class="edit-vital" value="${c.current.sta}" data-vital="sta"> / 
+                            <input type="number" class="edit-vital-max" value="${c.derived.maxSTA}" data-vital="maxSTA">
+                        </span>
+                    </div>
+                    <div class="progress-bar"><div class="fill" style="width:${staPct}%"></div></div>
+                </div>
+
+                <!-- MP -->
+                <div class="vital-bar-group blue">
+                    <div class="vital-label">
+                        <span>${t('sheet_mp')}</span>
+                        <span class="vital-nums">
+                            <input type="number" class="edit-vital" value="${c.current.mp}" data-vital="mp"> / 
+                            <input type="number" class="edit-vital-max" value="${c.derived.maxMP}" data-vital="maxMP">
+                        </span>
+                    </div>
+                    <div class="progress-bar"><div class="fill" style="width:${mpPct}%"></div></div>
+                </div>
+                
+                <!-- LUCK -->
+                <div class="vital-bar-group gold">
+                    <div class="vital-label">
+                        <span>${t('sheet_luck')}</span>
+                        <span class="vital-nums">
+                            <input type="number" class="edit-vital" value="${c.current.luck}" data-vital="luck"> / 
+                            <input type="number" class="edit-vital-max" value="${c.derived.maxLuck}" data-vital="maxLuck">
+                        </span>
+                    </div>
+                    <div class="progress-bar"><div class="fill" style="width:${luckPct}%"></div></div>
+                </div>
+            </div>
+        `;
+        return div;
+    },
+
+    renderTabs: () => {
+        const t = I18n.t;
+        const div = document.createElement('div');
+        div.className = 'char-tabs';
+        div.innerHTML = `
+            <button class="char-tab-btn active" data-target="main">⚔️ ${t('cg_combat_stats')}</button>
+            <button class="char-tab-btn" data-target="inventory">🎒 ${t('sheet_inv')}</button>
+            <button class="char-tab-btn" data-target="features">✨ ${t('sheet_features')}</button>
+            <button class="char-tab-btn" data-target="notes">📝 ${t('sheet_notes')}</button>
+        `;
         
-        // Count Materials
-        const materials = { "Organics": 0, "Scrap": 0, "Flora": 0, "Essence": 0 };
-        c.inventory.forEach(i => {
-            if(i.name.includes("Organics") || i.name.includes("Orgánico")) materials.Organics++;
-            if(i.name.includes("Scrap") || i.name.includes("Chatarra")) materials.Scrap++;
-            if(i.name.includes("Flora")) materials.Flora++;
-            if(i.name.includes("Essence") || i.name.includes("Esencia")) materials.Essence++;
+        // Tab Switching Logic
+        div.querySelectorAll('.char-tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                div.querySelectorAll('.char-tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                CharGen.switchTab(btn.dataset.target);
+            });
         });
-
-        // 4. Feature Sorting
-        const feats = {
-            origin: [
-                { name: `${ancFeat.name} (${ancestry.name})`, effect: `${ancFeat.effect} ${c.ancestryChoice ? `[${c.ancestryChoice}]` : ''}` },
-                { name: `${background.feat.name} (${background.name})`, effect: background.feat.effect }
-            ],
-            classSynergy: cls.synergy_feats.filter(f => f.level <= c.level).map(f => ({
-                name: f.name,
-                source: fmt('mon_meta_fmt', {role: t('lbl_class_lvl'), lvl: f.level, family: '', role: ''}).replace('  ', ' ').trim(), 
-                effect: f.effect,
-                cost: f.cost
-            })),
-            // FIX: Renamed iterator from 't' to 'tal' to avoid shadowing the translation function
-            archetype: c.talents.map(tal => ({
-                name: tal.name,
-                source: tal.sourceName || t('lbl_archetype'),
-                effect: tal.choice ? `${tal.effect} <em>(${tal.choice})</em>` : tal.effect,
-                cost: tal.cost
-            }))
-        };
-
-        // --- RENDER HELPERS ---
-        const renderVital = (labelKey, current, max, colorClass) => `
-            <div class="vital-box-compact ${colorClass}">
-                <div class="vb-label">${t(labelKey)}</div>
-                <div class="vb-vals">
-                    <input type="number" class="vb-input" id="inp-${labelKey === 'sheet_hp' ? 'hp' : (labelKey === 'sheet_mp' ? 'mp' : (labelKey === 'sheet_sta' ? 'sta' : 'luck'))}" value="${current}">
-                    <span class="vb-max">/ ${max}</span>
-                </div>
-            </div>
-        `;
-
-        const renderAttr = (stat, val) => `
-            <div class="attr-cell">
-                <div class="attr-name">${t('stat_' + stat.toLowerCase())}</div>
-                <div class="attr-num">${val >= 0 ? '+'+val : val}</div>
-            </div>
-        `;
-
-        const placeholderImg = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='%23ccc'%3E%3Crect width='100' height='100' fill='%23333'/%3E%3Ccircle cx='50' cy='40' r='15' fill='%23666'/%3E%3Cpath d='M20 90 Q50 60 80 90' fill='%23666'/%3E%3C/svg%3E`;
-
-        // --- HTML CONSTRUCTION ---
-        const html = `
-            <!-- TOOLBAR (Hidden in Print/Play Mode via CSS) -->
-            <div class="print-actions">
-                <button id="btn-levelup" class="btn-primary" style="background:var(--accent-blue); border-color:var(--accent-blue);">⬆ ${t('sheet_levelup')}</button>
-                <button id="btn-print-pdf" class="btn-secondary">🖨️ ${t('sheet_print')}</button>
-                <button id="btn-save-lib" class="btn-primary">💾 ${t('sheet_save')}</button>
-            </div>
-
-            <!-- PAGE 1: STATS, GEAR & NOTES -->
-            <div class="sheet-page" id="page-1">
-                
-                <!-- HEADER (COMPACT) -->
-                <div class="header-row">
-                    <!-- Left: Image -->
-                    <div class="portrait-container">
-                        <img id="char-portrait-img" src="${placeholderImg}">
-                    </div>
-                    
-                    <!-- Center: Identity & XP -->
-                    <div class="header-info">
-                        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                            <h1 class="char-title">${c.name || "Nameless"}</h1>
-                            <div class="xp-badge">
-                                <span>${t('sheet_xp')}</span>
-                                <input type="number" id="inp-xp" value="${c.current.xp}">
-                                <span>/ ${c.level * 10}</span>
-                            </div>
-                        </div>
-                        
-                        <div class="char-subtitle">
-                            <span style="color:var(--accent-crimson); font-weight:bold;">${fmt('mon_meta_fmt', {lvl: c.level, family: c.className, role: ''})}</span>
-                            <span class="sub-detail">(${archA} + ${archB})</span>
-                        </div>
-                        <div class="char-subtitle text-muted">
-                            ${ancestry.name} ${background.name}
-                        </div>
-                    </div>
-
-                    <!-- Right: Vitals Grid -->
-                    <div class="header-vitals">
-                        ${renderVital("sheet_hp", c.current.hp, c.derived.maxHP, "red")}
-                        ${renderVital("sheet_sta", c.current.sta, c.derived.maxSTA, "green")}
-                        ${renderVital("sheet_mp", c.current.mp, c.derived.maxMP, "blue")}
-                        ${renderVital("sheet_luck", c.current.luck, c.derived.maxLuck, "gold")}
-                    </div>
-                </div>
-
-                <!-- ATTRIBUTES -->
-                <div class="attr-row">
-                    ${['STR','DEX','CON','INT','WIS','CHA'].map(s => renderAttr(s, c.stats[s]||0)).join('')}
-                </div>
-
-                <!-- MAIN GRID -->
-                <div class="p1-body">
-                    
-                    <!-- LEFT COL: DEFENSE & SKILLS -->
-                    <div class="p1-left">
-                        <div class="defense-panel">
-                            <div class="ac-box">
-                                <span class="ac-val">${armorScore}</span>
-                                <span class="ac-label">${t('sheet_ac')}</span>
-                            </div>
-                            <div class="def-stats">
-                                <div class="def-row"><span>${t('sheet_dodge')}</span> <b>${def.dodge.val >=0 ? '+'+def.dodge.val : def.dodge.val} ${def.dodge.die !== '-' ? '+ '+def.dodge.die : ''}</b></div>
-                                <div class="def-row"><span>${t('sheet_parry')}</span> <b>${def.parry.val !== null ? (def.parry.val >=0 ? '+'+def.parry.val : def.parry.val) : '--'}</b></div>
-                                <div class="def-row"><span>${t('sheet_block')}</span> <b>${def.block.val !== null ? (def.block.val >=0 ? '+'+def.block.val : def.block.val) : '--'}</b></div>
-                            </div>
-                        </div>
-
-                        <div class="worn-gear-section">
-                            <strong>${t('sheet_worn')}:</strong>
-                            <span class="worn-text">${equippedArmor.length ? equippedArmor.map(a => `${a.name} (${t('mon_stat_as')} ${a.as})`).join(', ') : t('lbl_unarmored')}</span>
-                        </div>
-
-                        <div class="panel-header" style="margin-top:1.5rem;">${t('sheet_skills')}</div>
-                        <table class="skills-compact">
-                            ${skillsList.map(s => `
-                                <tr class="${s.count > 0 ? 'tr-trained' : ''}">
-                                    <td>${s.name}</td>
-                                    <td class="td-stat">${s.stat}</td>
-                                    <td class="td-die">${s.die !== '-' ? '+' + s.die : '-'}</td>
-                                </tr>
-                            `).join('')}
-                        </table>
-                        <div class="profs-text">
-                            <strong>${t('sheet_tools')}:</strong> ${CharGen._getToolProfs(c, background).join(', ') || "-"}
-                        </div>
-                    </div>
-
-                    <!-- RIGHT COL: OFFENSE, INVENTORY, NOTES -->
-                    <div class="p1-right">
-                        <div class="panel-header">${t('sheet_attacks')}</div>
-                        <table class="weapons-compact">
-                            <thead><tr><th>${t('lbl_name')}</th><th>${t('mon_stat_atk')}</th><th>${t('mon_stat_dmg')}</th><th>Tags</th></tr></thead>
-                            <tbody>
-                                <tr>
-                                    <td>${t('wep_unarmed')}</td>
-                                    <td>${(c.stats.STR || 0) >= 0 ? '+' : ''}${c.stats.STR || 0}</td>
-                                    <td>1d4 ${(c.stats.STR || 0) >= 0 ? '+' : ''}${c.stats.STR || 0}</td>
-                                    <td class="tags">${t('tag_melee')}</td>
-                                </tr>
-                                ${weapons.map(w => CharGen._renderWeaponRow(w, c.stats)).join('')}
-                            </tbody>
-                        </table>
-
-                        <div class="panel-header" style="margin-top:1.5rem;">${t('sheet_inv')} (${c.derived.slots} Slots)</div>
-                        <div class="wealth-row">
-                            <span><strong>G:</strong> ${c.currency.g}</span>
-                            <span><strong>S:</strong> ${c.currency.s}</span>
-                            <span><strong>C:</strong> ${c.currency.c}</span>
-                        </div>
-
-                        <div class="backpack-grid-dense">
-                            ${Array.from({length: 12}).map((_, i) => `
-                                <div class="pack-cell">
-                                    <span class="idx">${i+1}</span>
-                                    <span class="name">${backpack[i] ? backpack[i].name : ''}</span>
-                                    <span class="qty">${backpack[i] && backpack[i].slots ? backpack[i].slots : ''}</span>
-                                </div>
-                            `).join('')}
-                        </div>
-                        
-                        <div class="mats-row">
-                            <div class="mat-item"><span>FLORA</span> <strong>${materials.Flora}</strong></div>
-                            <div class="mat-item"><span>ORG</span> <strong>${materials.Organics}</strong></div>
-                            <div class="mat-item"><span>SCRAP</span> <strong>${materials.Scrap}</strong></div>
-                            <div class="mat-item"><span>ESS</span> <strong>${materials.Essence}</strong></div>
-                        </div>
-
-                        <div class="panel-header" style="margin-top:1rem;">${t('sheet_notes')}</div>
-                        <textarea id="inp-notes" class="sheet-notes-small" placeholder="...">${c.notes}</textarea>
-                    </div>
-                </div>
-            </div>
-
-            <div class="page-break"></div>
-
-            <!-- PAGE 2: DOSSIER -->
-            <div class="sheet-page" id="page-2">
-                <h2 class="page-title">${t('sheet_features')}</h2>
-                
-                <div class="feature-group">
-                    <h3 class="group-header">${t('sheet_origin_traits')}</h3>
-                    <div class="feat-grid">
-                        ${feats.origin.map(f => `
-                            <div class="feat-card">
-                                <div class="feat-top">
-                                    <span class="f-name">${f.name}</span>
-                                </div>
-                                <div class="f-body">${f.effect}</div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-
-                <div class="feature-group">
-                    <h3 class="group-header">${t('sheet_class_features')} (${c.className})</h3>
-                    <div class="feat-grid">
-                        ${feats.classSynergy.map(f => `
-                            <div class="feat-card class-feat">
-                                <div class="feat-top">
-                                    <span class="f-name">${f.name}</span>
-                                    <span class="f-source">${f.source}</span>
-                                </div>
-                                <div class="f-body">${f.effect}</div>
-                                ${f.cost ? `<div class="f-cost">${f.cost}</div>` : ''}
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-
-                <div class="feature-group">
-                    <h3 class="group-header">${t('sheet_arch_talents')}</h3>
-                    <div class="feat-grid">
-                        ${feats.archetype.map(tal => `
-                            <div class="feat-card">
-                                <div class="feat-top">
-                                    <span class="f-name">${tal.name}</span>
-                                    <span class="f-source">${tal.source}</span>
-                                </div>
-                                <div class="f-body">${tal.effect}</div>
-                                ${tal.cost ? `<div class="f-cost">${tal.cost}</div>` : ''}
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            </div>
-        `;
         
-        el.innerHTML = html;
-        CharGen._attachSheetListeners();
-        CharGen._loadPortrait();
+        return div;
+    },
+
+    switchTab: (tabName) => {
+        const container = document.getElementById('char-manager-content');
+        container.innerHTML = '';
+        
+        switch(tabName) {
+            case 'main':
+                CharGen.renderTabMain(container);
+                break;
+            case 'inventory':
+                CharGen.renderTabInventory(container);
+                break;
+            case 'features':
+                CharGen.renderTabFeatures(container);
+                break;
+            case 'notes':
+                CharGen.renderTabNotes(container);
+                break;
+        }
+    },
+
+    // --- PLACEHOLDERS FOR NEXT STEPS ---
+    
+    renderTabMain: (container) => {
+        container.innerHTML = `<div style="padding:20px; text-align:center;">Main Stats Coming Soon...</div>`;
+        // Phase 4 will fill this
+    },
+
+    renderTabInventory: (container) => {
+        container.innerHTML = `<div style="padding:20px; text-align:center;">Inventory Manager Coming Soon...</div>`;
+        // Phase 3 will fill this
+    },
+
+    renderTabFeatures: (container) => {
+        container.innerHTML = `<div style="padding:20px; text-align:center;">Features List Coming Soon...</div>`;
+    },
+
+    renderTabNotes: (container) => {
+         const c = CharGen.char;
+         container.innerHTML = `
+            <div style="padding:1rem;">
+                <textarea id="live-notes" class="editor-textarea" style="height:400px; font-size:1rem;">${c.notes || ''}</textarea>
+            </div>
+         `;
+         container.querySelector('#live-notes').addEventListener('input', (e) => {
+             c.notes = e.target.value;
+         });
+    },
+
+    renderPrintVersion: (container) => {
+        // This will be the robust A4 renderer later.
+        // For now, leave empty or put a placeholder.
+        container.innerHTML = `<!-- Print Version Hidden -->`;
+    },
+
+    attachManagerListeners: () => {
+        // HUD Listeners (Name, Level, Vitals)
+        const bind = (selector, path, isInt = false) => {
+            document.querySelectorAll(selector).forEach(el => {
+                el.addEventListener('change', (e) => {
+                    const val = isInt ? parseInt(e.target.value) : e.target.value;
+                    // Path logic handling... simple for now:
+                    if(path === 'name') CharGen.char.name = val;
+                    if(path === 'level') CharGen.char.level = val;
+                    
+                    // Vitals
+                    if (el.dataset.vital) {
+                        const key = el.dataset.vital;
+                        if (['hp','mp','sta','luck'].includes(key)) CharGen.char.current[key] = val;
+                        if (['maxHP','maxMP','maxSTA','maxLuck'].includes(key)) CharGen.char.derived[key] = val; // Manual Override!
+                        
+                        // Re-render HUD to update bars
+                        const newHUD = CharGen.renderHUD();
+                        document.querySelector('.char-hud').replaceWith(newHUD);
+                        CharGen.attachManagerListeners(); // Re-attach
+                    }
+                });
+            });
+        };
+        
+        bind('.edit-transparent', 'name');
+        bind('.edit-tiny', 'level', true);
+        bind('.edit-vital', 'vital', true);
+        bind('.edit-vital-max', 'vital', true);
+
+        // Toolbar
+        document.getElementById('btn-save-trigger').onclick = CharGen.saveCharacter;
+        document.getElementById('btn-print-trigger').onclick = () => window.print();
     },
 
     _renderWeaponRow: (w, stats) => {
@@ -3459,3 +3423,4 @@ renderSheet: async (el) => {
     },
 
 };
+

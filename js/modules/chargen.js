@@ -2805,8 +2805,213 @@ renderTabMain: (container) => {
 
 
     renderTabInventory: (container) => {
-        container.innerHTML = `<div style="padding:20px; text-align:center;">Inventory Manager Coming Soon...</div>`;
-        // Phase 3 will fill this
+        const c = CharGen.char;
+        const t = I18n.t;
+        const fmt = I18n.fmt;
+
+        // Calculate Slots
+        let currentSlots = 0;
+        c.inventory.forEach(i => currentSlots += (i.slots || 0));
+        currentSlots = Math.round(currentSlots * 100) / 100;
+        const maxSlots = c.derived.slots;
+        const pct = Math.min(100, (currentSlots / maxSlots) * 100);
+        const barColor = currentSlots > maxSlots ? 'var(--accent-crimson)' : 'var(--accent-gold)';
+
+        container.innerHTML = `
+            <div class="manager-grid">
+                <!-- TOP BAR: WEALTH & CAPACITY -->
+                <div style="grid-column: 1 / -1; display:flex; gap:20px; align-items:center; margin-bottom:1rem; background:#111; padding:10px; border:1px solid #333;">
+                    <div class="wealth-edit">
+                        <label>Gold</label>
+                        <input type="number" class="currency-input" data-type="g" value="${c.currency.g}">
+                    </div>
+                    <div class="wealth-edit">
+                        <label>Silver</label>
+                        <input type="number" class="currency-input" data-type="s" value="${c.currency.s}">
+                    </div>
+                    <div class="wealth-edit">
+                        <label>Copper</label>
+                        <input type="number" class="currency-input" data-type="c" value="${c.currency.c}">
+                    </div>
+                    
+                    <div style="flex-grow:1; margin-left:20px;">
+                        <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:2px;">
+                            <span>${t('cg_lbl_slots')}</span>
+                            <span style="color:${barColor}">${currentSlots} / ${maxSlots}</span>
+                        </div>
+                        <div class="progress-bar"><div class="fill" style="width:${pct}%; background:${barColor}"></div></div>
+                    </div>
+
+                    <button id="btn-open-shop" class="btn-primary" style="font-size:0.9rem;">🛒 ${t('btn_shop')}</button>
+                </div>
+
+                <!-- INVENTORY LIST -->
+                <div style="grid-column: 1 / -1;">
+                    <div class="inv-table-header">
+                        <span style="flex:2">${t('inv_header_name')}</span>
+                        <span style="width:60px; text-align:center;">${t('inv_header_slots')}</span>
+                        <span style="width:100px; text-align:right;">${t('inv_header_actions')}</span>
+                    </div>
+                    <div id="inv-manager-list">
+                        ${c.inventory.length === 0 ? `<div class="text-muted p-2">${t('inv_empty')}</div>` : ''}
+                        ${c.inventory.map((item, idx) => CharGen.renderManagerRow(item, idx)).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Bind Listeners
+        
+        // Currency
+        container.querySelectorAll('.currency-input').forEach(input => {
+            input.addEventListener('change', (e) => {
+                c.currency[e.target.dataset.type] = parseInt(e.target.value) || 0;
+            });
+        });
+
+        // Shop Modal
+        document.getElementById('btn-open-shop').onclick = CharGen.openShopModal;
+
+        // Row Actions (Equip/Delete)
+        container.querySelectorAll('.action-equip').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                CharGen.toggleEquip(e.target.dataset.idx); // Existing logic
+                CharGen.renderTabInventory(container); // Re-render to update UI
+            });
+        });
+
+        container.querySelectorAll('.action-delete').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                if(confirm(t('btn_confirm') + "?")) {
+                    CharGen.removeFromInventory(e.target.dataset.idx); // Existing logic
+                    CharGen.renderTabInventory(container);
+                }
+            });
+        });
+    },
+
+    renderManagerRow: (item, idx) => {
+        const t = I18n.t;
+        const isEquipped = item.equipped;
+        const isEquipable = (item.type === "Melee" || item.type === "Ranged" || item.type === "Armor" || item.type === "Shield");
+        
+        return `
+            <div class="inv-manager-row ${isEquipped ? 'equipped' : ''}">
+                <div style="flex:2; display:flex; flex-direction:column;">
+                    <span class="inv-name">${item.name}</span>
+                    <span class="inv-meta">${item.type} ${item.damage ? `• ${item.damage}` : ''} ${item.as ? `• AS ${item.as}` : ''}</span>
+                </div>
+                <div style="width:60px; text-align:center; font-family:var(--font-mono);">${item.slots}</div>
+                <div style="width:100px; text-align:right; display:flex; justify-content:flex-end; gap:5px;">
+                    ${isEquipable ? 
+                        `<button class="btn-icon-small action-equip" data-idx="${idx}" title="${isEquipped ? 'Unequip' : 'Equip'}">
+                            ${isEquipped ? '✅' : '🛡️'}
+                        </button>` : ''
+                    }
+                    <button class="btn-icon-small action-delete" data-idx="${idx}" title="${t('btn_delete')}">🗑️</button>
+                </div>
+            </div>
+        `;
+    },
+
+    openShopModal: () => {
+        const t = I18n.t;
+        const overlay = document.createElement('div');
+        overlay.className = 'modal-overlay';
+        
+        overlay.innerHTML = `
+            <div class="modal-content" style="width:800px; height:80vh; display:flex; flex-direction:column;">
+                <div class="modal-header" style="flex-shrink:0;">
+                    ${t('shop_modal_title')}
+                    <button id="close-shop" style="float:right; background:none; border:none; color:white; cursor:pointer;">✕</button>
+                </div>
+                
+                <div class="shop-tabs" style="margin-top:1rem;">
+                    <button class="tab-btn active" data-tab="weapons">${t('cg_tab_wep')}</button>
+                    <button class="tab-btn" data-tab="armor">${t('cg_tab_arm')}</button>
+                    <button class="tab-btn" data-tab="gear">${t('cg_tab_gear')}</button>
+                </div>
+
+                <div id="modal-shop-list" class="shop-list" style="flex-grow:1; height:auto;">
+                    <!-- Items injected here -->
+                </div>
+
+                <div style="margin-top:1rem; border-top:1px solid #333; padding-top:1rem;">
+                    <h4>${t('btn_add_custom')}</h4>
+                    <div style="display:flex; gap:5px;">
+                        <input type="text" id="cust-item-name" placeholder="${t('lbl_name')}" style="flex:2">
+                        <input type="number" id="cust-item-slots" placeholder="Slots" style="width:60px;">
+                        <button id="btn-add-custom-item" class="btn-secondary">+</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+
+        // Logic
+        const renderList = (cat) => {
+            const data = I18n.getData('items');
+            const container = overlay.querySelector('#modal-shop-list');
+            let items = [];
+            if (cat === 'weapons') items = data.weapons;
+            else if (cat === 'armor') items = data.armor;
+            else items = [...data.gear, ...data.materials, ...data.reagents];
+
+            container.innerHTML = items.map((item, idx) => `
+                <div class="shop-item">
+                    <div style="flex-grow:1;">
+                        <div style="font-weight:bold; color:var(--accent-gold);">${item.name}</div>
+                        <div style="font-size:0.75rem; color:#888;">
+                            ${item.cost} | ${item.slots} Slot | ${item.description || item.effect || ''}
+                        </div>
+                    </div>
+                    <button class="add-shop-item" data-cat="${cat}" data-idx="${idx}">+</button>
+                </div>
+            `).join('');
+
+            container.querySelectorAll('.add-shop-item').forEach(btn => {
+                btn.onclick = () => {
+                    const list = (btn.dataset.cat === 'weapons') ? data.weapons : (btn.dataset.cat === 'armor') ? data.armor : [...data.gear, ...data.materials, ...data.reagents];
+                    CharGen.addToInventory(list[btn.dataset.idx]);
+                    // Refresh main inventory view behind modal
+                    const mainContainer = document.getElementById('char-manager-content');
+                    if(mainContainer) CharGen.renderTabInventory(mainContainer);
+                    
+                    // Visual feedback
+                    btn.textContent = "✔";
+                    setTimeout(() => btn.textContent = "+", 500);
+                };
+            });
+        };
+
+        // Tabs
+        overlay.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.onclick = (e) => {
+                overlay.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                renderList(btn.dataset.tab);
+            };
+        });
+
+        // Custom Item
+        overlay.querySelector('#btn-add-custom-item').onclick = () => {
+            const name = overlay.querySelector('#cust-item-name').value;
+            const slots = parseFloat(overlay.querySelector('#cust-item-slots').value) || 0;
+            if(name) {
+                CharGen.char.inventory.push({ name, slots, type: 'Custom', cost: '-', equipped: false });
+                const mainContainer = document.getElementById('char-manager-content');
+                if(mainContainer) CharGen.renderTabInventory(mainContainer);
+                alert("Added " + name);
+            }
+        };
+
+        // Close
+        const close = () => overlay.remove();
+        overlay.querySelector('#close-shop').onclick = close;
+        overlay.addEventListener('click', (e) => { if(e.target === overlay) close(); });
+
+        // Initial Load
+        renderList('weapons');
     },
 
     renderTabFeatures: (container) => {
@@ -3586,5 +3791,6 @@ renderTabMain: (container) => {
     },
 
 };
+
 
 

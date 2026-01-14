@@ -1,4 +1,4 @@
-/* Update print.css */
+/* --- REPLACE CONTENTS OF css/print.css --- */
 
 @media print {
     @page {
@@ -10,73 +10,134 @@
         background-color: white !important;
         color: black !important;
         font-family: serif;
-        font-size: 11pt;
+        font-size: 10pt;
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
         height: auto;
         overflow: visible;
     }
 
-    /* Hide UI Elements */
-    #sidebar, .char-tabs, .char-hud, #mobile-menu-btn, .play-toolbar, .btn-icon, .roll-btn {
+    /* 1. HIDE ALL APP UI */
+    #sidebar, 
+    .chargen-sidebar, 
+    .chargen-footer, 
+    .char-tabs, 
+    .char-hud, 
+    .char-tab-content, 
+    #mobile-menu-btn, 
+    .play-toolbar,
+    .modal-overlay,
+    button {
         display: none !important;
     }
 
-    /* Reset Main Content for Print */
-    #main-content {
-        padding: 0 !important;
+    /* 2. SHOW PRINT CONTAINER */
+    /* Ensure the parent container is visible */
+    #app-container, #main-content, .chargen-layout, .chargen-content, .char-manager-layout {
+        display: block !important;
+        width: 100% !important;
+        height: auto !important;
         margin: 0 !important;
-        background: white !important;
+        padding: 0 !important;
         overflow: visible !important;
+        background: white !important;
     }
 
-    /* Force the Manager Grid to be visible and black/white friendly */
-    .manager-grid {
-        display: grid !important;
-        grid-template-columns: 1fr 1.5fr !important;
-        gap: 1cm !important;
+    .print-only {
+        display: block !important;
+        width: 100%;
+    }
+
+    /* --- PAGE LAYOUT --- */
+    .print-page {
+        width: 100%;
+        height: 275mm; /* A4 printable height */
+        position: relative;
+        page-break-after: always;
+        border: none;
+    }
+    
+    .print-page:last-child {
+        page-break-after: auto;
+    }
+
+    /* --- STYLING FOR PRINT --- */
+    .p-header {
+        background: #000 !important;
+        color: #fff !important;
+        text-transform: uppercase;
+        font-weight: bold;
+        text-align: center;
+        padding: 3px;
+        margin-bottom: 10px;
+        border: 1px solid #000;
+    }
+
+    .p-box {
         border: 2px solid #000;
-        padding: 10px;
+        padding: 5px;
+        margin-bottom: 10px;
     }
 
-    /* Styling adjustments for ink saving and readability */
-    .attr-card, .reaction-list, .attack-card, .skills-grid, .defense-row {
-        background: white !important;
-        border: 1px solid #000 !important;
-        color: black !important;
-        page-break-inside: avoid;
-        box-shadow: none !important;
+    /* Attributes Strip */
+    .p-attributes {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        border: 2px solid #000;
+        margin-bottom: 15px;
     }
-
-    /* Attributes circles */
-    .attr-input {
-        color: black !important;
-        font-size: 1.5rem !important;
-        border: 1px solid #000 !important;
-        border-radius: 50%;
-        width: 40px; height: 40px;
-        display: flex; align-items: center; justify-content: center;
-        margin: 0 auto;
+    .p-attr-cell {
+        border-right: 1px solid #000;
+        text-align: center;
+        padding: 5px;
     }
+    .p-attr-cell:last-child { border-right: none; }
+    .p-attr-val { font-size: 1.5em; font-weight: bold; display: block; }
+    .p-attr-name { font-size: 0.8em; text-transform: uppercase; }
 
-    .atk-name, .skill-name { color: black !important; }
-    .atk-bonus, .atk-dmg, .skill-die { color: #000 !important; font-weight: bold; }
-    
-    /* Vitals Row manual reconstruction for print */
-    .hud-vitals-row {
-        display: flex !important;
+    /* Identity */
+    .p-identity {
+        display: flex;
         justify-content: space-between;
-        margin-bottom: 20px;
-        border-bottom: 2px solid black;
-        padding-bottom: 10px;
+        border-bottom: 3px solid #000;
+        margin-bottom: 15px;
+        padding-bottom: 5px;
     }
-    
-    .res-card {
-        border: 1px solid black !important;
-        background: white !important;
-        color: black !important;
-        width: 100px;
+    .p-id-val { font-size: 1.5em; font-weight: bold; }
+
+    /* Vitals */
+    .p-vitals {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin-bottom: 15px;
     }
+    .p-vital-box {
+        border: 2px solid #000;
+        text-align: center;
+        padding: 5px;
+    }
+    .p-vital-val { font-size: 1.5em; font-weight: bold; }
+
+    /* Grid Layouts */
+    .p-grid-main {
+        display: grid;
+        grid-template-columns: 1fr 1.5fr;
+        gap: 20px;
+    }
+
+    /* Tables */
+    .p-table { width: 100%; border-collapse: collapse; font-size: 0.9em; }
+    .p-table th { border-bottom: 2px solid #000; text-align: left; }
+    .p-table td { border-bottom: 1px solid #ccc; padding: 2px 0; }
     
-    .res-input { color: black !important; }
+    /* Skills */
+    .die { font-family: monospace; font-weight: bold; text-align: right; }
+
+    /* Inventory */
+    .p-inv-list { column-count: 2; font-size: 0.85em; }
+    .p-inv-item { display: flex; justify-content: space-between; border-bottom: 1px dotted #ccc; }
+    
+    /* Colors to Black/White */
+    * { text-shadow: none !important; box-shadow: none !important; }
 }

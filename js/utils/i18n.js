@@ -7,6 +7,13 @@
 
 const UI_DICTIONARY = {
     "en": {
+        "btn_shop": "Open Shop",
+        "btn_add_custom": "Add Custom Item",
+        "inv_empty": "Inventory is empty.",
+        "inv_header_name": "Item Name",
+        "inv_header_slots": "Slots",
+        "inv_header_actions": "Actions",
+        "shop_modal_title": "Provisions & Gear",
         "lbl_commodity": "Commodity",
         "lbl_unit": "Unit",
         "lbl_value": "Value",
@@ -237,6 +244,13 @@ const UI_DICTIONARY = {
         "tbl_btn_roll": "Roll {dice}"
     },
     "es": {
+        "btn_shop": "Abrir Tienda",
+        "btn_add_custom": "Añadir Personalizado",
+        "inv_empty": "El inventario está vacío.",
+        "inv_header_name": "Objeto",
+        "inv_header_slots": "Espacios",
+        "inv_header_actions": "Acciones",
+        "shop_modal_title": "Provisiones y Equipo",
         "lbl_commodity": "Mercancía",
         "lbl_unit": "Unidad",
         "lbl_value": "Valor",
@@ -598,4 +612,5 @@ export const I18n = {
     getData: (type) => {
         return DATA_STORE[type];
     }
+
 };

@@ -2495,7 +2495,7 @@ renderSheet: async (container) => {
     renderHUD: () => {
         const c = CharGen.char;
         const t = I18n.t;
-        const data = I18n.getData('options'); // Needed for name lookups
+        const data = I18n.getData('options');
         
         // Calculate percentages
         const hpPct = c.derived.maxHP > 0 ? Math.min(100, (c.current.hp / c.derived.maxHP) * 100) : 0;
@@ -2503,46 +2503,43 @@ renderSheet: async (container) => {
         const staPct = c.derived.maxSTA > 0 ? Math.min(100, (c.current.sta / c.derived.maxSTA) * 100) : 0;
         const luckPct = c.derived.maxLuck > 0 ? Math.min(100, (c.current.luck / c.derived.maxLuck) * 100) : 0;
 
-        // Lookup Names
+        // Lookup Names for subtitle
         const anc = data.ancestries.find(a => a.id === c.ancestry);
         const bg = data.backgrounds.find(b => b.id === c.background);
-        const archA = data.archetypes.find(a => a.id === c.archA);
-        const archB = data.archetypes.find(a => a.id === c.archB);
-
-        const ancName = anc ? anc.name : "Unknown";
-        const bgName = bg ? bg.name : "Unknown";
-        const archAName = archA ? archA.name : "Archetype A";
-        const archBName = archB ? archB.name : "Archetype B";
+        const ancName = anc ? anc.name : "";
+        const bgName = bg ? bg.name : "";
         const className = c.className || "Adventurer";
 
         const div = document.createElement('div');
         div.className = 'char-hud';
         div.innerHTML = `
-            <!-- Top Row: Name & Controls -->
-            <div class="hud-top">
-                <input type="text" class="edit-name" value="${c.name}" data-field="name" placeholder="${t('cg_lbl_name')}">
+            <!-- Top Row: Identity -->
+            <div class="hud-header">
+                <div class="hud-identity">
+                    <input type="text" class="edit-name" value="${c.name}" data-field="name" placeholder="${t('cg_lbl_name')}">
+                    <div class="hud-subtitle">
+                        <span>${ancName} ${bgName}</span>
+                        <span>•</span>
+                        <span>${className}</span>
+                    </div>
+                </div>
                 <div class="hud-controls">
                     <button id="btn-print-trigger" class="btn-icon" title="${t('btn_print')}">🖨️</button>
                     <button id="btn-save-trigger" class="btn-icon" title="${t('btn_save')}">💾</button>
                 </div>
             </div>
 
-            <!-- Second Row: Bio & Meta -->
-            <div class="hud-bio-row">
-                <div class="bio-group">
-                    <span class="bio-main">${ancName} ${bgName}</span>
-                    <span class="bio-sub">${className} (${archAName} + ${archBName})</span>
+            <!-- Second Row: Level & XP (Compact Bar) -->
+            <div class="hud-stats-bar">
+                <div class="stat-pill-mini">
+                    <span class="stat-label-mini">LVL</span>
+                    <input type="number" class="input-minimal edit-tiny" value="${c.level}" data-field="level">
                 </div>
-                <div class="meta-group">
-                    <div class="meta-pill">
-                        <span class="lbl">Lvl</span>
-                        <input type="number" class="edit-tiny" value="${c.level}" data-field="level">
-                    </div>
-                    <div class="meta-pill">
-                        <span class="lbl">XP</span>
-                        <input type="number" class="edit-tiny" value="${c.current.xp}" data-vital="xp">
-                        <span class="static">/ 10</span>
-                    </div>
+                <div style="width:1px; height:15px; background:#444;"></div>
+                <div class="stat-pill-mini">
+                    <span class="stat-label-mini">XP</span>
+                    <input type="number" class="input-minimal" value="${c.current.xp}" data-vital="xp">
+                    <span style="color:#666;">/ 10</span>
                 </div>
             </div>
 
@@ -2550,54 +2547,54 @@ renderSheet: async (container) => {
             <div class="hud-vitals-grid">
                 <!-- HP -->
                 <div class="vital-card red">
-                    <div class="vital-header">
-                        <span class="v-title">${t('sheet_hp')}</span>
-                        <div class="v-inputs">
+                    <div class="vital-top">
+                        <span class="vital-title">${t('sheet_hp')}</span>
+                        <div class="vital-inputs">
                             <input type="number" class="v-cur" value="${c.current.hp}" data-vital="hp">
                             <span class="sep">/</span>
                             <input type="number" class="v-max" value="${c.derived.maxHP}" data-vital="maxHP">
                         </div>
                     </div>
-                    <div class="progress-bar"><div class="fill" style="width:${hpPct}%"></div></div>
+                    <div class="progress-container"><div class="fill" style="width:${hpPct}%"></div></div>
                 </div>
 
                 <!-- STA -->
                 <div class="vital-card green">
-                    <div class="vital-header">
-                        <span class="v-title">${t('sheet_sta')}</span>
-                        <div class="v-inputs">
+                    <div class="vital-top">
+                        <span class="vital-title">${t('sheet_sta')}</span>
+                        <div class="vital-inputs">
                             <input type="number" class="v-cur" value="${c.current.sta}" data-vital="sta">
                             <span class="sep">/</span>
                             <input type="number" class="v-max" value="${c.derived.maxSTA}" data-vital="maxSTA">
                         </div>
                     </div>
-                    <div class="progress-bar"><div class="fill" style="width:${staPct}%"></div></div>
+                    <div class="progress-container"><div class="fill" style="width:${staPct}%"></div></div>
                 </div>
 
                 <!-- MP -->
                 <div class="vital-card blue">
-                    <div class="vital-header">
-                        <span class="v-title">${t('sheet_mp')}</span>
-                        <div class="v-inputs">
+                    <div class="vital-top">
+                        <span class="vital-title">${t('sheet_mp')}</span>
+                        <div class="vital-inputs">
                             <input type="number" class="v-cur" value="${c.current.mp}" data-vital="mp">
                             <span class="sep">/</span>
                             <input type="number" class="v-max" value="${c.derived.maxMP}" data-vital="maxMP">
                         </div>
                     </div>
-                    <div class="progress-bar"><div class="fill" style="width:${mpPct}%"></div></div>
+                    <div class="progress-container"><div class="fill" style="width:${mpPct}%"></div></div>
                 </div>
                 
                 <!-- LUCK -->
                 <div class="vital-card gold">
-                    <div class="vital-header">
-                        <span class="v-title">${t('sheet_luck')}</span>
-                        <div class="v-inputs">
+                    <div class="vital-top">
+                        <span class="vital-title">${t('sheet_luck')}</span>
+                        <div class="vital-inputs">
                             <input type="number" class="v-cur" value="${c.current.luck}" data-vital="luck">
                             <span class="sep">/</span>
                             <input type="number" class="v-max" value="${c.derived.maxLuck}" data-vital="maxLuck">
                         </div>
                     </div>
-                    <div class="progress-bar"><div class="fill" style="width:${luckPct}%"></div></div>
+                    <div class="progress-container"><div class="fill" style="width:${luckPct}%"></div></div>
                 </div>
             </div>
         `;
@@ -3031,13 +3028,48 @@ renderTabMain: (container) => {
         container.innerHTML = `<div style="padding:20px; text-align:center;">Features List Coming Soon...</div>`;
     },
 
-    renderTabNotes: (container) => {
+    renderTabNotes: async (container) => {
          const c = CharGen.char;
+         const t = I18n.t;
+         const data = I18n.getData('options');
+
+         // Lookup Names
+         const archA = data.archetypes.find(a => a.id === c.archA)?.name || "Archetype A";
+         const archB = data.archetypes.find(a => a.id === c.archB)?.name || "Archetype B";
+         
+         let src = c.imageUrl;
+         if (c.imageId) {
+            const { ImageStore } = await import('../utils/image_store.js');
+            src = await ImageStore.getUrl(c.imageId);
+         }
+         const placeholderImg = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='%23333'%3E%3Ctext x='50' y='50' font-size='40' text-anchor='middle' dy='.3em' fill='%23555'%3E👤%3C/text%3E%3C/svg%3E`;
+
          container.innerHTML = `
-            <div style="padding:1rem;">
-                <textarea id="live-notes" class="editor-textarea" style="height:400px; font-size:1rem;">${c.notes || ''}</textarea>
+            <div class="manager-grid">
+                <div class="mgr-col">
+                    <div class="bio-card">
+                        <div class="bio-portrait">
+                            <img src="${src || placeholderImg}" style="width:100%; height:100%; object-fit:cover; border-radius:4px;">
+                        </div>
+                        <div class="bio-details">
+                            <label>${t('cg_lbl_class')}</label>
+                            <div class="bio-val">${c.className} (${archA} + ${archB})</div>
+                            
+                            <label style="margin-top:10px;">${t('cg_lbl_ancestry')}</label>
+                            <div class="bio-val">${c.ancestryChoice || '-'}</div>
+
+                            <label style="margin-top:10px;">${t('cg_lbl_background')}</label>
+                            <div class="bio-val">${c.background || '-'}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mgr-col">
+                    <h4 class="mgr-header">${t('sheet_notes')}</h4>
+                    <textarea id="live-notes" class="editor-textarea" style="height:400px; font-size:1rem; background:#222; border:1px solid #444; color:#eee; padding:10px; width:100%; resize:none;">${c.notes || ''}</textarea>
+                </div>
             </div>
          `;
+         
          container.querySelector('#live-notes').addEventListener('input', (e) => {
              c.notes = e.target.value;
          });
@@ -3984,6 +4016,7 @@ renderTabMain: (container) => {
     },
 
 };
+
 
 
 

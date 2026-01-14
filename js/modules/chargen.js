@@ -175,7 +175,7 @@ export const CharGen = {
      */
     renderPlayInterface: () => {
         // 1. Render the new Manager Layout
-        // The new renderSheet function handles clearing the container and setting up the grid/tabs.
+        // The new  function handles clearing the container and setting up the grid/tabs.
         CharGen.renderSheet(CharGen.container).then(() => {
             console.log("Play Mode: Manager Rendered.");
         });
@@ -2460,7 +2460,8 @@ renderSheet: async (container) => {
         layout.className = 'char-manager-layout';
         
         // 2. Render The HUD (Header & Vitals) - Always visible
-        layout.appendChild(CharGen.());
+        // FIX: Added 'renderHUD' back to the function call
+        layout.appendChild(CharGen.renderHUD());
 
         // 3. Render Navigation Tabs
         layout.appendChild(CharGen.renderTabs());
@@ -2488,7 +2489,6 @@ renderSheet: async (container) => {
         // 8. Attach Listeners
         CharGen.attachManagerListeners();
     },
-
     /**
      * Renders the Top Bar: Identity and Vitals
      */
@@ -3984,6 +3984,7 @@ renderTabMain: (container) => {
     },
 
 };
+
 
 
 

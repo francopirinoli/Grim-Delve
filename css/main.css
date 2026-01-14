@@ -4444,5 +4444,76 @@ input.res-input:focus { border-bottom: 1px solid #fff !important; }
     text-transform: uppercase;
 }
 
+/* --- MOBILE FIXES --- */
 
+/* 1. Make Tabs Scrollable */
+.char-tabs {
+    display: flex;
+    flex-wrap: nowrap; /* Prevent stacking */
+    overflow-x: auto;  /* Allow horizontal scroll */
+    -webkit-overflow-scrolling: touch; /* Smooth scroll iOS */
+    background: #111;
+    border-bottom: 1px solid #333;
+    padding: 0 10px;
+    gap: 10px;
+    scrollbar-width: none; /* Hide scrollbar Firefox */
+}
 
+.char-tabs::-webkit-scrollbar { display: none; /* Hide scrollbar Chrome/Safari */ }
+
+.char-tab-btn {
+    flex: 0 0 auto; /* Don't shrink */
+    white-space: nowrap;
+    padding: 15px 10px;
+    font-size: 0.85rem;
+}
+
+/* 2. Responsive Inventory List */
+@media (max-width: 768px) {
+    /* Hide the Desktop Header */
+    .inv-header-bar {
+        display: none; 
+    }
+
+    /* Transform Row into Card */
+    .inv-manager-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        grid-template-areas: 
+            "name slots"
+            "meta actions";
+        gap: 5px;
+        padding: 12px;
+        border-bottom: 1px solid #333;
+        background: #1a1a1a;
+        margin-bottom: 5px;
+        border-radius: 4px;
+    }
+
+    .col-name { 
+        grid-area: name; 
+        flex: 1;
+    }
+
+    /* Position Slots count top right */
+    .col-slots { 
+        grid-area: slots; 
+        width: auto;
+        text-align: right;
+        font-weight: bold;
+        color: var(--accent-gold);
+    }
+    .col-slots::after { content: ' Slot'; font-size: 0.7em; font-weight: normal; color: #666; }
+
+    /* Meta text moves to second line */
+    .inv-meta {
+        grid-area: meta;
+    }
+
+    /* Actions buttons move to bottom right */
+    .col-actions {
+        grid-area: actions;
+        width: auto;
+        justify-content: flex-end;
+    }
+}

@@ -2447,142 +2447,134 @@ renderGear: (el) => {
        ------------------------------------------------------------------ */
 
 renderSheet: async (container) => {
-        const c = CharGen.char;
+    const c = CharGen.char;
 
-        // 1. Data Safety: Initialize Current Vitals if they are null
-        // This fixes the "value 'null' cannot be parsed" error
-        if (c.current.hp === null) c.current.hp = c.derived.maxHP;
-        if (c.current.mp === null) c.current.mp = c.derived.maxMP;
-        if (c.current.sta === null) c.current.sta = c.derived.maxSTA;
-        if (c.current.luck === null) c.current.luck = c.derived.maxLuck;
+    // 1. Data Safety: Initialize Current Vitals if they are null
+    if (c.current.hp === null) c.current.hp = c.derived.maxHP;
+    if (c.current.mp === null) c.current.mp = c.derived.maxMP;
+    if (c.current.sta === null) c.current.sta = c.derived.maxSTA;
+    if (c.current.luck === null) c.current.luck = c.derived.maxLuck;
 
-        // Ensure derived stats are calculated
-        CharGen.calculateDerived();
-        CharGen.calculateDefenses();
-        CharGen.calculateArmorScore();
-        
-        // 2. Clear Container
-        container.innerHTML = '';
-        
-        // 3. Build Layout Structure
-        const layout = document.createElement('div');
-        layout.className = 'char-manager-layout';
-        
-        // 4. Render Components
-        layout.appendChild(CharGen.renderHUD());     // The Top Bar
-        layout.appendChild(CharGen.renderTabs());    // The Tabs
-        
-        // Content Area
-        const contentArea = document.createElement('div');
-        contentArea.id = 'char-manager-content';
-        contentArea.className = 'char-tab-content';
-        layout.appendChild(contentArea);
-        
-        // Hidden Print Area
-        const printArea = document.createElement('div');
-        printArea.id = 'print-sheet-root';
-        printArea.className = 'print-only';
-        layout.appendChild(printArea);
+    CharGen.recalcAll();
+    
+    // 2. Clear Container
+    container.innerHTML = '';
+    
+    // 3. Build Layout Structure
+    const layout = document.createElement('div');
+    layout.className = 'char-manager-layout';
+    
+    // 4. Render Components
+    layout.appendChild(CharGen.renderHUD());     
+    layout.appendChild(CharGen.renderTabs());    
+    
+    const contentArea = document.createElement('div');
+    contentArea.id = 'char-manager-content';
+    contentArea.className = 'char-tab-content';
+    layout.appendChild(contentArea);
+    
+    // CRITICAL: This class MUST be 'print-only' and matched in CSS
+    const printArea = document.createElement('div');
+    printArea.id = 'print-sheet-root';
+    printArea.className = 'print-only';
+    layout.appendChild(printArea);
 
-        container.appendChild(layout);
+    container.appendChild(layout);
 
-        // 5. Initialize Default Tab & Print View
-        CharGen.switchTab('main');
-        CharGen.renderPrintVersion(printArea);
-        
-        // 6. Attach Listeners
-        CharGen.attachManagerListeners();
-    },
+    // 5. Initialize
+    CharGen.switchTab('main');
+    CharGen.renderPrintVersion(printArea);
+    CharGen.attachManagerListeners();
+},
 
 renderHUD: () => {
-        const c = CharGen.char;
-        const t = I18n.t;
-        
-        // Safe Accessors
-        const hp = c.current.hp || 0;
-        const maxHP = c.derived.maxHP || 1;
-        const mp = c.current.mp || 0;
-        const maxMP = c.derived.maxMP || 0;
-        const sta = c.current.sta || 0;
-        const maxSTA = c.derived.maxSTA || 0;
-        const luck = c.current.luck || 0;
-        const maxLuck = c.derived.maxLuck || 0;
+    const c = CharGen.char;
+    const t = I18n.t;
+    
+    const hp = c.current.hp !== null ? c.current.hp : c.derived.maxHP;
+    const maxHP = c.derived.maxHP || 1;
+    const mp = c.current.mp !== null ? c.current.mp : c.derived.maxMP;
+    const maxMP = c.derived.maxMP || 0;
+    const sta = c.current.sta !== null ? c.current.sta : c.derived.maxSTA;
+    const maxSTA = c.derived.maxSTA || 0;
+    const luck = c.current.luck !== null ? c.current.luck : c.derived.maxLuck;
+    const maxLuck = c.derived.maxLuck || 0;
 
-        // Calculate Percentages for Bars
-        const hpPct = Math.min(100, (hp / maxHP) * 100);
-        const mpPct = Math.min(100, (mp / maxMP) * 100);
-        const staPct = Math.min(100, (sta / maxSTA) * 100);
-        const luckPct = Math.min(100, (luck / maxLuck) * 100);
+    const hpPct = Math.min(100, (hp / maxHP) * 100);
+    const mpPct = Math.min(100, (mp / maxMP) * 100);
+    const staPct = Math.min(100, (sta / maxSTA) * 100);
+    const luckPct = Math.min(100, (luck / maxLuck) * 100);
 
-        const div = document.createElement('div');
-        div.className = 'char-hud';
-        div.innerHTML = `
-            <div class="hud-header">
-                <div class="hud-identity">
-                    <input type="text" class="edit-name" value="${c.name}" data-field="name" placeholder="${t('cg_lbl_name')}">
-                    <div class="hud-subtitle">
-                        ${c.className || 'Adventurer'} &bull; Lvl ${c.level}
-                    </div>
+    const div = document.createElement('div');
+    div.className = 'char-hud';
+    div.innerHTML = `
+        <div class="hud-header">
+            <div class="hud-identity">
+                <input type="text" class="edit-name" value="${c.name}" data-field="name" placeholder="${t('cg_lbl_name')}">
+                <div class="hud-subtitle">
+                    ${c.className || 'Adventurer'} &bull; Lvl ${c.level}
                 </div>
-                <div class="hud-controls">
-                    <button id="btn-print-trigger" class="btn-icon" title="${t('btn_print')}">🖨️</button>
-                    <button id="btn-save-trigger" class="btn-icon" title="${t('btn_save')}">💾</button>
+            </div>
+            <div class="hud-controls">
+                <button id="btn-print-trigger" class="btn-icon" title="${t('btn_print')}">🖨️</button>
+                <button id="btn-save-trigger" class="btn-icon" title="${t('btn_save')}">💾</button>
+            </div>
+        </div>
+
+        <div class="hud-vitals-row">
+            <div class="level-capsule">
+                <div class="lvl-group">
+                    <span class="lvl-label">LVL</span>
+                    <input type="number" class="lvl-input edit-tiny" value="${c.level}" data-field="level">
+                </div>
+                <div style="width:1px; height:30px; background:#333;"></div>
+                <div class="lvl-group">
+                    <span class="lvl-label">XP</span>
+                    <div style="display:flex; align-items:baseline;">
+                        <input type="number" class="lvl-input" value="${c.current.xp || 0}" data-vital="xp">
+                        <span style="font-size:0.8rem; color:#666;">/ 10</span>
+                    </div>
                 </div>
             </div>
 
-            <div class="hud-vitals-row">
-                <!-- Level / XP Capsule -->
-                <div class="level-capsule">
-                    <span>LVL</span>
-                    <input type="number" class="input-minimal edit-tiny" value="${c.level}" data-field="level">
-                    <span style="color:#444">|</span>
-                    <span>XP</span>
-                    <input type="number" class="input-minimal" value="${c.current.xp || 0}" data-vital="xp">
+            <div class="resource-grid">
+                <div class="res-card red">
+                    <div class="res-label">${t('sheet_hp')}</div>
+                    <div class="res-values">
+                        <input type="number" class="res-input v-cur" value="${hp}" data-vital="hp">
+                        <span class="res-max">/ ${maxHP}</span>
+                    </div>
+                    <div class="res-bar"><div class="res-fill" style="width:${hpPct}%"></div></div>
                 </div>
-
-                <!-- Resource Grid -->
-                <div class="resource-grid">
-                    <!-- HP -->
-                    <div class="res-card red">
-                        <div class="res-header"><span>${t('sheet_hp')}</span></div>
-                        <div class="res-values">
-                            <input type="number" class="res-input v-cur" value="${hp}" data-vital="hp">
-                            <span class="res-max">/ ${maxHP}</span>
-                        </div>
-                        <div class="res-bar"><div class="res-fill" style="width:${hpPct}%"></div></div>
+                <div class="res-card green">
+                    <div class="res-label">${t('sheet_sta')}</div>
+                    <div class="res-values">
+                        <input type="number" class="res-input v-cur" value="${sta}" data-vital="sta">
+                        <span class="res-max">/ ${maxSTA}</span>
                     </div>
-                    <!-- STA -->
-                    <div class="res-card green">
-                        <div class="res-header"><span>${t('sheet_sta')}</span></div>
-                        <div class="res-values">
-                            <input type="number" class="res-input v-cur" value="${sta}" data-vital="sta">
-                            <span class="res-max">/ ${maxSTA}</span>
-                        </div>
-                        <div class="res-bar"><div class="res-fill" style="width:${staPct}%"></div></div>
+                    <div class="res-bar"><div class="res-fill" style="width:${staPct}%"></div></div>
+                </div>
+                <div class="res-card blue">
+                    <div class="res-label">${t('sheet_mp')}</div>
+                    <div class="res-values">
+                        <input type="number" class="res-input v-cur" value="${mp}" data-vital="mp">
+                        <span class="res-max">/ ${maxMP}</span>
                     </div>
-                    <!-- MP -->
-                    <div class="res-card blue">
-                        <div class="res-header"><span>${t('sheet_mp')}</span></div>
-                        <div class="res-values">
-                            <input type="number" class="res-input v-cur" value="${mp}" data-vital="mp">
-                            <span class="res-max">/ ${maxMP}</span>
-                        </div>
-                        <div class="res-bar"><div class="res-fill" style="width:${mpPct}%"></div></div>
+                    <div class="res-bar"><div class="res-fill" style="width:${mpPct}%"></div></div>
+                </div>
+                <div class="res-card gold">
+                    <div class="res-label">${t('sheet_luck')}</div>
+                    <div class="res-values">
+                        <input type="number" class="res-input v-cur" value="${luck}" data-vital="luck">
+                        <span class="res-max">/ ${maxLuck}</span>
                     </div>
-                    <!-- LUCK -->
-                    <div class="res-card gold">
-                        <div class="res-header"><span>${t('sheet_luck')}</span></div>
-                        <div class="res-values">
-                            <input type="number" class="res-input v-cur" value="${luck}" data-vital="luck">
-                            <span class="res-max">/ ${maxLuck}</span>
-                        </div>
-                        <div class="res-bar"><div class="res-fill" style="width:${luckPct}%"></div></div>
-                    </div>
+                    <div class="res-bar"><div class="res-fill" style="width:${luckPct}%"></div></div>
                 </div>
             </div>
-        `;
-        return div;
-    },
+        </div>
+    `;
+    return div;
+},
 
     renderTabs: () => {
         const t = I18n.t;
@@ -2628,94 +2620,104 @@ renderHUD: () => {
     },
 
     renderTabMain: (container) => {
-        const c = CharGen.char;
-        const t = I18n.t;
-        
-        // Calculate latest stats before rendering
-        CharGen.recalcAll(); 
+    const c = CharGen.char;
+    const t = I18n.t;
+    
+    CharGen.recalcAll(); 
 
-        const armorScore = CharGen.calculateArmorScore();
-        const def = c.defenses;
+    const armorScore = CharGen.calculateArmorScore();
+    const def = c.defenses;
 
-        container.innerHTML = `
-            <div class="manager-grid">
-                <!-- LEFT COL: Stats & Defense -->
-                <div class="mgr-col">
+    container.innerHTML = `
+        <div class="manager-grid">
+            
+            <!-- COLUMN 1 -->
+            <div class="mgr-col">
+                <div>
                     <div class="mgr-header">${t('cg_step_stats')}</div>
                     <div class="attr-grid">
                         ${['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'].map(stat => `
                             <div class="attr-card">
-                                <span class="attr-label">${t('stat_' + stat.toLowerCase())}</span>
+                                <span class="attr-lbl">${t('stat_' + stat.toLowerCase())}</span>
                                 <input type="number" class="attr-val attr-input" data-stat="${stat}" value="${c.stats[stat] || 0}">
                             </div>
                         `).join('')}
                     </div>
+                </div>
 
+                <div>
                     <div class="mgr-header">${t('sheet_def')}</div>
-                    <div class="defense-row">
-                        <div class="def-cell"><span class="def-label">${t('sheet_ac')}</span><div class="def-val">${armorScore}</div></div>
-                        <div class="def-cell"><span class="def-label">${t('cg_initiative')}</span><div class="def-val">${(c.stats.DEX || 0) >= 0 ? '+' : ''}${c.stats.DEX || 0}</div></div>
-                        <div class="def-cell"><span class="def-label">${t('mon_stat_spd')}</span><div class="def-val">30'</div></div>
+                    <div class="def-row">
+                        <div class="def-card">
+                            <span class="def-label">${t('sheet_ac')}</span>
+                            <div class="def-val">${armorScore}</div>
+                        </div>
+                        <div class="def-card">
+                            <span class="def-label">${t('cg_initiative')}</span>
+                            <div class="def-val">${(c.stats.DEX || 0) >= 0 ? '+' : ''}${c.stats.DEX || 0}</div>
+                        </div>
+                        <div class="def-card">
+                            <span class="def-label">${t('mon_stat_spd')}</span>
+                            <div class="def-val">30'</div>
+                        </div>
                     </div>
 
-                    <div class="reaction-list">
-                        <div class="reaction-item">
-                            <span>${t('sheet_dodge')} (DEX)</span>
-                            <strong>${def.dodge.val >= 0 ? '+' : ''}${def.dodge.val} ${def.dodge.die !== '-' ? '('+def.dodge.die+')' : ''}</strong>
+                    <div style="margin-top:10px; background:#1a1a1a; padding:10px; border-radius:4px; border:1px solid #333;">
+                        <div class="skill-row">
+                            <span class="skill-name">${t('sheet_dodge')} (DEX)</span>
+                            <span class="skill-val">${def.dodge.val >= 0 ? '+' : ''}${def.dodge.val} ${def.dodge.die !== '-' ? '('+def.dodge.die+')' : ''}</span>
                         </div>
-                        <div class="reaction-item">
-                            <span>${t('sheet_parry')} (STR)</span>
-                            <strong>${def.parry.val !== null ? (def.parry.val >= 0 ? '+'+def.parry.val : def.parry.val) : '--'}</strong>
+                        <div class="skill-row">
+                            <span class="skill-name">${t('sheet_parry')} (STR)</span>
+                            <span class="skill-val">${def.parry.val !== null ? (def.parry.val >= 0 ? '+'+def.parry.val : def.parry.val) : '--'}</span>
                         </div>
-                        <div class="reaction-item">
-                            <span>${t('sheet_block')} (CON)</span>
-                            <strong>${def.block.val !== null ? (def.block.val >= 0 ? '+'+def.block.val : def.block.val) : '--'}</strong>
+                        <div class="skill-row" style="border-bottom:none;">
+                            <span class="skill-name">${t('sheet_block')} (CON)</span>
+                            <span class="skill-val">${def.block.val !== null ? (def.block.val >= 0 ? '+'+def.block.val : def.block.val) : '--'}</span>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- RIGHT COL: Actions & Skills -->
-                <div class="mgr-col">
-                    <div class="mgr-header">
-                        <span>${t('sheet_attacks')}</span>
-                    </div>
-                    <div class="attack-list">
+            <!-- COLUMN 2 -->
+            <div class="mgr-col">
+                <div>
+                    <div class="mgr-header">${t('sheet_attacks')}</div>
+                    <div id="combat-attacks-list" class="attack-list">
                         ${CharGen.renderAttackButtons()}
                     </div>
+                </div>
 
-                    <div class="mgr-header" style="margin-top: 2rem;">${t('sheet_skills')}</div>
+                <div>
+                    <div class="mgr-header">${t('sheet_skills')}</div>
                     <div class="skills-grid">
                         ${CharGen.renderSkillButtons()}
                     </div>
                 </div>
             </div>
-        `;
-        
-        // 1. Re-bind Inputs for Attribute changes
-        container.querySelectorAll('.attr-input').forEach(input => {
-            input.addEventListener('change', (e) => {
-                const stat = e.target.dataset.stat;
-                const val = parseInt(e.target.value) || 0;
-                CharGen.char.stats[stat] = val;
-                
-                CharGen.recalcAll();
-                // We re-render the whole sheet to update dependent stats (like HP or Attack bonuses)
-                // that rely on the attribute you just changed.
-                CharGen.renderSheet(CharGen.container);
-            });
-        });
+        </div>
+    `;
 
-        // 2. Re-bind Attack Rolls (Moved INSIDE the function)
-        container.querySelectorAll('.attack-card').forEach(btn => {
-            btn.addEventListener('click', () => {
-                // Placeholder for Dice Roller integration
-                // In the future, this will call Dice.rollCheck()
-                const name = btn.dataset.name;
-                console.log(`Rolled Attack for: ${name}`);
-                alert(`Rolling attack for ${name}... (Check console)`);
-            });
+    // Bind Attribute Inputs
+    container.querySelectorAll('.attr-input').forEach(input => {
+        input.addEventListener('change', (e) => {
+            const stat = e.target.dataset.stat;
+            const val = parseInt(e.target.value) || 0;
+            CharGen.char.stats[stat] = val;
+            
+            CharGen.recalcAll();
+            CharGen.renderSheet(CharGen.container);
         });
-    },
+    });
+
+    // Bind Attack Rolls
+    container.querySelectorAll('.attack-card').forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Placeholder: In future phases this calls the dice roller
+            alert(`Attack Roll: ${btn.dataset.name}`);
+        });
+    });
+},
 
     renderAttackButtons: () => {
         const c = CharGen.char;
@@ -3995,6 +3997,7 @@ renderHUD: () => {
     },
 
 };
+
 
 
 

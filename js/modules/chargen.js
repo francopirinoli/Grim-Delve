@@ -3004,15 +3004,19 @@ renderHUD: () => {
     // --- 1. Gather Data ---
     const allFeatures = [];
 
-    // A. Ancestry Feat
+    // A. Ancestry Feat (FIXED)
     if (c.ancestry && data.ancestries) {
         const anc = data.ancestries.find(a => a.id === c.ancestry);
-        if (anc && c.ancestryFeatIndex !== null && anc.feats[c.ancestryFeatIndex]) {
-            const feat = anc.feats[c.ancestryFeatIndex];
+        // Check if an index is saved, otherwise default to 0 if exists
+        const featIdx = c.ancestryFeatIndex !== null ? c.ancestryFeatIndex : (anc.feats.length > 0 ? 0 : null);
+        
+        if (anc && featIdx !== null && anc.feats[featIdx]) {
+            const feat = anc.feats[featIdx];
             allFeatures.push({
                 name: feat.name,
                 source: `${t('cg_lbl_ancestry')}: ${anc.name}`,
                 type: "Passive",
+                cost: "-",
                 desc: feat.effect,
                 tags: feat.modifiers ? ["Stat Bonus"] : []
             });
@@ -3027,13 +3031,14 @@ renderHUD: () => {
                 name: bg.feat.name,
                 source: `${t('cg_lbl_background')}: ${bg.name}`,
                 type: "Passive",
+                cost: "-",
                 desc: bg.feat.effect,
                 tags: ["Utility"]
             });
         }
     }
 
-    // C. Class Synergy Feats (Level Based)
+    // C. Class Synergy Feats
     if (c.classId && data.classes) {
         const cls = data.classes.find(x => x.id === c.classId);
         if (cls && cls.synergy_feats) {
@@ -3042,8 +3047,8 @@ renderHUD: () => {
                     allFeatures.push({
                         name: f.name,
                         source: `${t('cg_step_class')} (Lvl ${f.level})`,
-                        type: f.type || "Passive", // e.g. "Action", "Reaction"
-                        cost: f.cost,
+                        type: f.type || "Passive",
+                        cost: f.cost || "-",
                         desc: f.effect,
                         tags: f.stat_options ? ["Stat Choice"] : []
                     });
@@ -3062,65 +3067,45 @@ renderHUD: () => {
                 cost: tal.cost,
                 desc: tal.effect,
                 tags: tal.tags || [],
-                choice: tal.choice // If they made a choice (e.g. Skill Specialization)
+                choice: tal.choice
             });
         });
     }
 
-    // --- 2. Helper: Determine CSS Class ---
-    const getTypeClass = (type, tags) => {
-        const tLower = (type || "").toLowerCase();
-        const tagsStr = (tags || []).join(" ").toLowerCase();
-        
-        if (tLower.includes("reaction") || tagsStr.includes("reaction")) return "reaction";
-        if (tLower.includes("action") || tLower.includes("attack") || tLower.includes("spell")) return "action";
-        if (tLower.includes("passive")) return "passive";
-        return "utility"; // Default
-    };
-
-    // --- 3. Render HTML ---
+    // --- 2. Render HTML ---
     if (allFeatures.length === 0) {
-        container.innerHTML = `<div style="padding:2rem; text-align:center; color:#666;">No features found. Complete Character Creation first.</div>`;
+        container.innerHTML = `<div style="padding:2rem; text-align:center; color:#666;">No features found.</div>`;
         return;
     }
+
+    // Helper for CSS classes
+    const getTypeClass = (type) => {
+        const tLower = (type || "").toLowerCase();
+        if (tLower.includes("reaction")) return "reaction";
+        if (tLower.includes("action") || tLower.includes("attack")) return "action";
+        if (tLower.includes("passive")) return "passive";
+        return "utility"; 
+    };
 
     container.innerHTML = `
         <div class="manager-grid" style="grid-template-columns: 1fr;">
             <div class="mgr-header">${t('sheet_features')}</div>
             <div class="features-grid">
-                ${allFeatures.map(f => {
-                    const cssClass = getTypeClass(f.type, f.tags);
-                    const costHtml = f.cost && f.cost !== "-" ? `<span class="feat-cost">${f.cost}</span>` : "";
-                    
-                    // Format Tags
-                    let tagsHtml = "";
-                    if(f.tags && f.tags.length > 0) {
-                        tagsHtml = `<div class="feat-tags">${f.tags.map(tag => `<span class="feat-tag">${tag}</span>`).join('')}</div>`;
-                    }
-
-                    // Append Choice info if present (e.g. "Selected: Athletics")
-                    let descHtml = f.desc;
-                    if(f.choice) {
-                        descHtml += ` <em style="color:var(--accent-gold); display:block; margin-top:5px;">Selection: ${f.choice}</em>`;
-                    }
-
-                    return `
-                        <div class="feature-card ${cssClass}">
-                            <div class="feat-header">
-                                <span class="feat-title">${f.name}</span>
-                                ${costHtml}
-                            </div>
-                            <div class="feat-meta">
-                                <span class="feat-source">${f.source}</span>
-                                <span>${f.type}</span>
-                            </div>
-                            <div class="feat-desc">
-                                ${descHtml}
-                            </div>
-                            ${tagsHtml}
+                ${allFeatures.map(f => `
+                    <div class="feature-card ${getTypeClass(f.type)}">
+                        <div class="feat-header">
+                            <span class="feat-title">${f.name}</span>
+                            ${f.cost !== "-" ? `<span class="feat-cost">${f.cost}</span>` : ""}
                         </div>
-                    `;
-                }).join('')}
+                        <div class="feat-meta">
+                            <span class="feat-source">${f.source}</span>
+                            <span>${f.type}</span>
+                        </div>
+                        <div class="feat-desc">
+                            ${f.desc} ${f.choice ? `<em style="color:var(--accent-gold); display:block; margin-top:5px;">Selection: ${f.choice}</em>` : ''}
+                        </div>
+                    </div>
+                `).join('')}
             </div>
         </div>
     `;
@@ -3178,155 +3163,154 @@ renderHUD: () => {
     });
 },
     renderPrintVersion: (container) => {
-        const c = CharGen.char;
-        const t = I18n.t;
-        const fmt = I18n.fmt;
-        const s = c.stats;
+    const c = CharGen.char;
+    const t = I18n.t;
+    const data = I18n.getData('options');
+    const s = c.stats;
 
-        // Ensure fresh math
-        const armorScore = CharGen.calculateArmorScore();
-        const def = c.defenses;
-        const skills = CharGen.calculateSkills();
+    // 1. Gather ALL Features (Ancestry + Background + Class + Talents)
+    let printFeatures = [];
+    
+    // Ancestry
+    if (c.ancestry) {
+        const anc = data.ancestries.find(a => a.id === c.ancestry);
+        const fIdx = c.ancestryFeatIndex !== null ? c.ancestryFeatIndex : 0;
+        if(anc && anc.feats[fIdx]) {
+            printFeatures.push({ name: anc.feats[fIdx].name, desc: anc.feats[fIdx].effect, source: "Ancestry" });
+        }
+    }
+    // Background
+    if (c.background) {
+        const bg = data.backgrounds.find(b => b.id === c.background);
+        if(bg && bg.feat) printFeatures.push({ name: bg.feat.name, desc: bg.feat.effect, source: "Background" });
+    }
+    // Synergy
+    if (c.classId) {
+        const cls = data.classes.find(x => x.id === c.classId);
+        if(cls) {
+            cls.synergy_feats.filter(f => f.level <= c.level).forEach(f => {
+                printFeatures.push({ name: f.name, desc: f.effect, source: "Class Lvl " + f.level });
+            });
+        }
+    }
+    // Talents
+    c.talents.forEach(tal => {
+        printFeatures.push({ name: tal.name, desc: tal.effect, source: tal.sourceName, choice: tal.choice });
+    });
+
+    // 2. Format Lists
+    const featsHTML = printFeatures.map(f => `
+        <div class="p-feat-card">
+            <span class="p-feat-name">${f.name} <span style="font-weight:normal; font-size:0.7em; float:right;">${f.source}</span></span>
+            <div>${f.desc} ${f.choice ? `<br><em>(${f.choice})</em>` : ''}</div>
+        </div>
+    `).join('');
+
+    const weapons = c.inventory.filter(i => (i.type === 'Melee' || i.type === 'Ranged') && i.equipped);
+    const attackRows = weapons.map(w => {
+        const isFinesse = w.tags && (w.tags.includes("Finesse") || w.tags.includes("Sutil"));
+        const isRanged = w.type === 'Ranged' || w.type === 'A Distancia';
+        let mod = s.STR || 0;
+        if (isRanged) mod = s.DEX || 0;
+        else if (isFinesse) mod = Math.max(s.STR || 0, s.DEX || 0);
+        const sign = mod >= 0 ? '+' : '';
+        // Translate tags
+        const tagStr = w.tags ? (Array.isArray(w.tags) ? w.tags.join(', ') : w.tags) : '-';
         
-        // Helper: Format Attacks
-        const weapons = c.inventory.filter(i => (i.type === 'Melee' || i.type === 'Ranged') && i.equipped);
-        const attackRows = weapons.map(w => {
-            const isFinesse = w.tags && (w.tags.includes("Finesse") || w.tags.includes("Sutil"));
-            const isRanged = w.type === 'Ranged' || w.type === 'A Distancia';
-            let mod = s.STR || 0;
-            if (isRanged) mod = s.DEX || 0;
-            else if (isFinesse) mod = Math.max(s.STR || 0, s.DEX || 0);
-            const sign = mod >= 0 ? '+' : '';
-            return `<tr><td>${w.name}</td><td>${sign}${mod}</td><td>${w.damage} ${sign}${mod}</td><td style="font-size:0.7em">${w.tags || '-'}</td></tr>`;
-        }).join('');
+        return `<tr><td>${w.name}</td><td>${sign}${mod}</td><td>${w.damage} ${sign}${mod}</td><td style="font-size:0.7em">${tagStr}</td></tr>`;
+    }).join('');
+    
+    // Inventory List
+    const invHTML = c.inventory.map(i => `
+        <div class="p-inv-item">
+            <span>${i.equipped ? '★ ' : ''}${i.name}</span>
+            <span>${i.slots || 0}</span>
+        </div>
+    `).join('');
 
-        // Helper: Format Inventory
-        const inventoryRows = c.inventory.map(i => `
-            <div class="p-inv-item">
-                <span>${i.equipped ? '★ ' : ''}${i.name}</span>
-                <span>${i.slots || 0}</span>
+    const skills = CharGen.calculateSkills();
+    const armorScore = CharGen.calculateArmorScore();
+
+    // 3. Render HTML
+    container.innerHTML = `
+        <div class="print-page" id="p1">
+            <div class="p-identity">
+                <div class="p-id-field"><span class="p-id-label">${t('lbl_name')}</span><span class="p-id-val">${c.name}</span></div>
+                <div class="p-id-field"><span class="p-id-label">Class</span><span class="p-id-val">${c.className}</span></div>
+                <div class="p-id-field"><span class="p-id-label">${t('lbl_level')}</span><span class="p-id-val">${c.level}</span></div>
+                <div class="p-id-field"><span class="p-id-label">XP</span><span class="p-id-val">${c.current.xp}/10</span></div>
             </div>
-        `).join('');
 
-        // Helper: Format Talents
-        const renderFeat = (f) => `
-            <div class="p-feat-card">
-                <span class="p-feat-name">${f.name}</span>
-                <div>${f.effect}</div>
+            <div class="p-attributes">
+                ${['STR','DEX','CON','INT','WIS','CHA'].map(st => 
+                    `<div class="p-attr-cell"><span class="p-attr-name">${st}</span><span class="p-attr-val">${s[st] !== null ? s[st] : 0}</span></div>`
+                ).join('')}
             </div>
-        `;
-        const featsHTML = c.talents.map(renderFeat).join('');
 
-        // HTML TEMPLATE
-        container.innerHTML = `
-            <!-- PAGE 1 -->
-            <div class="print-page" id="p1">
-                
-                <!-- IDENTITY -->
-                <div class="p-identity">
-                    <div class="p-id-field"><span class="p-id-label">${t('lbl_name')}</span><span class="p-id-val">${c.name}</span></div>
-                    <div class="p-id-field"><span class="p-id-label">Class</span><span class="p-id-val">${c.className}</span></div>
-                    <div class="p-id-field"><span class="p-id-label">${t('lbl_level')}</span><span class="p-id-val">${c.level}</span></div>
-                    <div class="p-id-field"><span class="p-id-label">XP</span><span class="p-id-val">${c.current.xp}/10</span></div>
-                </div>
+            <div class="p-vitals">
+                <div class="p-vital-box"><h4>${t('sheet_hp')}</h4><span class="p-vital-val">${c.derived.maxHP}</span></div>
+                <div class="p-vital-box"><h4>${t('sheet_sta')}</h4><span class="p-vital-val">${c.derived.maxSTA}</span></div>
+                <div class="p-vital-box"><h4>${t('sheet_mp')}</h4><span class="p-vital-val">${c.derived.maxMP}</span></div>
+                <div class="p-vital-box"><h4>${t('sheet_luck')}</h4><span class="p-vital-val">${c.derived.maxLuck}</span></div>
+            </div>
 
-                <!-- ATTRIBUTES -->
-                <div class="p-attributes">
-                    <div class="p-attr-cell"><span class="p-attr-name">${t('stat_str')}</span><span class="p-attr-val">${s.STR}</span></div>
-                    <div class="p-attr-cell"><span class="p-attr-name">${t('stat_dex')}</span><span class="p-attr-val">${s.DEX}</span></div>
-                    <div class="p-attr-cell"><span class="p-attr-name">${t('stat_con')}</span><span class="p-attr-val">${s.CON}</span></div>
-                    <div class="p-attr-cell"><span class="p-attr-name">${t('stat_int')}</span><span class="p-attr-val">${s.INT}</span></div>
-                    <div class="p-attr-cell"><span class="p-attr-name">${t('stat_wis')}</span><span class="p-attr-val">${s.WIS}</span></div>
-                    <div class="p-attr-cell"><span class="p-attr-name">${t('stat_cha')}</span><span class="p-attr-val">${s.CHA}</span></div>
-                </div>
-
-                <!-- MAIN GRID -->
-                <div class="p-grid-main">
-                    
-                    <!-- LEFT COL -->
-                    <div class="p-col-left">
-                        
-                        <div class="p-box">
-                            <div class="p-header">${t('sheet_def')}</div>
-                            <div class="p-defense-grid">
-                                <div class="p-ac-large">${armorScore} <span style="font-size:0.4em; display:block; font-weight:normal;">ARMOR</span></div>
-                                <div><small>${t('sheet_dodge')}</small><br><strong>${def.dodge.val} (${def.dodge.die})</strong></div>
-                                <div><small>${t('sheet_parry')}</small><br><strong>${def.parry.val!==null ? def.parry.val : '-'}</strong></div>
-                                <div><small>${t('sheet_block')}</small><br><strong>${def.block.val!==null ? def.block.val : '-'}</strong></div>
-                            </div>
+            <div class="p-grid-main">
+                <div class="p-col-left">
+                    <div class="p-box">
+                        <div class="p-header">${t('sheet_def')}</div>
+                        <div class="p-defense-grid">
+                            <div class="p-ac-large">${armorScore}<span>ARMOR</span></div>
+                            <div class="p-def-small"><small>Dodge</small><strong>${c.defenses.dodge.val} (${c.defenses.dodge.die})</strong></div>
+                            <div class="p-def-small"><small>Parry</small><strong>${c.defenses.parry.val!==null ? c.defenses.parry.val : '-'}</strong></div>
+                            <div class="p-def-small"><small>Block</small><strong>${c.defenses.block.val!==null ? c.defenses.block.val : '-'}</strong></div>
                         </div>
-
-                        <div style="margin-top:10px;">
-                            <strong>${t('sheet_skills')}</strong>
-                            <table class="p-table">
-                                ${skills.map(sk => `<tr><td>${sk.name}</td><td class="die">${sk.die !== '-' ? '+'+sk.die : ''}</td></tr>`).join('')}
-                            </table>
-                        </div>
-
                     </div>
+                    <div style="margin-top:10px;">
+                        <strong>${t('sheet_skills')}</strong>
+                        <table class="p-table">
+                            ${skills.map(sk => `<tr><td>${sk.name}</td><td class="die">${sk.die !== '-' ? '+'+sk.die : ''}</td></tr>`).join('')}
+                        </table>
+                    </div>
+                </div>
 
-                    <!-- RIGHT COL -->
-                    <div class="p-col-right">
-                        
-                        <!-- VITALS -->
-                        <div class="p-vitals">
-                            <div class="p-vital-box"><h4>${t('sheet_hp')}</h4><span class="p-vital-val">${c.derived.maxHP}</span></div>
-                            <div class="p-vital-box"><h4>${t('sheet_sta')}</h4><span class="p-vital-val">${c.derived.maxSTA}</span></div>
-                            <div class="p-vital-box"><h4>${t('sheet_mp')}</h4><span class="p-vital-val">${c.derived.maxMP}</span></div>
-                            <div class="p-vital-box"><h4>${t('sheet_luck')}</h4><span class="p-vital-val">${c.derived.maxLuck}</span></div>
-                        </div>
-
-                        <!-- ATTACKS -->
-                        <div class="p-box">
-                            <div class="p-header">${t('sheet_attacks')}</div>
-                            <table class="p-table">
-                                <tr>
-                                    <th>Name</th><th>Atk</th><th>Dmg</th><th>Tags</th>
-                                </tr>
-                                <tr>
-                                    <td>${t('wep_unarmed')}</td>
-                                    <td>${(s.STR >= 0 ? '+' : '')}${s.STR}</td>
-                                    <td>1d4 ${(s.STR >= 0 ? '+' : '')}${s.STR}</td>
-                                    <td>-</td>
-                                </tr>
-                                ${attackRows}
-                            </table>
-                        </div>
-                        
-                        <div class="p-box" style="margin-top:15px; height:200px;">
-                             <div class="p-header">${t('sheet_notes')}</div>
-                             <div style="font-size:0.8em; white-space: pre-wrap;">${c.notes}</div>
-                        </div>
-
+                <div class="p-col-right">
+                    <div class="p-box">
+                        <div class="p-header">${t('sheet_attacks')}</div>
+                        <table class="p-table">
+                            <tr><th>Name</th><th>Atk</th><th>Dmg</th><th>Tags</th></tr>
+                            <tr><td>${t('wep_unarmed')}</td><td>${(s.STR >= 0 ? '+' : '')}${s.STR}</td><td>1d4 ${(s.STR >= 0 ? '+' : '')}${s.STR}</td><td>-</td></tr>
+                            ${attackRows}
+                        </table>
+                    </div>
+                    <div class="p-box" style="margin-top:10px; height:150px;">
+                         <div class="p-header">${t('sheet_notes')}</div>
+                         <div style="font-size:0.8em; white-space: pre-wrap;">${c.notes || ''}</div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- PAGE 2 -->
-            <div class="print-page" id="p2">
-                <div class="p-header">${t('sheet_inv')} & ${t('sheet_features')}</div>
-                
-                <div class="p-grid-main">
-                    <!-- INVENTORY -->
-                    <div class="p-col-left">
-                        <div style="border-bottom:1px solid black; margin-bottom:5px;">
-                            <strong>Wealth:</strong> ${c.currency.g}g ${c.currency.s}s ${c.currency.c}c
-                        </div>
-                        <div class="p-inv-list">
-                            ${inventoryRows}
-                        </div>
-                    </div>
-
-                    <!-- FEATURES -->
-                    <div class="p-col-right">
-                        <div class="p-features-grid">
-                            ${featsHTML}
-                        </div>
+        <div class="print-page" id="p2">
+            <div class="p-header">INVENTORY & FEATURES</div>
+            <div style="border-bottom:1px solid #000; margin-bottom:10px; padding-bottom:5px;">
+                <strong>Wealth:</strong> ${c.currency.g}g ${c.currency.s}s ${c.currency.c}c
+            </div>
+            
+            <div style="column-count: 2; column-gap: 20px;">
+                <div style="break-inside: avoid; margin-bottom: 20px;">
+                    <h4 style="border-bottom:1px solid #000; margin-bottom:5px;">Inventory</h4>
+                    <div class="p-inv-list">${invHTML}</div>
+                </div>
+                <div style="break-inside: avoid;">
+                    <h4 style="border-bottom:1px solid #000; margin-bottom:5px;">Features</h4>
+                    <div class="p-features-grid" style="display:flex; flex-direction:column; gap:5px;">
+                        ${featsHTML}
                     </div>
                 </div>
             </div>
-        `;
-    },
+        </div>
+    `;
+},
 
     attachManagerListeners: () => {
         // 1. HUD Listeners (Name, Level, Vitals)
@@ -4118,6 +4102,7 @@ renderHUD: () => {
     },
 
 };
+
 
 
 

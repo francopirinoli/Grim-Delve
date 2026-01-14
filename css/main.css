@@ -3769,14 +3769,20 @@ body.mode-play #btn-levelup {
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 15px;
 }
 
-/* 1. Header (Name & Tools) */
-.hud-top {
+/* 1. Header (Name & Meta) */
+.hud-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
+}
+
+.hud-identity {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 
 .edit-name {
@@ -3788,81 +3794,75 @@ body.mode-play #btn-levelup {
     font-size: 2rem;
     font-weight: bold;
     width: auto;
-    min-width: 200px;
-    max-width: 100%;
+    min-width: 150px;
     padding: 0;
     margin: 0;
+    line-height: 1;
 }
 .edit-name:focus { border-bottom-color: #555; outline: none; }
+
+.hud-subtitle {
+    color: #888;
+    font-size: 0.9rem;
+    font-family: var(--font-mono);
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
 
 .hud-controls {
     display: flex;
     gap: 10px;
 }
 
-/* 2. Bio Row (Ancestry, Class, Level) */
-.hud-bio-row {
+/* 2. Compact Stats Bar (Level & XP) */
+.hud-stats-bar {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    border-bottom: 1px solid #222;
-    padding-bottom: 10px;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.bio-group {
-    display: flex;
-    flex-direction: column;
-}
-
-.bio-main {
-    font-size: 1.1rem;
-    color: #eee;
-    font-weight: bold;
-}
-
-.bio-sub {
-    font-size: 0.85rem;
-    color: #888;
-    font-family: var(--font-mono);
-}
-
-.meta-group {
-    display: flex;
-    gap: 15px;
-}
-
-.meta-pill {
-    display: flex;
-    align-items: center;
-    gap: 5px;
+    gap: 20px;
     background: #1a1a1a;
-    padding: 2px 8px;
+    padding: 8px 15px;
     border-radius: 4px;
     border: 1px solid #333;
+    align-items: center;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    width: fit-content;
 }
 
-.meta-pill .lbl {
-    font-size: 0.65rem;
-    text-transform: uppercase;
+.stat-pill-mini {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.stat-label-mini {
     color: #666;
+    text-transform: uppercase;
     font-weight: bold;
+    font-size: 0.75rem;
 }
 
-.edit-tiny {
+/* Invisible Input Styling */
+.input-minimal {
     background: transparent;
     border: none;
-    color: white;
-    width: 30px;
+    color: #eee;
+    width: 30px; /* Force small width */
     text-align: center;
-    font-family: var(--font-mono);
+    font-weight: bold;
     font-size: 1rem;
     padding: 0;
+    -moz-appearance: textfield; /* Remove spinner */
 }
-.edit-tiny:focus { outline: none; border-bottom: 1px solid var(--accent-gold); }
-
-.static { font-size: 0.9rem; color: #666; }
+.input-minimal::-webkit-outer-spin-button,
+.input-minimal::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.input-minimal:focus {
+    border-bottom: 1px solid var(--accent-gold);
+    outline: none;
+}
 
 /* 3. Vitals Grid */
 .hud-vitals-grid {
@@ -3872,53 +3872,55 @@ body.mode-play #btn-levelup {
 }
 
 .vital-card {
-    background: #181818;
+    background: #1a1a1a;
     border: 1px solid #333;
     border-radius: 4px;
-    padding: 6px 10px;
+    padding: 8px 12px;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 6px;
+    position: relative;
+    overflow: hidden;
 }
 
-.vital-header {
+.vital-top {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-end;
 }
 
-.v-title {
-    font-size: 0.65rem;
+.vital-title {
+    font-size: 0.7rem;
     text-transform: uppercase;
-    color: #777;
+    color: #888;
     font-weight: bold;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
 }
 
-/* Fix Input Sizing & Overlap */
-.v-inputs {
+.vital-inputs {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     gap: 2px;
 }
 
 .v-cur {
-    width: 40px; /* Constrain width */
+    width: 40px;
     background: transparent;
     border: none;
     color: white;
     font-family: var(--font-mono);
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     font-weight: bold;
     text-align: right;
     padding: 0;
+    line-height: 1;
 }
-.v-cur:focus { outline: none; border-bottom: 1px solid white; }
+.v-cur:focus { outline: none; border-bottom: 1px solid #fff; }
 
-.sep { color: #555; font-size: 1rem; margin: 0 2px; }
+.sep { color: #555; font-size: 1rem; margin: 0 4px; transform: translateY(-2px); }
 
 .v-max {
-    width: 30px; /* Constrain width */
+    width: 30px;
     background: transparent;
     border: none;
     color: #666;
@@ -3929,41 +3931,33 @@ body.mode-play #btn-levelup {
 }
 .v-max:focus { outline: none; border-bottom: 1px solid #666; }
 
+/* Progress Bars */
+.progress-container {
+    height: 4px;
+    background: #000;
+    width: 100%;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 2px;
+}
+.progress-container .fill { height: 100%; transition: width 0.3s ease; }
+
 /* Colors */
 .vital-card.red { border-left: 3px solid var(--accent-crimson); }
 .vital-card.green { border-left: 3px solid #388e3c; }
 .vital-card.blue { border-left: 3px solid #1976d2; }
 .vital-card.gold { border-left: 3px solid var(--accent-gold); }
 
-.vital-card.red .v-cur { color: #ffcccc; }
-.vital-card.green .v-cur { color: #ccffcc; }
-.vital-card.blue .v-cur { color: #cce5ff; }
-.vital-card.gold .v-cur { color: #ffeb99; }
-
-/* Progress Bars */
-.progress-bar {
-    height: 4px;
-    background: #000;
-    width: 100%;
-    border-radius: 2px;
-    overflow: hidden;
-}
-.progress-bar .fill { height: 100%; transition: width 0.3s ease; }
-
 .vital-card.red .fill { background: var(--accent-crimson); }
 .vital-card.green .fill { background: #388e3c; }
 .vital-card.blue .fill { background: #1976d2; }
 .vital-card.gold .fill { background: var(--accent-gold); }
 
-/* Mobile */
+/* --- RESPONSIVE --- */
 @media (max-width: 768px) {
-    .hud-vitals-grid {
-        grid-template-columns: 1fr 1fr;
-    }
-    .hud-bio-row {
-        flex-direction: column;
-        align-items: flex-start;
-    }
+    .hud-vitals-grid { grid-template-columns: 1fr 1fr; }
+    .hud-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .hud-controls { width: 100%; justify-content: flex-end; }
 }
 
 /* --- TABS --- */
@@ -4275,5 +4269,6 @@ body.mode-play #btn-levelup {
     color: white;
     padding: 8px;
 }
+
 
 

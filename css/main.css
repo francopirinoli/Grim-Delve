@@ -24,6 +24,8 @@
     --spacing-md: 1rem;
 }
 
+.print-only { display: none !important; }
+
 /* Reset */
 * {
     box-sizing: border-box;
@@ -4102,3 +4104,4 @@ body.mode-play #btn-levelup {
     .resource-grid { grid-template-columns: 1fr 1fr; }
     .hud-vitals-row { flex-direction: column; }
 }
+

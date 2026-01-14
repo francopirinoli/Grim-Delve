@@ -2447,32 +2447,38 @@ renderGear: (el) => {
        ------------------------------------------------------------------ */
 
 renderSheet: async (container) => {
-        // Ensure calculations are up to date
+        const c = CharGen.char;
+
+        // 1. Data Safety: Initialize Current Vitals if they are null
+        // This fixes the "value 'null' cannot be parsed" error
+        if (c.current.hp === null) c.current.hp = c.derived.maxHP;
+        if (c.current.mp === null) c.current.mp = c.derived.maxMP;
+        if (c.current.sta === null) c.current.sta = c.derived.maxSTA;
+        if (c.current.luck === null) c.current.luck = c.derived.maxLuck;
+
+        // Ensure derived stats are calculated
         CharGen.calculateDerived();
         CharGen.calculateDefenses();
         CharGen.calculateArmorScore();
         
-        // Clear container
+        // 2. Clear Container
         container.innerHTML = '';
         
-        // 1. Create Layout Structure
+        // 3. Build Layout Structure
         const layout = document.createElement('div');
         layout.className = 'char-manager-layout';
         
-        // 2. Render The HUD (Header & Vitals) - Always visible
-        // FIX: Added 'renderHUD' back to the function call
-        layout.appendChild(CharGen.renderHUD());
-
-        // 3. Render Navigation Tabs
-        layout.appendChild(CharGen.renderTabs());
-
-        // 4. Render Content Area (Dynamic based on active tab)
+        // 4. Render Components
+        layout.appendChild(CharGen.renderHUD());     // The Top Bar
+        layout.appendChild(CharGen.renderTabs());    // The Tabs
+        
+        // Content Area
         const contentArea = document.createElement('div');
         contentArea.id = 'char-manager-content';
         contentArea.className = 'char-tab-content';
         layout.appendChild(contentArea);
         
-        // 5. Hidden Print Container (For PDF generation)
+        // Hidden Print Area
         const printArea = document.createElement('div');
         printArea.id = 'print-sheet-root';
         printArea.className = 'print-only';
@@ -2480,47 +2486,42 @@ renderSheet: async (container) => {
 
         container.appendChild(layout);
 
-        // 6. Initialize Default Tab (Main/Combat)
+        // 5. Initialize Default Tab & Print View
         CharGen.switchTab('main');
-        
-        // 7. Render Print Version in background (so ctrl+p works immediately)
         CharGen.renderPrintVersion(printArea);
         
-        // 8. Attach Listeners
+        // 6. Attach Listeners
         CharGen.attachManagerListeners();
     },
-    /**
-     * Renders the Top Bar: Identity and Vitals
-     */
-    renderHUD: () => {
+
+renderHUD: () => {
         const c = CharGen.char;
         const t = I18n.t;
-        const data = I18n.getData('options');
         
-        // Calculate percentages
-        const hpPct = c.derived.maxHP > 0 ? Math.min(100, (c.current.hp / c.derived.maxHP) * 100) : 0;
-        const mpPct = c.derived.maxMP > 0 ? Math.min(100, (c.current.mp / c.derived.maxMP) * 100) : 0;
-        const staPct = c.derived.maxSTA > 0 ? Math.min(100, (c.current.sta / c.derived.maxSTA) * 100) : 0;
-        const luckPct = c.derived.maxLuck > 0 ? Math.min(100, (c.current.luck / c.derived.maxLuck) * 100) : 0;
+        // Safe Accessors
+        const hp = c.current.hp || 0;
+        const maxHP = c.derived.maxHP || 1;
+        const mp = c.current.mp || 0;
+        const maxMP = c.derived.maxMP || 0;
+        const sta = c.current.sta || 0;
+        const maxSTA = c.derived.maxSTA || 0;
+        const luck = c.current.luck || 0;
+        const maxLuck = c.derived.maxLuck || 0;
 
-        // Lookup Names for subtitle
-        const anc = data.ancestries.find(a => a.id === c.ancestry);
-        const bg = data.backgrounds.find(b => b.id === c.background);
-        const ancName = anc ? anc.name : "";
-        const bgName = bg ? bg.name : "";
-        const className = c.className || "Adventurer";
+        // Calculate Percentages for Bars
+        const hpPct = Math.min(100, (hp / maxHP) * 100);
+        const mpPct = Math.min(100, (mp / maxMP) * 100);
+        const staPct = Math.min(100, (sta / maxSTA) * 100);
+        const luckPct = Math.min(100, (luck / maxLuck) * 100);
 
         const div = document.createElement('div');
         div.className = 'char-hud';
         div.innerHTML = `
-            <!-- Top Row: Identity -->
             <div class="hud-header">
                 <div class="hud-identity">
                     <input type="text" class="edit-name" value="${c.name}" data-field="name" placeholder="${t('cg_lbl_name')}">
                     <div class="hud-subtitle">
-                        <span>${ancName} ${bgName}</span>
-                        <span>•</span>
-                        <span>${className}</span>
+                        ${c.className || 'Adventurer'} &bull; Lvl ${c.level}
                     </div>
                 </div>
                 <div class="hud-controls">
@@ -2529,72 +2530,54 @@ renderSheet: async (container) => {
                 </div>
             </div>
 
-            <!-- Second Row: Level & XP (Compact Bar) -->
-            <div class="hud-stats-bar">
-                <div class="stat-pill-mini">
-                    <span class="stat-label-mini">LVL</span>
+            <div class="hud-vitals-row">
+                <!-- Level / XP Capsule -->
+                <div class="level-capsule">
+                    <span>LVL</span>
                     <input type="number" class="input-minimal edit-tiny" value="${c.level}" data-field="level">
-                </div>
-                <div style="width:1px; height:15px; background:#444;"></div>
-                <div class="stat-pill-mini">
-                    <span class="stat-label-mini">XP</span>
-                    <input type="number" class="input-minimal" value="${c.current.xp}" data-vital="xp">
-                    <span style="color:#666;">/ 10</span>
-                </div>
-            </div>
-
-            <!-- Third Row: Vitals Grid -->
-            <div class="hud-vitals-grid">
-                <!-- HP -->
-                <div class="vital-card red">
-                    <div class="vital-top">
-                        <span class="vital-title">${t('sheet_hp')}</span>
-                        <div class="vital-inputs">
-                            <input type="number" class="v-cur" value="${c.current.hp}" data-vital="hp">
-                            <span class="sep">/</span>
-                            <input type="number" class="v-max" value="${c.derived.maxHP}" data-vital="maxHP">
-                        </div>
-                    </div>
-                    <div class="progress-container"><div class="fill" style="width:${hpPct}%"></div></div>
+                    <span style="color:#444">|</span>
+                    <span>XP</span>
+                    <input type="number" class="input-minimal" value="${c.current.xp || 0}" data-vital="xp">
                 </div>
 
-                <!-- STA -->
-                <div class="vital-card green">
-                    <div class="vital-top">
-                        <span class="vital-title">${t('sheet_sta')}</span>
-                        <div class="vital-inputs">
-                            <input type="number" class="v-cur" value="${c.current.sta}" data-vital="sta">
-                            <span class="sep">/</span>
-                            <input type="number" class="v-max" value="${c.derived.maxSTA}" data-vital="maxSTA">
+                <!-- Resource Grid -->
+                <div class="resource-grid">
+                    <!-- HP -->
+                    <div class="res-card red">
+                        <div class="res-header"><span>${t('sheet_hp')}</span></div>
+                        <div class="res-values">
+                            <input type="number" class="res-input v-cur" value="${hp}" data-vital="hp">
+                            <span class="res-max">/ ${maxHP}</span>
                         </div>
+                        <div class="res-bar"><div class="res-fill" style="width:${hpPct}%"></div></div>
                     </div>
-                    <div class="progress-container"><div class="fill" style="width:${staPct}%"></div></div>
-                </div>
-
-                <!-- MP -->
-                <div class="vital-card blue">
-                    <div class="vital-top">
-                        <span class="vital-title">${t('sheet_mp')}</span>
-                        <div class="vital-inputs">
-                            <input type="number" class="v-cur" value="${c.current.mp}" data-vital="mp">
-                            <span class="sep">/</span>
-                            <input type="number" class="v-max" value="${c.derived.maxMP}" data-vital="maxMP">
+                    <!-- STA -->
+                    <div class="res-card green">
+                        <div class="res-header"><span>${t('sheet_sta')}</span></div>
+                        <div class="res-values">
+                            <input type="number" class="res-input v-cur" value="${sta}" data-vital="sta">
+                            <span class="res-max">/ ${maxSTA}</span>
                         </div>
+                        <div class="res-bar"><div class="res-fill" style="width:${staPct}%"></div></div>
                     </div>
-                    <div class="progress-container"><div class="fill" style="width:${mpPct}%"></div></div>
-                </div>
-                
-                <!-- LUCK -->
-                <div class="vital-card gold">
-                    <div class="vital-top">
-                        <span class="vital-title">${t('sheet_luck')}</span>
-                        <div class="vital-inputs">
-                            <input type="number" class="v-cur" value="${c.current.luck}" data-vital="luck">
-                            <span class="sep">/</span>
-                            <input type="number" class="v-max" value="${c.derived.maxLuck}" data-vital="maxLuck">
+                    <!-- MP -->
+                    <div class="res-card blue">
+                        <div class="res-header"><span>${t('sheet_mp')}</span></div>
+                        <div class="res-values">
+                            <input type="number" class="res-input v-cur" value="${mp}" data-vital="mp">
+                            <span class="res-max">/ ${maxMP}</span>
                         </div>
+                        <div class="res-bar"><div class="res-fill" style="width:${mpPct}%"></div></div>
                     </div>
-                    <div class="progress-container"><div class="fill" style="width:${luckPct}%"></div></div>
+                    <!-- LUCK -->
+                    <div class="res-card gold">
+                        <div class="res-header"><span>${t('sheet_luck')}</span></div>
+                        <div class="res-values">
+                            <input type="number" class="res-input v-cur" value="${luck}" data-vital="luck">
+                            <span class="res-max">/ ${maxLuck}</span>
+                        </div>
+                        <div class="res-bar"><div class="res-fill" style="width:${luckPct}%"></div></div>
+                    </div>
                 </div>
             </div>
         `;
@@ -2644,86 +2627,79 @@ renderSheet: async (container) => {
         }
     },
 
-renderTabMain: (container) => {
-    const c = CharGen.char;
-    const t = I18n.t;
-    
-    CharGen.recalcAll(); 
+    renderTabMain: (container) => {
+        const c = CharGen.char;
+        const t = I18n.t;
+        
+        CharGen.recalcAll(); 
 
-    const armorScore = CharGen.calculateArmorScore();
-    const def = c.defenses;
+        const armorScore = CharGen.calculateArmorScore();
+        const def = c.defenses;
 
-    container.innerHTML = `
-        <div class="manager-grid">
-            
-            <!-- LEFT COLUMN: STATS -->
-            <div class="mgr-col">
-                <div class="mgr-header">${t('cg_step_stats')}</div>
-                <div class="attr-grid">
-                    ${['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'].map(stat => `
-                        <div class="attr-card">
-                            <span class="attr-label">${t('stat_' + stat.toLowerCase())}</span>
-                            <input type="number" class="attr-input" data-stat="${stat}" value="${c.stats[stat] || 0}">
+        container.innerHTML = `
+            <div class="manager-grid">
+                <!-- LEFT COL: Stats & Defense -->
+                <div class="mgr-col">
+                    <div class="mgr-header">${t('cg_step_stats')}</div>
+                    <div class="attr-grid">
+                        ${['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'].map(stat => `
+                            <div class="attr-card">
+                                <span class="attr-label">${t('stat_' + stat.toLowerCase())}</span>
+                                <input type="number" class="attr-val attr-input" data-stat="${stat}" value="${c.stats[stat] || 0}">
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <div class="mgr-header">${t('sheet_def')}</div>
+                    <div class="defense-row">
+                        <div class="def-cell"><span class="def-label">${t('sheet_ac')}</span><div class="def-val">${armorScore}</div></div>
+                        <div class="def-cell"><span class="def-label">${t('cg_initiative')}</span><div class="def-val">${(c.stats.DEX || 0) >= 0 ? '+' : ''}${c.stats.DEX || 0}</div></div>
+                        <div class="def-cell"><span class="def-label">${t('mon_stat_spd')}</span><div class="def-val">30'</div></div>
+                    </div>
+
+                    <div class="reaction-list">
+                        <div class="reaction-item">
+                            <span>${t('sheet_dodge')} (DEX)</span>
+                            <strong>${def.dodge.val >= 0 ? '+' : ''}${def.dodge.val} ${def.dodge.die !== '-' ? '('+def.dodge.die+')' : ''}</strong>
                         </div>
-                    `).join('')}
+                        <div class="reaction-item">
+                            <span>${t('sheet_parry')} (STR)</span>
+                            <strong>${def.parry.val !== null ? (def.parry.val >= 0 ? '+'+def.parry.val : def.parry.val) : '--'}</strong>
+                        </div>
+                        <div class="reaction-item">
+                            <span>${t('sheet_block')} (CON)</span>
+                            <strong>${def.block.val !== null ? (def.block.val >= 0 ? '+'+def.block.val : def.block.val) : '--'}</strong>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="mgr-header">${t('sheet_def')}</div>
-                <div class="defense-row">
-                    <div class="def-cell"><span class="def-label">${t('sheet_ac')}</span><div class="def-val">${armorScore}</div></div>
-                    <div class="def-cell"><span class="def-label">${t('cg_initiative')}</span><div class="def-val">${(c.stats.DEX || 0) >= 0 ? '+' : ''}${c.stats.DEX || 0}</div></div>
-                    <div class="def-cell"><span class="def-label">${t('mon_stat_spd')}</span><div class="def-val">30'</div></div>
-                </div>
+                <!-- RIGHT COL: Actions & Skills -->
+                <div class="mgr-col">
+                    <div class="mgr-header">${t('sheet_attacks')}</div>
+                    <div class="attack-list">
+                        ${CharGen.renderAttackButtons()}
+                    </div>
 
-                <div class="reaction-list">
-                    <div class="reaction-item">
-                        <span>${t('sheet_dodge')} (DEX)</span>
-                        <strong>${def.dodge.val >= 0 ? '+' : ''}${def.dodge.val} ${def.dodge.die !== '-' ? '('+def.dodge.die+')' : ''}</strong>
-                    </div>
-                    <div class="reaction-item">
-                        <span>${t('sheet_parry')} (STR)</span>
-                        <strong>${def.parry.val !== null ? (def.parry.val >= 0 ? '+'+def.parry.val : def.parry.val) : '--'}</strong>
-                    </div>
-                    <div class="reaction-item">
-                        <span>${t('sheet_block')} (CON)</span>
-                        <strong>${def.block.val !== null ? (def.block.val >= 0 ? '+'+def.block.val : def.block.val) : '--'}</strong>
+                    <div class="mgr-header" style="margin-top: 2rem;">${t('sheet_skills')}</div>
+                    <div class="skills-grid">
+                        ${CharGen.renderSkillButtons()}
                     </div>
                 </div>
             </div>
-
-            <!-- RIGHT COLUMN: COMBAT -->
-            <div class="mgr-col">
-                <div class="mgr-header">
-                    <span>${t('sheet_attacks')}</span>
-                </div>
-                <div class="attack-list">
-                    ${CharGen.renderAttackButtons()}
-                </div>
-
-                <div class="mgr-header" style="margin-top: 1.5rem;">${t('sheet_skills')}</div>
-                <div class="skills-grid">
-                    ${CharGen.renderSkillButtons()}
-                </div>
-            </div>
-        </div>
-    `;
-
-    // Re-bind Inputs
-    container.querySelectorAll('.attr-input').forEach(input => {
-        input.addEventListener('change', (e) => {
-            const stat = e.target.dataset.stat;
-            const val = parseInt(e.target.value) || 0;
-            CharGen.char.stats[stat] = val;
-            
-            CharGen.recalcAll();
-            CharGen.renderTabMain(container);
-            
-            // Refresh HUD
-            const hud = CharGen.renderHUD();
-            document.querySelector('.char-hud').replaceWith(hud);
-            CharGen.attachManagerListeners();
+        `;
+        
+        // Re-bind Inputs for Attribute changes
+        container.querySelectorAll('.attr-input').forEach(input => {
+            input.addEventListener('change', (e) => {
+                const stat = e.target.dataset.stat;
+                const val = parseInt(e.target.value) || 0;
+                CharGen.char.stats[stat] = val;
+                CharGen.recalcAll();
+                // Refresh full sheet to update dependent stats (HP/Attacks)
+                CharGen.renderSheet(CharGen.container);
+            });
         });
-    });
+    },
 
     // Re-bind Attack Rolls
     container.querySelectorAll('.attack-card').forEach(btn => {
@@ -2789,19 +2765,20 @@ renderTabMain: (container) => {
     },
 
 renderSkillButtons: () => {
-    const skills = CharGen.calculateSkills();
-    return skills.map(s => {
-        const isTrained = s.count > 0;
-        const dieClass = s.die === 'd6' ? 'expert' : (s.die === 'd4' ? 'trained' : '');
-        
-        return `
-            <div class="skill-row">
-                <span class="skill-name" style="${isTrained ? 'color:#eee;' : 'color:#666;'}">${s.name}</span>
-                <span class="skill-die ${dieClass}">${s.die !== '-' ? '+' + s.die : ''}</span>
-            </div>
-        `;
-    }).join('');
-},
+        const skills = CharGen.calculateSkills();
+        return skills.map(s => {
+            const isTrained = s.count > 0;
+            // Use CSS classes to color text
+            const dieClass = s.die === 'd6' ? 'expert' : (s.die === 'd4' ? 'trained' : '');
+            
+            return `
+                <div class="skill-row">
+                    <span class="skill-name" style="${isTrained ? 'color:#eee;' : 'color:#666;'}">${s.name}</span>
+                    <span class="skill-die ${dieClass}">${s.die !== '-' ? '+' + s.die : ''}</span>
+                </div>
+            `;
+        }).join('');
+    },
 
     renderTabInventory: (container) => {
         const c = CharGen.char;
@@ -4005,6 +3982,7 @@ renderSkillButtons: () => {
     },
 
 };
+
 
 
 

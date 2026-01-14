@@ -171,29 +171,17 @@ export const CharGen = {
     },
 
     /**
-     * Renders the simplified "Table View" without wizard steps.
+     * Renders the simplified "Table View" (Now the Character Manager).
      */
     renderPlayInterface: () => {
-        // 1. Clear Container
-        CharGen.container.innerHTML = '';
-        
-        // 2. Create Sheet Container
-        const sheetContainer = document.createElement('div');
-        sheetContainer.id = 'play-sheet-root';
-        sheetContainer.className = 'sheet-page';
-        // Force style to ensure visibility against dark background
-        sheetContainer.style.margin = "2rem auto 8rem auto"; 
-        
-        CharGen.container.appendChild(sheetContainer);
-
-        // 3. Render the Sheet Logic directly
-        // We use .then() because  is async (image loading)
-        CharGen.(sheetContainer).then(() => {
-            console.log("Play Mode: Sheet Rendered. Attaching listeners...");
-            CharGen._attachSheetListeners(); // Ensure listeners attach after render
+        // 1. Render the new Manager Layout
+        // The new renderSheet function handles clearing the container and setting up the grid/tabs.
+        CharGen.renderSheet(CharGen.container).then(() => {
+            console.log("Play Mode: Manager Rendered.");
         });
 
-        // 4. Add the Floating Toolbar
+        // 2. Add the Floating Toolbar (Save/Exit)
+        // This sits on top of the manager for quick access.
         CharGen.renderPlayToolbar();
     },
 
@@ -3971,6 +3959,7 @@ renderTabMain: (container) => {
     },
 
 };
+
 
 
 

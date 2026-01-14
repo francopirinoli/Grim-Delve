@@ -3031,44 +3031,224 @@ renderTabMain: (container) => {
     },
 
     renderPrintVersion: (container) => {
-        // This will be the robust A4 renderer later.
-        // For now, leave empty or put a placeholder.
-        container.innerHTML = `<!-- Print Version Hidden -->`;
+        const c = CharGen.char;
+        const t = I18n.t;
+        const fmt = I18n.fmt;
+        const s = c.stats;
+
+        // Ensure fresh math
+        const armorScore = CharGen.calculateArmorScore();
+        const def = c.defenses;
+        const skills = CharGen.calculateSkills();
+        
+        // Helper: Format Attacks
+        const weapons = c.inventory.filter(i => (i.type === 'Melee' || i.type === 'Ranged') && i.equipped);
+        const attackRows = weapons.map(w => {
+            const isFinesse = w.tags && (w.tags.includes("Finesse") || w.tags.includes("Sutil"));
+            const isRanged = w.type === 'Ranged' || w.type === 'A Distancia';
+            let mod = s.STR || 0;
+            if (isRanged) mod = s.DEX || 0;
+            else if (isFinesse) mod = Math.max(s.STR || 0, s.DEX || 0);
+            const sign = mod >= 0 ? '+' : '';
+            return `<tr><td>${w.name}</td><td>${sign}${mod}</td><td>${w.damage} ${sign}${mod}</td><td style="font-size:0.7em">${w.tags || '-'}</td></tr>`;
+        }).join('');
+
+        // Helper: Format Inventory
+        const inventoryRows = c.inventory.map(i => `
+            <div class="p-inv-item">
+                <span>${i.equipped ? '★ ' : ''}${i.name}</span>
+                <span>${i.slots || 0}</span>
+            </div>
+        `).join('');
+
+        // Helper: Format Talents
+        const renderFeat = (f) => `
+            <div class="p-feat-card">
+                <span class="p-feat-name">${f.name}</span>
+                <div>${f.effect}</div>
+            </div>
+        `;
+        const featsHTML = c.talents.map(renderFeat).join('');
+
+        // HTML TEMPLATE
+        container.innerHTML = `
+            <!-- PAGE 1 -->
+            <div class="print-page" id="p1">
+                
+                <!-- IDENTITY -->
+                <div class="p-identity">
+                    <div class="p-id-field"><span class="p-id-label">${t('lbl_name')}</span><span class="p-id-val">${c.name}</span></div>
+                    <div class="p-id-field"><span class="p-id-label">Class</span><span class="p-id-val">${c.className}</span></div>
+                    <div class="p-id-field"><span class="p-id-label">${t('lbl_level')}</span><span class="p-id-val">${c.level}</span></div>
+                    <div class="p-id-field"><span class="p-id-label">XP</span><span class="p-id-val">${c.current.xp}/10</span></div>
+                </div>
+
+                <!-- ATTRIBUTES -->
+                <div class="p-attributes">
+                    <div class="p-attr-cell"><span class="p-attr-name">${t('stat_str')}</span><span class="p-attr-val">${s.STR}</span></div>
+                    <div class="p-attr-cell"><span class="p-attr-name">${t('stat_dex')}</span><span class="p-attr-val">${s.DEX}</span></div>
+                    <div class="p-attr-cell"><span class="p-attr-name">${t('stat_con')}</span><span class="p-attr-val">${s.CON}</span></div>
+                    <div class="p-attr-cell"><span class="p-attr-name">${t('stat_int')}</span><span class="p-attr-val">${s.INT}</span></div>
+                    <div class="p-attr-cell"><span class="p-attr-name">${t('stat_wis')}</span><span class="p-attr-val">${s.WIS}</span></div>
+                    <div class="p-attr-cell"><span class="p-attr-name">${t('stat_cha')}</span><span class="p-attr-val">${s.CHA}</span></div>
+                </div>
+
+                <!-- MAIN GRID -->
+                <div class="p-grid-main">
+                    
+                    <!-- LEFT COL -->
+                    <div class="p-col-left">
+                        
+                        <div class="p-box">
+                            <div class="p-header">${t('sheet_def')}</div>
+                            <div class="p-defense-grid">
+                                <div class="p-ac-large">${armorScore} <span style="font-size:0.4em; display:block; font-weight:normal;">ARMOR</span></div>
+                                <div><small>${t('sheet_dodge')}</small><br><strong>${def.dodge.val} (${def.dodge.die})</strong></div>
+                                <div><small>${t('sheet_parry')}</small><br><strong>${def.parry.val!==null ? def.parry.val : '-'}</strong></div>
+                                <div><small>${t('sheet_block')}</small><br><strong>${def.block.val!==null ? def.block.val : '-'}</strong></div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top:10px;">
+                            <strong>${t('sheet_skills')}</strong>
+                            <table class="p-table">
+                                ${skills.map(sk => `<tr><td>${sk.name}</td><td class="die">${sk.die !== '-' ? '+'+sk.die : ''}</td></tr>`).join('')}
+                            </table>
+                        </div>
+
+                    </div>
+
+                    <!-- RIGHT COL -->
+                    <div class="p-col-right">
+                        
+                        <!-- VITALS -->
+                        <div class="p-vitals">
+                            <div class="p-vital-box"><h4>${t('sheet_hp')}</h4><span class="p-vital-val">${c.derived.maxHP}</span></div>
+                            <div class="p-vital-box"><h4>${t('sheet_sta')}</h4><span class="p-vital-val">${c.derived.maxSTA}</span></div>
+                            <div class="p-vital-box"><h4>${t('sheet_mp')}</h4><span class="p-vital-val">${c.derived.maxMP}</span></div>
+                            <div class="p-vital-box"><h4>${t('sheet_luck')}</h4><span class="p-vital-val">${c.derived.maxLuck}</span></div>
+                        </div>
+
+                        <!-- ATTACKS -->
+                        <div class="p-box">
+                            <div class="p-header">${t('sheet_attacks')}</div>
+                            <table class="p-table">
+                                <tr>
+                                    <th>Name</th><th>Atk</th><th>Dmg</th><th>Tags</th>
+                                </tr>
+                                <tr>
+                                    <td>${t('wep_unarmed')}</td>
+                                    <td>${(s.STR >= 0 ? '+' : '')}${s.STR}</td>
+                                    <td>1d4 ${(s.STR >= 0 ? '+' : '')}${s.STR}</td>
+                                    <td>-</td>
+                                </tr>
+                                ${attackRows}
+                            </table>
+                        </div>
+                        
+                        <div class="p-box" style="margin-top:15px; height:200px;">
+                             <div class="p-header">${t('sheet_notes')}</div>
+                             <div style="font-size:0.8em; white-space: pre-wrap;">${c.notes}</div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAGE 2 -->
+            <div class="print-page" id="p2">
+                <div class="p-header">${t('sheet_inv')} & ${t('sheet_features')}</div>
+                
+                <div class="p-grid-main">
+                    <!-- INVENTORY -->
+                    <div class="p-col-left">
+                        <div style="border-bottom:1px solid black; margin-bottom:5px;">
+                            <strong>Wealth:</strong> ${c.currency.g}g ${c.currency.s}s ${c.currency.c}c
+                        </div>
+                        <div class="p-inv-list">
+                            ${inventoryRows}
+                        </div>
+                    </div>
+
+                    <!-- FEATURES -->
+                    <div class="p-col-right">
+                        <div class="p-features-grid">
+                            ${featsHTML}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
     },
 
     attachManagerListeners: () => {
-        // HUD Listeners (Name, Level, Vitals)
-        const bind = (selector, path, isInt = false) => {
+        // 1. HUD Listeners (Name, Level, Vitals)
+        // Helper to bind inputs to state paths
+        const bind = (selector, type) => {
             document.querySelectorAll(selector).forEach(el => {
                 el.addEventListener('change', (e) => {
-                    const val = isInt ? parseInt(e.target.value) : e.target.value;
-                    // Path logic handling... simple for now:
-                    if(path === 'name') CharGen.char.name = val;
-                    if(path === 'level') CharGen.char.level = val;
+                    let val = e.target.value;
+                    // Convert to number if it's not the name field
+                    if (type !== 'name') val = parseInt(val) || 0;
+
+                    if (type === 'name') CharGen.char.name = val;
+                    if (type === 'level') CharGen.char.level = val;
                     
-                    // Vitals
+                    // Vitals Logic
                     if (el.dataset.vital) {
                         const key = el.dataset.vital;
-                        if (['hp','mp','sta','luck'].includes(key)) CharGen.char.current[key] = val;
-                        if (['maxHP','maxMP','maxSTA','maxLuck'].includes(key)) CharGen.char.derived[key] = val; // Manual Override!
                         
-                        // Re-render HUD to update bars
-                        const newHUD = CharGen.renderHUD();
-                        document.querySelector('.char-hud').replaceWith(newHUD);
-                        CharGen.attachManagerListeners(); // Re-attach
+                        // Handle Current Values (hp, mp, sta, luck)
+                        if (['hp', 'mp', 'sta', 'luck'].includes(key)) {
+                            CharGen.char.current[key] = val;
+                        }
+                        
+                        // Handle Max Values (Manual Overrides for "God Mode")
+                        // If Max changes, we must re-render the HUD to update progress bar widths
+                        if (['maxHP', 'maxMP', 'maxSTA', 'maxLuck'].includes(key)) {
+                            CharGen.char.derived[key] = val;
+                            
+                            const newHUD = CharGen.renderHUD();
+                            const oldHUD = document.querySelector('.char-hud');
+                            if (oldHUD) {
+                                oldHUD.replaceWith(newHUD);
+                                CharGen.attachManagerListeners(); // Re-attach listeners to new DOM elements
+                            }
+                            return; // Stop execution here to avoid redundant binding
+                        }
                     }
                 });
             });
         };
         
         bind('.edit-transparent', 'name');
-        bind('.edit-tiny', 'level', true);
-        bind('.edit-vital', 'vital', true);
-        bind('.edit-vital-max', 'vital', true);
+        bind('.edit-tiny', 'level');
+        bind('.edit-vital', 'vital');
+        bind('.edit-vital-max', 'vital');
 
-        // Toolbar
-        document.getElementById('btn-save-trigger').onclick = CharGen.saveCharacter;
-        document.getElementById('btn-print-trigger').onclick = () => window.print();
+        // 2. Toolbar Actions
+        const btnSave = document.getElementById('btn-save-trigger');
+        if (btnSave) {
+            btnSave.onclick = () => {
+                CharGen.saveCharacter();
+                // Simple visual feedback
+                const originalHTML = btnSave.innerHTML;
+                btnSave.innerHTML = "✅";
+                setTimeout(() => btnSave.innerHTML = originalHTML, 1000);
+            };
+        }
+
+        const btnPrint = document.getElementById('btn-print-trigger');
+        if (btnPrint) {
+            btnPrint.onclick = () => {
+                // Critical: Update the hidden print view with latest data before printing
+                // This ensures any manual edits made in the HUD appear on the PDF
+                const printArea = document.getElementById('print-sheet-root');
+                if (printArea) CharGen.renderPrintVersion(printArea);
+                
+                window.print();
+            };
+        }
     },
 
     _renderWeaponRow: (w, stats) => {
@@ -3791,6 +3971,7 @@ renderTabMain: (container) => {
     },
 
 };
+
 
 
 

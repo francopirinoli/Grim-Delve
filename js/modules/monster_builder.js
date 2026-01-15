@@ -185,8 +185,8 @@ export const MonsterBuilder = {
                     <div class="form-group" style="background:rgba(0,0,0,0.2); padding:10px; border:1px dashed #444;">
                         <label class="form-label" style="font-size:0.8rem;">${t('cg_lbl_portrait')}</label>
                         <div style="display:flex; gap:5px; margin-bottom:10px;">
-                            <input type="text" id="mb-img-url" placeholder="${t('cg_ph_url')}" style="flex:1; font-size:0.8rem;">
-                            <button id="btn-upload-img" class="btn-small">📁 ${t('cg_btn_upload')}</button>
+                            <input type="text" id="mb-img-url" placeholder="${t('lbl_paste_url')}" style="flex:1; font-size:0.8rem;">
+                            <button id="btn-upload-img" class="btn-small">📁 ${t('lbl_upload')}</button>
                             <input type="file" id="mb-file-input" style="display:none" accept="image/*">
                         </div>
                         
@@ -213,22 +213,26 @@ export const MonsterBuilder = {
                             <label class="form-label">${t('mon_lbl_role')}</label>
                             <select id="mb-role">
                                 ${roles.map(r => {
-                                    const key = 'role_' + r;
-                                    const label = t(key) !== key ? t(key) : r;
-                                    return `<option value="${r}">${label}</option>`;
+                                    // Translate Role Key (e.g., "role_soldier")
+                                    const key = 'role_' + r.toLowerCase();
+                                    const label = t(key); 
+                                    return `<option value="${r}" ${MonsterBuilder.currentMonster.role === r ? 'selected' : ''}>${label}</option>`;
                                 }).join('')}
                             </select>
                         </div>
                         <div>
                             <label class="form-label">${t('mon_lbl_level')}</label>
                             <select id="mb-level">
-                                ${Array.from({length:10}, (_, i) => i+1).map(n => `<option value="${n}">${n}</option>`).join('')}
+                                ${Array.from({length:10}, (_, i) => i+1).map(n => `<option value="${n}" ${MonsterBuilder.currentMonster.level === n ? 'selected' : ''}>${n}</option>`).join('')}
                             </select>
                         </div>
                         <div>
                             <label class="form-label">${t('mon_lbl_family')}</label>
                             <select id="mb-family">
-                                ${families.map(f => `<option value="${f}">${data.families[f].name}</option>`).join('')}
+                                ${families.map(f => {
+                                    const famName = data.families[f].name; // Capitalize or use as is
+                                    return `<option value="${f}" ${MonsterBuilder.currentMonster.family === f ? 'selected' : ''}>${famName}</option>`;
+                                }).join('')}
                             </select>
                         </div>
                     </div>
@@ -632,3 +636,4 @@ export const MonsterBuilder = {
         alert(`Saved ${m.name} to Library.`);
     }
 };
+

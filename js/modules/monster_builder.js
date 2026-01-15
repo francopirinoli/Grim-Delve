@@ -1,7 +1,7 @@
 /**
  * monster_builder.js
  * The Architect Tool for GMs to create, edit, and save stat blocks.
- * v3.5: Localized and Refactored
+ * v4.0: Localized, Printing Fixed, Full Logic.
  */
 
 import { I18n } from '../utils/i18n.js';
@@ -12,7 +12,6 @@ import { ImageStore } from '../utils/image_store.js';
 export const MonsterRenderer = {
     /**
      * Generates the HTML string for the Parchment Stat Block.
-     * Use I18n.t() for labels and I18n.fmt() for dynamic sentences.
      */
     getHTML: (m, imageSrc) => {
         const t = I18n.t;
@@ -48,13 +47,12 @@ export const MonsterRenderer = {
         `).join('');
 
         // Dynamic Strings - Handle Translation
-        // Try to translate role. If key missing, use original string.
-        const rawRole = m.role.toLowerCase();
+        const rawRole = m.role ? m.role.toLowerCase() : 'soldier';
         const roleKey = `role_${rawRole}`;
         const roleName = t(roleKey) !== roleKey ? t(roleKey) : m.role;
 
         // Capitalize Family
-        const familyName = m.family.charAt(0).toUpperCase() + m.family.slice(1);
+        const familyName = m.family ? (m.family.charAt(0).toUpperCase() + m.family.slice(1)) : 'Folk';
 
         const metaLine = fmt('mon_meta_fmt', { 
             lvl: m.level, 
@@ -65,34 +63,42 @@ export const MonsterRenderer = {
         const attackLine = fmt('mon_atk_fmt', { dmg: `<strong>${m.stats.dmg}</strong>` });
 
         return `
-            <div class="stat-block-classic">
-                <div class="sb-name-bar">${m.name}</div>
-                <div class="sb-meta">${metaLine}</div>
+            <div class="monster-card">
+                <div class="mc-header">
+                    <div class="mc-name">${m.name}</div>
+                    <div class="mc-meta">${metaLine}</div>
+                </div>
                 
                 ${imgHtml}
 
-                <div class="sb-red-line"></div>
-                <div class="sb-stats-grid">
-                    <div class="sb-stat-box"><span class="sb-stat-val" style="color:#8a2c2c;">${m.stats.hp}</span><span>${t('mon_stat_hp')}</span></div>
-                    <div class="sb-stat-box"><span class="sb-stat-val">${m.stats.as}</span><span>${t('mon_stat_as')}</span></div>
-                    <div class="sb-stat-box"><span class="sb-stat-val">${m.stats.speed}</span><span>${t('mon_stat_spd')}</span></div>
+                <div class="mc-stats-grid">
+                    <div class="mc-stat">
+                        <div class="mc-stat-val" style="color:#8a2c2c;">${m.stats.hp}</div>
+                        <div class="mc-stat-label">${t('mon_stat_hp')}</div>
+                    </div>
+                    <div class="mc-stat">
+                        <div class="mc-stat-val">${m.stats.as}</div>
+                        <div class="mc-stat-label">${t('mon_stat_as')}</div>
+                    </div>
+                    <div class="mc-stat">
+                        <div class="mc-stat-val">${m.stats.speed}</div>
+                        <div class="mc-stat-label">${t('mon_stat_spd')}</div>
+                    </div>
+                    <div class="mc-stat">
+                        <div class="mc-stat-val" style="color:#c5a059;">${m.stats.atk}</div>
+                        <div class="mc-stat-label">${t('mon_stat_atk')}</div>
+                    </div>
                 </div>
-                <div class="sb-stats-grid" style="background:rgba(0,0,0,0.05); padding:5px;">
-                    <div class="sb-stat-box"><span>${t('mon_stat_atk')}</span><span class="sb-stat-val">${m.stats.atk}</span></div>
-                    <div class="sb-stat-box"><span>${t('mon_stat_def')}</span><span class="sb-stat-val">${m.stats.def}</span></div>
-                    <div class="sb-stat-box"><span>${t('mon_stat_save')}</span><span class="sb-stat-val">${m.stats.save}</span></div>
-                </div>
-                <div class="sb-red-line"></div>
 
-                <div class="sb-property">
-                    <span class="sb-prop-text">${attackLine}</span>
+                <div class="mc-section" style="border-top:1px solid #aaa; padding-top:5px;">
+                    <div class="mc-ability">${attackLine}</div>
                 </div>
 
-                ${traits.length > 0 ? `<div class="sb-section-header">${t('mon_sect_traits')}</div>${renderRow(traits)}` : ''}
-                ${actions.length > 0 ? `<div class="sb-section-header">${t('mon_sect_actions')}</div>${renderRow(actions)}` : ''}
-                ${dangers.length > 0 ? `<div class="sb-danger-section"><div class="sb-danger-title">${t('mon_sect_danger')}</div>${renderRow(dangers)}</div>` : ''}
+                ${traits.length > 0 ? `<div class="mc-section"><div class="mc-section-title">${t('mon_sect_traits')}</div>${renderRow(traits)}</div>` : ''}
+                ${actions.length > 0 ? `<div class="mc-section"><div class="mc-section-title">${t('mon_sect_actions')}</div>${renderRow(actions)}</div>` : ''}
+                ${dangers.length > 0 ? `<div class="mc-danger"><div class="sb-danger-title">${t('mon_sect_danger')}</div>${renderRow(dangers)}</div>` : ''}
                 
-                ${m.notes ? `<div class="sb-red-line"></div><div class="sb-property" style="font-style:italic; font-size:0.9em;"><strong>${t('mon_lbl_notes')}:</strong> ${m.notes}</div>` : ''}
+                ${m.notes ? `<div class="mc-section" style="border-top:1px solid #aaa; margin-top:10px; padding-top:5px; font-style:italic; font-size:0.9em;"><strong>${t('mon_lbl_notes')}:</strong> ${m.notes}</div>` : ''}
             </div>
         `;
     }
@@ -100,6 +106,8 @@ export const MonsterRenderer = {
 
 export const MonsterBuilder = {
     
+    container: null,
+
     // State Object
     currentMonster: {
         id: null,
@@ -121,10 +129,14 @@ export const MonsterBuilder = {
     dragState: { isDragging: false, startX: 0, startY: 0, initialImgX: 0, initialImgY: 0 },
 
     init: (container) => {
+        MonsterBuilder.container = container;
         MonsterBuilder.renderInterface(container);
+        
+        // If it's a new monster, calc default stats
         if (!MonsterBuilder.currentMonster.id) {
             MonsterBuilder.updateCalculation();
         } else {
+            // If loading existing, give DOM time to render before syncing
             setTimeout(() => {
                 MonsterBuilder.renderAbilityPickers(MonsterBuilder.currentMonster.family);
                 MonsterBuilder.syncDOMFromState();
@@ -138,7 +150,7 @@ export const MonsterBuilder = {
         MonsterBuilder.currentMonster = JSON.parse(JSON.stringify(monsterData));
         const m = MonsterBuilder.currentMonster;
         
-        // Data Integrity Checks
+        // Ensure data integrity
         if (!m.imgPos) m.imgPos = { x: 0, y: 0, scale: 1.0 };
         if (!m.traits) m.traits = [];
         if (!m.actions) m.actions = [];
@@ -146,6 +158,7 @@ export const MonsterBuilder = {
         if (!m.custom_abilities) m.custom_abilities = [];
         if (!m.notes) m.notes = "";
 
+        // If official, treat as a copy
         if (monsterData.source === 'official') {
             m.id = null;
             m.name = `${monsterData.name} (Copy)`;
@@ -153,6 +166,7 @@ export const MonsterBuilder = {
             m.imgPos = { x: 0, y: 0, scale: 1.0 };
         }
         
+        // Logic to refresh if module is already active
         const nameInput = document.getElementById('mb-name');
         if (nameInput) {
             MonsterBuilder.syncDOMFromState();
@@ -213,25 +227,25 @@ export const MonsterBuilder = {
                             <label class="form-label">${t('mon_lbl_role')}</label>
                             <select id="mb-role">
                                 ${roles.map(r => {
-                                    // Translate Role Key (e.g., "role_soldier")
                                     const key = 'role_' + r.toLowerCase();
-                                    const label = t(key); 
-                                    return `<option value="${r}" ${MonsterBuilder.currentMonster.role === r ? 'selected' : ''}>${label}</option>`;
+                                    const label = t(key);
+                                    return `<option value="${r}">${label}</option>`;
                                 }).join('')}
                             </select>
                         </div>
                         <div>
                             <label class="form-label">${t('mon_lbl_level')}</label>
                             <select id="mb-level">
-                                ${Array.from({length:10}, (_, i) => i+1).map(n => `<option value="${n}" ${MonsterBuilder.currentMonster.level === n ? 'selected' : ''}>${n}</option>`).join('')}
+                                ${Array.from({length:10}, (_, i) => i+1).map(n => `<option value="${n}">${n}</option>`).join('')}
                             </select>
                         </div>
                         <div>
                             <label class="form-label">${t('mon_lbl_family')}</label>
                             <select id="mb-family">
                                 ${families.map(f => {
-                                    const famName = data.families[f].name; // Capitalize or use as is
-                                    return `<option value="${f}" ${MonsterBuilder.currentMonster.family === f ? 'selected' : ''}>${famName}</option>`;
+                                    // Capitalize first letter if name is missing in json
+                                    const famName = data.families[f].name || f.charAt(0).toUpperCase() + f.slice(1);
+                                    return `<option value="${f}">${famName}</option>`;
                                 }).join('')}
                             </select>
                         </div>
@@ -299,11 +313,13 @@ export const MonsterBuilder = {
     },
 
     attachListeners: () => {
+        // Dropdowns
         ['mb-role', 'mb-level', 'mb-family'].forEach(id => {
             const el = document.getElementById(id);
             if(el) el.addEventListener('change', MonsterBuilder.updateCalculation);
         });
 
+        // Stats Manual Edits
         const statIds = ['mb-hp', 'mb-as', 'mb-speed', 'mb-atk', 'mb-def', 'mb-save', 'mb-dmg'];
         statIds.forEach(id => {
             const el = document.getElementById(id);
@@ -314,6 +330,7 @@ export const MonsterBuilder = {
             });
         });
 
+        // Text Inputs
         document.getElementById('mb-name').addEventListener('input', (e) => {
             MonsterBuilder.currentMonster.name = e.target.value;
             MonsterBuilder.renderCard();
@@ -323,7 +340,7 @@ export const MonsterBuilder = {
             MonsterBuilder.renderCard();
         });
 
-        // Image Handling
+        // --- IMAGE HANDLING ---
         const urlInput = document.getElementById('mb-img-url');
         const fileInput = document.getElementById('mb-file-input');
         const uploadBtn = document.getElementById('btn-upload-img');
@@ -373,79 +390,65 @@ export const MonsterBuilder = {
             }
         });
 
+        // --- CUSTOM ABILITIES ---
         document.getElementById('cust-type').addEventListener('change', (e) => {
             const isDanger = e.target.value === 'Danger';
             document.getElementById('cust-cost-row').style.display = isDanger ? 'flex' : 'none';
         });
         document.getElementById('btn-add-custom').addEventListener('click', MonsterBuilder.addCustomAbility);
+        
+        // --- FOOTER BUTTONS ---
         document.getElementById('btn-save-monster').addEventListener('click', MonsterBuilder.save);
+        
+        // --- FIXED PRINT LOGIC ---
         document.getElementById('btn-print-monster').addEventListener('click', () => {
-    const cardContent = document.getElementById('monster-card-display').innerHTML;
-    
-    // 1. Ensure Print Root Exists
-    let printRoot = document.getElementById('print-sheet-root');
-    if (!printRoot) {
-        printRoot = document.createElement('div');
-        printRoot.id = 'print-sheet-root';
-        printRoot.className = 'print-only';
-        document.body.appendChild(printRoot);
-    }
-    
-    // 2. Clear and Inject
-    printRoot.innerHTML = '';
-    
-    const wrapper = document.createElement('div');
-    wrapper.style.display = 'flex';
-    wrapper.style.justifyContent = 'center';
-    wrapper.style.paddingTop = '2cm';
-    wrapper.innerHTML = cardContent;
-    
-    printRoot.appendChild(wrapper);
-    
-    // 3. Print
-    window.print();
-});
+            const cardContent = document.getElementById('monster-card-display').innerHTML;
+            
+            // 1. Ensure Print Root Exists
+            let printRoot = document.getElementById('print-sheet-root');
+            if (!printRoot) {
+                printRoot = document.createElement('div');
+                printRoot.id = 'print-sheet-root';
+                printRoot.className = 'print-only';
+                document.body.appendChild(printRoot);
+            }
+            
+            // 2. Clean and Inject Wrapper
+            printRoot.innerHTML = '';
+            const wrapper = document.createElement('div');
+            wrapper.style.display = 'flex';
+            wrapper.style.justifyContent = 'center';
+            wrapper.style.paddingTop = '2cm';
+            wrapper.innerHTML = cardContent;
+            
+            printRoot.appendChild(wrapper);
+            
+            // 3. Trigger Print
+            window.print();
+        });
+    },
 
     syncDOMFromState: () => {
         const m = MonsterBuilder.currentMonster;
-        // Safety check to prevent crash if data is missing
-        if (!m) return;
-
-        // Helper to set values (handles 0 correctly, defaults undefined to empty)
-        const set = (id, val) => { 
-            const el = document.getElementById(id); 
-            if (el) el.value = (val !== null && val !== undefined) ? val : ""; 
-        };
+        const set = (id, val) => { const el = document.getElementById(id); if(el) el.value = val; };
 
         set('mb-name', m.name);
-        set('mb-role', m.role ? m.role.toLowerCase() : ""); // Safe check for role
+        set('mb-role', m.role.toLowerCase());
         set('mb-level', m.level);
         set('mb-family', m.family);
-        
-        // Ensure stats object exists before accessing properties
-        if (m.stats) {
-            set('mb-hp', m.stats.hp);
-            set('mb-as', m.stats.as);
-            set('mb-speed', m.stats.speed);
-            set('mb-atk', m.stats.atk);
-            set('mb-def', m.stats.def);
-            set('mb-save', m.stats.save);
-            set('mb-dmg', m.stats.dmg);
-        }
-
+        set('mb-hp', m.stats.hp);
+        set('mb-as', m.stats.as);
+        set('mb-speed', m.stats.speed);
+        set('mb-atk', m.stats.atk);
+        set('mb-def', m.stats.def);
+        set('mb-save', m.stats.save);
+        set('mb-dmg', m.stats.dmg);
         set('mb-notes', m.notes);
 
-        // Image URL Handling
-        if (m.imageUrl) {
-            set('mb-img-url', m.imageUrl);
-        } else if (m.imageId) {
-            set('mb-img-url', "[Image Uploaded]");
-        } else {
-            set('mb-img-url', "");
-        }
+        if (m.imageUrl) set('mb-img-url', m.imageUrl);
+        else if (m.imageId) set('mb-img-url', "[Uploaded Image]");
 
-        // Image Position Controls
-        if (m.imgPos) {
+        if(m.imgPos) {
             set('inp-img-scale', m.imgPos.scale);
             set('inp-img-x', m.imgPos.x);
             set('inp-img-y', m.imgPos.y);
@@ -455,8 +458,7 @@ export const MonsterBuilder = {
     applyImageTransform: () => {
         const img = document.querySelector('.sb-image-container img');
         const m = MonsterBuilder.currentMonster;
-        // Safety checks
-        if (img && m && m.imgPos) {
+        if(img && m.imgPos) {
             img.style.transform = `translate(${m.imgPos.x}px, ${m.imgPos.y}px) scale(${m.imgPos.scale})`;
         }
     },
@@ -473,7 +475,9 @@ export const MonsterBuilder = {
         const level = parseInt(levelEl.value);
         const familyKey = familyEl.value;
         
-        const chassis = data.chassis[role].find(c => c.lvl === level);
+        // Safe access in case role key doesn't exist yet
+        const chassisList = data.chassis[role] || data.chassis['soldier'];
+        const chassis = chassisList.find(c => c.lvl === level) || chassisList[0];
         
         const m = MonsterBuilder.currentMonster;
         m.role = role;
@@ -496,6 +500,7 @@ export const MonsterBuilder = {
         const data = I18n.getData('monsters');
         const t = I18n.t;
         
+        // Fallback if family not found
         if (!data || !data.families[familyKey]) return;
 
         const fam = data.families[familyKey];
@@ -529,7 +534,9 @@ export const MonsterBuilder = {
 
         let html = "";
         html += createAccordion(t('mon_sect_traits'), fam.universal_traits, "traits", false);
-        html += createAccordion(t('mon_sect_traits') + " (" + fam.name + ")", fam.passives, "passives", true);
+        // Sometimes passives are under 'passives', sometimes 'traits' in JSON logic
+        const passives = fam.passives || [];
+        html += createAccordion(t('mon_sect_traits') + " (" + fam.name + ")", passives, "passives", true);
         html += createAccordion(t('mon_sect_actions'), fam.actions, "actions", true);
         html += createAccordion(t('mon_sect_danger'), fam.danger_abilities, "danger", false);
 
@@ -550,7 +557,7 @@ export const MonsterBuilder = {
             const nameEl = chk.nextElementSibling.querySelector('.picker-name');
             if (!nameEl) return;
             const name = nameEl.textContent.split(' (')[0].trim(); 
-            const match = allSel.some(s => s.name.includes(name)); 
+            const match = allSel.some(s => s.name === name); // Strict name match
             chk.checked = match;
         });
         MonsterBuilder.scanSelections();
@@ -559,9 +566,10 @@ export const MonsterBuilder = {
     scanSelections: () => {
         const m = MonsterBuilder.currentMonster;
         const data = I18n.getData('monsters');
+        if (!data.families[m.family]) return;
         const fam = data.families[m.family];
 
-        // Reset arrays, keep customs
+        // Reset standard arrays, keep customs
         m.traits = []; 
         m.actions = []; 
         m.danger_abilities = [];
@@ -572,15 +580,21 @@ export const MonsterBuilder = {
             const type = chk.dataset.type;
             const idx = parseInt(chk.dataset.idx);
             counts[type]++;
+            
             if (type === 'traits') m.traits.push(fam.universal_traits[idx]);
-            if (type === 'passives') m.traits.push({ ...fam.passives[idx], type: "Trait" }); 
-            if (type === 'actions') m.actions.push({ ...fam.actions[idx], type: "Action" });
-            if (type === 'danger') m.danger_abilities.push({ ...fam.danger_abilities[idx], type: "Danger" });
+            else if (type === 'passives') m.traits.push({ ...fam.passives[idx], type: "Trait" }); 
+            else if (type === 'actions') m.actions.push({ ...fam.actions[idx], type: "Action" });
+            else if (type === 'danger') m.danger_abilities.push({ ...fam.danger_abilities[idx], type: "Danger" });
         });
 
+        // Update UI Badges
         for (const [key, val] of Object.entries(counts)) {
             const badge = document.getElementById(`badge-${key}`);
-            if(badge) { badge.textContent = val; badge.classList.toggle('active', val > 0); }
+            if(badge) { 
+                badge.textContent = val; 
+                badge.classList.toggle('active', val > 0); 
+                badge.style.opacity = val > 0 ? '1' : '0';
+            }
         }
         MonsterBuilder.renderCard();
     },
@@ -614,15 +628,20 @@ export const MonsterBuilder = {
         if (!container) return;
 
         let src = m.imageUrl;
-        if (m.imageId) src = await ImageStore.getUrl(m.imageId);
+        if (m.imageId) {
+             try {
+                src = await ImageStore.getUrl(m.imageId);
+             } catch(e) { console.warn("Image load error", e); }
+        }
 
         container.innerHTML = MonsterRenderer.getHTML(m, src);
 
+        // Re-bind delete buttons for customs
         container.querySelectorAll('.del-custom').forEach(btn => {
             btn.addEventListener('click', (e) => MonsterBuilder.removeCustomAbility(parseInt(e.target.dataset.id)));
         });
 
-        // Image Drag
+        // Image Drag Logic
         const imgBox = container.querySelector('.sb-image-container');
         if (imgBox) {
             imgBox.addEventListener('mousedown', (e) => {
@@ -680,7 +699,3 @@ export const MonsterBuilder = {
         alert(`Saved ${m.name} to Library.`);
     }
 };
-
-
-
-

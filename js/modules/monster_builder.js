@@ -408,25 +408,44 @@ export const MonsterBuilder = {
 
     syncDOMFromState: () => {
         const m = MonsterBuilder.currentMonster;
-        const set = (id, val) => { const el = document.getElementById(id); if(el) el.value = val; };
+        // Safety check to prevent crash if data is missing
+        if (!m) return;
+
+        // Helper to set values (handles 0 correctly, defaults undefined to empty)
+        const set = (id, val) => { 
+            const el = document.getElementById(id); 
+            if (el) el.value = (val !== null && val !== undefined) ? val : ""; 
+        };
 
         set('mb-name', m.name);
-        set('mb-role', m.role.toLowerCase());
+        set('mb-role', m.role ? m.role.toLowerCase() : ""); // Safe check for role
         set('mb-level', m.level);
         set('mb-family', m.family);
-        set('mb-hp', m.stats.hp);
-        set('mb-as', m.stats.as);
-        set('mb-speed', m.stats.speed);
-        set('mb-atk', m.stats.atk);
-        set('mb-def', m.stats.def);
-        set('mb-save', m.stats.save);
-        set('mb-dmg', m.stats.dmg);
+        
+        // Ensure stats object exists before accessing properties
+        if (m.stats) {
+            set('mb-hp', m.stats.hp);
+            set('mb-as', m.stats.as);
+            set('mb-speed', m.stats.speed);
+            set('mb-atk', m.stats.atk);
+            set('mb-def', m.stats.def);
+            set('mb-save', m.stats.save);
+            set('mb-dmg', m.stats.dmg);
+        }
+
         set('mb-notes', m.notes);
 
-        if (m.imageUrl) set('mb-img-url', m.imageUrl);
-        else if (m.imageId) set('mb-img-url', "[Uploaded Image]");
+        // Image URL Handling
+        if (m.imageUrl) {
+            set('mb-img-url', m.imageUrl);
+        } else if (m.imageId) {
+            set('mb-img-url', "[Image Uploaded]");
+        } else {
+            set('mb-img-url', "");
+        }
 
-        if(m.imgPos) {
+        // Image Position Controls
+        if (m.imgPos) {
             set('inp-img-scale', m.imgPos.scale);
             set('inp-img-x', m.imgPos.x);
             set('inp-img-y', m.imgPos.y);
@@ -436,7 +455,8 @@ export const MonsterBuilder = {
     applyImageTransform: () => {
         const img = document.querySelector('.sb-image-container img');
         const m = MonsterBuilder.currentMonster;
-        if(img && m.imgPos) {
+        // Safety checks
+        if (img && m && m.imgPos) {
             img.style.transform = `translate(${m.imgPos.x}px, ${m.imgPos.y}px) scale(${m.imgPos.scale})`;
         }
     },
@@ -660,6 +680,7 @@ export const MonsterBuilder = {
         alert(`Saved ${m.name} to Library.`);
     }
 };
+
 
 
 

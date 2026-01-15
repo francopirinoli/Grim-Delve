@@ -222,14 +222,14 @@ export const ItemBuilder = {
                         </div>
                     </div>
 
-                    <!-- EDITOR (Always Visible) -->
+                    <!-- EDITOR -->
                     <div class="forge-panel item-editor">
                         <h3>${t('item_lbl_editor')}</h3>
                         
                         <!-- Image Controls -->
                         <div style="background:rgba(0,0,0,0.3); padding:8px; border:1px dashed #444; border-radius:4px; margin-bottom:10px;">
                             <div style="display:flex; gap:5px; margin-bottom:8px;">
-                                <input type="text" id="edit-img-url" placeholder="${t('cg_ph_url')}" class="editor-input" style="flex:1;">
+                                <input type="text" id="edit-img-url" placeholder="${t('lbl_paste_url')}" class="editor-input" style="flex:1;">
                                 <button id="btn-upload-img" class="btn-small" style="font-size:0.7rem;">📁 ${t('lbl_upload')}</button>
                                 <input type="file" id="file-upload-item" style="display:none" accept="image/*">
                             </div>
@@ -252,18 +252,18 @@ export const ItemBuilder = {
 
                         <div class="editor-grid two-col">
                             <input type="text" id="edit-name" class="editor-input" placeholder="${t('lbl_name')}">
-                            <input type="text" id="edit-type" class="editor-input" placeholder="Type">
+                            <input type="text" id="edit-type" class="editor-input" placeholder="${t('item_ph_type')}">
                         </div>
 
                         <div class="editor-grid">
-                            <input type="text" id="edit-damage" class="editor-input" placeholder="${t('mon_stat_dmg')}">
-                            <input type="text" id="edit-armor" class="editor-input" placeholder="${t('mon_stat_as')}">
-                            <input type="number" id="edit-slots" class="editor-input" placeholder="${t('cg_lbl_slots')}">
+                            <input type="text" id="edit-damage" class="editor-input" placeholder="${t('item_ph_damage')}">
+                            <input type="text" id="edit-armor" class="editor-input" placeholder="${t('item_ph_ac')}">
+                            <input type="number" id="edit-slots" class="editor-input" placeholder="${t('item_ph_slots')}">
                             <input type="text" id="edit-cost" class="editor-input" placeholder="${t('lbl_cost')}">
                         </div>
 
                         <div style="margin-bottom:8px;">
-                             <input type="text" id="edit-tags" class="editor-input" placeholder="Tags">
+                             <input type="text" id="edit-tags" class="editor-input" placeholder="${t('item_ph_tags')}">
                         </div>
 
                         <textarea id="edit-desc" class="editor-textarea" rows="2" placeholder="${t('lbl_desc')}"></textarea>
@@ -271,7 +271,7 @@ export const ItemBuilder = {
                         <!-- Magic Section -->
                         <div style="border-top:1px dashed #444; padding-top:10px; margin-top:10px;">
                             <div style="display:flex; gap:10px; margin-bottom:8px;">
-                                <input type="text" id="edit-magic-name" class="editor-input" placeholder="Magic Prefix/Name" style="flex-grow:1;">
+                                <input type="text" id="edit-magic-name" class="editor-input" placeholder="${t('item_ph_magic_name')}" style="flex-grow:1;">
                                 <label style="display:flex; align-items:center; gap:5px; color:#aaa; font-size:0.8rem; white-space:nowrap;">
                                     <input type="checkbox" id="edit-is-magic"> ${t('item_is_magic')}
                                 </label>
@@ -289,7 +289,7 @@ export const ItemBuilder = {
                     </div>
                     <div style="margin-top:10px; text-align:center;">
                         <button id="btn-save-item" class="btn-primary" style="margin-right:10px;">💾 ${t('btn_save_lib')}</button>
-                        <button class="btn-secondary" onclick="window.print()">🖨️ ${t('btn_print')}</button>
+                        <button class="btn-secondary" id="btn-print-item">🖨️ ${t('btn_print')}</button>
                     </div>
                 </div>
             </div>
@@ -803,3 +803,4 @@ export const ItemBuilder = {
     }
 
 };
+

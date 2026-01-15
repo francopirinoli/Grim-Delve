@@ -669,10 +669,22 @@ export const I18n = {
         return value;
     },
 
+    matches: (userInput, translationKey) => {
+    if (!userInput) return true;
+    const localized = I18n.t(translationKey).toLowerCase();
+    const raw = translationKey.replace('role_', '').replace('type_', '').toLowerCase();
+    const input = userInput.toLowerCase();
+    
+    // Check against Localized OR Raw (English)
+    return localized.includes(input) || raw.includes(input);
+    },
+
+
     getData: (type) => {
         return DATA_STORE[type];
     }
 
 };
+
 
 

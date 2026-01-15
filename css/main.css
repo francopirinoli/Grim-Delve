@@ -3765,6 +3765,10 @@ body.mode-play #btn-levelup {
    CHARACTER MANAGER (REFACTORED)
    ========================================= */
 
+:root {
+    --content-max-width: 1200px; /* Controls the width of the whole app */
+}
+
 /* --- LAYOUT & HUD --- */
 .char-manager-layout {
     display: flex;
@@ -3775,9 +3779,7 @@ body.mode-play #btn-levelup {
 }
 
 /* Ensure Print View is HIDDEN on screen */
-.print-only { 
-    display: none !important; 
-}
+.print-only { display: none !important; }
 
 .char-hud {
     background: #0a0a0a;
@@ -3789,6 +3791,10 @@ body.mode-play #btn-levelup {
     gap: 15px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.5);
     z-index: 10;
+    
+    /* Centering Logic */
+    align-items: center; 
+    width: 100%;
 }
 
 /* Row 1: Identity */
@@ -3796,6 +3802,8 @@ body.mode-play #btn-levelup {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
+    width: 100%;
+    max-width: var(--content-max-width); /* Constraint */
 }
 
 .hud-identity { width: 100%; }
@@ -3815,20 +3823,13 @@ body.mode-play #btn-levelup {
 }
 .edit-name:focus { outline: none; border-bottom-color: var(--accent-gold); }
 
-.hud-subtitle {
-    color: #888;
-    font-size: 0.8rem;
-    font-family: var(--font-mono);
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    margin-top: 5px;
-}
-
 /* Row 2: Vitals */
 .hud-vitals-row {
     display: flex;
     gap: 20px;
     align-items: stretch;
+    width: 100%;
+    max-width: var(--content-max-width); /* Constraint */
 }
 
 input.edit-name {
@@ -3845,6 +3846,17 @@ input.edit-name {
     height: auto !important;
 }
 input.edit-name:focus { outline: none; border-bottom-color: var(--accent-gold) !important; }
+
+.hud-subtitle {
+    color: #888;
+    font-size: 0.8rem;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-top: 5px;
+}
+
+.hud-controls { display: flex; gap: 10px; }
 
 input.lvl-input, input.input-minimal {
     background: transparent !important;
@@ -3872,7 +3884,7 @@ input.lvl-input:focus { border-bottom-color: var(--accent-gold) !important; }
     padding: 5px 15px;
     gap: 15px;
     min-width: 180px;
-    height: 50px; /* Fixed height for consistency */
+    height: 65px; /* Matched height with resources */
 }
 
 .lvl-group {
@@ -3917,7 +3929,7 @@ input.lvl-input:focus { border-bottom-color: var(--accent-gold) !important; }
     display: flex;
     flex-direction: column;
     justify-content: center;
-    height: 70px;
+    height: 65px;
 }
 
 .res-values {
@@ -3926,7 +3938,7 @@ input.lvl-input:focus { border-bottom-color: var(--accent-gold) !important; }
     justify-content: flex-end;
     gap: 5px;
     z-index: 2;
-    margin-top: -5px; /* Pull up slightly */
+    margin-top: -5px;
 }
 
 .res-card.red { border-left: 4px solid #8a2c2c; }
@@ -3948,7 +3960,7 @@ input.res-input {
     border-bottom: 1px solid transparent !important;
     color: #fff;
     font-family: var(--font-mono);
-    font-size: 1.8rem; /* Large font */
+    font-size: 1.8rem;
     font-weight: bold;
     text-align: right;
     width: 60px !important;
@@ -3957,11 +3969,7 @@ input.res-input {
 }
 input.res-input:focus { border-bottom: 1px solid #fff !important; }
 
-.res-max {
-    font-family: var(--font-mono);
-    font-size: 0.9rem;
-    color: #555;
-}
+.res-max { font-family: var(--font-mono); font-size: 0.9rem; color: #555; }
 
 .res-input {
     background: transparent;
@@ -3977,20 +3985,7 @@ input.res-input:focus { border-bottom: 1px solid #fff !important; }
 }
 .res-input:focus { outline: none; border-bottom: 1px solid #fff; }
 
-.res-max {
-    font-family: var(--font-mono);
-    font-size: 0.9rem;
-    color: #555;
-}
-
-/* Progress Bar Background */
-.res-bar {
-    position: absolute;
-    bottom: 0; left: 0;
-    height: 4px;
-    width: 100%;
-    background: #222;
-}
+.res-bar { position: absolute; bottom: 0; left: 0; height: 4px; width: 100%; background: #222; }
 .res-fill { height: 100%; transition: width 0.3s ease; }
 .res-card.red .res-fill { background: #8a2c2c; }
 .res-card.green .res-fill { background: #388e3c; }
@@ -4000,18 +3995,20 @@ input.res-input:focus { border-bottom: 1px solid #fff !important; }
 /* --- TABS --- */
 .char-tabs {
     display: flex;
+    justify-content: center; /* Center the buttons */
     background: #111;
     border-bottom: 1px solid #333;
-    padding: 0 25px;
-    gap: 30px;
+    padding: 10px 0 0 0; /* Top padding only */
+    gap: 10px;
+    width: 100%;
 }
 
 .char-tab-btn {
-    background: transparent;
-    border: none;
-    border-bottom: 3px solid transparent;
-    color: #666;
-    padding: 15px 0;
+    background: #1a1a1a; /* Dark button background */
+    border: 1px solid #333;
+    border-bottom: none; /* Connect to content */
+    color: #888;
+    padding: 12px 25px;
     font-family: var(--font-header);
     font-size: 0.9rem;
     font-weight: bold;
@@ -4019,23 +4016,41 @@ input.res-input:focus { border-bottom: 1px solid #fff !important; }
     transition: all 0.2s;
     text-transform: uppercase;
     letter-spacing: 1px;
+    border-radius: 6px 6px 0 0; /* Rounded tops */
+    min-width: 140px; /* Make them look substantive */
+    text-align: center;
 }
-.char-tab-btn:hover { color: #ccc; }
-.char-tab-btn.active { color: var(--accent-gold); border-bottom-color: var(--accent-gold); }
 
-/* --- MAIN CONTENT GRID --- */
+.char-tab-btn:hover {
+    background: #252525;
+    color: #ccc;
+    transform: translateY(-2px);
+}
+
+.char-tab-btn.active {
+    background: var(--bg-dark); /* Match background color of content */
+    color: var(--accent-gold);
+    border-color: var(--accent-gold);
+    border-bottom: 1px solid var(--bg-dark); /* Blend into content */
+    margin-bottom: -1px; /* Overlap border */
+}
+
+
+/* --- MAIN CONTENT AREA --- */
 .char-tab-content {
     flex-grow: 1;
     overflow-y: auto;
     padding: 2rem;
+    width: 100%;
+    /* Center text/content inside generally, but grid handles layout */
 }
 
 .manager-grid {
     display: grid;
-    grid-template-columns: 350px 1fr; /* Fixed Left sidebar, Flexible Right */
+    grid-template-columns: 350px 1fr;
     gap: 3rem;
-    max-width: 1400px;
-    margin: 0 auto;
+    max-width: var(--content-max-width); /* Constraint */
+    margin: 0 auto; /* Center on screen */
 }
 
 .mgr-col { display: flex; flex-direction: column; gap: 2rem; }
@@ -4163,9 +4178,24 @@ input.res-input:focus { border-bottom: 1px solid #fff !important; }
 
 /* Responsive */
 @media (max-width: 1024px) {
-    .manager-grid { grid-template-columns: 1fr; }
+    /* Collapse grids to single column */
+    .manager-grid, 
+    .bio-layout, 
+    .hud-vitals-row,
+    .wealth-bar { 
+        display: flex; 
+        flex-direction: column; 
+    }
+    .hud-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .hud-controls { width: 100%; justify-content: flex-end; }
+    
+    /* Allow scrolling on tabs for mobile */
+    .char-tabs { justify-content: flex-start; overflow-x: auto; padding-left: 10px; }
+    
+    /* Vitals Grid 2x2 on mobile */
     .resource-grid { grid-template-columns: 1fr 1fr; }
-    .hud-vitals-row { flex-direction: column; }
+    
+    .wealth-bar { gap: 15px; align-items: flex-start; }
 }
 
 /* --- HUD REFINEMENTS --- */
@@ -4193,22 +4223,26 @@ input.res-input:focus { border-bottom: 1px solid #fff !important; }
 /* --- INVENTORY TAB STYLES (New) --- */
 .inv-grid-layout {
     display: grid;
-    grid-template-columns: 1fr; /* Single column list for readability */
-    gap: 1rem;
-    max-width: 1000px;
+    grid-template-columns: 1fr;
+    gap: 0; /* Rows touch */
+    max-width: var(--content-max-width); /* Constraint */
     margin: 0 auto;
+    border: 1px solid #333;
+    border-radius: 4px;
+    overflow: hidden;
 }
 
 .inv-header-bar {
     display: flex;
-    background: #1a1a1a;
-    padding: 10px 15px;
-    border-bottom: 2px solid #333;
+    background: #252525;
+    padding: 12px 20px;
+    border-bottom: 1px solid #444;
     font-family: var(--font-header);
-    color: var(--text-muted);
-    font-size: 0.8rem;
+    color: var(--accent-gold);
+    font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 1px;
+    font-weight: bold;
 }
 
 .inv-manager-row {
@@ -4216,13 +4250,12 @@ input.res-input:focus { border-bottom: 1px solid #fff !important; }
     align-items: center;
     background: #151515;
     border-bottom: 1px solid #222;
-    padding: 10px 15px;
+    padding: 12px 20px;
     transition: background 0.2s;
 }
+.inv-manager-row:last-child { border-bottom: none; }
 
-.inv-manager-row:hover {
-    background: #1f1f1f;
-}
+.inv-manager-row:hover { background: #1f1f1f; }
 
 /* Inventory Columns */
 .col-name { flex: 2; display: flex; flex-direction: column; }
@@ -4246,11 +4279,14 @@ input.res-input:focus { border-bottom: 1px solid #fff !important; }
     display: flex;
     gap: 20px;
     background: #000;
-    padding: 10px 20px;
+    padding: 15px 25px;
     border: 1px solid #333;
-    border-radius: 4px;
+    border-radius: 6px;
     margin-bottom: 2rem;
     align-items: center;
+    max-width: var(--content-max-width); /* Constraint */
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .wealth-item {
@@ -4259,10 +4295,11 @@ input.res-input:focus { border-bottom: 1px solid #fff !important; }
 }
 
 .wealth-item label {
-    font-size: 0.6rem;
-    color: #555;
+    font-size: 0.65rem;
+    color: #666;
     text-transform: uppercase;
-    margin-bottom: 2px;
+    margin-bottom: 4px;
+    font-weight: bold;
 }
 
 .wealth-input {
@@ -4271,8 +4308,9 @@ input.res-input:focus { border-bottom: 1px solid #fff !important; }
     border-bottom: 1px solid #333;
     color: var(--accent-gold);
     font-family: var(--font-mono);
-    font-size: 1.1rem;
-    width: 60px;
+    font-size: 1.2rem;
+    width: 80px;
+    padding-bottom: 2px;
 }
 .wealth-input:focus { outline: none; border-bottom-color: var(--accent-gold); }
 
@@ -4280,7 +4318,14 @@ input.res-input:focus { border-bottom: 1px solid #fff !important; }
 .bio-layout {
     display: grid;
     grid-template-columns: 300px 1fr;
-    gap: 2rem;
+    gap: 3rem;
+    max-width: var(--content-max-width); /* Constraint */
+    margin: 0 auto;
+}
+
+.bio-main {
+    display: flex;
+    flex-direction: column;
 }
 
 .bio-sidebar {
@@ -4335,26 +4380,28 @@ input.res-input:focus { border-bottom: 1px solid #fff !important; }
 
 .notes-editor {
     width: 100%;
-    height: 100%;
-    min-height: 400px;
+    height: 500px; /* Taller by default */
     background: #151515;
     border: 1px solid #333;
     color: #ccc;
-    padding: 15px;
+    padding: 20px;
     font-family: var(--font-body);
     font-size: 1rem;
     line-height: 1.6;
     resize: none;
+    border-radius: 4px;
 }
-.notes-editor:focus { outline: none; border-color: #555; }
+.notes-editor:focus { outline: none; border-color: var(--accent-gold); }
 
 /* --- FEATURES & TALENTS TAB --- */
 
 .features-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); /* Better card width */
     gap: 1.5rem;
     padding-bottom: 2rem;
+    max-width: var(--content-max-width); /* Constraint */
+    margin: 0 auto;
 }
 
 .feature-card {

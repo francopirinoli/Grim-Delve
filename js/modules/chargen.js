@@ -2449,7 +2449,7 @@ renderGear: (el) => {
 renderSheet: async (container) => {
     const c = CharGen.char;
 
-    // 1. Data Safety: Initialize Current Vitals if they are null
+    // 1. Data Safety
     if (c.current.hp === null) c.current.hp = c.derived.maxHP;
     if (c.current.mp === null) c.current.mp = c.derived.maxMP;
     if (c.current.sta === null) c.current.sta = c.derived.maxSTA;
@@ -2460,11 +2460,22 @@ renderSheet: async (container) => {
     // 2. Clear Container
     container.innerHTML = '';
     
-    // 3. Build Layout Structure
+    // --- 3. CLEANUP PREVIOUS PRINT VIEWS ---
+    // Remove any existing print container attached to body to prevent duplicates
+    const existingPrint = document.getElementById('print-sheet-root');
+    if (existingPrint) existingPrint.remove();
+
+    // --- 4. CREATE NEW PRINT CONTAINER ON BODY ---
+    // This moves it outside the #app-container so it doesn't get hidden by UI rules
+    const printArea = document.createElement('div');
+    printArea.id = 'print-sheet-root';
+    printArea.className = 'print-only';
+    document.body.appendChild(printArea);
+
+    // 5. Build Application Layout (Screen)
     const layout = document.createElement('div');
     layout.className = 'char-manager-layout';
     
-    // 4. Render Components
     layout.appendChild(CharGen.renderHUD());     
     layout.appendChild(CharGen.renderTabs());    
     
@@ -2472,18 +2483,15 @@ renderSheet: async (container) => {
     contentArea.id = 'char-manager-content';
     contentArea.className = 'char-tab-content';
     layout.appendChild(contentArea);
-    
-    // CRITICAL: This class MUST be 'print-only' and matched in CSS
-    const printArea = document.createElement('div');
-    printArea.id = 'print-sheet-root';
-    printArea.className = 'print-only';
-    layout.appendChild(printArea);
 
     container.appendChild(layout);
 
-    // 5. Initialize
+    // 6. Initialize
     CharGen.switchTab('main');
-    CharGen.renderPrintVersion(printArea);
+    
+    // Render the print view into the isolated container
+    await CharGen.renderPrintVersion(printArea);
+    
     CharGen.attachManagerListeners();
 },
 
@@ -3162,150 +3170,230 @@ renderHUD: () => {
         c.notes = e.target.value;
     });
 },
-    renderPrintVersion: (container) => {
+    renderPrintVersion: async (container) => {
     const c = CharGen.char;
     const t = I18n.t;
     const data = I18n.getData('options');
     const s = c.stats;
+    const def = c.defenses;
 
-    // 1. Gather ALL Features (Ancestry + Background + Class + Talents)
-    let printFeatures = [];
+    // --- 1. PREPARE DATA ---
+
+    // Image
+    let imgHTML = `<div style="font-size:4rem; color:#ccc;">👤</div>`;
+    if (c.imageUrl) {
+        imgHTML = `<img src="${c.imageUrl}">`;
+    } else if (c.imageId) {
+        try {
+            const { ImageStore } = await import('../utils/image_store.js');
+            const url = await ImageStore.getUrl(c.imageId);
+            if (url) imgHTML = `<img src="${url}">`;
+        } catch(e) { console.warn("Print Img Error", e); }
+    }
+
+    // Calculations
+    const armorScore = CharGen.calculateArmorScore();
+    const skills = CharGen.calculateSkills(); // Returns array of objects {name, die}
     
+    // Attacks Table
+    const weapons = c.inventory.filter(i => (i.type === 'Melee' || i.type === 'Ranged') && i.equipped);
+    let attackRows = `<tr><td>${t('wep_unarmed')}</td><td style="text-align:center">${(s.STR>=0?'+':'')+s.STR}</td><td>1d4 ${(s.STR>=0?'+':'')+s.STR}</td><td>-</td></tr>`;
+    
+    weapons.forEach(w => {
+        const isFinesse = w.tags && (String(w.tags).toLowerCase().includes("finesse") || String(w.tags).toLowerCase().includes("sutil"));
+        const isRanged = w.type === 'Ranged' || w.type === 'A Distancia';
+        let mod = s.STR || 0;
+        if (isRanged) mod = s.DEX || 0;
+        else if (isFinesse) mod = Math.max(s.STR || 0, s.DEX || 0);
+        
+        const sign = mod >= 0 ? '+' : '';
+        const tagStr = w.tags ? (Array.isArray(w.tags) ? w.tags.join(', ') : w.tags) : '-';
+        attackRows += `<tr><td><b>${w.name}</b></td><td style="text-align:center">${sign}${mod}</td><td>${w.damage} ${sign}${mod}</td><td style="font-size:0.8em">${tagStr}</td></tr>`;
+    });
+
+    // Features List
+    let featuresHTML = "";
+    const addFeat = (name, source, desc) => {
+        featuresHTML += `
+            <div class="p-feat-block">
+                <span class="p-feat-title">${name} <span style="float:right; font-weight:normal; font-size:0.8em; color:#555;">${source}</span></span>
+                <div style="font-size:0.9em; margin-top:2px;">${desc}</div>
+            </div>`;
+    };
+
     // Ancestry
-    if (c.ancestry) {
+    if(c.ancestry) {
         const anc = data.ancestries.find(a => a.id === c.ancestry);
-        const fIdx = c.ancestryFeatIndex !== null ? c.ancestryFeatIndex : 0;
-        if(anc && anc.feats[fIdx]) {
-            printFeatures.push({ name: anc.feats[fIdx].name, desc: anc.feats[fIdx].effect, source: "Ancestry" });
-        }
+        const fIdx = c.ancestryFeatIndex || 0;
+        if(anc && anc.feats[fIdx]) addFeat(anc.feats[fIdx].name, t('cg_lbl_ancestry'), anc.feats[fIdx].effect);
     }
     // Background
-    if (c.background) {
+    if(c.background) {
         const bg = data.backgrounds.find(b => b.id === c.background);
-        if(bg && bg.feat) printFeatures.push({ name: bg.feat.name, desc: bg.feat.effect, source: "Background" });
+        if(bg && bg.feat) addFeat(bg.feat.name, t('cg_lbl_background'), bg.feat.effect);
     }
-    // Synergy
-    if (c.classId) {
+    // Class
+    if(c.classId) {
         const cls = data.classes.find(x => x.id === c.classId);
         if(cls) {
             cls.synergy_feats.filter(f => f.level <= c.level).forEach(f => {
-                printFeatures.push({ name: f.name, desc: f.effect, source: "Class Lvl " + f.level });
+                addFeat(f.name, `Lvl ${f.level}`, f.effect);
             });
         }
     }
     // Talents
     c.talents.forEach(tal => {
-        printFeatures.push({ name: tal.name, desc: tal.effect, source: tal.sourceName, choice: tal.choice });
+        let txt = tal.effect;
+        if(tal.choice) txt += ` <em>(Selected: ${tal.choice})</em>`;
+        addFeat(tal.name, tal.sourceName || "Talent", txt);
     });
 
-    // 2. Format Lists
-    const featsHTML = printFeatures.map(f => `
-        <div class="p-feat-card">
-            <span class="p-feat-name">${f.name} <span style="font-weight:normal; font-size:0.7em; float:right;">${f.source}</span></span>
-            <div>${f.desc} ${f.choice ? `<br><em>(${f.choice})</em>` : ''}</div>
-        </div>
-    `).join('');
-
-    const weapons = c.inventory.filter(i => (i.type === 'Melee' || i.type === 'Ranged') && i.equipped);
-    const attackRows = weapons.map(w => {
-        const isFinesse = w.tags && (w.tags.includes("Finesse") || w.tags.includes("Sutil"));
-        const isRanged = w.type === 'Ranged' || w.type === 'A Distancia';
-        let mod = s.STR || 0;
-        if (isRanged) mod = s.DEX || 0;
-        else if (isFinesse) mod = Math.max(s.STR || 0, s.DEX || 0);
-        const sign = mod >= 0 ? '+' : '';
-        // Translate tags
-        const tagStr = w.tags ? (Array.isArray(w.tags) ? w.tags.join(', ') : w.tags) : '-';
-        
-        return `<tr><td>${w.name}</td><td>${sign}${mod}</td><td>${w.damage} ${sign}${mod}</td><td style="font-size:0.7em">${tagStr}</td></tr>`;
-    }).join('');
-    
     // Inventory List
     const invHTML = c.inventory.map(i => `
-        <div class="p-inv-item">
+        <div class="p-list-item">
             <span>${i.equipped ? '★ ' : ''}${i.name}</span>
-            <span>${i.slots || 0}</span>
+            <span style="font-family:monospace;">${i.slots || 0}</span>
         </div>
     `).join('');
 
-    const skills = CharGen.calculateSkills();
-    const armorScore = CharGen.calculateArmorScore();
-
-    // 3. Render HTML
+    // --- 2. BUILD HTML STRUCTURE ---
+    
     container.innerHTML = `
-        <div class="print-page" id="p1">
-            <div class="p-identity">
-                <div class="p-id-field"><span class="p-id-label">${t('lbl_name')}</span><span class="p-id-val">${c.name}</span></div>
-                <div class="p-id-field"><span class="p-id-label">Class</span><span class="p-id-val">${c.className}</span></div>
-                <div class="p-id-field"><span class="p-id-label">${t('lbl_level')}</span><span class="p-id-val">${c.level}</span></div>
-                <div class="p-id-field"><span class="p-id-label">XP</span><span class="p-id-val">${c.current.xp}/10</span></div>
+        <!-- PAGE 1 -->
+        <div class="print-page">
+            <div class="p-header-row">
+                <div class="p-portrait-box">${imgHTML}</div>
+                <div class="p-header-info">
+                    <div class="p-field" style="grid-column: 1 / -1">
+                        <span class="p-lbl">${t('lbl_name')}</span>
+                        <span class="p-val-large">${c.name}</span>
+                    </div>
+                    <div class="p-field">
+                        <span class="p-lbl">${t('cg_step_class')}</span>
+                        <span class="p-val">${c.className || 'Adventurer'}</span>
+                    </div>
+                    <div class="p-field">
+                        <span class="p-lbl">${t('lbl_level')}</span>
+                        <span class="p-val">${c.level} <small style="color:#666; font-weight:normal;">(${c.current.xp}/10 XP)</small></span>
+                    </div>
+                    <div class="p-field">
+                        <span class="p-lbl">${t('cg_lbl_ancestry')}</span>
+                        <span class="p-val">${data.ancestries.find(a=>a.id===c.ancestry)?.name || '-'}</span>
+                    </div>
+                    <div class="p-field">
+                        <span class="p-lbl">${t('cg_lbl_background')}</span>
+                        <span class="p-val">${data.backgrounds.find(b=>b.id===c.background)?.name || '-'}</span>
+                    </div>
+                </div>
             </div>
 
-            <div class="p-attributes">
-                ${['STR','DEX','CON','INT','WIS','CHA'].map(st => 
-                    `<div class="p-attr-cell"><span class="p-attr-name">${st}</span><span class="p-attr-val">${s[st] !== null ? s[st] : 0}</span></div>`
-                ).join('')}
+            <!-- ATTRIBUTES -->
+            <div class="p-stats-row">
+                ${['STR','DEX','CON','INT','WIS','CHA'].map(st => `
+                    <div class="p-stat-cell">
+                        <span class="p-stat-name">${t('stat_'+st.toLowerCase())}</span>
+                        <span class="p-stat-num">${s[st] !== null ? (s[st]>=0?'+'+s[st]:s[st]) : 0}</span>
+                    </div>
+                `).join('')}
             </div>
 
-            <div class="p-vitals">
-                <div class="p-vital-box"><h4>${t('sheet_hp')}</h4><span class="p-vital-val">${c.derived.maxHP}</span></div>
-                <div class="p-vital-box"><h4>${t('sheet_sta')}</h4><span class="p-vital-val">${c.derived.maxSTA}</span></div>
-                <div class="p-vital-box"><h4>${t('sheet_mp')}</h4><span class="p-vital-val">${c.derived.maxMP}</span></div>
-                <div class="p-vital-box"><h4>${t('sheet_luck')}</h4><span class="p-vital-val">${c.derived.maxLuck}</span></div>
+            <!-- VITALS -->
+            <div class="p-vitals-row">
+                <div class="p-vital-card">
+                    <div class="p-vital-head">${t('sheet_hp')}</div>
+                    <span class="p-vital-num">${c.derived.maxHP}</span>
+                </div>
+                <div class="p-vital-card">
+                    <div class="p-vital-head">${t('sheet_sta')}</div>
+                    <span class="p-vital-num">${c.derived.maxSTA}</span>
+                </div>
+                <div class="p-vital-card">
+                    <div class="p-vital-head">${t('sheet_mp')}</div>
+                    <span class="p-vital-num">${c.derived.maxMP}</span>
+                </div>
+                <div class="p-vital-card">
+                    <div class="p-vital-head">${t('sheet_luck')}</div>
+                    <span class="p-vital-num">${c.derived.maxLuck}</span>
+                </div>
             </div>
 
-            <div class="p-grid-main">
-                <div class="p-col-left">
-                    <div class="p-box">
-                        <div class="p-header">${t('sheet_def')}</div>
-                        <div class="p-defense-grid">
-                            <div class="p-ac-large">${armorScore}<span>ARMOR</span></div>
-                            <div class="p-def-small"><small>Dodge</small><strong>${c.defenses.dodge.val} (${c.defenses.dodge.die})</strong></div>
-                            <div class="p-def-small"><small>Parry</small><strong>${c.defenses.parry.val!==null ? c.defenses.parry.val : '-'}</strong></div>
-                            <div class="p-def-small"><small>Block</small><strong>${c.defenses.block.val!==null ? c.defenses.block.val : '-'}</strong></div>
+            <!-- 2 COLUMN LAYOUT -->
+            <div class="p-columns">
+                <!-- Left: Defense & Skills -->
+                <div>
+                    <div class="p-section-title">${t('sheet_def')}</div>
+                    <div class="p-defense-grid">
+                        <div class="p-ac-box">
+                            <span class="p-ac-val">${armorScore}</span>
+                            <span class="p-lbl">${t('sheet_ac')}</span>
+                        </div>
+                        <div class="p-def-small">
+                            <span class="p-def-lbl">${t('sheet_dodge')}</span>
+                            <span class="p-def-val">${def.dodge.val} (${def.dodge.die})</span>
+                        </div>
+                        <div class="p-def-small">
+                            <span class="p-def-lbl">${t('sheet_parry')}</span>
+                            <span class="p-def-val">${def.parry.val!==null?def.parry.val:'-'}</span>
+                        </div>
+                        <div class="p-def-small">
+                            <span class="p-def-lbl">${t('sheet_block')}</span>
+                            <span class="p-def-val">${def.block.val!==null?def.block.val:'-'}</span>
                         </div>
                     </div>
-                    <div style="margin-top:10px;">
-                        <strong>${t('sheet_skills')}</strong>
-                        <table class="p-table">
-                            ${skills.map(sk => `<tr><td>${sk.name}</td><td class="die">${sk.die !== '-' ? '+'+sk.die : ''}</td></tr>`).join('')}
-                        </table>
+
+                    <div class="p-section-title">${t('sheet_skills')}</div>
+                    <div class="p-skills-list">
+                        ${skills.map(sk => `
+                            <div class="p-skill-row">
+                                <span>${sk.name}</span>
+                                <span class="p-skill-bonus">${sk.die !== '-' ? '+'+sk.die : '-'}</span>
+                            </div>
+                        `).join('')}
                     </div>
                 </div>
 
-                <div class="p-col-right">
-                    <div class="p-box">
-                        <div class="p-header">${t('sheet_attacks')}</div>
-                        <table class="p-table">
-                            <tr><th>Name</th><th>Atk</th><th>Dmg</th><th>Tags</th></tr>
-                            <tr><td>${t('wep_unarmed')}</td><td>${(s.STR >= 0 ? '+' : '')}${s.STR}</td><td>1d4 ${(s.STR >= 0 ? '+' : '')}${s.STR}</td><td>-</td></tr>
-                            ${attackRows}
-                        </table>
-                    </div>
-                    <div class="p-box" style="margin-top:10px; height:150px;">
-                         <div class="p-header">${t('sheet_notes')}</div>
-                         <div style="font-size:0.8em; white-space: pre-wrap;">${c.notes || ''}</div>
-                    </div>
+                <!-- Right: Attacks & Notes -->
+                <div>
+                    <div class="p-section-title">${t('sheet_attacks')}</div>
+                    <table class="p-table">
+                        <tr>
+                            <th width="40%">${t('lbl_name')}</th>
+                            <th width="15%">Atk</th>
+                            <th width="20%">Dmg</th>
+                            <th width="25%">Tags</th>
+                        </tr>
+                        ${attackRows}
+                    </table>
+
+                    <div class="p-section-title">${t('sheet_notes')}</div>
+                    <div class="p-notes-box">${c.notes || ''}</div>
                 </div>
             </div>
         </div>
 
-        <div class="print-page" id="p2">
-            <div class="p-header">INVENTORY & FEATURES</div>
-            <div style="border-bottom:1px solid #000; margin-bottom:10px; padding-bottom:5px;">
-                <strong>Wealth:</strong> ${c.currency.g}g ${c.currency.s}s ${c.currency.c}c
+        <!-- PAGE 2 (FORCED BREAK) -->
+        <div class="page-break"></div>
+
+        <div class="print-page">
+            <div class="p-section-title">INVENTORY & FEATURES</div>
+
+            <div class="p-wealth-bar">
+                <div>GOLD: ${c.currency.g}</div>
+                <div>SILVER: ${c.currency.s}</div>
+                <div>COPPER: ${c.currency.c}</div>
+                <div>SLOTS: ${c.derived.slots}</div>
             </div>
-            
-            <div style="column-count: 2; column-gap: 20px;">
-                <div style="break-inside: avoid; margin-bottom: 20px;">
-                    <h4 style="border-bottom:1px solid #000; margin-bottom:5px;">Inventory</h4>
-                    <div class="p-inv-list">${invHTML}</div>
-                </div>
-                <div style="break-inside: avoid;">
-                    <h4 style="border-bottom:1px solid #000; margin-bottom:5px;">Features</h4>
-                    <div class="p-features-grid" style="display:flex; flex-direction:column; gap:5px;">
-                        ${featsHTML}
+
+            <div class="p-grid-2">
+                <div>
+                    <h4 style="border-bottom:2px solid black; margin-bottom:5px;">${t('sheet_inv')}</h4>
+                    <div style="font-size:9pt;">
+                        ${invHTML}
                     </div>
+                </div>
+                <div>
+                    <h4 style="border-bottom:2px solid black; margin-bottom:5px;">${t('sheet_features')}</h4>
+                    ${featuresHTML}
                 </div>
             </div>
         </div>

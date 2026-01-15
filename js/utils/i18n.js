@@ -36,7 +36,7 @@ const UI_DICTIONARY = {
         "item_ph_slots": "Slots",
         
         // --- BUTTONS ---
-        "btn_save_lib": "Save to Library"
+        "btn_save_lib": "Save to Library",
         "btn_shop": "Open Shop",
         "btn_add_custom": "Add Custom Item",
         "inv_empty": "Inventory is empty.",
@@ -303,7 +303,7 @@ const UI_DICTIONARY = {
         "item_ph_slots": "Espacios",
 
         // --- BUTTONS ---
-        "btn_save_lib": "Guardar en Biblioteca"
+        "btn_save_lib": "Guardar en Biblioteca",
         "btn_shop": "Abrir Tienda",
         "btn_add_custom": "Añadir Personalizado",
         "inv_empty": "El inventario está vacío.",
@@ -674,4 +674,5 @@ export const I18n = {
     }
 
 };
+
 

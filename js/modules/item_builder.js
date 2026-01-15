@@ -311,6 +311,28 @@ export const ItemBuilder = {
             ItemBuilder.renderBlueprintList();
         };
 
+        const btnPrint = document.getElementById('btn-print-item');
+        if(btnPrint) {
+            btnPrint.addEventListener('click', () => {
+        const cardContent = document.getElementById('item-card-display').innerHTML;
+        const printRoot = document.getElementById('print-sheet-root');
+        
+        // Clear previous print content
+        printRoot.innerHTML = '';
+        
+        // Create a wrapper
+        const wrapper = document.createElement('div');
+        wrapper.style.display = 'flex';
+        wrapper.style.justifyContent = 'center';
+        wrapper.style.paddingTop = '2cm';
+        wrapper.innerHTML = cardContent;
+        
+        printRoot.appendChild(wrapper);
+        
+        // Print
+        window.print();
+        });
+
         // Base Item Selection Logic
         document.getElementById('base-item-select').onchange = (e) => {
             const idx = e.target.value;
@@ -803,4 +825,5 @@ export const ItemBuilder = {
     }
 
 };
+
 

@@ -449,36 +449,37 @@ export const ItemBuilder = {
         if(btnSave) btnSave.onclick = ItemBuilder.save;
 
         // 9. Print Button (Contextual Printing Fix)
-        const btnPrint = document.getElementById('btn-print-item');
-        if(btnPrint) {
-            btnPrint.addEventListener('click', () => {
-                // 1. Get the HTML of the Card
-                const cardContent = document.getElementById('item-card-display').innerHTML;
-                
-                // 2. Get the Print Root (Hidden div on body)
-                const printRoot = document.getElementById('print-sheet-root');
-                if(!printRoot) return;
-                
-                // 3. Clean and Inject
-                printRoot.innerHTML = '';
-                
-                // Create a centering wrapper for the paper
-                const wrapper = document.createElement('div');
-                wrapper.style.display = 'flex';
-                wrapper.style.justifyContent = 'center';
-                wrapper.style.alignItems = 'flex-start';
-                wrapper.style.paddingTop = '2cm';
-                wrapper.style.height = '100%';
-                
-                // Scale it up slightly for print visibility if needed, or leave as is
-                wrapper.innerHTML = cardContent;
-                
-                printRoot.appendChild(wrapper);
-                
-                // 4. Trigger Browser Print
-                window.print();
-            });
+const btnPrint = document.getElementById('btn-print-item');
+if(btnPrint) {
+    btnPrint.addEventListener('click', () => {
+        const cardContent = document.getElementById('item-card-display').innerHTML;
+        
+        // 1. Ensure Print Root Exists
+        let printRoot = document.getElementById('print-sheet-root');
+        if (!printRoot) {
+            printRoot = document.createElement('div');
+            printRoot.id = 'print-sheet-root';
+            printRoot.className = 'print-only';
+            document.body.appendChild(printRoot);
         }
+        
+        // 2. Clear and Inject
+        printRoot.innerHTML = '';
+        
+        const wrapper = document.createElement('div');
+        wrapper.style.display = 'flex';
+        wrapper.style.justifyContent = 'center';
+        wrapper.style.alignItems = 'flex-start';
+        wrapper.style.paddingTop = '2cm';
+        wrapper.style.height = '100%';
+        wrapper.innerHTML = cardContent;
+        
+        printRoot.appendChild(wrapper);
+        
+        // 3. Print
+        window.print();
+    });
+    }
     },
 
     toggleMode: (mode) => {
@@ -849,6 +850,7 @@ export const ItemBuilder = {
     }
 
 };
+
 
 
 

@@ -10,70 +10,84 @@ import { ImageStore } from '../utils/image_store.js';
 
 // --- SHARED RENDERER ---
 export const MonsterRenderer = {
-    /**
-     * Generates the HTML string for the Parchment Stat Block.
-     */
     getHTML: (m, imageSrc) => {
         const t = I18n.t;
         const fmt = I18n.fmt;
-
-        // Image Handling
-        let imgHtml = '';
-        if (imageSrc) {
-            const pos = m.imgPos || { x: 0, y: 0, scale: 1.0 };
-            const style = `transform: translate(${pos.x}px, ${pos.y}px) scale(${pos.scale});`;
-            imgHtml = `<div class="sb-image-container"><img src="${imageSrc}" style="${style}" draggable="false"></div>`;
-        }
-
-        // Merge Standard + Custom Abilities
-        const traits = [...(m.traits || [])];
-        const actions = [...(m.actions || [])];
-        const dangers = [...(m.danger_abilities || [])];
-
-        if (m.custom_abilities) {
-            m.custom_abilities.forEach(c => {
-                if (c.type === 'Trait') traits.push(c);
-                else if (c.type === 'Danger') dangers.push(c);
-                else actions.push(c); 
-            });
-        }
-
-        const renderRow = (list) => list.map(item => `
-            <div class="sb-property">
-                <span class="sb-prop-name">${item.name} ${item.cost ? `(${item.cost})` : ''}.</span>
-                <span class="sb-prop-text">${item.effect}</span>
-                ${item.id ? `<span class="del-custom" data-id="${item.id}" style="color:red; cursor:pointer; font-size:0.8em; margin-left:5px;">[×]</span>` : ''}
-            </div>
-        `).join('');
-
-        // Dynamic Strings - Handle Translation
+        
+        // 1. Get Localized Data
+        const data = I18n.getData('monsters');
+        
+        // Translate Role
         const rawRole = m.role ? m.role.toLowerCase() : 'soldier';
         const roleKey = `role_${rawRole}`;
         const roleName = t(roleKey) !== roleKey ? t(roleKey) : m.role;
 
-        // Capitalize Family
-        const familyName = m.family ? (m.family.charAt(0).toUpperCase() + m.family.slice(1)) : 'Folk';
+        // Translate Family (Lookup from loaded JSON)
+        let familyName = m.family; // Default to ID
+        if (data && data.families && data.families[m.family]) {
+            familyName = data.families[m.family].name;
+        }
+        // Capitalize
+        familyName = familyName.charAt(0).toUpperCase() + familyName.slice(1);
 
+        // Dynamic Meta Line
         const metaLine = fmt('mon_meta_fmt', { 
             lvl: m.level, 
             role: roleName, 
             family: familyName 
         });
 
+        // Image Handling (with inline styles for Print safety)
+        let imgHtml = '';
+        if (imageSrc) {
+            const pos = m.imgPos || { x: 0, y: 0, scale: 1.0 };
+            // Ensure transforms are hardcoded for the printer
+            const style = `transform: translate(${pos.x}px, ${pos.y}px) scale(${pos.scale}); width:100%; height:100%; object-fit:cover;`;
+            imgHtml = `<div class="sb-image-container"><img src="${imageSrc}" style="${style}" draggable="false"></div>`;
+        }
+
+        // Abilities Rendering
+        const renderRow = (list) => list.map(item => `
+            <div class="sb-property">
+                <div class="sb-prop-header">
+                    <span class="sb-prop-name">${item.name}</span>
+                    ${item.cost ? `<span class="sb-prop-cost">[${item.cost}]</span>` : ''}
+                    ${item.id ? `<span class="del-custom" data-id="${item.id}" title="Remove">×</span>` : ''}
+                </div>
+                <div class="sb-prop-text">${item.effect}</div>
+            </div>
+        `).join('');
+
+        // Merge Custom Abilities
+        const traits = [...(m.traits || [])];
+        const actions = [...(m.actions || [])];
+        const dangers = [...(m.danger_abilities || [])];
+
+        if (m.custom_abilities) {
+            m.custom_abilities.forEach(c => {
+                if (c.type === 'Trait' || c.type === 'Passive') traits.push(c);
+                else if (c.type === 'Danger') dangers.push(c);
+                else actions.push(c); 
+            });
+        }
+
         const attackLine = fmt('mon_atk_fmt', { dmg: `<strong>${m.stats.dmg}</strong>` });
 
         return `
             <div class="monster-card">
+                <!-- Header -->
                 <div class="mc-header">
                     <div class="mc-name">${m.name}</div>
                     <div class="mc-meta">${metaLine}</div>
                 </div>
                 
+                <!-- Image -->
                 ${imgHtml}
 
+                <!-- Stats Grid -->
                 <div class="mc-stats-grid">
-                    <div class="mc-stat">
-                        <div class="mc-stat-val" style="color:#8a2c2c;">${m.stats.hp}</div>
+                    <div class="mc-stat hp">
+                        <div class="mc-stat-val">${m.stats.hp}</div>
                         <div class="mc-stat-label">${t('mon_stat_hp')}</div>
                     </div>
                     <div class="mc-stat">
@@ -84,21 +98,31 @@ export const MonsterRenderer = {
                         <div class="mc-stat-val">${m.stats.speed}</div>
                         <div class="mc-stat-label">${t('mon_stat_spd')}</div>
                     </div>
-                    <div class="mc-stat">
-                        <div class="mc-stat-val" style="color:#c5a059;">${m.stats.atk}</div>
+                    <div class="mc-stat atk">
+                        <div class="mc-stat-val">+${m.stats.atk}</div>
                         <div class="mc-stat-label">${t('mon_stat_atk')}</div>
+                    </div>
+                    <div class="mc-stat">
+                        <div class="mc-stat-val">${m.stats.def}</div>
+                        <div class="mc-stat-label">${t('mon_stat_def')}</div>
+                    </div>
+                    <div class="mc-stat">
+                        <div class="mc-stat-val">${m.stats.save}</div>
+                        <div class="mc-stat-label">${t('mon_stat_save')}</div>
                     </div>
                 </div>
 
-                <div class="mc-section" style="border-top:1px solid #aaa; padding-top:5px;">
+                <!-- Basic Attack -->
+                <div class="mc-section main-attack">
                     <div class="mc-ability">${attackLine}</div>
                 </div>
 
+                <!-- Ability Sections -->
                 ${traits.length > 0 ? `<div class="mc-section"><div class="mc-section-title">${t('mon_sect_traits')}</div>${renderRow(traits)}</div>` : ''}
                 ${actions.length > 0 ? `<div class="mc-section"><div class="mc-section-title">${t('mon_sect_actions')}</div>${renderRow(actions)}</div>` : ''}
-                ${dangers.length > 0 ? `<div class="mc-danger"><div class="sb-danger-title">${t('mon_sect_danger')}</div>${renderRow(dangers)}</div>` : ''}
+                ${dangers.length > 0 ? `<div class="mc-section danger"><div class="mc-section-title danger-title">${t('mon_sect_danger')}</div>${renderRow(dangers)}</div>` : ''}
                 
-                ${m.notes ? `<div class="mc-section" style="border-top:1px solid #aaa; margin-top:10px; padding-top:5px; font-style:italic; font-size:0.9em;"><strong>${t('mon_lbl_notes')}:</strong> ${m.notes}</div>` : ''}
+                ${m.notes ? `<div class="mc-section notes"><strong>${t('mon_lbl_notes')}:</strong> ${m.notes}</div>` : ''}
             </div>
         `;
     }
@@ -630,6 +654,7 @@ export const MonsterBuilder = {
         let src = m.imageUrl;
         if (m.imageId) {
              try {
+                const { ImageStore } = await import('../utils/image_store.js');
                 src = await ImageStore.getUrl(m.imageId);
              } catch(e) { console.warn("Image load error", e); }
         }
@@ -644,6 +669,14 @@ export const MonsterBuilder = {
         // Image Drag Logic
         const imgBox = container.querySelector('.sb-image-container');
         if (imgBox) {
+            const updateTransform = () => {
+                 const img = imgBox.querySelector('img');
+                 if(img) img.style.transform = `translate(${m.imgPos.x}px, ${m.imgPos.y}px) scale(${m.imgPos.scale})`;
+            };
+            
+            // Initial Apply
+            updateTransform();
+
             imgBox.addEventListener('mousedown', (e) => {
                 e.preventDefault();
                 MonsterBuilder.dragState.isDragging = true;
@@ -668,7 +701,7 @@ export const MonsterBuilder = {
                 const dy = e.clientY - MonsterBuilder.dragState.startY;
                 m.imgPos.x = MonsterBuilder.dragState.initialImgX + dx;
                 m.imgPos.y = MonsterBuilder.dragState.initialImgY + dy;
-                MonsterBuilder.applyImageTransform();
+                updateTransform();
             });
 
             imgBox.addEventListener('wheel', (e) => {
@@ -678,10 +711,14 @@ export const MonsterBuilder = {
                 if (newScale < 0.1) newScale = 0.1;
                 if (newScale > 3.0) newScale = 3.0;
                 m.imgPos.scale = parseFloat(newScale.toFixed(1));
-                MonsterBuilder.applyImageTransform();
+                updateTransform();
                 MonsterBuilder.syncDOMFromState();
             });
         }
+        
+        container.querySelectorAll('.del-custom').forEach(btn => {
+            btn.addEventListener('click', (e) => MonsterBuilder.removeCustomAbility(parseInt(e.target.dataset.id)));
+        });
     },
 
     save: () => {
@@ -699,3 +736,4 @@ export const MonsterBuilder = {
         alert(`Saved ${m.name} to Library.`);
     }
 };
+

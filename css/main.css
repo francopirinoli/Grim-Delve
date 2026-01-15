@@ -4597,3 +4597,155 @@ input.res-input:focus { border-bottom: 1px solid #fff !important; }
     }
 }
 
+/* --- MONSTER CARD STYLING (IMPROVED) --- */
+
+.monster-card {
+    background-color: #f3f0eb; /* Parchment white */
+    color: #1a1a1a;
+    width: 100%;
+    max-width: 500px;
+    border: 4px solid #1a1a1a;
+    padding: 0;
+    font-family: 'Georgia', serif;
+    box-shadow: 5px 5px 15px rgba(0,0,0,0.5);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Header Strip */
+.mc-header {
+    background: #8a2c2c; /* Crimson */
+    color: #fff;
+    padding: 10px 15px;
+    border-bottom: 2px solid #000;
+}
+
+.mc-name {
+    font-family: 'Cinzel', serif;
+    font-size: 1.6rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    line-height: 1.1;
+}
+
+.mc-meta {
+    font-family: 'Fira Code', monospace;
+    font-size: 0.85rem;
+    color: #ffd;
+    margin-top: 4px;
+    text-transform: uppercase;
+}
+
+/* Image */
+.sb-image-container {
+    width: 100%;
+    height: 250px;
+    background: #e5e5e5;
+    overflow: hidden;
+    position: relative;
+    border-bottom: 2px solid #000;
+    cursor: grab;
+}
+.sb-image-container:active { cursor: grabbing; }
+
+/* Stats Bar */
+.mc-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    background: #ddd;
+    border-bottom: 2px solid #000;
+    padding: 5px 0;
+}
+
+.mc-stat {
+    text-align: center;
+    border-right: 1px solid #aaa;
+    padding: 0 5px;
+}
+.mc-stat:last-child { border-right: none; }
+
+.mc-stat-val {
+    font-family: 'Fira Code', monospace;
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #000;
+}
+.mc-stat.hp .mc-stat-val { color: #b71c1c; }
+.mc-stat.atk .mc-stat-val { color: #0d47a1; }
+
+.mc-stat-label {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    color: #555;
+    font-weight: bold;
+}
+
+/* Abilities */
+.mc-section {
+    padding: 10px 15px;
+    border-bottom: 1px dotted #999;
+}
+.mc-section:last-child { border-bottom: none; }
+
+.mc-section.main-attack {
+    background: rgba(0,0,0,0.03);
+    font-style: italic;
+    font-size: 1rem;
+}
+
+.mc-section-title {
+    font-family: sans-serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: #8a2c2c;
+    border-bottom: 1px solid #8a2c2c;
+    margin-bottom: 8px;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+}
+
+/* Danger Section Highlight */
+.mc-section.danger {
+    background: rgba(138, 44, 44, 0.1);
+    border-left: 4px solid #8a2c2c;
+}
+.danger-title { color: #b71c1c; border-color: #b71c1c; }
+
+/* Ability Rows */
+.sb-property {
+    margin-bottom: 8px;
+}
+
+.sb-prop-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.sb-prop-name {
+    font-weight: bold;
+    color: #000;
+    font-size: 0.95rem;
+}
+
+.sb-prop-cost {
+    font-family: 'Fira Code', monospace;
+    font-size: 0.75rem;
+    color: #b71c1c;
+    font-weight: bold;
+}
+
+.sb-prop-text {
+    display: block;
+    color: #333;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin-top: 2px;
+}
+
+.del-custom {
+    color: red;
+    cursor: pointer;
+    font-weight: bold;
+    padding-left: 5px;
+}

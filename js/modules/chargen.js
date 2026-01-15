@@ -3177,222 +3177,167 @@ renderHUD: () => {
     const s = c.stats;
     const def = c.defenses;
 
-    // --- 1. PREPARE DATA ---
-
-    // Image
-    let imgHTML = `<div style="font-size:4rem; color:#ccc;">👤</div>`;
-    if (c.imageUrl) {
-        imgHTML = `<img src="${c.imageUrl}">`;
-    } else if (c.imageId) {
+    // --- IMAGES ---
+    let imgHTML = `<div style="font-size:3rem; color:#ccc;">👤</div>`;
+    if (c.imageUrl) imgHTML = `<img src="${c.imageUrl}">`;
+    else if (c.imageId) {
         try {
             const { ImageStore } = await import('../utils/image_store.js');
             const url = await ImageStore.getUrl(c.imageId);
             if (url) imgHTML = `<img src="${url}">`;
-        } catch(e) { console.warn("Print Img Error", e); }
+        } catch(e) {}
     }
 
-    // Calculations
+    // --- DATA PREP ---
     const armorScore = CharGen.calculateArmorScore();
-    const skills = CharGen.calculateSkills(); // Returns array of objects {name, die}
+    const skills = CharGen.calculateSkills();
     
-    // Attacks Table
+    // Attacks
     const weapons = c.inventory.filter(i => (i.type === 'Melee' || i.type === 'Ranged') && i.equipped);
-    let attackRows = `<tr><td>${t('wep_unarmed')}</td><td style="text-align:center">${(s.STR>=0?'+':'')+s.STR}</td><td>1d4 ${(s.STR>=0?'+':'')+s.STR}</td><td>-</td></tr>`;
+    let attackRows = `<tr><td><b>${t('wep_unarmed')}</b></td><td>${(s.STR>=0?'+':'')+s.STR}</td><td>1d4 ${(s.STR>=0?'+':'')+s.STR}</td><td>-</td></tr>`;
     
     weapons.forEach(w => {
-        const isFinesse = w.tags && (String(w.tags).toLowerCase().includes("finesse") || String(w.tags).toLowerCase().includes("sutil"));
-        const isRanged = w.type === 'Ranged' || w.type === 'A Distancia';
-        let mod = s.STR || 0;
-        if (isRanged) mod = s.DEX || 0;
-        else if (isFinesse) mod = Math.max(s.STR || 0, s.DEX || 0);
-        
+        const isFinesse = w.tags && String(w.tags).includes("Finesse");
+        const isRanged = w.type === 'Ranged';
+        let mod = isRanged ? s.DEX : (isFinesse ? Math.max(s.STR, s.DEX) : s.STR);
         const sign = mod >= 0 ? '+' : '';
-        const tagStr = w.tags ? (Array.isArray(w.tags) ? w.tags.join(', ') : w.tags) : '-';
-        attackRows += `<tr><td><b>${w.name}</b></td><td style="text-align:center">${sign}${mod}</td><td>${w.damage} ${sign}${mod}</td><td style="font-size:0.8em">${tagStr}</td></tr>`;
+        attackRows += `<tr><td><b>${w.name}</b></td><td>${sign}${mod}</td><td>${w.damage} ${sign}${mod}</td><td style="font-size:0.8em">${w.tags||'-'}</td></tr>`;
     });
 
-    // Features List
+    // Features
     let featuresHTML = "";
     const addFeat = (name, source, desc) => {
-        featuresHTML += `
-            <div class="p-feat-block">
-                <span class="p-feat-title">${name} <span style="float:right; font-weight:normal; font-size:0.8em; color:#555;">${source}</span></span>
-                <div style="font-size:0.9em; margin-top:2px;">${desc}</div>
-            </div>`;
+        featuresHTML += `<div class="p-feat-block"><div class="p-feat-head"><span>${name}</span><span style="font-weight:normal; font-size:0.8em">${source}</span></div><div style="font-size:0.9em;">${desc}</div></div>`;
     };
 
-    // Ancestry
     if(c.ancestry) {
         const anc = data.ancestries.find(a => a.id === c.ancestry);
         const fIdx = c.ancestryFeatIndex || 0;
         if(anc && anc.feats[fIdx]) addFeat(anc.feats[fIdx].name, t('cg_lbl_ancestry'), anc.feats[fIdx].effect);
     }
-    // Background
     if(c.background) {
         const bg = data.backgrounds.find(b => b.id === c.background);
         if(bg && bg.feat) addFeat(bg.feat.name, t('cg_lbl_background'), bg.feat.effect);
     }
-    // Class
     if(c.classId) {
         const cls = data.classes.find(x => x.id === c.classId);
-        if(cls) {
-            cls.synergy_feats.filter(f => f.level <= c.level).forEach(f => {
-                addFeat(f.name, `Lvl ${f.level}`, f.effect);
-            });
-        }
+        if(cls) cls.synergy_feats.filter(f => f.level <= c.level).forEach(f => addFeat(f.name, `Class Lvl ${f.level}`, f.effect));
     }
-    // Talents
-    c.talents.forEach(tal => {
-        let txt = tal.effect;
-        if(tal.choice) txt += ` <em>(Selected: ${tal.choice})</em>`;
-        addFeat(tal.name, tal.sourceName || "Talent", txt);
-    });
+    c.talents.forEach(tal => addFeat(tal.name, tal.sourceName || "Talent", tal.effect));
 
-    // Inventory List
-    const invHTML = c.inventory.map(i => `
-        <div class="p-list-item">
-            <span>${i.equipped ? '★ ' : ''}${i.name}</span>
-            <span style="font-family:monospace;">${i.slots || 0}</span>
-        </div>
-    `).join('');
+    // Inventory
+    const invHTML = c.inventory.map(i => `<div class="p-list-row"><span>${i.name}</span><span>${i.slots}</span></div>`).join('');
 
-    // --- 2. BUILD HTML STRUCTURE ---
-    
+    // --- RENDER ---
     container.innerHTML = `
         <!-- PAGE 1 -->
         <div class="print-page">
-            <div class="p-header-row">
-                <div class="p-portrait-box">${imgHTML}</div>
+            <div class="p-header-grid">
                 <div class="p-header-info">
-                    <div class="p-field" style="grid-column: 1 / -1">
+                    <div class="p-id-field" style="grid-column: 1 / -1;">
                         <span class="p-lbl">${t('lbl_name')}</span>
                         <span class="p-val-large">${c.name}</span>
                     </div>
-                    <div class="p-field">
+                    <div class="p-id-field">
                         <span class="p-lbl">${t('cg_step_class')}</span>
                         <span class="p-val">${c.className || 'Adventurer'}</span>
                     </div>
-                    <div class="p-field">
+                    <div class="p-id-field">
                         <span class="p-lbl">${t('lbl_level')}</span>
-                        <span class="p-val">${c.level} <small style="color:#666; font-weight:normal;">(${c.current.xp}/10 XP)</small></span>
+                        <span class="p-val">${c.level} <span class="p-id-sub">(${c.current.xp} XP)</span></span>
                     </div>
-                    <div class="p-field">
+                    <div class="p-id-field">
                         <span class="p-lbl">${t('cg_lbl_ancestry')}</span>
                         <span class="p-val">${data.ancestries.find(a=>a.id===c.ancestry)?.name || '-'}</span>
                     </div>
-                    <div class="p-field">
+                    <div class="p-id-field">
                         <span class="p-lbl">${t('cg_lbl_background')}</span>
                         <span class="p-val">${data.backgrounds.find(b=>b.id===c.background)?.name || '-'}</span>
                     </div>
                 </div>
+                <div class="p-portrait-box">${imgHTML}</div>
             </div>
 
-            <!-- ATTRIBUTES -->
             <div class="p-stats-row">
                 ${['STR','DEX','CON','INT','WIS','CHA'].map(st => `
                     <div class="p-stat-cell">
-                        <span class="p-stat-name">${t('stat_'+st.toLowerCase())}</span>
+                        <span class="p-lbl">${st}</span>
                         <span class="p-stat-num">${s[st] !== null ? (s[st]>=0?'+'+s[st]:s[st]) : 0}</span>
                     </div>
                 `).join('')}
             </div>
 
-            <!-- VITALS -->
             <div class="p-vitals-row">
-                <div class="p-vital-card">
-                    <div class="p-vital-head">${t('sheet_hp')}</div>
-                    <span class="p-vital-num">${c.derived.maxHP}</span>
-                </div>
-                <div class="p-vital-card">
-                    <div class="p-vital-head">${t('sheet_sta')}</div>
-                    <span class="p-vital-num">${c.derived.maxSTA}</span>
-                </div>
-                <div class="p-vital-card">
-                    <div class="p-vital-head">${t('sheet_mp')}</div>
-                    <span class="p-vital-num">${c.derived.maxMP}</span>
-                </div>
-                <div class="p-vital-card">
-                    <div class="p-vital-head">${t('sheet_luck')}</div>
-                    <span class="p-vital-num">${c.derived.maxLuck}</span>
-                </div>
+                <div class="p-vital-card"><div class="p-vital-head">${t('sheet_hp')}</div><span class="p-vital-num">${c.derived.maxHP}</span></div>
+                <div class="p-vital-card"><div class="p-vital-head">${t('sheet_sta')}</div><span class="p-vital-num">${c.derived.maxSTA}</span></div>
+                <div class="p-vital-card"><div class="p-vital-head">${t('sheet_mp')}</div><span class="p-vital-num">${c.derived.maxMP}</span></div>
+                <div class="p-vital-card"><div class="p-vital-head">${t('sheet_luck')}</div><span class="p-vital-num">${c.derived.maxLuck}</span></div>
             </div>
 
-            <!-- 2 COLUMN LAYOUT -->
-            <div class="p-columns">
-                <!-- Left: Defense & Skills -->
+            <div class="p-main-cols">
+                <!-- LEFT COL -->
                 <div>
-                    <div class="p-section-title">${t('sheet_def')}</div>
-                    <div class="p-defense-grid">
-                        <div class="p-ac-box">
-                            <span class="p-ac-val">${armorScore}</span>
-                            <span class="p-lbl">${t('sheet_ac')}</span>
-                        </div>
-                        <div class="p-def-small">
-                            <span class="p-def-lbl">${t('sheet_dodge')}</span>
-                            <span class="p-def-val">${def.dodge.val} (${def.dodge.die})</span>
-                        </div>
-                        <div class="p-def-small">
-                            <span class="p-def-lbl">${t('sheet_parry')}</span>
-                            <span class="p-def-val">${def.parry.val!==null?def.parry.val:'-'}</span>
-                        </div>
-                        <div class="p-def-small">
-                            <span class="p-def-lbl">${t('sheet_block')}</span>
-                            <span class="p-def-val">${def.block.val!==null?def.block.val:'-'}</span>
+                    <div class="p-section">
+                        <div class="p-lbl" style="text-align:center;">${t('sheet_ac')}</div>
+                        <div class="p-ac-val" style="text-align:center;">${armorScore}</div>
+                        <div style="display:flex; gap:5px; margin-top:5px;">
+                            <div class="p-def-small" style="flex:1; text-align:center;">
+                                <span class="p-lbl">${t('sheet_dodge')}</span><br><b>${def.dodge.val}</b>
+                            </div>
+                            <div class="p-def-small" style="flex:1; text-align:center;">
+                                <span class="p-lbl">${t('sheet_parry')}</span><br><b>${def.parry.val!==null?def.parry.val:'-'}</b>
+                            </div>
                         </div>
                     </div>
-
-                    <div class="p-section-title">${t('sheet_skills')}</div>
-                    <div class="p-skills-list">
+                    
+                    <div class="p-section">
+                        <div class="p-lbl" style="border-bottom:2px solid #000; margin-bottom:5px;">${t('sheet_skills')}</div>
                         ${skills.map(sk => `
-                            <div class="p-skill-row">
+                            <div class="p-list-row">
                                 <span>${sk.name}</span>
-                                <span class="p-skill-bonus">${sk.die !== '-' ? '+'+sk.die : '-'}</span>
+                                <strong>${sk.die !== '-' ? '+'+sk.die : ''}</strong>
                             </div>
                         `).join('')}
                     </div>
                 </div>
 
-                <!-- Right: Attacks & Notes -->
+                <!-- RIGHT COL -->
                 <div>
-                    <div class="p-section-title">${t('sheet_attacks')}</div>
-                    <table class="p-table">
-                        <tr>
-                            <th width="40%">${t('lbl_name')}</th>
-                            <th width="15%">Atk</th>
-                            <th width="20%">Dmg</th>
-                            <th width="25%">Tags</th>
-                        </tr>
-                        ${attackRows}
-                    </table>
+                    <div class="p-section">
+                        <div class="p-lbl" style="border-bottom:2px solid #000;">${t('sheet_attacks')}</div>
+                        <table class="p-atk-table">
+                            <tr><th>Name</th><th>Atk</th><th>Dmg</th><th>Tags</th></tr>
+                            ${attackRows}
+                        </table>
+                    </div>
 
-                    <div class="p-section-title">${t('sheet_notes')}</div>
-                    <div class="p-notes-box">${c.notes || ''}</div>
+                    <div class="p-section">
+                        <div class="p-lbl">${t('sheet_notes')}</div>
+                        <div class="p-notes">${c.notes || ''}</div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- PAGE 2 (FORCED BREAK) -->
-        <div class="page-break"></div>
-
+        <!-- PAGE 2 -->
         <div class="print-page">
-            <div class="p-section-title">INVENTORY & FEATURES</div>
-
-            <div class="p-wealth-bar">
-                <div>GOLD: ${c.currency.g}</div>
-                <div>SILVER: ${c.currency.s}</div>
-                <div>COPPER: ${c.currency.c}</div>
-                <div>SLOTS: ${c.derived.slots}</div>
+            <div class="p-header">INVENTORY & ABILITIES</div>
+            
+            <div class="p-wealth-strip">
+                <span>GOLD: ${c.currency.g}</span>
+                <span>SILVER: ${c.currency.s}</span>
+                <span>COPPER: ${c.currency.c}</span>
+                <span>SLOTS: ${c.derived.slots}</span>
             </div>
 
-            <div class="p-grid-2">
-                <div>
-                    <h4 style="border-bottom:2px solid black; margin-bottom:5px;">${t('sheet_inv')}</h4>
-                    <div style="font-size:9pt;">
-                        ${invHTML}
-                    </div>
+            <div style="column-count: 2; column-gap: 20px;">
+                <div class="p-section" style="break-inside: avoid;">
+                    <div class="p-lbl" style="border-bottom:2px solid #000; margin-bottom:5px;">${t('sheet_inv')}</div>
+                    ${invHTML}
                 </div>
-                <div>
-                    <h4 style="border-bottom:2px solid black; margin-bottom:5px;">${t('sheet_features')}</h4>
+                
+                <div style="break-inside: avoid;">
+                    <div class="p-lbl" style="border-bottom:2px solid #000; margin-bottom:10px;">${t('sheet_features')}</div>
                     ${featuresHTML}
                 </div>
             </div>
@@ -4190,6 +4135,7 @@ renderHUD: () => {
     },
 
 };
+
 
 
 

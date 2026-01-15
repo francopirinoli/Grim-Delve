@@ -4781,3 +4781,29 @@ input.res-input:focus { border-bottom: 1px solid #fff !important; }
 .lib-pagination button:disabled { opacity: 0.5; cursor: default; }
 .lib-pagination button:hover:not(:disabled) { background: var(--accent-gold); color: black; }
 
+/* Update in css/main.css */
+
+.mc-header {
+    background: #8a2c2c;
+    color: #ffffff; /* Ensure parent has white text */
+    padding: 10px 15px;
+    border-bottom: 2px solid #000;
+}
+
+.mc-name {
+    font-family: 'Cinzel', serif;
+    font-size: 1.6rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    line-height: 1.1;
+    color: #ffffff !important; /* FORCE WHITE TEXT */
+    text-shadow: 1px 1px 0 #000; /* Optional: Adds a tiny drop shadow for readability */
+}
+
+.mc-meta {
+    font-family: 'Fira Code', monospace;
+    font-size: 0.85rem;
+    color: #ffdddd; /* Light pink/white for the subtitle */
+    margin-top: 4px;
+    text-transform: uppercase;
+}

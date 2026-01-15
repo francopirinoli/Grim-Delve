@@ -7,6 +7,36 @@
 
 const UI_DICTIONARY = {
     "en": {
+        // --- MISSING IMAGE CONTROLS ---
+        "lbl_zoom": "Zoom",
+        "lbl_pan_x": "Pan X",
+        "lbl_pan_y": "Pan Y",
+        "lbl_reset": "Reset",
+        "lbl_upload": "Upload",
+        "lbl_paste_url": "Paste Image URL...",
+
+        // --- MISSING MONSTER ROLES (Ensure these match your JSON keys lowercase) ---
+        "role_soldier": "Soldier",
+        "role_brute": "Brute",
+        "role_skirmisher": "Skirmisher",
+        "role_controller": "Controller",
+        "role_artillery": "Artillery",
+        "role_lurker": "Lurker",
+        "role_minion": "Minion",
+        "role_solo": "Solo",
+        
+         // --- MISSING ITEM BUILDER KEYS ---
+        "item_default_name": "New Item",
+        "item_default_desc": "Select a base item or edit fields to begin.",
+        "item_ph_magic_name": "Magic Prefix/Name",
+        "item_ph_tags": "Tags",
+        "item_ph_type": "Type",
+        "item_ph_damage": "Damage",
+        "item_ph_ac": "AS",
+        "item_ph_slots": "Slots",
+        
+        // --- BUTTONS ---
+        "btn_save_lib": "Save to Library"
         "btn_shop": "Open Shop",
         "btn_add_custom": "Add Custom Item",
         "inv_empty": "Inventory is empty.",
@@ -244,6 +274,36 @@ const UI_DICTIONARY = {
         "tbl_btn_roll": "Roll {dice}"
     },
     "es": {
+        // --- MISSING IMAGE CONTROLS ---
+        "lbl_zoom": "Zoom",
+        "lbl_pan_x": "Pan X",
+        "lbl_pan_y": "Pan Y",
+        "lbl_reset": "Reiniciar",
+        "lbl_upload": "Subir",
+        "lbl_paste_url": "Pegar URL de Imagen...",
+
+        // --- MISSING MONSTER ROLES ---
+        "role_soldier": "Soldado",
+        "role_brute": "Bruto",
+        "role_skirmisher": "Hostigador",
+        "role_controller": "Controlador",
+        "role_artillery": "Artillería",
+        "role_lurker": "Acechador",
+        "role_minion": "Esbirro",
+        "role_solo": "Solo (Jefe)",
+
+        // --- MISSING ITEM BUILDER KEYS ---
+        "item_default_name": "Nuevo Objeto",
+        "item_default_desc": "Elige un objeto base o edita los campos.",
+        "item_ph_magic_name": "Prefijo Mágico/Nombre",
+        "item_ph_tags": "Etiquetas",
+        "item_ph_type": "Tipo",
+        "item_ph_damage": "Daño",
+        "item_ph_ac": "AS",
+        "item_ph_slots": "Espacios",
+
+        // --- BUTTONS ---
+        "btn_save_lib": "Guardar en Biblioteca"
         "btn_shop": "Abrir Tienda",
         "btn_add_custom": "Añadir Personalizado",
         "inv_empty": "El inventario está vacío.",
@@ -614,3 +674,4 @@ export const I18n = {
     }
 
 };
+

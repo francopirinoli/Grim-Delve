@@ -204,9 +204,15 @@
 }
 
 .mc-header {
-    background: #000 !important; /* Force black for headers */
+    background: #000 !important; /* Force black background for print contrast */
     color: #fff !important;
     border-bottom: 2px solid #000 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+.mc-name {
+    color: #fff !important; /* Keep name white on black header */
 }
 
 .mc-stats-grid {
@@ -238,3 +244,4 @@
 .mc-section-title { color: #000 !important; border-color: #000 !important; }
 .sb-prop-name { color: #000 !important; }
 .mc-stat-val { color: #000 !important; }
+

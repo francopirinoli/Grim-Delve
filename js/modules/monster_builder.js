@@ -381,12 +381,19 @@ export const MonsterBuilder = {
         document.getElementById('btn-save-monster').addEventListener('click', MonsterBuilder.save);
         document.getElementById('btn-print-monster').addEventListener('click', () => {
     const cardContent = document.getElementById('monster-card-display').innerHTML;
-    const printRoot = document.getElementById('print-sheet-root');
     
-    // Clear previous print content
+    // 1. Ensure Print Root Exists
+    let printRoot = document.getElementById('print-sheet-root');
+    if (!printRoot) {
+        printRoot = document.createElement('div');
+        printRoot.id = 'print-sheet-root';
+        printRoot.className = 'print-only';
+        document.body.appendChild(printRoot);
+    }
+    
+    // 2. Clear and Inject
     printRoot.innerHTML = '';
     
-    // Create a wrapper to center the card on the page
     const wrapper = document.createElement('div');
     wrapper.style.display = 'flex';
     wrapper.style.justifyContent = 'center';
@@ -395,10 +402,9 @@ export const MonsterBuilder = {
     
     printRoot.appendChild(wrapper);
     
-    // Print
+    // 3. Print
     window.print();
-    });
-    },
+});
 
     syncDOMFromState: () => {
         const m = MonsterBuilder.currentMonster;
@@ -654,5 +660,6 @@ export const MonsterBuilder = {
         alert(`Saved ${m.name} to Library.`);
     }
 };
+
 
 

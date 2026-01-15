@@ -99,7 +99,7 @@ export const MonsterRenderer = {
                         <div class="mc-stat-label">${t('mon_stat_spd')}</div>
                     </div>
                     <div class="mc-stat atk">
-                        <div class="mc-stat-val">+${m.stats.atk}</div>
+                        <div class="mc-stat-val">${m.stats.atk}</div>
                         <div class="mc-stat-label">${t('mon_stat_atk')}</div>
                     </div>
                     <div class="mc-stat">
@@ -736,4 +736,5 @@ export const MonsterBuilder = {
         alert(`Saved ${m.name} to Library.`);
     }
 };
+
 

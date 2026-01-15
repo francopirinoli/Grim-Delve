@@ -4749,3 +4749,23 @@ input.res-input:focus { border-bottom: 1px solid #fff !important; }
     font-weight: bold;
     padding-left: 5px;
 }
+
+.lib-pagination {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+    align-items: center;
+    color: var(--accent-gold);
+}
+
+.lib-pagination button {
+    background: #333;
+    border: 1px solid var(--accent-gold);
+    color: white;
+    padding: 5px 15px;
+    cursor: pointer;
+}
+.lib-pagination button:disabled { opacity: 0.5; cursor: default; }
+.lib-pagination button:hover:not(:disabled) { background: var(--accent-gold); color: black; }

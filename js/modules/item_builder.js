@@ -300,40 +300,18 @@ export const ItemBuilder = {
     },
     
     attachListeners: () => {
-        // Mode Toggles
+        // 1. Mode Toggles (Forge vs Loot)
         document.getElementById('mode-forge').onclick = () => ItemBuilder.toggleMode('forge');
         document.getElementById('mode-loot').onclick = () => ItemBuilder.toggleMode('loot');
 
-        // Dropdowns
+        // 2. Category Dropdown
         document.getElementById('base-cat-select').onchange = (e) => {
             ItemBuilder.state.baseCategory = e.target.value;
             ItemBuilder.loadBaseOptions();
             ItemBuilder.renderBlueprintList();
         };
 
-        const btnPrint = document.getElementById('btn-print-item');
-        if(btnPrint) {
-            btnPrint.addEventListener('click', () => {
-        const cardContent = document.getElementById('item-card-display').innerHTML;
-        const printRoot = document.getElementById('print-sheet-root');
-        
-        // Clear previous print content
-        printRoot.innerHTML = '';
-        
-        // Create a wrapper
-        const wrapper = document.createElement('div');
-        wrapper.style.display = 'flex';
-        wrapper.style.justifyContent = 'center';
-        wrapper.style.paddingTop = '2cm';
-        wrapper.innerHTML = cardContent;
-        
-        printRoot.appendChild(wrapper);
-        
-        // Print
-        window.print();
-        });
-
-        // Base Item Selection Logic
+        // 3. Base Item Selection Logic
         document.getElementById('base-item-select').onchange = (e) => {
             const idx = e.target.value;
             if (idx === "") return;
@@ -348,6 +326,7 @@ export const ItemBuilder = {
             const base = list[idx];
             const cur = ItemBuilder.currentItem;
             
+            // Populate fields from base item
             cur.name = base.name;
             cur.type = base.type || "Item";
             cur.cost = base.cost;
@@ -357,17 +336,20 @@ export const ItemBuilder = {
             cur.tags = base.tags ? (Array.isArray(base.tags) ? base.tags.join(', ') : base.tags) : "";
             cur.description = base.description || base.effect || "";
             
+            // Append Magic Prefix if exists
             if(cur.magicName) cur.name = `${cur.magicName} ${base.name}`;
 
             ItemBuilder.syncDOMFromState();
             ItemBuilder.renderCard();
         };
 
+        // 4. Blueprint Search
         document.getElementById('bp-search').oninput = (e) => {
             ItemBuilder.state.filterText = e.target.value.toLowerCase();
             ItemBuilder.renderBlueprintList();
         };
 
+        // 5. Loot Generation Buttons
         document.querySelectorAll('.btn-loot').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const target = e.target.closest('.btn-loot');
@@ -375,7 +357,7 @@ export const ItemBuilder = {
             });
         });
 
-        // --- IMAGE CONTROLS ---
+        // 6. Image Controls
         const urlInput = document.getElementById('edit-img-url');
         const fileInput = document.getElementById('file-upload-item');
         const uploadBtn = document.getElementById('btn-upload-img');
@@ -392,40 +374,46 @@ export const ItemBuilder = {
             ItemBuilder.applyImageTransform();
         };
 
-        sScale.addEventListener('input', updateImgState);
-        sX.addEventListener('input', updateImgState);
-        sY.addEventListener('input', updateImgState);
+        if(sScale) sScale.addEventListener('input', updateImgState);
+        if(sX) sX.addEventListener('input', updateImgState);
+        if(sY) sY.addEventListener('input', updateImgState);
 
-        btnReset.addEventListener('click', () => {
-            ItemBuilder.currentItem.imgPos = { x: 0, y: 0, scale: 1.0 };
-            ItemBuilder.syncDOMFromState();
-            ItemBuilder.applyImageTransform();
-        });
+        if(btnReset) {
+            btnReset.addEventListener('click', () => {
+                ItemBuilder.currentItem.imgPos = { x: 0, y: 0, scale: 1.0 };
+                ItemBuilder.syncDOMFromState();
+                ItemBuilder.applyImageTransform();
+            });
+        }
 
-        urlInput.addEventListener('change', (e) => {
-            ItemBuilder.currentItem.imageUrl = e.target.value;
-            ItemBuilder.currentItem.imageId = null;
-            ItemBuilder.renderCard();
-        });
+        if(urlInput) {
+            urlInput.addEventListener('change', (e) => {
+                ItemBuilder.currentItem.imageUrl = e.target.value;
+                ItemBuilder.currentItem.imageId = null;
+                ItemBuilder.renderCard();
+            });
+        }
 
-        uploadBtn.addEventListener('click', () => fileInput.click());
+        if(uploadBtn && fileInput) {
+            uploadBtn.addEventListener('click', () => fileInput.click());
 
-        fileInput.addEventListener('change', async (e) => {
-            if (e.target.files && e.target.files[0]) {
-                try {
-                    const id = await ImageStore.saveImage(e.target.files[0]);
-                    ItemBuilder.currentItem.imageId = id;
-                    ItemBuilder.currentItem.imageUrl = null;
-                    urlInput.value = "[Uploaded Image]";
-                    ItemBuilder.renderCard();
-                } catch (err) {
-                    console.error(err);
-                    alert("Failed to save image.");
+            fileInput.addEventListener('change', async (e) => {
+                if (e.target.files && e.target.files[0]) {
+                    try {
+                        const id = await ImageStore.saveImage(e.target.files[0]);
+                        ItemBuilder.currentItem.imageId = id;
+                        ItemBuilder.currentItem.imageUrl = null;
+                        urlInput.value = "[Uploaded Image]";
+                        ItemBuilder.renderCard();
+                    } catch (err) {
+                        console.error(err);
+                        alert("Failed to save image.");
+                    }
                 }
-            }
-        });
+            });
+        }
 
-        // --- TEXT INPUTS ---
+        // 7. Text Input Binding
         const bind = (id, key) => {
             const el = document.getElementById(id);
             if(el) {
@@ -448,13 +436,49 @@ export const ItemBuilder = {
         bind('edit-magic-effect', 'magicEffect');
         bind('edit-craft-req', 'craftReq');
 
-        document.getElementById('edit-is-magic').addEventListener('change', (e) => {
-            ItemBuilder.currentItem.isMagic = e.target.checked;
-            ItemBuilder.renderCard();
-        });
+        const chkMagic = document.getElementById('edit-is-magic');
+        if(chkMagic) {
+            chkMagic.addEventListener('change', (e) => {
+                ItemBuilder.currentItem.isMagic = e.target.checked;
+                ItemBuilder.renderCard();
+            });
+        }
 
-        // SAVE BUTTON
-        document.getElementById('btn-save-item').onclick = ItemBuilder.save;
+        // 8. Save Button
+        const btnSave = document.getElementById('btn-save-item');
+        if(btnSave) btnSave.onclick = ItemBuilder.save;
+
+        // 9. Print Button (Contextual Printing Fix)
+        const btnPrint = document.getElementById('btn-print-item');
+        if(btnPrint) {
+            btnPrint.addEventListener('click', () => {
+                // 1. Get the HTML of the Card
+                const cardContent = document.getElementById('item-card-display').innerHTML;
+                
+                // 2. Get the Print Root (Hidden div on body)
+                const printRoot = document.getElementById('print-sheet-root');
+                if(!printRoot) return;
+                
+                // 3. Clean and Inject
+                printRoot.innerHTML = '';
+                
+                // Create a centering wrapper for the paper
+                const wrapper = document.createElement('div');
+                wrapper.style.display = 'flex';
+                wrapper.style.justifyContent = 'center';
+                wrapper.style.alignItems = 'flex-start';
+                wrapper.style.paddingTop = '2cm';
+                wrapper.style.height = '100%';
+                
+                // Scale it up slightly for print visibility if needed, or leave as is
+                wrapper.innerHTML = cardContent;
+                
+                printRoot.appendChild(wrapper);
+                
+                // 4. Trigger Browser Print
+                window.print();
+            });
+        }
     },
 
     toggleMode: (mode) => {
@@ -825,5 +849,6 @@ export const ItemBuilder = {
     }
 
 };
+
 
 

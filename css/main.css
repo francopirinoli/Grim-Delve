@@ -1712,7 +1712,8 @@ dd {
 /* --- FILTER BAR --- */
 .filter-bar {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr 1fr; /* Search + 4 Dropdowns */
+    /* Search | Role | Family | Source */
+    grid-template-columns: 2fr 1fr 1fr 1fr; 
     gap: 10px;
     background: rgba(0,0,0,0.3);
     padding: 15px;
@@ -1720,6 +1721,16 @@ dd {
     border-radius: 4px;
     margin-bottom: 2rem;
     align-items: center;
+}
+
+/* Tablet/Mobile Adjustments */
+@media (max-width: 1024px) {
+    .filter-bar {
+        grid-template-columns: 1fr 1fr; /* 2x2 grid */
+    }
+    #lib-search {
+        grid-column: 1 / -1; /* Search takes full width */
+    }
 }
 
 .filter-bar input, 
@@ -4769,3 +4780,4 @@ input.res-input:focus { border-bottom: 1px solid #fff !important; }
 }
 .lib-pagination button:disabled { opacity: 0.5; cursor: default; }
 .lib-pagination button:hover:not(:disabled) { background: var(--accent-gold); color: black; }
+

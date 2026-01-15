@@ -379,7 +379,25 @@ export const MonsterBuilder = {
         });
         document.getElementById('btn-add-custom').addEventListener('click', MonsterBuilder.addCustomAbility);
         document.getElementById('btn-save-monster').addEventListener('click', MonsterBuilder.save);
-        document.getElementById('btn-print-monster').addEventListener('click', () => window.print());
+        document.getElementById('btn-print-monster').addEventListener('click', () => {
+    const cardContent = document.getElementById('monster-card-display').innerHTML;
+    const printRoot = document.getElementById('print-sheet-root');
+    
+    // Clear previous print content
+    printRoot.innerHTML = '';
+    
+    // Create a wrapper to center the card on the page
+    const wrapper = document.createElement('div');
+    wrapper.style.display = 'flex';
+    wrapper.style.justifyContent = 'center';
+    wrapper.style.paddingTop = '2cm';
+    wrapper.innerHTML = cardContent;
+    
+    printRoot.appendChild(wrapper);
+    
+    // Print
+    window.print();
+    });
     },
 
     syncDOMFromState: () => {
@@ -636,4 +654,5 @@ export const MonsterBuilder = {
         alert(`Saved ${m.name} to Library.`);
     }
 };
+
 

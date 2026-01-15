@@ -193,3 +193,48 @@
     /* Print Colors */
     * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
+
+/* --- MONSTER CARD PRINT OVERRIDES --- */
+.monster-card {
+    border: 2px solid #000 !important;
+    background: white !important;
+    box-shadow: none !important;
+    page-break-inside: avoid;
+    margin: 0 auto;
+}
+
+.mc-header {
+    background: #000 !important; /* Force black for headers */
+    color: #fff !important;
+    border-bottom: 2px solid #000 !important;
+}
+
+.mc-stats-grid {
+    background: #eee !important;
+    border-bottom: 2px solid #000 !important;
+}
+
+/* IMPORTANT: Image Fixing */
+.sb-image-container {
+    height: 250px !important; /* Force height */
+    overflow: hidden !important; /* Clip image */
+    border-bottom: 2px solid #000 !important;
+    background: #fff !important;
+    position: relative !important;
+    display: block !important;
+}
+
+.sb-image-container img {
+    /* The inline style transform from JS handles position */
+    /* Ensure it prints properly */
+    max-width: none !important;
+    max-height: none !important;
+}
+
+/* Hide UI elements inside card */
+.del-custom { display: none !important; }
+
+/* Colors for print */
+.mc-section-title { color: #000 !important; border-color: #000 !important; }
+.sb-prop-name { color: #000 !important; }
+.mc-stat-val { color: #000 !important; }

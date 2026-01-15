@@ -1,7 +1,7 @@
 /**
  * library.js
  * Central Hub for Characters, Monsters, and Items.
- * v4.0: Localized, Paginated, and Print-Ready.
+ * v4.1: Added Family Filter & Fixed Spanish Localization Logic.
  */
 
 import { Storage } from '../utils/storage.js';
@@ -19,6 +19,7 @@ export const Library = {
     filters: {
         search: '',
         role: 'all',
+        family: 'all', // New Filter
         type: 'all', 
         source: 'all'
     },
@@ -44,6 +45,18 @@ export const Library = {
         const isItem = Library.currentTab === 'items';
         const isChar = Library.currentTab === 'characters';
 
+        // Get Families for Dropdown
+        let familyOptions = `<option value="all">-- ${t('mon_lbl_family')} --</option>`;
+        if (isMon) {
+            const monData = I18n.getData('monsters');
+            if (monData && monData.families) {
+                Object.keys(monData.families).forEach(key => {
+                    const famName = monData.families[key].name;
+                    familyOptions += `<option value="${key}">${famName}</option>`;
+                });
+            }
+        }
+
         const html = `
             <div class="lib-static-top">
                 <div class="lib-header">
@@ -61,7 +74,7 @@ export const Library = {
                     
                     <!-- Monster Filters -->
                     <select id="filter-role" style="display: ${isMon ? 'block' : 'none'}">
-                        <option value="all">-- All Roles --</option>
+                        <option value="all">-- ${t('mon_lbl_role')} --</option>
                         <option value="soldier">${t('role_soldier')}</option>
                         <option value="brute">${t('role_brute')}</option>
                         <option value="skirmisher">${t('role_skirmisher')}</option>
@@ -70,6 +83,10 @@ export const Library = {
                         <option value="lurker">${t('role_lurker')}</option>
                         <option value="minion">${t('role_minion')}</option>
                         <option value="solo">${t('role_solo')}</option>
+                    </select>
+
+                    <select id="filter-family" style="display: ${isMon ? 'block' : 'none'}">
+                        ${familyOptions}
                     </select>
 
                     <!-- Item Filters -->
@@ -83,8 +100,9 @@ export const Library = {
                         <option value="Loot">Loot</option>
                     </select>
 
+                    <!-- Source Filter -->
                     <select id="filter-source" style="display: ${isChar ? 'none' : 'block'}">
-                        <option value="all">-- All Sources --</option>
+                        <option value="all">-- ${t('lbl_source')} --</option>
                         <option value="official">Official</option>
                         <option value="custom">Custom</option>
                     </select>
@@ -112,6 +130,13 @@ export const Library = {
         
         Library.container.innerHTML = html;
         Library.attachListeners();
+        
+        // Restore filter state values
+        if(isMon) {
+            document.getElementById('filter-role').value = Library.filters.role;
+            document.getElementById('filter-family').value = Library.filters.family;
+        }
+
         Library.refreshContent();
     },
 
@@ -120,22 +145,28 @@ export const Library = {
         Library.container.querySelectorAll('.lib-tab-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 Library.currentTab = btn.dataset.tab;
-                Library.pagination.page = 1; // Reset page on tab switch
+                
+                // Reset Filters on Tab Change
+                Library.filters = { search: '', role: 'all', family: 'all', type: 'all', source: 'all' };
+                Library.pagination.page = 1;
+                
                 Library.renderShell(); 
             });
         });
 
-        // Filters
+        // Generic Filter Binding
         const bind = (id, key) => {
             const el = document.getElementById(id);
             if(el) el.addEventListener('input', (e) => {
                 Library.filters[key] = e.target.value.toLowerCase();
-                Library.pagination.page = 1; // Reset page on filter
+                Library.pagination.page = 1; // Reset page on filter change
                 Library.refreshContent();
             });
         };
+
         bind('lib-search', 'search');
         bind('filter-role', 'role');
+        bind('filter-family', 'family'); // New listener
         bind('filter-type', 'type');
         bind('filter-source', 'source');
 
@@ -180,11 +211,14 @@ export const Library = {
             <button id="btn-next-page" ${page === totalPages ? 'disabled' : ''}>»</button>
         `;
 
-        document.getElementById('btn-prev-page').onclick = () => {
+        const btnPrev = document.getElementById('btn-prev-page');
+        const btnNext = document.getElementById('btn-next-page');
+
+        if(btnPrev) btnPrev.onclick = () => {
             Library.pagination.page--;
             Library.refreshContent();
         };
-        document.getElementById('btn-next-page').onclick = () => {
+        if(btnNext) btnNext.onclick = () => {
             Library.pagination.page++;
             Library.refreshContent();
         };
@@ -340,18 +374,30 @@ export const Library = {
         const all = [...custom, ...official];
         const f = Library.filters;
         
-        // 2. Filter
+        // 2. Filter with Language Logic
         const filtered = all.filter(m => {
+            // Search (Name)
             if (f.search && !m.name.toLowerCase().includes(f.search)) return false;
             
+            // Role Filter (Robust Spanish Check)
             if (f.role !== 'all') {
-                const normalizedRole = m.role.toLowerCase();
-                // Check if the localized text includes the search term (e.g., "Soldado" vs "soldier")
-                // Or if the raw data matches.
-                if (normalizedRole !== f.role) return false;
+                const mRoleRaw = m.role.toLowerCase(); // e.g. "soldier" or "soldado"
+                const filterRaw = f.role.toLowerCase(); // e.g. "soldier"
+                const filterLocalized = t('role_' + filterRaw).toLowerCase(); // e.g. "soldado"
+                
+                // Matches if monster role equals internal ID OR localized name
+                const matchesRole = (mRoleRaw === filterRaw) || (mRoleRaw === filterLocalized);
+                if (!matchesRole) return false;
+            }
+
+            // Family Filter (Internal ID check)
+            if (f.family !== 'all') {
+                if (m.family !== f.family) return false;
             }
             
+            // Source Filter
             if (f.source !== 'all' && (m.source || 'custom') !== f.source) return false;
+            
             return true;
         });
 
@@ -370,9 +416,10 @@ export const Library = {
         grid.innerHTML = pageItems.map(m => {
             const isCustom = (m.source !== 'official');
             
-            // Translate Role and Family for Card
+            // Translate Role for Card Display
             const roleKey = 'role_' + (m.role || '').toLowerCase();
             const roleName = t(roleKey) !== roleKey ? t(roleKey) : m.role;
+            const displayRole = roleName.charAt(0).toUpperCase() + roleName.slice(1);
 
             let imgHTML = `<div class="lib-thumb-placeholder">💀</div>`;
             if (m.imageId) imgHTML = `<img src="" data-img-id="${m.imageId}">`;
@@ -388,7 +435,7 @@ export const Library = {
                     </div>
                     <div class="lib-card-body">
                         <div class="lib-card-name">${m.name}</div>
-                        <div class="lib-card-meta">${t('lbl_level')} ${m.level} ${roleName}</div>
+                        <div class="lib-card-meta">${t('lbl_level')} ${m.level} ${displayRole}</div>
                         
                         <div class="lib-mini-stats">
                             <div class="lms-box"><div class="lms-label">${t('mon_stat_hp')}</div><div class="lms-val" style="color:#d32f2f">${m.stats.hp}</div></div>
@@ -581,19 +628,25 @@ export const Library = {
         
         // FIX: Contextual Printing from Library
         document.getElementById('btn-print-modal').onclick = () => {
-            const printRoot = document.getElementById('print-sheet-root');
-            if (printRoot) {
-                printRoot.innerHTML = '';
-                // Wrap to center for print
-                const wrapper = document.createElement('div');
-                wrapper.style.display = 'flex';
-                wrapper.style.justifyContent = 'center';
-                wrapper.style.paddingTop = '2cm';
-                wrapper.innerHTML = cardHtml;
-                
-                printRoot.appendChild(wrapper);
-                window.print();
+            // Check or Create Print Root
+            let printRoot = document.getElementById('print-sheet-root');
+            if (!printRoot) {
+                printRoot = document.createElement('div');
+                printRoot.id = 'print-sheet-root';
+                printRoot.className = 'print-only';
+                document.body.appendChild(printRoot);
             }
+
+            printRoot.innerHTML = '';
+            // Wrap to center for print
+            const wrapper = document.createElement('div');
+            wrapper.style.display = 'flex';
+            wrapper.style.justifyContent = 'center';
+            wrapper.style.paddingTop = '2cm';
+            wrapper.innerHTML = cardHtml;
+            
+            printRoot.appendChild(wrapper);
+            window.print();
         };
 
         overlay.addEventListener('click', (e) => {
@@ -631,18 +684,24 @@ export const Library = {
         
         // FIX: Contextual Printing from Library
         document.getElementById('btn-print-modal').onclick = () => {
-            const printRoot = document.getElementById('print-sheet-root');
-            if (printRoot) {
-                printRoot.innerHTML = '';
-                const wrapper = document.createElement('div');
-                wrapper.style.display = 'flex';
-                wrapper.style.justifyContent = 'center';
-                wrapper.style.paddingTop = '2cm';
-                wrapper.innerHTML = cardHtml;
-                
-                printRoot.appendChild(wrapper);
-                window.print();
+            // Check or Create Print Root
+            let printRoot = document.getElementById('print-sheet-root');
+            if (!printRoot) {
+                printRoot = document.createElement('div');
+                printRoot.id = 'print-sheet-root';
+                printRoot.className = 'print-only';
+                document.body.appendChild(printRoot);
             }
+
+            printRoot.innerHTML = '';
+            const wrapper = document.createElement('div');
+            wrapper.style.display = 'flex';
+            wrapper.style.justifyContent = 'center';
+            wrapper.style.paddingTop = '2cm';
+            wrapper.innerHTML = cardHtml;
+            
+            printRoot.appendChild(wrapper);
+            window.print();
         };
 
         overlay.addEventListener('click', (e) => {

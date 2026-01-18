@@ -16,6 +16,7 @@ import { MonsterBuilder } from './modules/monster_builder.js';
 import { ItemBuilder } from './modules/item_builder.js'; // <--- FIXED THIS PATH
 import { Library } from './modules/library.js';
 import { TableLookup } from './modules/table_lookup.js';
+import { MonsterTuner } from './modules/monster_tuner.js';
 
 document.addEventListener("DOMContentLoaded", async () => {
     console.log("Grim Delve System Initializing...");
@@ -126,6 +127,9 @@ function loadModule(moduleName) {
             break;
         case 'tables':
             TableLookup.init(contentArea);
+            break;
+        case 'tuner':
+            MonsterTuner.init(contentArea);
             break;
         default:
             contentArea.innerHTML = `<p style="padding:2rem; color:#888;">Module <strong>${moduleName}</strong> not implemented.</p>`;

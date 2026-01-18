@@ -9,120 +9,254 @@ import { Storage } from '../utils/storage.js';
 import { ImageStore } from '../utils/image_store.js';
 
 // --- SHARED RENDERER ---
+/**
+ * Normalizes monster data into a standard renderable format.
+ * Handles both "Old Builder" data and "New Official" data.
+ */
+const normalizeMonsterData = (m) => {
+    // Deep copy
+    const data = JSON.parse(JSON.stringify(m));
+
+    // 1. Unify Stats
+    const stats = {
+        hp: data.stats.hp,
+        as: data.stats.as,
+        speed: data.stats.speed,
+        atk: data.combat ? data.combat.atk_dc : data.stats.atk,
+        def: data.combat ? data.combat.def_dc : data.stats.def,
+        save: data.combat ? data.combat.save_dc : data.stats.save,
+        dmg: data.combat ? data.combat.dmg : data.stats.dmg
+    };
+
+    // 2. Unify Abilities (Buckets)
+    let attacks = [];
+    let traits = [];
+    let actions = [];
+    let dangers = [];
+
+    // --- FIX: Always check for explicit 'attacks' array (From Dropdown or JSON) ---
+    if (data.attacks && Array.isArray(data.attacks)) {
+        attacks.push(...data.attacks);
+    }
+    // -----------------------------------------------------------------------------
+
+    // Check if we have the NEW "abilities" array (Official Data)
+    const hasNewAbilities = data.abilities && Array.isArray(data.abilities) && data.abilities.length > 0;
+
+    if (hasNewAbilities) {
+        data.abilities.forEach(a => {
+            const t = a.type ? a.type.toLowerCase() : 'trait';
+            
+            // Normalize Spanish/English keys
+            if (t.includes('attack') || t.includes('ataque')) {
+                // If it's an attack not already in the main array, add it
+                // (Prevent duplicates if data.attacks already existed)
+                if (!attacks.some(existing => existing.name === a.name)) {
+                    attacks.push(a);
+                }
+            }
+            else if (t.includes('passive') || t.includes('trait') || t.includes('rasgo') || t.includes('pasivo')) {
+                traits.push(a);
+            }
+            else if (t.includes('danger') || t.includes('legendary') || t.includes('peligro') || a.cost) {
+                dangers.push(a);
+            }
+            else {
+                actions.push(a);
+            }
+        });
+
+    } else {
+        // Fallback: Use OLD 'traits'/'actions' arrays (Custom Builder Data)
+        if (data.traits) traits.push(...data.traits);
+        if (data.actions) actions.push(...data.actions);
+        if (data.danger_abilities) dangers.push(...data.danger_abilities);
+    }
+    
+    // Always add Builder Custom Abilities
+    if (data.custom_abilities) {
+        data.custom_abilities.forEach(c => {
+            if (c.type === 'Danger') dangers.push(c);
+            else if (c.type === 'Trait') traits.push(c);
+            else actions.push(c);
+        });
+    }
+
+    // 3. Loot / Notes Deduplication
+    let notes = data.notes || "";
+    let loot = data.loot || "";
+
+    if (loot && notes.includes(loot)) {
+        notes = notes.replace(loot, "").replace(/Loot:\s*$/, "").trim();
+    }
+    notes = notes.replace(/^GM Notes \/\s*/i, "").trim();
+    if (notes === "Loot:") notes = "";
+
+    const imgPos = data.imgPos || { x: 0, y: 0, scale: 1.0 };
+
+    return {
+        ...data,
+        derivedStats: stats,
+        renderAttacks: attacks,
+        renderTraits: traits,
+        renderActions: actions,
+        renderDangers: dangers,
+        imgPos: imgPos,
+        notes: notes,
+        loot: loot
+    };
+};
+
 export const MonsterRenderer = {
-    getHTML: (m, imageSrc) => {
+    
+    // ... (Keep formatStat function as is) ...
+    formatStat: (val) => {
+        if (!val && val !== 0) return `<span class="stat-main">-</span>`;
+        const str = String(val);
+        const match = str.match(/^(\d+)\s*(.*)$/);
+        if (match) {
+            const main = match[1]; 
+            let sub = match[2].trim();
+            if (sub.startsWith('(') && sub.endsWith(')')) sub = sub.substring(1, sub.length - 1);
+            if (sub) return `<span class="stat-main">${main}</span><span class="stat-sub">${sub}</span>`;
+            else return `<span class="stat-main">${main}</span>`;
+        }
+        return `<span class="stat-main">${str}</span>`;
+    },
+
+    getHTML: (rawMonster, imageSrc, forceLang = null) => {
         const t = I18n.t;
         const fmt = I18n.fmt;
         
-        // 1. Get Localized Data
-        const data = I18n.getData('monsters');
-        
-        // Translate Role
+        const txt = (key) => forceLang ? I18n.force(key, forceLang) : t(key);
+        const m = normalizeMonsterData(rawMonster);
+        const s = m.derivedStats;
+
+        // ... (Role and Family Logic stays the same) ...
         const rawRole = m.role ? m.role.toLowerCase() : 'soldier';
         const roleKey = `role_${rawRole}`;
-        const roleName = t(roleKey) !== roleKey ? t(roleKey) : m.role;
-
-        // Translate Family (Lookup from loaded JSON)
-        let familyName = m.family; // Default to ID
-        if (data && data.families && data.families[m.family]) {
-            familyName = data.families[m.family].name;
+        
+        let roleName = m.role;
+        if (forceLang) {
+             const dictRole = I18n.force(roleKey, forceLang);
+             if (dictRole && dictRole !== roleKey) roleName = dictRole;
+        } else {
+             roleName = t(roleKey) !== roleKey ? t(roleKey) : m.role;
         }
-        // Capitalize
-        familyName = familyName.charAt(0).toUpperCase() + familyName.slice(1);
 
-        // Dynamic Meta Line
-        const metaLine = fmt('mon_meta_fmt', { 
-            lvl: m.level, 
-            role: roleName, 
-            family: familyName 
-        });
+        let familyName = m.family || "Unknown";
+        const monsterData = I18n.getData('monsters');
+        if (monsterData && monsterData.families && monsterData.families[m.family]) {
+            familyName = monsterData.families[m.family].name;
+        }
 
-        // Image Handling (with inline styles for Print safety)
+        const lang = forceLang || I18n.currentLang;
+        let metaLine = "";
+        if (lang === 'es') metaLine = `${roleName} ${familyName} de Nivel ${m.level}`; 
+        else metaLine = `Level ${m.level} ${familyName} ${roleName}`;
+
+        // Image
         let imgHtml = '';
         if (imageSrc) {
-            const pos = m.imgPos || { x: 0, y: 0, scale: 1.0 };
-            // Ensure transforms are hardcoded for the printer
-            const style = `transform: translate(${pos.x}px, ${pos.y}px) scale(${pos.scale}); width:100%; height:100%; object-fit:cover;`;
+            const style = `transform: translate(${m.imgPos.x}px, ${m.imgPos.y}px) scale(${m.imgPos.scale}); width:100%; height:100%; object-fit:cover;`;
             imgHtml = `<div class="sb-image-container"><img src="${imageSrc}" style="${style}" draggable="false"></div>`;
         }
 
-        // Abilities Rendering
-        const renderRow = (list) => list.map(item => `
-            <div class="sb-property">
+        // --- IMPROVED RENDER ROW ---
+        // Handles {dmg} replacement and proper Tag formatting
+        const renderRow = (list, cssClass = '') => list.map(item => {
+            // 1. Swap Damage Placeholder
+            let text = item.effect || item.desc || '';
+            
+            // We use the chassis damage (s.dmg) to replace the placeholder
+            if (s.dmg) {
+                text = text.replace('{dmg}', `<strong>${s.dmg}</strong>`);
+                text = text.replace('Weapon Damage', `<strong>${s.dmg}</strong>`); // Fallback for old data
+                text = text.replace('Daño de Arma', `<strong>${s.dmg}</strong>`); // Fallback for old ES data
+            }
+
+            // 2. Format Tags
+            let tagHtml = '';
+            if (item.tags) {
+                // Remove parentheses if they exist in data to avoid double parens
+                let cleanTag = item.tags.replace(/^\(|\)$/g, '');
+                tagHtml = `<span class="sb-prop-tags">(${cleanTag})</span>`;
+            }
+
+            return `
+            <div class="sb-property ${cssClass}">
                 <div class="sb-prop-header">
                     <span class="sb-prop-name">${item.name}</span>
+                    ${tagHtml}
                     ${item.cost ? `<span class="sb-prop-cost">[${item.cost}]</span>` : ''}
                     ${item.id ? `<span class="del-custom" data-id="${item.id}" title="Remove">×</span>` : ''}
                 </div>
-                <div class="sb-prop-text">${item.effect}</div>
-            </div>
-        `).join('');
+                <div class="sb-prop-text">${text}</div>
+            </div>`;
+        }).join('');
+        // ---------------------------
 
-        // Merge Custom Abilities
-        const traits = [...(m.traits || [])];
-        const actions = [...(m.actions || [])];
-        const dangers = [...(m.danger_abilities || [])];
+        // Basic Attack Line
+        let mainAttackHtml = '';
+        const atkLabel = txt('sheet_attacks').toUpperCase();
 
-        if (m.custom_abilities) {
-            m.custom_abilities.forEach(c => {
-                if (c.type === 'Trait' || c.type === 'Passive') traits.push(c);
-                else if (c.type === 'Danger') dangers.push(c);
-                else actions.push(c); 
-            });
+        if (m.renderAttacks.length > 0) {
+             mainAttackHtml = `<div class="mc-section attacks-section"><div class="mc-section-title" style="color:#8a2c2c; border-bottom:1px solid #8a2c2c;">${atkLabel}</div>${renderRow(m.renderAttacks)}</div>`;
+        } else if (s.dmg) {
+             const atkName = txt('mon_default_atk_name');
+             const atkDesc = txt('mon_default_atk_desc').replace('{dmg}', `<strong>${s.dmg}</strong>`);
+             mainAttackHtml = `<div class="mc-section main-attack"><div class="mc-section-title" style="color:#8a2c2c; border-bottom:1px solid #8a2c2c;">${atkLabel}</div><div class="mc-ability"><strong>${atkName}</strong><br>${atkDesc}</div></div>`;
         }
 
-        const attackLine = fmt('mon_atk_fmt', { dmg: `<strong>${m.stats.dmg}</strong>` });
+        const headTraits = txt('mon_sect_traits');
+        const headActions = txt('mon_sect_actions');
+        const headDanger = txt('mon_sect_danger');
 
         return `
             <div class="monster-card">
-                <!-- Header -->
                 <div class="mc-header">
                     <div class="mc-name">${m.name}</div>
                     <div class="mc-meta">${metaLine}</div>
                 </div>
                 
-                <!-- Image -->
                 ${imgHtml}
 
-                <!-- Stats Grid -->
                 <div class="mc-stats-grid">
                     <div class="mc-stat hp">
-                        <div class="mc-stat-val">${m.stats.hp}</div>
-                        <div class="mc-stat-label">${t('mon_stat_hp')}</div>
+                        <div class="mc-stat-val">${MonsterRenderer.formatStat(s.hp)}</div>
+                        <div class="mc-stat-label">${txt('mon_stat_hp')}</div>
                     </div>
                     <div class="mc-stat">
-                        <div class="mc-stat-val">${m.stats.as}</div>
-                        <div class="mc-stat-label">${t('mon_stat_as')}</div>
+                        <div class="mc-stat-val">${MonsterRenderer.formatStat(s.as)}</div>
+                        <div class="mc-stat-label">${txt('mon_stat_as')}</div>
                     </div>
                     <div class="mc-stat">
-                        <div class="mc-stat-val">${m.stats.speed}</div>
-                        <div class="mc-stat-label">${t('mon_stat_spd')}</div>
+                        <div class="mc-stat-val">${MonsterRenderer.formatStat(s.speed)}</div>
+                        <div class="mc-stat-label">${txt('mon_stat_spd')}</div>
                     </div>
                     <div class="mc-stat atk">
-                        <div class="mc-stat-val">${m.stats.atk}</div>
-                        <div class="mc-stat-label">${t('mon_stat_atk')}</div>
+                        <div class="mc-stat-val">${MonsterRenderer.formatStat(s.atk)}</div>
+                        <div class="mc-stat-label">${txt('mon_stat_atk')}</div>
                     </div>
                     <div class="mc-stat">
-                        <div class="mc-stat-val">${m.stats.def}</div>
-                        <div class="mc-stat-label">${t('mon_stat_def')}</div>
+                        <div class="mc-stat-val">${MonsterRenderer.formatStat(s.def)}</div>
+                        <div class="mc-stat-label">${txt('mon_stat_def')}</div>
                     </div>
                     <div class="mc-stat">
-                        <div class="mc-stat-val">${m.stats.save}</div>
-                        <div class="mc-stat-label">${t('mon_stat_save')}</div>
+                        <div class="mc-stat-val">${MonsterRenderer.formatStat(s.save)}</div>
+                        <div class="mc-stat-label">${txt('mon_stat_save')}</div>
                     </div>
                 </div>
 
-                <!-- Basic Attack -->
-                <div class="mc-section main-attack">
-                    <div class="mc-ability">${attackLine}</div>
-                </div>
+                ${mainAttackHtml}
 
-                <!-- Ability Sections -->
-                ${traits.length > 0 ? `<div class="mc-section"><div class="mc-section-title">${t('mon_sect_traits')}</div>${renderRow(traits)}</div>` : ''}
-                ${actions.length > 0 ? `<div class="mc-section"><div class="mc-section-title">${t('mon_sect_actions')}</div>${renderRow(actions)}</div>` : ''}
-                ${dangers.length > 0 ? `<div class="mc-section danger"><div class="mc-section-title danger-title">${t('mon_sect_danger')}</div>${renderRow(dangers)}</div>` : ''}
+                ${m.renderTraits.length > 0 ? `<div class="mc-section"><div class="mc-section-title">${headTraits}</div>${renderRow(m.renderTraits)}</div>` : ''}
+                ${m.renderActions.length > 0 ? `<div class="mc-section"><div class="mc-section-title">${headActions}</div>${renderRow(m.renderActions)}</div>` : ''}
+                ${m.renderDangers.length > 0 ? `<div class="mc-section danger"><div class="mc-section-title danger-title">${headDanger}</div>${renderRow(m.renderDangers)}</div>` : ''}
                 
-                ${m.notes ? `<div class="mc-section notes"><strong>${t('mon_lbl_notes')}:</strong> ${m.notes}</div>` : ''}
+                ${m.description ? `<div class="mc-section description" style="font-style:italic; font-size:0.9em; color:#444; border-top:1px solid #ccc; padding-top:5px;">${m.description}</div>` : ''}
+                ${m.notes ? `<div class="mc-section notes"><strong>${txt('mon_lbl_notes')}:</strong> ${m.notes}</div>` : ''}
+                ${m.loot ? `<div class="mc-section loot" style="font-size:0.85em; background:#eee; padding:5px;"><strong>Loot:</strong> ${m.loot}</div>` : ''}
             </div>
         `;
     }
@@ -229,20 +363,20 @@ export const MonsterBuilder = {
                         </div>
                         
                         <!-- Image Adjustments -->
-                        <div id="img-controls" style="display:flex; gap:10px; align-items:center;">
-                            <div style="flex:1;">
-                                <label style="font-size:0.7rem; color:#aaa;">${t('lbl_zoom')}</label>
+                        <div id="img-controls" style="display:grid; grid-template-columns: 1fr 1fr 1fr auto; gap:5px; align-items:center;">
+                            <div>
+                                <label style="font-size:0.6rem; color:#aaa;">${t('lbl_zoom')}</label>
                                 <input type="range" id="inp-img-scale" min="0.1" max="3.0" step="0.1" value="1" style="width:100%;">
                             </div>
-                            <div style="flex:1;">
-                                <label style="font-size:0.7rem; color:#aaa;">${t('lbl_pan_x')}</label>
+                            <div>
+                                <label style="font-size:0.6rem; color:#aaa;">${t('lbl_pan_x')}</label>
                                 <input type="range" id="inp-img-x" min="-200" max="200" step="10" value="0" style="width:100%;">
                             </div>
-                            <div style="flex:1;">
-                                <label style="font-size:0.7rem; color:#aaa;">${t('lbl_pan_y')}</label>
+                            <div>
+                                <label style="font-size:0.6rem; color:#aaa;">${t('lbl_pan_y')}</label>
                                 <input type="range" id="inp-img-y" min="-200" max="200" step="10" value="0" style="width:100%;">
                             </div>
-                            <button id="btn-reset-img" class="btn-small" style="height:30px; margin-top:12px;">${t('lbl_reset')}</button>
+                            <button id="btn-reset-img" class="btn-small" style="height:24px; margin-top:10px;">${t('lbl_reset')}</button>
                         </div>
                     </div>
 
@@ -252,7 +386,7 @@ export const MonsterBuilder = {
                             <select id="mb-role">
                                 ${roles.map(r => {
                                     const key = 'role_' + r.toLowerCase();
-                                    const label = t(key);
+                                    const label = t(key) !== key ? t(key) : r;
                                     return `<option value="${r}">${label}</option>`;
                                 }).join('')}
                             </select>
@@ -267,7 +401,6 @@ export const MonsterBuilder = {
                             <label class="form-label">${t('mon_lbl_family')}</label>
                             <select id="mb-family">
                                 ${families.map(f => {
-                                    // Capitalize first letter if name is missing in json
                                     const famName = data.families[f].name || f.charAt(0).toUpperCase() + f.slice(1);
                                     return `<option value="${f}">${famName}</option>`;
                                 }).join('')}
@@ -286,14 +419,28 @@ export const MonsterBuilder = {
                             <div class="stat-input"><label>${t('mon_stat_def')}</label><input type="number" id="mb-def"></div>
                             <div class="stat-input"><label>${t('mon_stat_save')}</label><input type="number" id="mb-save"></div>
                         </div>
-                        <div style="margin-top:10px;">
-                            <label class="form-label">${t('mon_stat_dmg')}</label>
-                            <input type="text" id="mb-dmg">
+                        
+                        <div style="margin-top:10px; border-top:1px solid #444; padding-top:10px;">
+                            <label class="form-label" style="font-size:0.8rem;">${t('mon_lbl_basic_attack')}</label>
+                            <select id="mb-basic-attack" style="margin-bottom:5px;">
+                                <option value="">-- ${t('mon_lbl_manual_dmg')} --</option>
+                            </select>
+                            <input type="text" id="mb-dmg" placeholder="e.g. 1d8+2">
                         </div>
                     </div>
 
                     <div id="ability-section"></div>
+                    
+                    <!-- Flavor Section -->
+                    <div class="info-box" style="margin-bottom:1rem;">
+                        <h4 style="margin-top:0; color:var(--accent-gold); font-size:0.9rem; text-transform:uppercase;">${t('mon_lbl_flavor')}</h4>
+                        <div style="display:flex; gap:5px; margin-bottom:5px;">
+                            <button id="btn-roll-flavor" class="btn-small" style="width:100%;">🎲 ${t('mon_btn_roll_flavor')}</button>
+                        </div>
+                        <div id="flavor-display" style="font-style:italic; font-size:0.8rem; color:#aaa; min-height:40px;"></div>
+                    </div>
 
+                    <!-- Custom Builder -->
                     <div class="custom-builder">
                         <h4 style="margin-top:0; color:var(--accent-gold); font-size:0.9rem; text-transform:uppercase;">${t('mon_lbl_custom')}</h4>
                         <div class="custom-row">
@@ -337,6 +484,50 @@ export const MonsterBuilder = {
     },
 
     attachListeners: () => {
+        // Basic Attack Dropdown
+        const atkDrop = document.getElementById('mb-basic-attack');
+        if (atkDrop) {
+            atkDrop.addEventListener('change', () => {
+                const idx = atkDrop.value;
+                if (idx !== "") {
+                    // Fetch attack data from family
+                    const data = I18n.getData('monsters');
+                    const fam = data.families[MonsterBuilder.currentMonster.family];
+                    const atk = fam.basic_attacks[idx];
+                    
+                    // Inject into Monster object (we store it in a special slot or just overwrite 'attacks' array)
+                    // Let's use a dedicated 'attacks' array like the new schema supports
+                    MonsterBuilder.currentMonster.attacks = [atk]; 
+                    
+                    // Also auto-fill the DMG text box if empty, just for reference? 
+                    // No, let the renderer handle it.
+                } else {
+                    MonsterBuilder.currentMonster.attacks = [];
+                }
+                MonsterBuilder.renderCard();
+            });
+        }
+
+        // Flavor Roller
+        document.getElementById('btn-roll-flavor').addEventListener('click', () => {
+            const data = I18n.getData('monsters');
+            const fam = data.families[MonsterBuilder.currentMonster.family];
+            if (!fam || !fam.flavor) return;
+
+            const rand = (arr) => arr[Math.floor(Math.random() * arr.length)];
+            
+            const activity = rand(fam.flavor.activity);
+            const visual = rand(fam.flavor.visuals);
+            const loot = rand(fam.flavor.loot);
+
+            const text = `<strong>Activity:</strong> ${activity}<br><strong>Visual:</strong> ${visual}<br><strong>Loot:</strong> ${loot}`;
+            
+            document.getElementById('flavor-display').innerHTML = text;
+            
+            // Optional: Auto-append to Notes?
+            // MonsterBuilder.currentMonster.notes += `\n${activity}`;
+        });
+
         // Dropdowns
         ['mb-role', 'mb-level', 'mb-family'].forEach(id => {
             const el = document.getElementById(id);
@@ -523,11 +714,29 @@ export const MonsterBuilder = {
     renderAbilityPickers: (familyKey) => {
         const data = I18n.getData('monsters');
         const t = I18n.t;
+        const m = MonsterBuilder.currentMonster;
         
-        // Fallback if family not found
         if (!data || !data.families[familyKey]) return;
-
         const fam = data.families[familyKey];
+        const currentRole = m.role ? m.role.toLowerCase() : 'soldier';
+
+        // 1. Populate Basic Attack Dropdown
+        const atkSelect = document.getElementById('mb-basic-attack');
+        if (atkSelect && fam.basic_attacks) {
+            // Keep previous selection if possible, otherwise reset
+            const prevVal = atkSelect.value;
+            atkSelect.innerHTML = `<option value="">-- ${t('mon_lbl_manual_dmg')} --</option>`;
+            
+            fam.basic_attacks.forEach((atk, idx) => {
+                const opt = document.createElement('option');
+                opt.value = idx;
+                opt.textContent = atk.name;
+                atkSelect.appendChild(opt);
+            });
+            // Try to restore selection
+            atkSelect.value = prevVal;
+        }
+
         const container = document.getElementById('ability-section');
         if(!container) return;
 
@@ -541,12 +750,18 @@ export const MonsterBuilder = {
                     <div class="arch-content">
             `;
             items.forEach((item, idx) => {
+                // If filtering logic below passed, item is valid
                 const cid = `chk-${typeKey}-${idx}`;
+                let originalIndex = idx;
+                if (typeKey === 'passives') {
+                    originalIndex = fam.role_passives.indexOf(item);
+                }
+
                 html += `
                     <div class="picker-item">
-                        <input type="checkbox" id="${cid}" data-type="${typeKey}" data-idx="${idx}">
+                        <input type="checkbox" id="${cid}" data-type="${typeKey}" data-idx="${originalIndex}">
                         <div class="picker-content">
-                            <div class="picker-name">${item.name} <span style="font-weight:normal; font-size:0.8em; color:#888;">${item.type || ""}</span></div>
+                            <div class="picker-name">${item.name}</div>
                             <div class="picker-desc">${item.effect}</div>
                         </div>
                     </div>
@@ -557,15 +772,23 @@ export const MonsterBuilder = {
         };
 
         let html = "";
-        html += createAccordion(t('mon_sect_traits'), fam.universal_traits, "traits", false);
-        // Sometimes passives are under 'passives', sometimes 'traits' in JSON logic
-        const passives = fam.passives || [];
-        html += createAccordion(t('mon_sect_traits') + " (" + fam.name + ")", passives, "passives", true);
+        
+        // 1. Universal Traits (Always Show)
+        html += createAccordion(t('mon_sect_universal'), fam.universal_traits, "universal", false);
+
+        // 2. Role Passives (STRICT FILTER)
+        // Only show passives that match the currently selected role
+        const filteredPassives = (fam.role_passives || []).filter(p => 
+            p.role.toLowerCase() === currentRole
+        );
+        
+        html += createAccordion(t('mon_sect_traits'), filteredPassives, "passives", true);
         html += createAccordion(t('mon_sect_actions'), fam.actions, "actions", true);
         html += createAccordion(t('mon_sect_danger'), fam.danger_abilities, "danger", false);
 
         container.innerHTML = html;
 
+        // Bind checkboxes
         container.querySelectorAll('input[type="checkbox"]').forEach(chk => {
             chk.addEventListener('change', () => MonsterBuilder.scanSelections());
         });
@@ -593,20 +816,22 @@ export const MonsterBuilder = {
         if (!data.families[m.family]) return;
         const fam = data.families[m.family];
 
-        // Reset standard arrays, keep customs
+        // Reset arrays (Keep Customs!)
         m.traits = []; 
         m.actions = []; 
         m.danger_abilities = [];
         
-        const counts = { traits: 0, passives: 0, actions: 0, danger: 0 };
+        // Note: Basic Attack is handled separately by the dropdown logic
+        
+        const counts = { universal: 0, passives: 0, actions: 0, danger: 0 };
 
         document.querySelectorAll('.arch-content input:checked').forEach(chk => {
             const type = chk.dataset.type;
             const idx = parseInt(chk.dataset.idx);
             counts[type]++;
             
-            if (type === 'traits') m.traits.push(fam.universal_traits[idx]);
-            else if (type === 'passives') m.traits.push({ ...fam.passives[idx], type: "Trait" }); 
+            if (type === 'universal') m.traits.push(fam.universal_traits[idx]);
+            else if (type === 'passives') m.traits.push({ ...fam.role_passives[idx], type: "Trait" }); 
             else if (type === 'actions') m.actions.push({ ...fam.actions[idx], type: "Action" });
             else if (type === 'danger') m.danger_abilities.push({ ...fam.danger_abilities[idx], type: "Danger" });
         });
@@ -736,5 +961,3 @@ export const MonsterBuilder = {
         alert(`Saved ${m.name} to Library.`);
     }
 };
-
-

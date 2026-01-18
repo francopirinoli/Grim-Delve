@@ -1512,10 +1512,67 @@ dd {
     color: #555;
 }
 
+/* --- Stat Block Number Styling --- */
 .mc-stat-val {
-    font-family: var(--font-mono);
-    font-size: 1.2rem;
+    color: #000;
+    line-height: 1.1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 3.5rem;
+}
+
+/* The Big Number */
+.stat-main {
+    font-family: 'Fira Code', monospace;
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #000; /* Default Black */
+}
+
+/* The Small Subtext (ft, Iron Scales, etc) */
+.stat-sub {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.65rem;
+    color: #444; /* Dark Grey for readability */
+    text-transform: uppercase;
     font-weight: bold;
+    text-align: center;
+    max-width: 90px;
+    line-height: 1.2;
+    margin-top: 2px;
+}
+
+/* --- STAT COLORS --- */
+
+/* 1. Labels (The Keys: HP, AS, SPEED...) */
+.mc-stat-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    font-weight: 900;
+    color: #8a2c2c; /* Crimson Labels */
+    letter-spacing: 0.5px;
+    margin-top: 4px;
+}
+
+/* 2. Value Overrides */
+/* HP Number is Red */
+.mc-stat.hp .stat-main { 
+    color: #b71c1c; 
+} 
+
+/* Attack Number forced to Black (Overriding default blue) */
+.mc-stat.atk .stat-main { 
+    color: #000; 
+} 
+
+/* Ensure borders match the layout */
+.mc-stat {
+    border-right: 1px solid #ccc; /* Lighter borders for cleanliness */
+}
+.mc-stat:last-child {
+    border-right: none;
 }
 
 .mc-section {
@@ -1941,32 +1998,57 @@ dd {
 /* --- FULL CARD MODAL --- */
 .modal-overlay {
     position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%;
     background: rgba(0, 0, 0, 0.85);
     display: flex;
     justify-content: center;
-    align-items: center;
+    /* Changed from center to flex-start to prevent top cutoff on tall items */
+    align-items: flex-start; 
     z-index: 2000;
     backdrop-filter: blur(3px);
     padding: 20px;
+    overflow-y: auto; /* Allows the overlay itself to scroll if needed */
 }
 
 /* Container for the stat block within modal */
 .view-monster-modal {
-    /* Reset width constraints for the modal wrapper */
-    max-width: 600px; 
     width: 100%;
-    max-height: 90vh;
-    overflow-y: auto;
-    box-shadow: 0 0 40px rgba(0,0,0,0.8);
-    border-radius: 4px;
+    max-width: 600px;
+    /* Ensure it doesn't get stuck off-screen */
+    margin: auto; 
+    position: relative;
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* Allow internal scrolling if we want fixed header behavior, 
+       otherwise let it grow naturally with the overlay scroll */
+    pointer-events: auto;
 }
 
 /* Ensure the monster card inside fills the modal nicely */
 .view-monster-modal .monster-card {
-    max-width: none; /* Allow it to fill the modal width */
+    max-width: none;
     margin: 0;
-    border: none; /* Modal has its own boundary */
+    border: 4px solid #1a1a1a;
+    background-color: #f3f0eb;
+    /* Fix for text rendering in modals */
+    text-align: left; 
+    box-shadow: 0 10px 40px rgba(0,0,0,1);
+}
+
+/* Make sure the close button is always visible/accessible */
+.view-monster-modal .btn-primary {
+    background: #8a2c2c;
+    border: 1px solid #ff5555;
+    color: white;
+    margin-top: 15px;
+    padding: 10px 30px;
+    font-size: 1rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
 }
 
 .library-module {
@@ -4729,17 +4811,28 @@ input.res-input:focus { border-bottom: 1px solid #fff !important; }
 
 .sb-prop-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start; /* Change to start to group Name and Tag */
     align-items: baseline;
+    gap: 8px; /* Space between Name and Tag */
 }
 
 .sb-prop-name {
-    font-weight: bold;
+    font-weight: 800;
     color: #000;
     font-size: 0.95rem;
 }
 
+.sb-prop-tags {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    font-style: italic;
+    color: #666;
+    font-weight: normal;
+}
+
+/* Push cost to the right */
 .sb-prop-cost {
+    margin-left: auto;
     font-family: 'Fira Code', monospace;
     font-size: 0.75rem;
     color: #b71c1c;
@@ -4806,4 +4899,96 @@ input.res-input:focus { border-bottom: 1px solid #fff !important; }
     color: #ffdddd; /* Light pink/white for the subtitle */
     margin-top: 4px;
     text-transform: uppercase;
+}
+
+/* --- MONSTER TUNER STYLES --- */
+
+/* 1. The Container limits the height to the viewport */
+.tuner-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    height: 100vh; /* Force full viewport height */
+    overflow: hidden; /* Prevent body scroll */
+}
+
+/* 2. Sidebar scrolls independently */
+.tuner-sidebar {
+    background: #1a1a1a;
+    border-right: 1px solid #333;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+.tuner-search { padding: 15px; border-bottom: 1px solid #333; flex-shrink: 0; }
+.tuner-search input { width: 100%; background: #000; color: #fff; border: 1px solid #444; padding: 8px; }
+
+.tuner-list {
+    flex-grow: 1;
+    overflow-y: auto; /* List scrolls here */
+    padding-bottom: 20px;
+}
+
+.tuner-item {
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    border-bottom: 1px solid #222;
+    color: #bbb;
+}
+
+.tuner-item:hover { background: #252525; color: white; }
+.tuner-item.active { background: rgba(197, 160, 89, 0.2); border-left: 3px solid var(--accent-gold); color: white; font-weight: bold; }
+
+.tuner-footer { padding: 15px; border-top: 1px solid #333; display: flex; gap: 10px; flex-shrink: 0; background: #1a1a1a; }
+
+/* 3. Workspace Layout */
+.tuner-workspace {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: #111;
+    overflow: hidden;
+}
+
+.tuner-controls {
+    background: #222;
+    padding: 15px 20px;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    border-bottom: 1px solid #444;
+    flex-shrink: 0; /* Controls stay fixed at top */
+}
+
+/* 4. The Scrolling Viewport for Cards */
+.tuner-dual-view {
+    flex-grow: 1;
+    overflow-y: auto; /* THIS enables scrolling for the cards */
+    padding: 40px;
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    background-image: radial-gradient(#222 15%, transparent 16%), radial-gradient(#222 15%, transparent 16%);
+    background-size: 60px 60px;
+    background-position: 0 0, 30px 30px;
+}
+
+.tuner-pane {
+    flex: 0 0 500px; /* Fixed width for columns so they don't squash */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.pane-label {
+    font-family: var(--font-header);
+    color: var(--accent-blue);
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-align: center;
+    border-bottom: 2px solid var(--accent-blue);
+    width: 100%;
+    padding-bottom: 5px;
 }

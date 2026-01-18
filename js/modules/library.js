@@ -416,14 +416,23 @@ export const Library = {
         grid.innerHTML = pageItems.map(m => {
             const isCustom = (m.source !== 'official');
             
-            // Translate Role for Card Display
+            // Translate Role
             const roleKey = 'role_' + (m.role || '').toLowerCase();
             const roleName = t(roleKey) !== roleKey ? t(roleKey) : m.role;
             const displayRole = roleName.charAt(0).toUpperCase() + roleName.slice(1);
 
+            // --- IMAGE FIX ---
             let imgHTML = `<div class="lib-thumb-placeholder">💀</div>`;
-            if (m.imageId) imgHTML = `<img src="" data-img-id="${m.imageId}">`;
-            else if (m.imageUrl) imgHTML = `<img src="${m.imageUrl}">`;
+            
+            // Calculate Style string for Pan/Zoom
+            const pos = m.imgPos || { x: 0, y: 0, scale: 1.0 };
+            const imgStyle = `transform: translate(${pos.x}px, ${pos.y}px) scale(${pos.scale});`;
+
+            if (m.imageId) {
+                imgHTML = `<img src="" data-img-id="${m.imageId}" style="${imgStyle}">`;
+            } else if (m.imageUrl) {
+                imgHTML = `<img src="${m.imageUrl}" style="${imgStyle}">`;
+            }
 
             return `
                 <div class="lib-card ${isCustom ? 'custom' : 'official'}">

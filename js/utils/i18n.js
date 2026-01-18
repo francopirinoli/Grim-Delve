@@ -7,6 +7,13 @@
 
 const UI_DICTIONARY = {
     "en": {
+        "mon_sect_universal": "Universal Traits",
+        "mon_lbl_basic_attack": "Basic Attack",
+        "mon_lbl_manual_dmg": "Manual Damage",
+        "mon_lbl_flavor": "Flavor",
+        "mon_btn_roll_flavor": "Roll Random Flavor",
+        "mon_default_atk_name": "Standard Attack",
+        "mon_default_atk_desc": "Deals {dmg} damage.",
         // --- MISSING IMAGE CONTROLS ---
         "lbl_zoom": "Zoom",
         "lbl_pan_x": "Pan X",
@@ -274,6 +281,13 @@ const UI_DICTIONARY = {
         "tbl_btn_roll": "Roll {dice}"
     },
     "es": {
+        "mon_sect_universal": "Rasgos Universales",
+        "mon_lbl_basic_attack": "Ataque Básico",
+        "mon_lbl_manual_dmg": "Daño Manual",
+        "mon_lbl_flavor": "Sabor / Ambientación",
+        "mon_btn_roll_flavor": "Generar Sabor Aleatorio",
+        "mon_default_atk_name": "Ataque Estándar",
+        "mon_default_atk_desc": "Inflige {dmg} de daño.",
         // --- MISSING IMAGE CONTROLS ---
         "lbl_zoom": "Zoom",
         "lbl_pan_x": "Pan X",
@@ -376,7 +390,7 @@ const UI_DICTIONARY = {
         "nav_dashboard": "Tablero",
         "nav_home": "Reglas",
         "nav_chargen": "Creador de PJs",
-        "nav_bestiary": "Bestiario",
+        "nav_bestiary": "Creador de Criaturas",
         "nav_items": "El Artificiero",
         "nav_library": "Biblioteca",
         "nav_tables": "Tablas y Dados",
@@ -650,10 +664,16 @@ export const I18n = {
     fmt: (key, vars = {}) => {
         let str = UI_DICTIONARY[I18n.currentLang][key] || key;
         for (const [k, v] of Object.entries(vars)) {
-            // Replace {key} with value
             str = str.replace(`{${k}}`, v);
         }
         return str;
+    },
+
+    force: (key, lang) => {
+        if (UI_DICTIONARY[lang] && UI_DICTIONARY[lang][key]) {
+            return UI_DICTIONARY[lang][key];
+        }
+        return key;
     },
 
     normalize: (type, value) => {
@@ -678,7 +698,20 @@ export const I18n = {
     // Check against Localized OR Raw (English)
     return localized.includes(input) || raw.includes(input);
     },
-
+    
+    updateEntry: (category, newItem) => {
+        if (!DATA_STORE[category]) return;
+        
+        const idx = DATA_STORE[category].findIndex(i => i.id === newItem.id);
+        if (idx > -1) {
+            // Update existing
+            DATA_STORE[category][idx] = newItem;
+        } else {
+            // Add new
+            DATA_STORE[category].push(newItem);
+        }
+        console.log(`I18n: Updated ${category} entry: ${newItem.name}`);
+    },
 
     getData: (type) => {
         return DATA_STORE[type];

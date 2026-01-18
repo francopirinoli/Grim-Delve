@@ -91,1536 +91,2590 @@
       { "lvl": 10, "hp": 1, "as": 0, "speed": 30, "atk_dc": 18, "def_dc": 15, "save_dc": 17, "dmg": "6 (Flat)" }
     ]
   },
-  "families": {
-    "folk": {
-      "id": "fam_folk",
-      "name": "The Folk",
-      "description": "People. Humans, Elves, Dwarves, Orcs, and Goblins. They utilize equipment, formations, and tactics. Unlike beasts, they can be reasoned with... or bribed.",
-      "universal_traits": [
-        {
-          "name": "Gear Dependent",
-          "effect": "Power comes from weapons/armor. If Disarmed: Attack DC -2, Damage becomes 1d4. Must spend Action to retrieve weapon."
-        },
-        {
-          "name": "Social Psychology",
-          "effect": "Susceptible to Parley (Influence Checks). If a Leader is killed, Minions must check Morale or flee."
-        },
-        {
-          "name": "Lootable",
-          "effect": "Drop weapons, armor, and coin pouches (Roll on Folk Loot Table)."
-        }
-      ],
-      "passives": [
-        {
-          "name": "Shield Wall",
-          "role": "Soldier",
-          "effect": "Gains +2 Defense DC while adjacent to an ally wielding a shield."
-        },
-        {
-          "name": "Pack Tactics",
-          "role": "Brute/Minion",
-          "effect": "Gains +1 Attack DC if an ally is adjacent to the target."
-        },
-        {
-          "name": "Phalanx",
-          "role": "Soldier",
-          "effect": "Cannot be Flanked while adjacent to an ally."
-        },
-        {
-          "name": "Vengeful",
-          "role": "Leader",
-          "effect": "If an ally within 30ft is killed, gain Advantage on next Attack Check."
-        },
-        {
-          "name": "Sniper's Patience",
-          "role": "Artillery",
-          "effect": "If this unit does not Move, deal +1d6 Damage with Ranged Attacks."
-        },
-        {
-          "name": "Evasive Footwork",
-          "role": "Skirmisher",
-          "effect": "Movement does not provoke Opportunity Attacks (Counter-Attacks)."
-        },
-        {
-          "name": "Arcane Ward",
-          "role": "Caster",
-          "effect": "Gains +2 Armor Score against Spells and Magical Effects."
-        },
-        {
-          "name": "Concentration",
-          "role": "Caster",
-          "effect": "Does not lose held spells upon taking damage unless damage exceeds 10 in a single hit."
-        }
-      ],
-      "actions": [
-        {
-          "name": "Dirty Fighting",
-          "type": "Melee",
-          "effect": "On Hit: Normal Damage. Target must make Fortitude Save vs Attack DC or be Blinded (sand/spit) for 1 round."
-        },
-        {
-          "name": "Trip / Shove",
-          "type": "Melee",
-          "effect": "On Hit: Half Damage. Target must make Reflex Save vs Attack DC or be Knocked Prone / Pushed 10ft."
-        },
-        {
-          "name": "Volley Fire",
-          "type": "Ranged",
-          "effect": "Target 10ft Radius. All enemies in area roll Defense vs Attack DC. On Fail: Take Weapon Damage."
-        },
-        {
-          "name": "Execute",
-          "type": "Melee",
-          "effect": "Target must be Prone or Stunned. On Hit: Deal Critical Damage."
-        },
-        {
-          "name": "Arcane Bolt",
-          "type": "Magic",
-          "effect": "Ranged (60ft). On Hit: 1d10 Force Damage. Ignores Armor Score."
-        },
-        {
-          "name": "Scorching Ray",
-          "type": "Magic",
-          "effect": "Ranged (60ft). On Hit: 2d6 Fire Damage + Burning Condition."
-        },
-        {
-          "name": "Hold Person",
-          "type": "Magic",
-          "effect": "Target makes Will Save vs Save DC. Fail: Paralyzed (Stunned) for 1 round."
-        },
-        {
-          "name": "Dark Prayer",
-          "type": "Magic",
-          "effect": "Target makes Fortitude Save vs Save DC. Fail: Take 2d6 Necrotic Damage, Caster heals for that amount."
-        },
-        {
-          "name": "Mend Wounds",
-          "type": "Magic",
-          "effect": "Touch Ally. Ally regains 2d8 + Level HP."
-        }
-      ],
-      "danger_abilities": [
-        {
-          "name": "Get Them!",
-          "cost": "1 DP",
-          "effect": "All allies within 30ft use Reaction to move up to Speed toward a specific target."
-        },
-        {
-          "name": "Focus Fire",
-          "cost": "1 DP",
-          "effect": "Mark a player. Until next round, all attacks against them have +2 Attack DC."
-        },
-        {
-          "name": "Flashbang",
-          "cost": "1 DP",
-          "effect": "All players within 20ft: Reflex Save vs Save DC or Stunned 1 round."
-        },
-        {
-          "name": "Reinforcements",
-          "cost": "2 DP",
-          "effect": "1d4 Minions (Same type) arrive from nearby entrance."
-        },
-        {
-          "name": "Desperate Fury",
-          "cost": "1 DP",
-          "effect": "Trigger: Reduced to 0 HP. Enemy remains at 1 HP, takes one immediate Action, then dies."
-        },
-        {
-          "name": "Wall of Steel",
-          "cost": "1 DP",
-          "effect": "Gain Resistance (Half Damage) to Physical Damage until next turn."
-        },
-        {
-          "name": "Mass Dispel",
-          "cost": "1 DP",
-          "effect": "All active player buffs/spells within 60ft are ended."
-        },
-        {
-          "name": "Tactical Retreat",
-          "cost": "1 DP",
-          "effect": "All allies Disengage and move Full Speed away. They regain 1d6 HP (Second Wind)."
-        }
-      ],
-      "flavor": {
-        "activity": [
-          "Gambling with bone dice.", "Sharpening weapons.", "Eating hardtack.", "Sleeping (Sentry asleep?)", "Interrogating prisoner.", "Arguing over maps.", "Building fortifications.", "Praying to dark god.", "Counting loot.", "Patching wounds."
-        ],
-        "visuals": [
-          "Deserters in rags.", "Cultists in robes.", "Bandits with trophies.", "Rival Adventuring Party.", "Uniformed Guards.", "Tribal/Woad Painted.", "Scavengers in gas masks.", "Nobles in silk/plate.", "Professional Mercenaries.", "Plague-Infected."
-        ],
-        "loot": [
-          "Copper/Silver coins.", "Pouch of tobacco.", "Bone dice.", "Crude map (Quest Hook).", "Love letter.", "Cheap wine flask.", "Silver tooth (5g).", "Vial of Basic Toxin.", "Dungeon Key.", "Stolen Potion.", "Bounty Poster.", "Small Gemstone."
-        ]
-      }
+  "families": 
+  {"folk": {
+  "id": "fam_folk",
+  "name": "The Folk",
+  "description": "People. Humans, Elves, Dwarves, Orcs, and Goblins. They utilize equipment, formations, and tactics. Unlike beasts, they can be reasoned with... or bribed.",
+  "universal_traits": [
+    {
+      "name": "Gear Dependent",
+      "effect": "Power comes from weapons/armor. If Disarmed: Attack DC -2, Damage becomes 1d4. Must spend Action to retrieve weapon."
     },
-    "beasts": {
-      "id": "fam_beasts",
-      "name": "The Beasts",
-      "description": "Natural predators. Wolves, bears, spiders, and serpents. They are driven by hunger, territory, and instinct. They fight with unified purpose to protect the pack or nest.",
-      "universal_traits": [
-        {
-          "name": "Natural Weaponry",
-          "effect": "Cannot be Disarmed. Weapons are body parts (Claws, Fangs)."
-        },
-        {
-          "name": "Animal Mind",
-          "effect": "Immune to bribes or complex social manipulation. Can be influenced via Survival (Handle Animal) actions if not Enraged."
-        },
-        {
-          "name": "Harvestable",
-          "effect": "Drop 'Organics' (Hides, Venom, Glands). Harvest Check: Survival (WIS) DC 10 + Level."
-        }
-      ],
-      "passives": [
-        {
-          "name": "Keen Senses",
-          "role": "Skirmisher/Lurker",
-          "effect": "Cannot be Surprised. Advantage on Attack DC vs Hidden enemies (Smell/Hearing)."
-        },
-        {
-          "name": "Spider Climb",
-          "role": "Lurker",
-          "effect": "Climb walls/ceilings at full speed without checks."
-        },
-        {
-          "name": "Charge",
-          "role": "Brute/Soldier",
-          "effect": "If moving 20ft straight toward target, gain +1 Attack DC for that turn."
-        },
-        {
-          "name": "Blood Frenzy",
-          "role": "Skirmisher/Minion",
-          "effect": "Gain +2 Attack DC against targets with Bleeding or <50% HP."
-        },
-        {
-          "name": "Amphibious",
-          "role": "Any",
-          "effect": "Breathe water and Swim at full speed."
-        },
-        {
-          "name": "Pack Tactics",
-          "role": "Soldier/Minion",
-          "effect": "Gain +1 Attack DC if an ally is adjacent to the target."
-        },
-        {
-          "name": "Instinctive Dodge",
-          "role": "Skirmisher",
-          "effect": "Take Half Damage from Area of Effect attacks (Reflex Saves)."
-        }
-      ],
-      "actions": [
-        {
-          "name": "Latch On",
-          "type": "Melee",
-          "effect": "On Hit: Normal Damage. Target is Grappled (Speed 0). If target starts turn Grappled, take automatic Damage equal to STR Mod."
-        },
-        {
-          "name": "Knockdown",
-          "type": "Melee",
-          "effect": "On Hit: Half Damage. Target must make Reflex Save vs Attack DC or be Knocked Prone."
-        },
-        {
-          "name": "Venomous Strike",
-          "type": "Melee",
-          "effect": "On Hit: Normal Damage. Target must make Fortitude Save vs Attack DC or be Poisoned (1d6/turn) for 1 minute."
-        },
-        {
-          "name": "Web Shot",
-          "type": "Ranged",
-          "effect": "Range 30ft. On Hit: No Damage. Target is Restrained. Escape: STR Check DC 13."
-        },
-        {
-          "name": "Rend",
-          "type": "Melee",
-          "effect": "On Hit: Normal Damage. If target is below Max HP, they gain Bleeding condition."
-        },
-        {
-          "name": "Terrifying Roar",
-          "type": "AoE",
-          "effect": "30ft Radius. Enemies must make Will Save vs Save DC. Fail: Frightened for 1 round."
-        }
-      ],
-      "danger_abilities": [
-        {
-          "name": "Primal Roar",
-          "cost": "1 DP",
-          "effect": "All players within 30ft: Will Save vs Save DC or Frightened 1 round."
-        },
-        {
-          "name": "Devour",
-          "cost": "1 DP",
-          "effect": "Attack a Grappled/Prone target. Deal Double Damage and Heal for half the amount dealt."
-        },
-        {
-          "name": "Call of the Wild",
-          "cost": "1 DP",
-          "effect": "1d4 Minions (Same species) emerge from environment at end of round."
-        },
-        {
-          "name": "Thrash",
-          "cost": "1 DP",
-          "effect": "All adjacent creatures: Reflex Save vs Save DC. Fail: Take STR Mod damage and pushed 10ft."
-        },
-        {
-          "name": "Pounce",
-          "cost": "1 DP",
-          "effect": "Leap 30ft to target. Target makes Reflex Save vs Attack DC. Fail: Normal Damage + Knocked Prone."
-        },
-        {
-          "name": "Enrage",
-          "cost": "1 DP",
-          "effect": "Trigger: <50% HP. Clear all negative conditions. Take an immediate extra Action."
-        },
-        {
-          "name": "Stampede",
-          "cost": "1 DP",
-          "effect": "Move up to Speed in a straight line through enemies. Enemies passed through must make Reflex Save or take Weapon Damage and fall Prone."
-        }
-      ],
-      "flavor": {
-        "activity": [
-          "Sleeping among bones.", "Gnawing on fresh corpse.", "Stalking (Stealth Check).", "Nursing young/eggs.", "Marking territory.", "Fighting over carcass.", "Suffering from disease.", "Sharpening claws.", "Watching from high ground.", "Playing with a 'toy'."
-        ],
-        "visuals": [
-          "Mange-Ridden/Rabid.", "Alpha/Dire (Bone ridges).", "Quilled/Spined.", "Blind/Cave-Adapted.", "Fused with metal.", "Shadow-Touched (Black fur).", "Albino.", "Ancient/Scarred.", "Fungal growth.", "Two-Headed Mutation."
-        ],
-        "loot": [
-          "Intact Pelt (10g).", "Venom Gland (20g).", "Undigested Ring (50g).", "Razor Claws (5g).", "Rare Egg (100g).", "Musk Scent Gland (15g).", "Web Silk Gland (20g).", "Monster Heart (50g).", "Bone Trophy.", "Ownership Collar."
-        ]
-      }
+    {
+      "name": "Social Psychology",
+      "effect": "Susceptible to Parley (Influence Checks). If a Leader is killed, Minions must check Morale or flee."
     },
-    "unliving": {
-      "id": "fam_unliving",
-      "name": "The Unliving",
-      "description": "A violation of the natural order. Skeletons, zombies, ghosts, and liches. They do not feel pain, fear, or mercy. Fighting them is a battle of attrition.",
-      "universal_traits": [
-        {
-          "name": "Dead Nerves",
-          "effect": "Immune to Poisoned, Bleeding, and Exhausted conditions. They do not breathe, eat, or sleep."
-        },
-        {
-          "name": "Unholy Vulnerability",
-          "effect": "Take Double Damage from Radiant sources."
-        },
-        {
-          "name": "Harvestable",
-          "effect": "Drop 'Essence' (Bone Dust, Ectoplasm). Harvest Check: Lore (INT) DC 10 + Level."
-        }
-      ],
-      "passives": [
-        {
-          "name": "Undead Fortitude",
-          "role": "Soldier/Brute",
-          "effect": "If damage reduces it to 0 HP, make a check (DC 5 + Damage Taken). On success, drop to 1 HP instead. Radiant damage bypasses this."
-        },
-        {
-          "name": "Stench",
-          "role": "Brute",
-          "effect": "Living creatures starting turn within 10ft must make Fortitude Save vs Save DC. Fail: Weakened for 1 round."
-        },
-        {
-          "name": "Incorporeal",
-          "role": "Lurker/Controller",
-          "effect": "Can move through objects. Resistance (Half Damage) to non-magical physical attacks."
-        },
-        {
-          "name": "Life Sense",
-          "role": "Lurker",
-          "effect": "Automatically detects living creatures within 60ft, ignoring Invisibility and Stealth."
-        },
-        {
-          "name": "Magic Resistance",
-          "role": "Controller",
-          "effect": "Gains +2 Armor Score against Spells and Magical Effects."
-        },
-        {
-          "name": "Bone Pile",
-          "role": "Minion/Lurker",
-          "effect": "Indistinguishable from a dead body while prone. Advantage on first attack (Ambush)."
-        },
-        {
-          "name": "Turn Resistance",
-          "role": "Solo",
-          "effect": "Advantage on Saving Throws against Turn Undead or Holy Repulsion effects."
-        }
-      ],
-      "actions": [
-        {
-          "name": "Rotting Slam",
-          "type": "Melee",
-          "effect": "On Hit: Normal Damage. Target must make Fortitude Save vs Save DC or contract a Disease (Cannot heal non-magically)."
-        },
-        {
-          "name": "Life Drain",
-          "type": "Melee",
-          "effect": "On Hit: Necrotic Damage. The Undead regains HP equal to half the damage dealt."
-        },
-        {
-          "name": "Paralyzing Touch",
-          "type": "Melee",
-          "effect": "On Hit: Normal Damage. Target must make Fortitude Save vs Save DC or be Stunned for 1 round."
-        },
-        {
-          "name": "Grave Grasp",
-          "type": "Melee",
-          "effect": "Ignores Armor Score. On Hit: Target is Grappled (Speed 0)."
-        },
-        {
-          "name": "Terrifying Glare",
-          "type": "Ranged",
-          "effect": "Target player makes Will Save vs Save DC. Fail: 1d6 Psychic Damage and Frightened for 1 round."
-        },
-        {
-          "name": "Necrotic Bolt",
-          "type": "Magic",
-          "effect": "Ranged (60ft). On Hit: Force/Necrotic Damage. Ignores Armor Score."
-        }
-      ],
-      "danger_abilities": [
-        {
-          "name": "Wail of the Damned",
-          "cost": "1 DP",
-          "effect": "All living enemies within 30ft: Will Save vs Save DC. Fail: 2d6 Psychic Dmg and Frightened."
-        },
-        {
-          "name": "Rise Again",
-          "cost": "1 DP",
-          "effect": "Trigger: When destroyed. Reassemble/Stand up immediately with Half HP."
-        },
-        {
-          "name": "Horde Instinct",
-          "cost": "1 DP",
-          "effect": "All Undead Minions within 30ft move Full Speed toward the nearest player (No OA)."
-        },
-        {
-          "name": "Curse of Ages",
-          "cost": "1 DP",
-          "effect": "Target is Cursed. Cannot regain Hit Points or Luck Points until Curse is removed."
-        },
-        {
-          "name": "Corpse Explosion",
-          "cost": "1 DP",
-          "effect": "Trigger: When destroyed (or target corpse). 10ft Radius. 4d6 Necrotic Damage (Reflex Half)."
-        },
-        {
-          "name": "Grave-Bind",
-          "cost": "1 DP",
-          "effect": "Spectral hands erupt in 20ft Radius. Area is Difficult Terrain. Creatures are Restrained (STR Save DC 13)."
-        },
-        {
-          "name": "Soul Reap",
-          "cost": "1 DP",
-          "effect": "Target one creature with <10 HP. They drop to 0 HP immediately. If already at 0, they fail 1 Death Save."
-        }
-      ],
-      "flavor": {
-        "activity": [
-          "Standing perfectly still (facing wall).", "Arranging bones in patterns.", "Repeating a single word.", "Lying in a pile (Ambush).", "Weeping silently.", "Gnawing on dry bone.", "Scratching at a door.", "Worshipping dark idol.", "Patrolling ancient route.", "Screaming without breath."
-        ],
-        "visuals": [
-          "Fused armor/bone.", "Leaking green vapor.", "Preserved (Wax/Bandages).", "Broken/Contorted limbs.", "Burning with cold fire.", "Bloated/Waterlogged.", "Mineral encrusted.", "Shadowy/Indistinct.", "Overgrown with roots.", "Gilded/Jeweled."
-        ],
-        "loot": [
-          "Grave Dust (5g).", "Bone Meal (2g).", "Ectoplasm (20g).", "Gold Tooth (5g).", "Burial Ring (15g).", "Ancient Coin (10g).", "Funerary Mask (50g).", "Cursed Trinket (100g).", "Wraith Silk (25g).", "Canopic Jar (50g)."
-        ]
-      }
-    },
-    "constructs": {
-      "id": "fam_constructs",
-      "name": "The Constructs",
-      "description": "Artificial life. Golems, animated armor, and clockwork horrors. They do not feel pain or fear, following their programming with absolute, machine-like perfection.",
-      "universal_traits": [
-        {
-          "name": "Inorganic Shell",
-          "effect": "Immune to Bleeding, Poisoned, Diseased, Exhausted, Charmed, and Frightened. Do not breathe/eat/sleep."
-        },
-        {
-          "name": "Repair Required",
-          "effect": "Cannot be healed by standard magic (Cure Wounds) or Medicine. Requires Mending spell or Craft & Tinker checks."
-        },
-        {
-          "name": "Harvestable",
-          "effect": "Drop 'Scrap' (Gears, Plating, Oil). Harvest Check: Craft & Tinker (INT) DC 10 + Level."
-        }
-      ],
-      "passives": [
-        {
-          "name": "Heavy Plating",
-          "role": "Soldier/Brute",
-          "effect": "Base Armor Score is increased by +1."
-        },
-        {
-          "name": "Immutable Form",
-          "role": "Any",
-          "effect": "Immune to Polymorph/Petrification. Critical Hits against it count as Normal Hits (No Bonus Effect/Luck gain)."
-        },
-        {
-          "name": "Magic Resistance",
-          "role": "Soldier/Solo",
-          "effect": "Gains +2 Armor Score against Spells and Magical Effects."
-        },
-        {
-          "name": "Hazardous Body",
-          "role": "Skirmisher",
-          "effect": "Covered in spikes/heat/electricity. Grapplers or Unarmed attackers take 1d4 Damage."
-        },
-        {
-          "name": "Unstoppable",
-          "role": "Brute",
-          "effect": "Ignores non-magical Difficult Terrain. Cannot be Slowed or Paralyzed by physical means."
-        },
-        {
-          "name": "Elemental Absorption",
-          "role": "Solo",
-          "effect": "Immune to one Element (Fire/Lightning/Acid). Heals for half damage if hit by that type."
-        }
-      ],
-      "actions": [
-        {
-          "name": "Slam",
-          "type": "Melee",
-          "effect": "On Hit: High Damage (Upgrade die type). Simple bludgeoning force."
-        },
-        {
-          "name": "Crush",
-          "type": "Melee",
-          "effect": "On Hit: Normal Damage. Target is Grappled. Start Turn Grappled: Take Automatic Damage equal to STR Mod."
-        },
-        {
-          "name": "Vent (Steam/Fire)",
-          "type": "AoE",
-          "effect": "15ft Cone. Reflex Save vs Attack DC. Fail: 2d6 Elemental Damage."
-        },
-        {
-          "name": "Whirlwind",
-          "type": "AoE",
-          "effect": "Make one Attack Check against EVERY adjacent enemy."
-        },
-        {
-          "name": "Trample",
-          "type": "Move",
-          "effect": "Move full speed through enemies. They make Reflex Save vs Attack DC or take Damage and fall Prone."
-        },
-        {
-          "name": "Capture",
-          "type": "Melee",
-          "effect": "On Hit: No Damage. Target is Restrained (Net/Manacles). Escape: STR/DEX DC 15."
-        }
-      ],
-      "danger_abilities": [
-        {
-          "name": "Overcharge",
-          "cost": "1 DP",
-          "effect": "Take an immediate Extra Action. At end of turn, Construct takes 1d10 Damage (Overheat)."
-        },
-        {
-          "name": "Self-Destruct",
-          "cost": "1 DP",
-          "effect": "Trigger: 0 HP. Explode. 20ft Radius. 4d6 Fire/Force Damage (Reflex Half)."
-        },
-        {
-          "name": "Repair Protocol",
-          "cost": "1 DP",
-          "effect": "Regain 10 HP and end one negative condition (Blinded/Weakened)."
-        },
-        {
-          "name": "Lockdown",
-          "cost": "1 DP",
-          "effect": "Create a barrier (Force/Stone/Iron) blocking a 10ft passage or trapping a target. Durability: 20 HP."
-        },
-        {
-          "name": "Vent Coolant",
-          "cost": "1 DP",
-          "effect": "20ft Radius cloud. Heavily Obscured (Blindness). Start turn in cloud: Take 1d6 Cold Damage."
-        },
-        {
-          "name": "Analyze Pattern",
-          "cost": "1 DP",
-          "effect": "Scan one player. Gain Advantage on all Attack Checks against them for the rest of combat."
-        }
-      ],
-      "flavor": {
-        "activity": [
-          "Standing statue-still.", "Patrolling precise path.", "Cleaning debris/corpses.", "Repeating warning message.", "Repairing self (sparks).", "Venting steam rhythmically.", "Staring at wall (Input wait).", "Marching in lockstep.", "Grinding gears.", "Mimicking last sight."
-        ],
-        "visuals": [
-          "Rusted Iron (Leaking oil).", "Polished Marble.", "Clockwork Brass (Ticking).", "Flesh-Stitched (Golem).", "Crystal/Gem (Glowing).", "Wicker/Wood (Burning core).", "Porcelain (Doll-like).", "Obsidian (Jagged).", "Scrap Heap (Magnetic).", "Hollow Armor."
-        ],
-        "loot": [
-          "Complex Gear (10g).", "Hydraulic Piston (15g).", "Power Core (50g).", "Alchemical Fuel (20g).", "Masterwork Plate (50g).", "Focus Lens (25g).", "Copper Wiring (5g).", "Runic Clay (10g).", "Silver Filigree (30g).", "Black Box (Quest Item)."
-        ]
-      }
-    },
-    "horrors": {
-      "id": "fam_horrors",
-      "name": "The Horrors",
-      "description": "Aberrations from the Far Realm or the deep earth. They defy biology and logic. Fighting them risks madness as much as physical death.",
-      "universal_traits": [
-        {
-          "name": "Non-Euclidean Anatomy",
-          "effect": "Cannot be Flanked (immune to side-based Sneak Attack) and cannot be Knocked Prone (no up or down)."
-        },
-        {
-          "name": "Alien Mind",
-          "effect": "Immune to Charmed and Confused conditions. Their thoughts are too vast or jagged to manipulate."
-        },
-        {
-          "name": "Harvestable",
-          "effect": "Drop 'Forbidden Curios' (Alien Gems, Brain Fluid). Harvest Check: Survival (WIS) DC 10 + Level."
-        }
-      ],
-      "passives": [
-        {
-          "name": "Amorphous",
-          "role": "Lurker",
-          "effect": "Can squeeze through 1-inch gaps. Advantage to escape Grapples."
-        },
-        {
-          "name": "Regeneration",
-          "role": "Brute/Soldier",
-          "effect": "Regain 5 HP at start of turn. Stopped by Fire or Acid damage."
-        },
-        {
-          "name": "Aura of Madness",
-          "role": "Controller/Solo",
-          "effect": "Creatures starting turn within 10ft must make Will Save vs Save DC or be Dazed 1 round."
-        },
-        {
-          "name": "Magic Resistance",
-          "role": "Soldier",
-          "effect": "Gains +2 Armor Score against Spells and Magical Effects."
-        },
-        {
-          "name": "Caustic Blood",
-          "role": "Brute",
-          "effect": "Melee attackers take 1d4 Acid Damage on hit."
-        }
-      ],
-      "actions": [
-        {
-          "name": "Tentacle Lash",
-          "type": "Melee",
-          "effect": "Reach 10ft. On Hit: Normal Damage and Target is Grappled."
-        },
-        {
-          "name": "Psychic Bore",
-          "type": "Magic",
-          "effect": "Ranged (60ft). On Hit: Psychic Damage (Ignores Armor). Target loses Concentration on spells."
-        },
-        {
-          "name": "Engulf / Absorb",
-          "type": "Melee",
-          "effect": "Against Grappled target. Move into space. Target Restrained. Automatic Acid Damage at start of turn."
-        },
-        {
-          "name": "Gaze of Entropy",
-          "type": "Ranged",
-          "effect": "Target makes Fortitude Save vs Save DC. Fail: Weakened (Half Damage dealt) for 1 minute."
-        },
-        {
-          "name": "Gibbering",
-          "type": "AoE",
-          "effect": "20ft Radius. Will Save vs Save DC. Fail: Confused for 1 round."
-        },
-        {
-          "name": "Flesh-Warp",
-          "type": "Melee",
-          "effect": "On Hit: Fortitude Save. Fail: Limb becomes rubbery (Drop Item or Fall Prone) for 1 minute."
-        }
-      ],
-      "danger_abilities": [
-        {
-          "name": "Mind Blast",
-          "cost": "1 DP",
-          "effect": "30ft Cone. Will Save vs Save DC. Fail: 3d6 Psychic Damage (Ignores Armor) and Stunned 1 round."
-        },
-        {
-          "name": "Spatial Warp",
-          "cost": "1 DP",
-          "effect": "Teleport self and one adjacent creature (Will Save negates) to any point within 60ft."
-        },
-        {
-          "name": "Fission",
-          "cost": "1 DP",
-          "effect": "Trigger: Take Slashing/Lightning dmg. Split into two copies. Both have Half current HP."
-        },
-        {
-          "name": "Void Shield",
-          "cost": "1 DP",
-          "effect": "Gain 20 Temp HP. While Shield holds, Immune to Magic."
-        },
-        {
-          "name": "Reality Tear",
-          "cost": "1 DP",
-          "effect": "20ft Radius Zone. Zero-Gravity. Creatures float and have Disadvantage on DEX/Attacks unless flying/anchored."
-        },
-        {
-          "name": "Dominate",
-          "cost": "1 DP",
-          "effect": "Target makes Will Save. Fail: Charmed and immediately makes a Reaction Attack against an ally."
-        }
-      ],
-      "flavor": {
-        "activity": [
-          "Vibrating reality.", "Merging with terrain.", "Mimicking backwards speech.", "Staring through walls.", "Building nest of glass.", "Swimming through air.", "Dissolving victim.", "Tracing geometry.", "Weeping ichor.", "Hovering motionless."
-        ],
-        "visuals": [
-          "Translucent Jelly.", "Non-Euclidean Geometry.", "Stretched Humanoid.", "Insectoid/Chitin.", "Cohesive Gas.", "Fungal/Moldy.", "Organic Metal.", "Living Silhouette.", "Inside-Out Anatomy.", "Mass of Worms."
-        ],
-        "loot": [
-          "Alien Gem (50g).", "Brain Fluid (25g).", "Strange Metal (20g).", "Geometric Geode (30g).", "Mutagenic Gland (40g).", "Void Dust (15g).", "Flexible Chitin (20g).", "Resonating Spine (10g).", "Grim Grimoire (100g).", "Crystallized Lobe (50g)."
-        ]
-      }
-    },
-    "spirits": {
-      "id": "fam_spirits",
-      "name": "The Spirits",
-      "description": "Visitors from other planes. Elementals, Fey, Demons, and Devils. They follow alien logic and are bound by ancient laws. To defeat them is to banish them.",
-      "universal_traits": [
-        {
-          "name": "Planar Resistance",
-          "effect": "Resistance (Half Damage) to Non-Magical Weapons. Vulnerable (Double Damage) to their Bane (Silver for Fiends, Cold Iron for Fey, Opposing Element for Elementals)."
-        },
-        {
-          "name": "Dissolution",
-          "effect": "When destroyed, they dissolve into ash, light, or slime, returning to their home plane (no corpse). Equipment drops normally."
-        },
-        {
-          "name": "Harvestable",
-          "effect": "Drop 'Essence' (Crystallized Mana, Elemental Cores). Harvest Check: Lore (INT) DC 10 + Level."
-        }
-      ],
-      "passives": [
-        {
-          "name": "Elemental Body",
-          "role": "Brute/Skirmisher",
-          "effect": "Radiates hazardous energy. Grapplers or Unarmed attackers take 1d6 Elemental Damage."
-        },
-        {
-          "name": "Magic Resistance",
-          "role": "Soldier/Controller",
-          "effect": "Gains +2 Armor Score against Spells and Magical Effects."
-        },
-        {
-          "name": "Hover",
-          "role": "Artillery/Solo",
-          "effect": "Floats 1-5ft. Ignores ground-based Difficult Terrain and cannot be Knocked Prone."
-        },
-        {
-          "name": "Glamour",
-          "role": "Skirmisher",
-          "effect": "Start of Encounter: Players make Will Save. Fail: Disadvantage on Attacks against this unit (Illusion/Beauty). Save ends."
-        },
-        {
-          "name": "Incorporeal",
-          "role": "Lurker",
-          "effect": "Can move through objects. Resistance to non-magical physical attacks."
-        }
-      ],
-      "actions": [
-        {
-          "name": "Elemental Touch",
-          "type": "Melee",
-          "effect": "Ignores Armor Score. Deals specific Elemental Damage (Fire, Cold, Necrotic)."
-        },
-        {
-          "name": "Blink Strike",
-          "type": "Melee",
-          "effect": "Teleport 15ft immediately before attacking. Attack has Advantage."
-        },
-        {
-          "name": "Charm / Fear",
-          "type": "Ranged",
-          "effect": "30ft Range. Target makes Will Save vs Save DC. Fail: Charmed or Frightened for 1 minute."
-        },
-        {
-          "name": "Life Drain",
-          "type": "Melee",
-          "effect": "On Hit: Necrotic Damage. The Spirit regains HP equal to half the damage dealt."
-        },
-        {
-          "name": "Possession",
-          "type": "Magic",
-          "effect": "Target makes Will Save. Fail: Dominated. Takes 1d6 Psychic damage/turn. Caster is removed from board (inside target)."
-        },
-        {
-          "name": "Elemental Blast",
-          "type": "Ranged",
-          "effect": "60ft Range. 2d8 Elemental Damage. Splash: Adjacent creatures make Reflex Save for Half."
-        }
-      ],
-      "danger_abilities": [
-        {
-          "name": "Summon Kin",
-          "cost": "1 DP",
-          "effect": "Portal opens. 1d4 Minions (Mephits/Imps) appear at end of round."
-        },
-        {
-          "name": "Nova",
-          "cost": "1 DP",
-          "effect": "20ft Radius burst. 3d6 Elemental Damage (Reflex Half)."
-        },
-        {
-          "name": "Planar Shift",
-          "cost": "1 DP",
-          "effect": "Teleport self and one adjacent creature (Will Save negates) up to 60ft away."
-        },
-        {
-          "name": "Polymorph",
-          "cost": "1 DP",
-          "effect": "Target makes Will Save. Fail: Turned into harmless critter (1 HP, 0 AS, Stunned) for 1 round."
-        },
-        {
-          "name": "Elemental Wall",
-          "cost": "1 DP",
-          "effect": "Create Wall (20ft long). Fire/Ice deals damage; Stone blocks movement."
-        },
-        {
-          "name": "Possession",
-          "cost": "1 DP",
-          "effect": "Spirit dives into player. Will Save vs Save DC. Fail: Spirit controls player's next Action. Player takes 1d10 Internal Psychic Damage."
-        }
-      ],
-      "flavor": {
-        "activity": [
-          "Bargaining for a soul.", "Dancing in mushroom circle.", "Consuming magic from item.", "Torturing a ghost.", "Maintaining a portal.", "Mimicking party voices.", "Meditating in orbit.", "Building body from mud.", "Singing painful song.", "Sleeping in lava/ice."
-        ],
-        "visuals": [
-          "Glitching Reality.", "Geometric Light.", "Chimera/Hybrid.", "Masked Humanoid.", "Starry Void.", "Liquid Metal/Fire.", "Insect Swarm.", "Hollow Armor.", "Angelic Eyes.", "Crystalline."
-        ],
-        "loot": [
-          "Crystallized Mana (10g).", "Elemental Core (50g).", "Fairy Dust (20g).", "Demon Horn (25g).", "Angel Feather (50g).", "Ectoplasm (15g).", "Sulfur (5g).", "Ever-Burning Coal (30g).", "Bottled Lightning (40g).", "True Name Scroll."
-        ]
-      }
-    },
-    "wyrms": {
-      "id": "fam_wyrms",
-      "name": "The Wyrms",
-      "description": "Dragons, drakes, and hydras. Lords of the sky and deep caverns. They possess cruel intelligence, elemental blood, and an obsession with wealth.",
-      "universal_traits": [
-        {
-          "name": "Draconic Blood",
-          "effect": "Tied to an element (Fire/Cold/Acid/Lightning/Poison). Immune to that element. Vulnerable (Double Damage) to the opposing element."
-        },
-        {
-          "name": "Flight",
-          "effect": "Unless wingless (Drakes/Land-Wyrms), they have a Fly Speed equal to their Ground Speed."
-        },
-        {
-          "name": "The Hoard",
-          "effect": "Defeating a Wyrm yields 3x Loot Rolls. Harvestable: Scales, Blood, Horns. Harvest Check: Survival (WIS) DC 10 + Level."
-        }
-      ],
-      "passives": [
-        {
-          "name": "Hardened Scales",
-          "role": "Soldier/Brute",
-          "effect": "Armor Score is increased by +1."
-        },
-        {
-          "name": "Frightful Presence",
-          "role": "Solo",
-          "effect": "Enemies starting turn within 30ft must make Will Save vs Save DC or be Frightened for 1 round."
-        },
-        {
-          "name": "Reactive Tail",
-          "role": "Soldier/Lurker",
-          "effect": "If Flanked or an enemy moves adjacent, use Reaction to make an immediate Tail Attack."
-        },
-        {
-          "name": "Multi-Headed",
-          "role": "Brute/Solo",
-          "effect": "Advantage on Initiative/Perception. Make 1 Extra Attack per round. Taking 15+ damage in one hit kills a head (Attack DC -1)."
-        },
-        {
-          "name": "Legendary Resistance",
-          "role": "Solo",
-          "effect": "1/Combat: If the Wyrm fails a Save, it can choose to Succeed instead."
-        }
-      ],
-      "actions": [
-        {
-          "name": "Bite & Claw",
-          "type": "Melee",
-          "effect": "Multi-Attack: Make Two Attacks (High Dmg Bite / Normal Dmg Claw)."
-        },
-        {
-          "name": "Snatched",
-          "type": "Melee",
-          "effect": "On Hit: Normal Damage. Target is Grappled. If Flying, Wyrm moves 20ft Up, carrying victim."
-        },
-        {
-          "name": "Swallow Whole",
-          "type": "Melee",
-          "effect": "Target must be Grappled. On Hit: Swallowed (Removed from board). Restrained/Blinded. Auto-Damage each turn. Escape: Deal 15 Dmg to stomach (AC 10)."
-        },
-        {
-          "name": "Tail Sweep",
-          "type": "AoE",
-          "effect": "Rear Arc (10ft). Reflex Save vs Attack DC. Fail: Damage + Prone."
-        },
-        {
-          "name": "Elemental Bite",
-          "type": "Melee",
-          "effect": "Ignores Armor Score. Deals Physical + Elemental Damage."
-        },
-        {
-          "name": "Wingover",
-          "type": "Move",
-          "effect": "Push all adjacent creatures 10ft away. Move up to Half Speed without provoking counter-attacks."
-        }
-      ],
-      "danger_abilities": [
-        {
-          "name": "Breath Weapon",
-          "cost": "1 DP",
-          "effect": "Cone (30ft) or Line (60ft). Reflex Save vs Save DC. Fail: 4d6 Elemental Damage."
-        },
-        {
-          "name": "Roar of the Ancients",
-          "cost": "1 DP",
-          "effect": "60ft Radius. Will Save vs Save DC. Fail: Frightened 1 round and Drop Weapons."
-        },
-        {
-          "name": "Flyby Snatch",
-          "cost": "1 DP",
-          "effect": "Move Fly Speed (No OA). Grapple one target along path. Success: Carry them for rest of move."
-        },
-        {
-          "name": "Elemental Aura",
-          "cost": "1 DP",
-          "effect": "Nova. 15ft Radius. 2d6 Elemental Damage (No Save)."
-        },
-        {
-          "name": "Incinerate / Freeze",
-          "cost": "1 DP",
-          "effect": "Target one creature. Automatic Elemental Damage (Weapon Die). Apply Permanent Injury (e.g., Burnt Lungs, -1 Stamina) until cured."
-        },
-        {
-          "name": "Legendary Recovery",
-          "cost": "1 DP",
-          "effect": "Trigger: When Stunned/Blinded. End one condition immediately and take a Move Action."
-        }
-      ],
-      "flavor": {
-        "activity": [
-          "Sleeping on coins.", "Eating large prey.", "Counting hoard.", "Arguing with self (Hydra).", "Sharpening claws on statue.", "Bathing in lava/acid.", "Watching from high peak.", "Teaching young (Wyrmlings).", "Molting (Irritable).", "Singing deep draconic song."
-        ],
-        "visuals": [
-          "Rusted/Corroded scales.", "Crystalline/Translucent.", "Rotting (Dracolich).", "Deep-Sea (Bioluminescent).", "Gem-Studded.", "Feathered (Coatl).", "Obsidian (Jagged).", "Albino (Cave dweller).", "Fungal/Mossy.", "Metallic (Gold/Silver)."
-        ],
-        "loot": [
-          "Dragon Scale (20g).", "Wyrm Tooth (10g).", "Elemental Gland (50g).", "Dragon Blood (25g).", "Undigested Gem (50g).", "Copper Hoard (Bulk).", "Marble Statue (Art).", "Masterwork Gear.", "Rare Blueprint.", "Dragon Egg (500g+)."
-        ]
-      }
-    },
-    "titans": {
-      "id": "fam_titans",
-      "name": "The Titans",
-      "description": "Giants, Ogres, and Trolls. Walking natural disasters who dominate the battlefield through sheer mass and reach. Fighting them is not a duel; it is a siege.",
-      "universal_traits": [
-        {
-          "name": "Long Reach",
-          "effect": "Melee Reach is 10ft (Large) or 15ft (Huge). They can attack enemies who cannot reach them back."
-        },
-        {
-          "name": "Hurl Debris",
-          "effect": "Can rip up rocks/furniture to make Ranged Attacks (60ft) dealing standard weapon damage."
-        },
-        {
-          "name": "Siege Monster",
-          "effect": "Deals Double Damage to objects and structures. Ignores non-magical Difficult Terrain (rubble)."
-        },
-        {
-          "name": "Bulk Loot",
-          "effect": "Wealth is carried in massive sacks. High value, but high slot cost (e.g., barrels of wine, livestock, raw ore)."
-        }
-      ],
-      "passives": [
-        {
-          "name": "Regeneration",
-          "role": "Brute (Troll)",
-          "effect": "Regain 10 HP at start of turn. Stopped by Fire or Acid damage."
-        },
-        {
-          "name": "Wide Swing",
-          "role": "Soldier",
-          "effect": "On a Hit, deals Half Damage to one other enemy adjacent to the target."
-        },
-        {
-          "name": "Thick Skull",
-          "role": "Brute/Minion",
-          "effect": "Advantage on Saves against Psychic Damage and Stunned condition."
-        },
-        {
-          "name": "Trampling Charge",
-          "role": "Soldier/Solo",
-          "effect": "If moving 20ft straight toward target, hit knocks target Prone (Reflex Save negates)."
-        },
-        {
-          "name": "Sure-Footed",
-          "role": "Artillery/Skirmisher",
-          "effect": "Cannot be Pushed or Knocked Prone by creatures smaller than it."
-        }
-      ],
-      "actions": [
-        {
-          "name": "Smash",
-          "type": "Melee",
-          "effect": "On Hit: Normal Damage. Target is automatically Knocked Prone."
-        },
-        {
-          "name": "Sweep",
-          "type": "AoE",
-          "effect": "10ft Semi-Circle. Defense vs Attack DC. Fail: Standard Damage and Pushed 10ft."
-        },
-        {
-          "name": "Fling Victim",
-          "type": "Melee",
-          "effect": "Grapple Check. Success: Throw target 30ft. Take 1d6 per 10ft Falling Dmg and land Prone."
-        },
-        {
-          "name": "Bite/Eat",
-          "type": "Melee",
-          "effect": "On Hit: Damage + Heal self for half amount. If target dies, allies must Save vs Fear."
-        },
-        {
-          "name": "Stomp",
-          "type": "AoE",
-          "effect": "5ft Radius. Reflex Save vs Attack DC. Fail: STR Mod Damage and Speed Halved (1 round)."
-        },
-        {
-          "name": "Bellow",
-          "type": "Support",
-          "effect": "All allies within 30ft gain Advantage on their next Attack Check."
-        }
-      ],
-      "danger_abilities": [
-        {
-          "name": "Earthquake",
-          "cost": "1 DP",
-          "effect": "30ft Radius. Reflex Save vs Save DC. Fail: Prone. Area becomes Difficult Terrain."
-        },
-        {
-          "name": "Structure Collapse",
-          "cost": "1 DP",
-          "effect": "Smash pillar/ceiling. 15ft Radius. 4d10 Bludgeoning (Reflex Half). Fail: Restrained (Buried)."
-        },
-        {
-          "name": "Rage",
-          "cost": "1 DP",
-          "effect": "1 Minute. Deal +1d6 Damage. Defense DC reduced by 2."
-        },
-        {
-          "name": "Grab & Squeeze",
-          "cost": "1 DP",
-          "effect": "Auto-Grapple target within reach. Deal automatic STR Mod damage at start of turns."
-        },
-        {
-          "name": "Batter",
-          "cost": "1 DP",
-          "effect": "Home run swing. Reflex Save vs Attack DC. Fail: Double Damage and Pushed 30ft."
-        },
-        {
-          "name": "War Cry",
-          "cost": "1 DP",
-          "effect": "60ft Radius. Fortitude Save vs Save DC. Fail: Stunned 1 round."
-        }
-      ],
-      "flavor": {
-        "activity": [
-          "Boiling stew in a cauldron.", "Sleeping loudly (Snoring).", "Painting wall with mud/blood.", "Sharpening tree-trunk spear.", "Arguing with self (Ettin).", "Counting copper coins.", "Gnawing on horse bones.", "Wrestling practice.", "Singing deep songs.", "Fascinated by tiny trinket."
-        ],
-        "visuals": [
-          "Fungal/Mossy (Hill).", "Crystalline/Ice (Frost).", "Molten/Charcoal (Fire).", "Rotting (Undead).", "Scrap-Armored.", "Mutated/Cyclopean.", "Runed Skin (Stone).", "Noble Silks (Cloud).", "Bestial/Hairy.", "Elemental Legs."
-        ],
-        "loot": [
-          "Terrified Livestock (Alive).", "Keg of Ale (2 Slots).", "Wagon Wheel Shield.", "5,000 Copper Pieces (50 Slots).", "Bank Vault Door (Scrap).", "Necklace of Helmets.", "Raw Silver Ore (Boulder).", "Roasted Pig.", "Captive Cage.", "Massive Iron Key."
-        ]
-      }
-    },
-    "watchers": {
-      "id": "fam_watchers",
-      "name": "The Watchers",
-      "description": "Alien intelligences of floating flesh and crystal. They are tyrants of the dark, obsessed with observation and control. They do not use weapons; they gaze upon reality and force it to bend.",
-      "universal_traits": [
-        {
-          "name": "Panopticon",
-          "effect": "Cannot be Flanked (Immune to Side-Based Sneak Attack) and cannot be Surprised."
-        },
-        {
-          "name": "Hover",
-          "effect": "Floats 1-10ft. Ignores ground-based Difficult Terrain (grease/rubble) and cannot be Knocked Prone unless reduced to 0 HP."
-        },
-        {
-          "name": "Harvestable",
-          "effect": "Drop 'Arcane Curios' (Lenses, Humours, Corneas). Harvest Check: Lore (INT) DC 10 + Level."
-        }
-      ],
-      "passives": [
-        {
-          "name": "Anti-Magic Cone",
-          "role": "Solo/Controller",
-          "effect": "Central Eye projects 30-60ft Cone. Inside, no magic functions. Rotates at start of turn."
-        },
-        {
-          "name": "Reflective Cornea",
-          "role": "Soldier/Artillery",
-          "effect": "If a Ranged Spell Attack misses, it bounces back. Caster must roll Defense vs their own Spell DC or be hit."
-        },
-        {
-          "name": "Paranoid Vigilance",
-          "role": "Solo/Minion",
-          "effect": "Add Proficiency Die to Initiative. If acting first in Round 1, fire one Ray as Free Action."
-        },
-        {
-          "name": "Mana Drain",
-          "role": "Skirmisher",
-          "effect": "Creatures starting turn within 20ft lose 1d4 MP. If 0 MP, take Psychic Damage instead."
-        },
-        {
-          "name": "Distracting Gaze",
-          "role": "Soldier",
-          "effect": "Enemies within 10ft have Disadvantage on Attack Checks (Unnerving stare)."
-        }
-      ],
-      "actions": [
-        {
-          "name": "Ray Volley",
-          "type": "Ranged",
-          "effect": "Fire 2 Random Rays (Roll d8 on Ray Table). Can target different creatures."
-        },
-        {
-          "name": "Focused Beam",
-          "type": "Ranged",
-          "effect": "Fire 1 specific Ray Type with Advantage."
-        },
-        {
-          "name": "Spinning Fusillade",
-          "type": "AoE",
-          "effect": "20ft Radius. Reflex Save vs Attack DC. Fail: Hit by Random Ray (Roll d8)."
-        },
-        {
-          "name": "Telekinetic Grip",
-          "type": "Ranged",
-          "effect": "Target makes Strength Save. Fail: Restrained (Held in air) and moved 20ft."
-        },
-        {
-          "name": "Bite",
-          "type": "Melee",
-          "effect": "On Hit: Low Damage. Target is Grappled (Jaw-lock)."
-        }
-      ],
-      "danger_abilities": [
-        {
-          "name": "Prismatic Storm",
-          "cost": "1 DP",
-          "effect": "Fire 4 Random Rays at random targets within 60ft."
-        },
-        {
-          "name": "Anti-Magic Pulse",
-          "cost": "1 DP",
-          "effect": "Dispel all active magical effects/buffs/summons within 60ft."
-        },
-        {
-          "name": "Tyrant's Command",
-          "cost": "1 DP",
-          "effect": "Target makes Will Save. Fail: Dominated (1 round). Uses Reaction to attack ally."
-        },
-        {
-          "name": "Disintegrate",
-          "cost": "1 DP",
-          "effect": "Target takes 6d10 Force Damage (Dodge Half). If 0 HP, turned to dust."
-        },
-        {
-          "name": "Reality Shift",
-          "cost": "1 DP",
-          "effect": "Telekinetically move 3 creatures/objects 20ft instantly (No Save)."
-        },
-        {
-          "name": "Paranoid Snap",
-          "cost": "1 DP",
-          "effect": "Trigger: When damaged. Immediately fire one Random Ray at attacker."
-        }
-      ],
-      "ray_table": [
-        { "roll": 1, "name": "Searing Ray", "effect": "Defense Check. Fail: 2d6 Fire + Burning." },
-        { "roll": 2, "name": "Frost Ray", "effect": "Defense Check. Fail: 2d6 Cold + Speed 0 (Frozen)." },
-        { "roll": 3, "name": "Telekinetic Ray", "effect": "Strength Save. Fail: Thrown 30ft, Prone, 2d6 Impact." },
-        { "roll": 4, "name": "Fear Ray", "effect": "Will Save. Fail: Frightened (1 min)." },
-        { "roll": 5, "name": "Charm Ray", "effect": "Will Save. Fail: Charmed (1 min)." },
-        { "roll": 6, "name": "Enervation Ray", "effect": "Fortitude Save. Fail: 3d6 Necrotic + Weakened." },
-        { "roll": 7, "name": "Petrification Ray", "effect": "Fortitude Save. Fail: Restrained (Turning to stone)." },
-        { "roll": 8, "name": "Death Ray", "effect": "Fortitude Save. Fail: 5d8 Necrotic (0 HP = Death)." }
-      ],
-      "flavor": {
-        "activity": [
-          "Sorting gems telekinetically.", "Dreaming (Warping reality).", "Dictating to scribe.", "Dissecting adventurer.", "Scrying a distant location.", "Arguing with eye stalks.", "Timing gravity drops.", "Polishing central eye.", "Building trap.", "Sleeping (One eye open)."
-        ],
-        "visuals": [
-          "Fleshy/Veined.", "Mechanical/Brass.", "Crystalline Geode.", "Undead (Death Tyrant).", "Eldritch Tentacles.", "Orb of Pure Light.", "Fungal Spore-Puff.", "Deep Sea (Bioluminescent).", "Stone Statue.", "Infernal/Burning."
-        ],
-        "loot": [
-          "Central Lens (100g).", "Eye Stalk (20g).", "Vitreous Humor (50g).", "Crystallized Tear (10g).", "Petrified Adventurer.", "Telekinetic Ring (50g).", "Scroll of Dispel Magic.", "Strange Geode (30g).", "Perfect Map.", "Eye of the Tyrant (Artifact)."
-        ]
-      }
-    },
-    "amorphous": {
-      "id": "fam_amorphous",
-      "name": "The Amorphous",
-      "description": "Slimes, jellies, and oozes. Life without structure. They dissolve organic matter and metal alike. Fighting them is a nightmare of corrosion and suffocation.",
-      "universal_traits": [
-        {
-          "name": "Liquid Anatomy",
-          "effect": "Immune to Flanking, Prone, and Grappled. Critical Hits against them count as Normal Hits (No Bonus Effect/Luck gain)."
-        },
-        {
-          "name": "Squeeze",
-          "effect": "Can move through gaps as small as 1 inch without slowing down."
-        },
-        {
-          "name": "Blind-Sight",
-          "effect": "Immune to Gaze Attacks and Invisibility. Senses heat/vibration."
-        },
-        {
-          "name": "Harvestable",
-          "effect": "Drop 'Alchemical Slime' and Undigested Loot. Harvest Check: Craft & Tinker (INT) DC 10 + Level."
-        }
-      ],
-      "passives": [
-        {
-          "name": "Corrosive Body",
-          "role": "Brute/Soldier",
-          "effect": "Touching/Grappling/Unarmed Attacking the ooze deals 1d4 Acid Damage. Non-magical weapons hitting it take -1 penalty."
-        },
-        {
-          "name": "False Appearance",
-          "role": "Lurker",
-          "effect": "Indistinguishable from object/puddle while motionless. Advantage on first attack (Ambush)."
-        },
-        {
-          "name": "Split",
-          "role": "Brute",
-          "effect": "Reaction: When taking Slashing/Lightning damage, splits into two smaller oozes with half HP each."
-        },
-        {
-          "name": "Sticky Climber",
-          "role": "Skirmisher",
-          "effect": "Spider Climb. Advantage on checks to maintain Grapple."
-        },
-        {
-          "name": "Magic Absorbent",
-          "role": "Solo",
-          "effect": "Immune to Force Damage (Magic Missile). Heals 1 HP for every point of Force damage prevented."
-        }
-      ],
-      "actions": [
-        {
-          "name": "Engulf",
-          "type": "Melee",
-          "effect": "Move into target space. Target rolls Defense. Fail: Engulfed (Restrained, Blinded, Suffocating). Auto-Damage at start of turn."
-        },
-        {
-          "name": "Corrode Armor",
-          "type": "Melee",
-          "effect": "On Hit: Normal Damage. Target's Armor Score is reduced by 1 (Permanent until Repaired)."
-        },
-        {
-          "name": "Adhesive Strike",
-          "type": "Melee",
-          "effect": "On Hit: Weapon sticks to Ooze. Player must drop weapon or be Grappled."
-        },
-        {
-          "name": "Slime Shot",
-          "type": "Ranged",
-          "effect": "Range 30ft. On Hit: Target Slowed (Speed Halved, No Dash) until cleaned."
-        },
-        {
-          "name": "Shapechange",
-          "type": "Utility",
-          "effect": "Transform into object of same size (Mimic)."
-        }
-      ],
-      "danger_abilities": [
-        {
-          "name": "Mitosis",
-          "cost": "1 DP",
-          "effect": "Trigger: Taken Damage. Split into two copies. Each has Half the current HP."
-        },
-        {
-          "name": "Violent Eruption",
-          "cost": "1 DP",
-          "effect": "15ft Radius. Reflex Save vs Attack DC. Fail: 4d6 Acid Damage and Blinded by slime."
-        },
-        {
-          "name": "Sudden Surge",
-          "cost": "1 DP",
-          "effect": "Move Double Speed. Pass through enemies without OA. Enemies passed through take 2d6 Acid Damage."
-        },
-        {
-          "name": "Devour",
-          "cost": "1 DP",
-          "effect": "Constrict Engulfed/Grappled target. Deal Double Damage. Heal for half amount dealt."
-        },
-        {
-          "name": "Liquid Form",
-          "cost": "1 DP",
-          "effect": "Trigger: Stunned/Restrained. Collapse and reform 5ft away. End all negative conditions."
-        },
-        {
-          "name": "Acid Spray",
-          "cost": "1 DP",
-          "effect": "20ft Cone. 3d6 Acid Damage (Reflex Half). Floor becomes Difficult Terrain."
-        }
-      ],
-      "flavor": {
-        "activity": [
-          "Cleaning floor (dissolving trash).", "Dripping from ceiling.", "Digesting visible skeleton.", "Mimicking a chest.", "Vibrating near magic.", "Flowing under door.", "Bubbling (Foul gas).", "Glowing (Bioluminescent).", "Dividing.", "Stagnating like a puddle."
-        ],
-        "visuals": [
-          "Transparent Cube.", "Black Oil (Flammable).", "Neon Green/Pink.", "Stone-Texture (Mimic).", "Blood Clot.", "Mercury/Liquid Metal.", "Fungal Slurry.", "Freezing Slush.", "Molten Gold.", "Void Shadow."
-        ],
-        "loot": [
-          "Floating Skeleton.", "Sealed Scroll Case.", "Magic Ring (Acid Proof).", "Gemstones (Undigested).", "Glass Vial.", "Pitted Gold Coins.", "Stone Tablet.", "Crystal Weapon.", "Gold Tooth.", "Alchemical Slime (25g)."
-        ]
-      }
-    },
-    "verdant": {
-      "id": "fam_verdant",
-      "name": "The Verdant",
-      "description": "Plant-monsters. Choking vines, carnivorous flowers, and fungal colonies. They are silent, resilient, and reclaim the dungeon for nature. They manipulate terrain and poison the air.",
-      "universal_traits": [
-        {
-          "name": "Botanical Biology",
-          "effect": "Immune to Charmed, Sleep, and Confused conditions. Do not breathe (immune to suffocation)."
-        },
-        {
-          "name": "Flammable",
-          "effect": "Vulnerable (Double Damage) to Fire Damage (unless aquatic/rock-based)."
-        },
-        {
-          "name": "Harvestable",
-          "effect": "Drop 'Herbal Reagents' (Saps, Spores, Bark). Harvest Check: Survival (WIS) DC 10 + Level."
-        }
-      ],
-      "passives": [
-        {
-          "name": "Thorny Skin",
-          "role": "Soldier/Brute",
-          "effect": "Grapplers or Unarmed attackers take 1d4 Piercing Damage."
-        },
-        {
-          "name": "False Appearance",
-          "role": "Lurker/Minion",
-          "effect": "Indistinguishable from normal plant while motionless. Advantage on first attack (Ambush)."
-        },
-        {
-          "name": "Grasping Ground",
-          "role": "Controller",
-          "effect": "Ground within 10ft is Difficult Terrain (Roots/Vines)."
-        },
-        {
-          "name": "Photosynthetic Regeneration",
-          "role": "Solo",
-          "effect": "Regain 5 HP at start of turn if in Bright Light. Fire damage stops this for 1 round."
-        },
-        {
-          "name": "Toxic Spores",
-          "role": "Brute/Controller",
-          "effect": "Creatures starting turn adjacent must make Fortitude Save vs Save DC or be Poisoned 1 round."
-        },
-        {
-          "name": "Deep Roots",
-          "role": "Soldier",
-          "effect": "Cannot be Knocked Prone or Moved against will while on natural ground."
-        }
-      ],
-      "actions": [
-        {
-          "name": "Vine Lash",
-          "type": "Melee",
-          "effect": "Reach 15ft. On Hit: Normal Damage and Target pulled 10ft closer."
-        },
-        {
-          "name": "Needle Volley",
-          "type": "Ranged",
-          "effect": "Range 30ft. Make Attack Rolls against up to Two targets within 5ft of each other."
-        },
-        {
-          "name": "Engulf",
-          "type": "Melee",
-          "effect": "Target must be Grappled. Swallow target. Restrained, Blinded, Suffocating. Auto-Damage at start of turn."
-        },
-        {
-          "name": "Hypnotic Pollen",
-          "type": "Magic",
-          "effect": "Ranged Cloud. Will Save vs Save DC. Fail: Dazed (Hallucinating). Fail by 5+: Stunned (Sleep)."
-        },
-        {
-          "name": "Slam",
-          "type": "Melee",
-          "effect": "On Hit: High Damage. Simple crushing force."
-        }
-      ],
-      "danger_abilities": [
-        {
-          "name": "Entangle",
-          "cost": "1 DP",
-          "effect": "20ft Radius. Reflex Save vs Save DC. Fail: Restrained (Speed 0). Area is Difficult Terrain."
-        },
-        {
-          "name": "Pollen Nova",
-          "cost": "1 DP",
-          "effect": "15ft Radius. Fortitude Save vs Save DC. Fail: Unconscious (Sleep) for 1 min or until damaged."
-        },
-        {
-          "name": "Rapid Growth",
-          "cost": "1 DP",
-          "effect": "Instantly regain 15 HP and end one negative condition."
-        },
-        {
-          "name": "Seed Bomb",
-          "cost": "1 DP",
-          "effect": "Launch pod. 1d4 Minions (Twig Blights) appear at destination at end of round."
-        },
-        {
-          "name": "Wall of Thorns",
-          "cost": "1 DP",
-          "effect": "Create Wall (20ft long). Blocks sight/move. 2d6 Piercing Dmg to pass through."
-        },
-        {
-          "name": "Devour",
-          "cost": "1 DP",
-          "effect": "Constrict Engulfed/Grappled target. Deal Double Damage. Heal for half amount dealt."
-        }
-      ],
-      "flavor": {
-        "activity": [
-          "Rotting in compost.", "Absorbing a corpse.", "Turning toward sun.", "Venting spores rhythmically.", "Creaking/Singing.", "Mimicking a bush.", "Blooming rapidly.", "Dripping sticky sap.", "Weaving a cage.", "Floating on draft."
-        ],
-        "visuals": [
-          "Fungal/Spongy.", "Deadwood/Brittle.", "Swampy/Moss-covered.", "Floral (Bright petals).", "Thorny (Cactus).", "Vine-Mass.", "Bark-Armored.", "Crystalline/Glass.", "Pale/Albino.", "Charred/Burnt."
-        ],
-        "loot": [
-          "Ironwood Bark (20g).", "Toxic Spore Sac (15g).", "Rare Tuber (Ration).", "Sticky Sap (15g).", "Razor Leaf (5g).", "Phosphorescent Moss (5g).", "Heart-Wood (50g).", "Paralysis Pollen (25g).", "Amber Chunk (30g).", "Living Seed (100g)."
-        ]
-      }
-    },
-    "monstrosities": {
-      "id": "fam_monstrosities",
-      "name": "The Monstrosities",
-      "description": "Mutants and hybrids. Owlbears, basilisks, and chimeras. Born of magical experiments or curses, they combine the worst traits of multiple beasts. They are apex predators with unnatural abilities.",
-      "universal_traits": [
-        {
-          "name": "Hybrid Mind",
-          "effect": "Immune to Charmed. Cannot be calmed or distracted by Survival checks (unlike Beasts)."
-        },
-        {
-          "name": "Darkvision",
-          "effect": "Can see perfectly in total darkness."
-        },
-        {
-          "name": "Harvestable",
-          "effect": "Drop 'Trophy Parts' (Beaks, Spikes, Glands). Harvest Check: Survival (WIS) DC 10 + Level."
-        }
-      ],
-      "passives": [
-        {
-          "name": "Displacement",
-          "role": "Skirmisher",
-          "effect": "Appears shifted from actual location. Attacks against it have Disadvantage. Disabled for 1 round if hit."
-        },
-        {
-          "name": "Keen Senses",
-          "role": "Soldier/Solo",
-          "effect": "Advantage on Scrutiny. Cannot be Surprised."
-        },
-        {
-          "name": "Spiked Hide",
-          "role": "Brute",
-          "effect": "Grapplers or Unarmed attackers take 1d6 Piercing Damage."
-        },
-        {
-          "name": "Pounce",
-          "role": "Brute/Skirmisher",
-          "effect": "If moving 20ft straight toward target and hitting, target must make Reflex Save or be Knocked Prone."
-        },
-        {
-          "name": "Amphibious / Flyer",
-          "role": "Any",
-          "effect": "Has Swim or Fly speed equal to Ground speed (depending on creature type)."
-        }
-      ],
-      "actions": [
-        {
-          "name": "Multi-Attack",
-          "type": "Melee",
-          "effect": "Make Two Attacks against one target. If both hit, deal +1d6 extra Damage."
-        },
-        {
-          "name": "Petrifying Gaze",
-          "type": "Ranged",
-          "effect": "Range 30ft. Fortitude Save vs Save DC. Fail: Restrained (Turning to stone). Fail 2nd save at end of turn: Petrified."
-        },
-        {
-          "name": "Tail Spikes",
-          "type": "Ranged",
-          "effect": "Range 60ft. Make Attack Rolls against up to 3 targets in a 10ft area."
-        },
-        {
-          "name": "Bear Hug",
-          "type": "Melee",
-          "effect": "Target must be Grappled. Deal automatic damage equal to STR Mod + Proficiency Die."
-        },
-        {
-          "name": "Sonic Screech",
-          "type": "AoE",
-          "effect": "15ft Cone. Thunder Damage. Creatures are Deafened (Disadvantage on Cast Checks)."
-        }
-      ],
-      "danger_abilities": [
-        {
-          "name": "Feral Rage",
-          "cost": "1 DP",
-          "effect": "1 Minute. Advantage on all Attacks. Attacks against it also have Advantage."
-        },
-        {
-          "name": "Stone Glare",
-          "cost": "1 DP",
-          "effect": "Target within 30ft. Fortitude Save vs Save DC. Fail: Stunned (Petrified) until cured."
-        },
-        {
-          "name": "Dive Bomb",
-          "cost": "1 DP",
-          "effect": "Flyer only. Drop on target. Deal Weapon Dmg + 2d6 Fall Dmg. Target Prone."
-        },
-        {
-          "name": "Breath Weapon",
-          "cost": "1 DP",
-          "effect": "15ft Cone (Fire/Acid). 3d6 Damage (Reflex Half)."
-        },
-        {
-          "name": "Phase Shift",
-          "cost": "1 DP",
-          "effect": "Trigger: Targeted by Attack. Teleport 15ft to empty space. Attack Misses."
-        },
-        {
-          "name": "Terrifying Screech",
-          "cost": "1 DP",
-          "effect": "30ft Radius. Will Save vs Save DC. Fail: Frightened 1 round. Drop items."
-        }
-      ],
-      "flavor": {
-        "activity": [
-          "Sharpening beak on stone.", "Mimicking victim voices.", "Nesting with shields.", "Stalking a wolf pack.", "Glitching/Vibrating.", "Eating a chest.", "Molting (Aggressive).", "Playing with live food.", "Guarding statue-still.", "Mutating visibly."
-        ],
-        "visuals": [
-          "Construct-Hybrid (Stitched).", "Crystalline Feathers.", "Undead-Like (Ribs showing).", "Elemental-Infused.", "Runed Hide.", "Multi-Limbed.", "Albino (Cave).", "Shadow-Wreathed.", "Armored Chitin.", "Unnaturally Beautiful."
-        ],
-        "loot": [
-          "Intact Beak/Horn (20g).", "Petrifying Eye (50g).", "Displacer Hide (50g).", "Manticore Spike (5g).", "Magical Gland (25g).", "Rare Egg (100g).", "Undigested Gems (50g).", "Wizard's Collar.", "Griffon Feather (10g).", "Heart of the Beast (50g)."
-        ]
-      }
+    {
+      "name": "Lootable",
+      "effect": "Drop weapons, armor, and coin pouches (Roll on Folk Loot Table)."
     }
+  ],
+  "basic_attacks": [
+    {
+      "name": "Shortsword",
+      "tags": "Parry",
+      "effect": "Deals {dmg} Physical Damage. Effect: +1 Defense DC vs Melee."
+    },
+    {
+      "name": "Shield & Mace",
+      "tags": "Block",
+      "effect": "Deals {dmg} Physical Damage. Effect: Reduces incoming Physical Damage by 1."
+    },
+    {
+      "name": "Greatsword",
+      "tags": "Heavy",
+      "effect": "Deals {dmg} Physical Damage. Effect: Critical Hit knocks target Prone."
+    },
+    {
+      "name": "Spear",
+      "tags": "Reach",
+      "effect": "Deals {dmg} Physical Damage. Effect: Can attack targets up to 10ft away."
+    },
+    {
+      "name": "Dual Daggers",
+      "tags": "Flurry",
+      "effect": "Deals {dmg} Physical Damage. Effect: Make Two Attacks (each deals Half Damage)."
+    },
+    {
+      "name": "Warhammer",
+      "tags": "Sunder",
+      "effect": "Deals {dmg} Physical Damage. Effect: Hit reduces target Armor Score by 1 for the encounter."
+    },
+    {
+      "name": "Crossbow",
+      "tags": "Pierce",
+      "effect": "Deals {dmg} Physical Damage. Effect: Ignores 1 point of Armor Score."
+    },
+    {
+      "name": "Longbow",
+      "tags": "Sniper",
+      "effect": "Deals {dmg} Physical Damage. Effect: If not moving, gain +2 Attack DC."
+    },
+    {
+      "name": "Whip / Net",
+      "type": "Control",
+      "tags": "Control",
+      "effect": "Deals {dmg} Physical Damage. Effect: Hit Grapples or knocks target Prone instead of full damage."
+    },
+    {
+      "name": "Alchemical Flask",
+      "tags": "Splash",
+      "effect": "Deals {dmg} Elemental Damage. Effect: Adjacent creatures make Reflex Save for half damage."
+    }
+  ],
+  "role_passives": [
+    {
+      "name": "Shield Wall",
+      "role": "Soldier",
+      "effect": "Gains +2 Defense DC while adjacent to an ally wielding a shield."
+    },
+    {
+      "name": "Pack Tactics",
+      "role": "Brute",
+      "effect": "Gains +1 Attack DC if an ally is adjacent to the target."
+    },
+    {
+      "name": "Pack Tactics",
+      "role": "Minion",
+      "effect": "Gains +1 Attack DC if an ally is adjacent to the target."
+    },
+    {
+      "name": "Phalanx",
+      "role": "Soldier",
+      "effect": "Cannot be Flanked while adjacent to an ally."
+    },
+    {
+      "name": "Vengeful",
+      "role": "Leader",
+      "effect": "If an ally within 30ft is killed, gain Advantage on next Attack Check."
+    },
+    {
+      "name": "Sniper's Patience",
+      "role": "Artillery",
+      "effect": "If this unit does not Move, deal +1d6 Damage with Ranged Attacks."
+    },
+    {
+      "name": "Evasive Footwork",
+      "role": "Skirmisher",
+      "effect": "Movement does not provoke Opportunity Attacks (Counter-Attacks)."
+    },
+    {
+      "name": "Arcane Ward",
+      "role": "Caster",
+      "effect": "Gains +2 Armor Score against Spells and Magical Effects."
+    },
+    {
+      "name": "Concentration",
+      "role": "Caster",
+      "effect": "Does not lose held spells upon taking damage unless damage exceeds 10 in a single hit."
+    },
+    {
+      "name": "Aura of Menace",
+      "role": "Solo",
+      "effect": "Players have Disadvantage on Saving Throws against this enemy's abilities while within 10 feet."
+    }
+  ],
+  "actions": [
+    {
+      "name": "Dirty Fighting",
+      "type": "Melee",
+      "effect": "On Hit: Normal Damage. Target must make Fortitude Save vs Attack DC or be Blinded (sand/spit) for 1 round."
+    },
+    {
+      "name": "Trip / Shove",
+      "type": "Melee",
+      "effect": "On Hit: Half Damage. Target must make Reflex Save vs Attack DC or be Knocked Prone / Pushed 10ft."
+    },
+    {
+      "name": "Volley Fire",
+      "type": "Ranged",
+      "effect": "Target 10ft Radius. All enemies in area roll Defense vs Attack DC. On Fail: Take Weapon Damage."
+    },
+    {
+      "name": "Use Potion",
+      "type": "Support",
+      "effect": "Drink or feed potion. Heals 1d8 + Level HP."
+    },
+    {
+      "name": "Throw Bomb",
+      "type": "Ranged",
+      "effect": "Range 30ft. 2d6 Fire Damage. Reflex Save for Half."
+    },
+    {
+      "name": "Throw Smoke Bomb",
+      "type": "Support",
+      "effect": "The enemy becomes Hidden instantly."
+    },
+    {
+      "name": "Command",
+      "type": "Support",
+      "effect": "One ally within 30 feet makes a single attack as a Free Action."
+    },
+    {
+      "name": "Execute",
+      "type": "Melee",
+      "effect": "Target must be Prone or Stunned. On Hit: Deal Critical Damage."
+    },
+    {
+      "name": "Arcane Bolt",
+      "type": "Magic",
+      "effect": "Ranged (60ft). On Hit: 1d10 Force Damage. Ignores Armor Score."
+    },
+    {
+      "name": "Scorching Ray",
+      "type": "Magic",
+      "effect": "Ranged (60ft). On Hit: 2d6 Fire Damage + Burning Condition."
+    },
+    {
+      "name": "Hold Person",
+      "type": "Magic",
+      "effect": "Target makes Will Save vs Save DC. Fail: Paralyzed (Stunned) for 1 round."
+    },
+    {
+      "name": "Dark Prayer",
+      "type": "Magic",
+      "effect": "Target makes Fortitude Save vs Save DC. Fail: Take 2d6 Necrotic Damage, Caster heals for that amount."
+    },
+    {
+      "name": "Blessing",
+      "type": "Magic",
+      "effect": "Caster and allies within 30ft gain +1 Attack DC and +1 Defense DC for 1 minute."
+    },
+    {
+      "name": "Mend Wounds",
+      "type": "Magic",
+      "effect": "Touch Ally. Ally regains 2d8 + Level HP."
+    }
+  ],
+  "danger_abilities": [
+    {
+      "name": "Get Them!",
+      "cost": "1 DP",
+      "effect": "All allies within 30ft use Reaction to move up to Speed toward a specific target."
+    },
+    {
+      "name": "Focus Fire",
+      "cost": "1 DP",
+      "effect": "Mark a player. Until next round, all attacks against them have +2 Attack DC."
+    },
+    {
+      "name": "Flashbang",
+      "cost": "1 DP",
+      "effect": "All players within 20ft: Reflex Save vs Save DC or Stunned 1 round."
+    },
+    {
+      "name": "Reinforcements",
+      "cost": "2 DP",
+      "effect": "1d4 Minions (Same type) arrive from nearby entrance."
+    },
+    {
+      "name": "Desperate Fury",
+      "cost": "1 DP",
+      "effect": "Trigger: Reduced to 0 HP. Enemy remains at 1 HP, takes one immediate Action, then dies."
+    },
+    {
+      "name": "Wall of Steel",
+      "cost": "1 DP",
+      "effect": "Gain Resistance (Half Damage) to Physical Damage until next turn."
+    },
+    {
+      "name": "Mass Dispel",
+      "cost": "1 DP",
+      "effect": "All active player buffs/spells within 60ft are ended."
+    }
+  ],
+  "flavor": {
+    "activity": [
+      "Gambling with bone dice.",
+      "Sharpening weapons and complaining.",
+      "Eating hardtack and stew.",
+      "Sleeping (Sentry asleep).",
+      "Interrogating a prisoner.",
+      "Arguing over a map.",
+      "Building a fortification.",
+      "Praying to a dark god.",
+      "Counting loot.",
+      "Patching wounds."
+    ],
+    "visuals": [
+      "Deserters in rags.",
+      "Cultists in robes.",
+      "Bandits with trophies.",
+      "Rival Adventuring Party.",
+      "Uniformed Guards.",
+      "Tribal/Woad Painted.",
+      "Scavengers in gas masks.",
+      "Nobles in silk/plate.",
+      "Professional Mercenaries.",
+      "Plague-Infected."
+    ],
+    "loot": [
+      "Handful of copper/silver.",
+      "Pouch of tobacco.",
+      "Bone dice or cards.",
+      "Crude map (Quest Hook).",
+      "Love letter.",
+      "Flask of cheap wine.",
+      "Silver tooth (5g).",
+      "Vial of poison.",
+      "Dungeon Key.",
+      "Stolen Potion.",
+      "Bounty Poster.",
+      "Small Gemstone."
+    ]
   }
+},
+"beasts": {
+  "id": "fam_beasts",
+  "name": "The Beasts",
+  "description": "Natural predators. Wolves, bears, spiders, and serpents. They are driven by hunger, territory, and instinct. They fight with unified purpose to protect the pack or nest.",
+  "universal_traits": [
+    {
+      "name": "Natural Weaponry",
+      "effect": "Cannot be Disarmed. Weapons are body parts (Claws, Fangs)."
+    },
+    {
+      "name": "Animal Mind",
+      "effect": "Immune to bribes or social manipulation. Can be influenced via Survival (Handle Animal) if not Enraged."
+    },
+    {
+      "name": "Harvestable",
+      "effect": "Drop 'Organics' (Hides, Venom, Glands). Harvest Check: Survival (WIS) DC 10 + Level."
+    }
+  ],
+  "basic_attacks": [
+    {
+      "name": "Claws",
+      "tags": "Finesse",
+      "effect": "Deals {dmg} Physical Damage. Effect: Move +5ft on Hit."
+    },
+    {
+      "name": "Fangs / Jaws",
+      "tags": "Grapple",
+      "effect": "Deals Half {dmg} Physical Damage. Effect: Hit Grapples target (Speed 0)."
+    },
+    {
+      "name": "Horns / Tusks",
+      "tags": "Heavy",
+      "effect": "Deals {dmg} Physical Damage. Effect: Hit forces Reflex Save or Prone."
+    },
+    {
+      "name": "Stinger",
+      "tags": "Pierce",
+      "effect": "Deals {dmg} Physical Damage. Effect: Ignores 1 AS. Penetration applies Poison."
+    },
+    {
+      "name": "Tail Swipe",
+      "tags": "Reach, Messy",
+      "effect": "Deals {dmg} Physical Damage. Effect: Reach 10ft. Crit knocks back 10ft."
+    },
+    {
+      "name": "Spines / Quills",
+      "tags": "Retribution",
+      "effect": "Deals {dmg} Physical Damage. Effect: Melee attackers take 1d4 Damage."
+    },
+    {
+      "name": "Acid Spit",
+      "type": "Ranged",
+      "tags": "Splash",
+      "effect": "Range 30ft. Deals {dmg} Acid Damage. Effect: Hit reduces Armor Score by 1."
+    },
+    {
+      "name": "Crushing Limbs",
+      "tags": "Sunder",
+      "effect": "Deals {dmg} Physical Damage. Effect: Critical Hit Restrains and deals Double Damage."
+    }
+  ],
+  "role_passives": [
+    {
+      "name": "Keen Senses",
+      "role": "Skirmisher",
+      "effect": "Cannot be Surprised. Advantage on Attack DC vs Hidden enemies."
+    },
+    {
+      "name": "Keen Senses",
+      "role": "Lurker",
+      "effect": "Cannot be Surprised. Advantage on Attack DC vs Hidden enemies."
+    },
+    {
+      "name": "Spider Climb",
+      "role": "Lurker",
+      "effect": "Climb difficult surfaces/ceilings without checks at full Speed."
+    },
+    {
+      "name": "Charge",
+      "role": "Brute",
+      "effect": "If moving 20ft straight toward target, gain +1 Attack DC for that turn."
+    },
+    {
+      "name": "Charge",
+      "role": "Soldier",
+      "effect": "If moving 20ft straight toward target, gain +1 Attack DC for that turn."
+    },
+    {
+      "name": "Blood Frenzy",
+      "role": "Skirmisher",
+      "effect": "Gain +2 Attack DC against targets with Bleeding or <50% HP."
+    },
+    {
+      "name": "Blood Frenzy",
+      "role": "Minion",
+      "effect": "Gain +2 Attack DC against targets with Bleeding or <50% HP."
+    },
+    {
+      "name": "Amphibious",
+      "role": "Any",
+      "effect": "Breathe water and Swim at full Speed."
+    },
+    {
+      "name": "Pack Tactics",
+      "role": "Soldier",
+      "effect": "Gain +1 Attack DC if an ally is adjacent to the target."
+    },
+    {
+      "name": "Pack Tactics",
+      "role": "Minion",
+      "effect": "Gain +1 Attack DC if an ally is adjacent to the target."
+    },
+    {
+      "name": "Instinctive Dodge",
+      "role": "Skirmisher",
+      "effect": "Take Half Damage from Area of Effect attacks (Reflex Saves)."
+    }
+  ],
+  "actions": [
+    {
+      "name": "Latch On",
+      "type": "Melee",
+      "effect": "On Hit: Normal Damage. Target is Grappled (Speed 0). Beast occupies space. Auto-Damage (STR Mod) at start of turn."
+    },
+    {
+      "name": "Knockdown",
+      "type": "Melee",
+      "effect": "On Hit: Half Damage. Target must make Reflex Save vs Attack DC or be Knocked Prone."
+    },
+    {
+      "name": "Venomous Strike",
+      "type": "Melee",
+      "effect": "On Hit: Normal Damage. Target must make Fortitude Save vs Attack DC or be Poisoned (1d6/turn, ignore Armor) for 1 min."
+    },
+    {
+      "name": "Web Shot",
+      "type": "Ranged",
+      "effect": "Range 30ft. On Hit: No Damage. Target is Restrained. Escape: STR Check DC 13."
+    },
+    {
+      "name": "Rend",
+      "type": "Melee",
+      "effect": "On Hit: Normal Damage. If target is below Max HP, they gain Bleeding condition (1d4/turn)."
+    },
+    {
+      "name": "Terrifying Roar",
+      "type": "AoE",
+      "effect": "30ft Radius. All enemies must make Will Save vs Save DC. Fail: Frightened for 1 round."
+    }
+  ],
+  "danger_abilities": [
+    {
+      "name": "Primal Roar",
+      "cost": "1 DP",
+      "effect": "All players within 30ft: Will Save vs Save DC or Frightened 1 round."
+    },
+    {
+      "name": "Devour",
+      "cost": "1 DP",
+      "effect": "Attack a Grappled/Prone target. Deal Double Damage and Heal for half the amount dealt."
+    },
+    {
+      "name": "Call of the Wild",
+      "cost": "1 DP",
+      "effect": "1d4 Minions (Same species) emerge from environment at end of round."
+    },
+    {
+      "name": "Thrash",
+      "cost": "1 DP",
+      "effect": "All adjacent creatures: Reflex Save vs Save DC. Fail: Take STR Mod damage and pushed 10ft."
+    },
+    {
+      "name": "Pounce",
+      "cost": "1 DP",
+      "effect": "Leap 30ft to target. Target makes Reflex Save vs Attack DC. Fail: Normal Damage + Knocked Prone."
+    },
+    {
+      "name": "Enrage",
+      "cost": "1 DP",
+      "effect": "Trigger: <50% HP. Clear all negative conditions. Take an immediate extra Standard Action."
+    },
+    {
+      "name": "Stampede",
+      "cost": "1 DP",
+      "effect": "Move up to Speed in a straight line through enemies. Enemies passed through must make Reflex Save or take Weapon Damage and fall Prone."
+    }
+  ],
+  "flavor": {
+    "activity": [
+      "Sleeping among bones.",
+      "Gnawing on fresh corpse.",
+      "Stalking (Stealth Check).",
+      "Nursing young/eggs.",
+      "Marking territory.",
+      "Fighting over carcass.",
+      "Suffering from disease.",
+      "Sharpening claws.",
+      "Watching from high ground.",
+      "Playing with a 'toy'."
+    ],
+    "visuals": [
+      "Mange-Ridden/Rabid.",
+      "Alpha/Dire (Bone ridges).",
+      "Quilled/Spined.",
+      "Blind/Cave-Adapted.",
+      "Fused with metal.",
+      "Shadow-Touched.",
+      "Albino.",
+      "Ancient/Scarred.",
+      "Fungal growth.",
+      "Two-Headed."
+    ],
+    "loot": [
+      "Intact Pelt (10g).",
+      "Venom Gland (20g).",
+      "Undigested Ring (50g).",
+      "Razor Claws (5g).",
+      "Rare Egg (100g).",
+      "Musk Gland (15g).",
+      "Web Silk Gland (20g).",
+      "Monster Heart (50g).",
+      "Bone Trophy (1g).",
+      "Ownership Collar."
+    ]
+  }
+},
+"unliving": {
+  "id": "fam_unliving",
+  "name": "The Unliving",
+  "description": "A violation of the natural order. Skeletons, zombies, ghosts, and liches. They do not feel pain, fear, or mercy. Fighting them is a battle of attrition.",
+  "universal_traits": [
+    {
+      "name": "Dead Nerves",
+      "effect": "Immune to Poisoned, Bleeding, and Exhausted conditions. They do not breathe, eat, or sleep."
+    },
+    {
+      "name": "Unholy Vulnerability",
+      "effect": "Take Double Damage from Radiant sources."
+    },
+    {
+      "name": "Harvestable",
+      "effect": "Drop 'Essence' (Bone Dust, Ectoplasm). Harvest Check: Lore (INT) DC 10 + Level."
+    }
+  ],
+  "basic_attacks": [
+    {
+      "name": "Rotted Claws",
+      "tags": "Finesse",
+      "effect": "Deals {dmg} Necrotic Damage. Effect: Crit applies Bleeding."
+    },
+    {
+      "name": "Rusted Blade",
+      "tags": "Sunder",
+      "effect": "Deals {dmg} Physical Damage. Effect: Hit reduces Armor Score by 1 until repaired."
+    },
+    {
+      "name": "Grave Mattock",
+      "tags": "Heavy",
+      "effect": "Deals {dmg} Physical Damage. Effect: Hit forces Reflex Save or Prone."
+    },
+    {
+      "name": "Spectral Touch",
+      "tags": "Pierce",
+      "effect": "Deals {dmg} Cold/Necrotic Damage. Effect: Ignores Armor Score."
+    },
+    {
+      "name": "Ancient Bow",
+      "type": "Ranged",
+      "tags": "Sniper",
+      "effect": "Deals {dmg} Physical Damage. Effect: If not moving, +2 Attack DC."
+    },
+    {
+      "name": "Bile / Vomit",
+      "type": "Ranged",
+      "tags": "Splash",
+      "effect": "Range 15ft. Deals {dmg} Acid Damage. Effect: Hit Blinds for 1 round."
+    },
+    {
+      "name": "Chains / Noose",
+      "tags": "Control",
+      "effect": "Deals {dmg} Physical Damage. Effect: Reach 10ft. Hit Grapples target."
+    },
+    {
+      "name": "Life Siphon",
+      "type": "Magic",
+      "tags": "Magic",
+      "effect": "Range 30ft. Deals {dmg} Necrotic Damage. Effect: Heals for half damage dealt."
+    }
+  ],
+  "role_passives": [
+    {
+      "name": "Undead Fortitude",
+      "role": "Soldier",
+      "effect": "If reduced to 0 HP, make check (DC 5 + Dmg). Success: Drop to 1 HP. Radiant bypasses."
+    },
+    {
+      "name": "Undead Fortitude",
+      "role": "Brute",
+      "effect": "If reduced to 0 HP, make check (DC 5 + Dmg). Success: Drop to 1 HP. Radiant bypasses."
+    },
+    {
+      "name": "Stench",
+      "role": "Brute",
+      "effect": "Living creatures starting turn within 10ft must make Fortitude Save or be Weakened 1 round."
+    },
+    {
+      "name": "Incorporeal",
+      "role": "Lurker",
+      "effect": "Can move through objects. Resistance to non-magical physical attacks."
+    },
+    {
+      "name": "Incorporeal",
+      "role": "Controller",
+      "effect": "Can move through objects. Resistance to non-magical physical attacks."
+    },
+    {
+      "name": "Life Sense",
+      "role": "Lurker",
+      "effect": "Automatically detects living creatures within 60ft, ignoring Invisibility and Stealth."
+    },
+    {
+      "name": "Magic Resistance",
+      "role": "Controller",
+      "effect": "Gains +2 Armor Score against Spells and Magical Effects."
+    },
+    {
+      "name": "Bone Pile",
+      "role": "Minion",
+      "effect": "Indistinguishable from a dead body while prone. Advantage on first attack (Ambush)."
+    },
+    {
+      "name": "Bone Pile",
+      "role": "Lurker",
+      "effect": "Indistinguishable from a dead body while prone. Advantage on first attack (Ambush)."
+    },
+    {
+      "name": "Turn Resistance",
+      "role": "Solo",
+      "effect": "Advantage on Saving Throws against Turn Undead or Holy Repulsion effects."
+    }
+  ],
+  "actions": [
+    {
+      "name": "Rotting Slam",
+      "type": "Melee",
+      "effect": "On Hit: Normal Damage. Target must make Fortitude Save vs Save DC or contract a Disease (No natural healing)."
+    },
+    {
+      "name": "Life Drain",
+      "type": "Melee",
+      "effect": "On Hit: Necrotic Damage. The Undead regains HP equal to half the damage dealt."
+    },
+    {
+      "name": "Paralyzing Touch",
+      "type": "Melee",
+      "effect": "On Hit: Normal Damage. Target must make Fortitude Save vs Save DC or be Stunned for 1 round."
+    },
+    {
+      "name": "Grave Grasp",
+      "type": "Melee",
+      "effect": "Ignores Armor Score. On Hit: Target is Grappled (Speed 0)."
+    },
+    {
+      "name": "Terrifying Glare",
+      "type": "Ranged",
+      "effect": "Target player makes Will Save vs Save DC. Fail: 1d6 Psychic Damage and Frightened for 1 round."
+    },
+    {
+      "name": "Necrotic Bolt",
+      "type": "Magic",
+      "effect": "Ranged (60ft). On Hit: Force/Necrotic Damage. Ignores Armor Score."
+    }
+  ],
+  "danger_abilities": [
+    {
+      "name": "Wail of the Damned",
+      "cost": "1 DP",
+      "effect": "All living enemies within 30ft: Will Save vs Save DC. Fail: 2d6 Psychic Dmg and Frightened."
+    },
+    {
+      "name": "Rise Again",
+      "cost": "1 DP",
+      "effect": "Trigger: When destroyed. Reassemble/Stand up immediately with Half HP."
+    },
+    {
+      "name": "Horde Instinct",
+      "cost": "1 DP",
+      "effect": "All Undead Minions within 30ft move Full Speed toward the nearest player (No OA)."
+    },
+    {
+      "name": "Curse of Ages",
+      "cost": "1 DP",
+      "effect": "Target is Cursed. Cannot regain Hit Points or Luck Points until Curse is removed."
+    },
+    {
+      "name": "Corpse Explosion",
+      "cost": "1 DP",
+      "effect": "Trigger: When destroyed (or target corpse). 10ft Radius. 4d6 Necrotic Damage (Reflex Half)."
+    },
+    {
+      "name": "Grave-Bind",
+      "cost": "1 DP",
+      "effect": "Spectral hands erupt in 20ft Radius. Area is Difficult Terrain. Creatures are Restrained (STR Save DC 13)."
+    }
+  ],
+  "flavor": {
+    "activity": [
+      "Standing perfectly still (facing wall).",
+      "Arranging bones in patterns.",
+      "Repeating a single word.",
+      "Lying in a pile (Ambush).",
+      "Weeping silently.",
+      "Gnawing on dry bone.",
+      "Scratching at a door.",
+      "Worshipping dark idol.",
+      "Patrolling ancient route.",
+      "Screaming without breath."
+    ],
+    "visuals": [
+      "Fused armor/bone.",
+      "Leaking green vapor.",
+      "Preserved (Wax/Bandages).",
+      "Broken/Contorted limbs.",
+      "Burning with cold fire.",
+      "Bloated/Waterlogged.",
+      "Mineral encrusted.",
+      "Shadowy/Indistinct.",
+      "Overgrown with roots.",
+      "Gilded/Jeweled."
+    ],
+    "loot": [
+      "Grave Dust (5g).",
+      "Bone Meal (2g).",
+      "Ectoplasm (20g).",
+      "Gold Tooth (5g).",
+      "Burial Ring (15g).",
+      "Ancient Coin (10g).",
+      "Funerary Mask (50g).",
+      "Cursed Trinket (100g).",
+      "Wraith Silk (25g).",
+      "Canopic Jar (50g)."
+    ]
+  }
+},
+"constructs": {
+  "id": "fam_constructs",
+  "name": "The Constructs",
+  "description": "Artificial life. Golems, animated armor, and clockwork horrors. They do not feel pain or fear, following their programming with absolute, machine-like perfection.",
+  "universal_traits": [
+    {
+      "name": "Inorganic Shell",
+      "effect": "Immune to Bleeding, Poisoned, Diseased, Exhausted, Charmed, and Frightened. Do not breathe/eat/sleep."
+    },
+    {
+      "name": "Repair Required",
+      "effect": "Cannot be healed by standard magic (Cure Wounds) or Medicine. Requires Mending spell or Craft & Tinker checks."
+    },
+    {
+      "name": "Harvestable",
+      "effect": "Drop 'Scrap' (Gears, Plating, Oil). Harvest Check: Craft & Tinker (INT) DC 10 + Level."
+    }
+  ],
+  "basic_attacks": [
+    {
+      "name": "Pneumatic Fist",
+      "tags": "Heavy",
+      "effect": "Deals {dmg} Physical Damage. Effect: Critical Hit knocks target Prone and Pushes 10ft."
+    },
+    {
+      "name": "Buzzsaw Limb",
+      "tags": "Messy",
+      "effect": "Deals {dmg} Physical Damage. Effect: Hit applies Bleeding condition."
+    },
+    {
+      "name": "Great-Hammer",
+      "tags": "Sunder",
+      "effect": "Deals {dmg} Physical Damage. Effect: Hit reduces Armor Score by 1."
+    },
+    {
+      "name": "Steam Jet",
+      "type": "Ranged",
+      "tags": "Splash",
+      "effect": "Range 15ft. Deals {dmg} Fire Damage. Effect: Hit Blinds target for 1 round."
+    },
+    {
+      "name": "Integrated Crossbow",
+      "type": "Ranged",
+      "tags": "Pierce",
+      "effect": "Deals {dmg} Physical Damage. Effect: Ignores 1 point of Armor Score."
+    },
+    {
+      "name": "Shock Prod",
+      "tags": "Daze",
+      "effect": "Deals {dmg} Lightning Damage. Effect: Hit forces Fortitude Save or Dazed for 1 round."
+    },
+    {
+      "name": "Grasping Pincers",
+      "tags": "Control",
+      "effect": "Deals Half {dmg} Physical Damage. Effect: Hit Grapples target."
+    },
+    {
+      "name": "Alchemical Sprayer",
+      "type": "AoE",
+      "tags": "Area",
+      "effect": "15ft Cone. Deals {dmg} Acid or Fire Damage. Effect: Reflex Save for Half."
+    }
+  ],
+  "role_passives": [
+    {
+      "name": "Heavy Plating",
+      "role": "Soldier",
+      "effect": "Base Armor Score is increased by +1."
+    },
+    {
+      "name": "Heavy Plating",
+      "role": "Brute",
+      "effect": "Base Armor Score is increased by +1."
+    },
+    {
+      "name": "Immutable Form",
+      "role": "Any",
+      "effect": "Immune to Polymorph/Petrification. Critical Hits count as Normal Hits (No Bonus/Luck)."
+    },
+    {
+      "name": "Magic Resistance",
+      "role": "Soldier",
+      "effect": "Gains +2 Armor Score against Spells and Magical Effects."
+    },
+    {
+      "name": "Magic Resistance",
+      "role": "Solo",
+      "effect": "Gains +2 Armor Score against Spells and Magical Effects."
+    },
+    {
+      "name": "Hazardous Body",
+      "role": "Skirmisher",
+      "effect": "Covered in spikes/heat/electricity. Grapplers or Unarmed attackers take 1d4 Damage."
+    },
+    {
+      "name": "Unstoppable",
+      "role": "Brute",
+      "effect": "Ignores non-magical Difficult Terrain. Cannot be Slowed or Paralyzed by physical means."
+    },
+    {
+      "name": "Elemental Absorption",
+      "role": "Solo",
+      "effect": "Immune to one Element (Fire/Lightning/Acid). Heals for half damage if hit by that type."
+    }
+  ],
+  "actions": [
+    {
+      "name": "Slam",
+      "type": "Melee",
+      "effect": "On Hit: High Damage (Upgrade die type). Simple bludgeoning force."
+    },
+    {
+      "name": "Crush",
+      "type": "Melee",
+      "effect": "On Hit: Normal Damage. Target is Grappled. Start Turn Grappled: Take Automatic Damage equal to STR Mod."
+    },
+    {
+      "name": "Vent (Steam/Fire)",
+      "type": "AoE",
+      "effect": "15ft Cone. Reflex Save vs Attack DC. Fail: 2d6 Elemental Damage."
+    },
+    {
+      "name": "Whirlwind",
+      "type": "AoE",
+      "effect": "Make one Attack Check against EVERY adjacent enemy."
+    },
+    {
+      "name": "Trample",
+      "type": "Move",
+      "effect": "Move full speed through enemies. They make Reflex Save vs Attack DC or take Damage and fall Prone."
+    },
+    {
+      "name": "Capture",
+      "type": "Melee",
+      "effect": "On Hit: No Damage. Target is Restrained (Net/Manacles). Escape: STR/DEX DC 15."
+    }
+  ],
+  "danger_abilities": [
+    {
+      "name": "Overcharge",
+      "cost": "1 DP",
+      "effect": "Take an immediate Extra Action. At end of turn, Construct takes 1d10 Damage (Overheat)."
+    },
+    {
+      "name": "Self-Destruct",
+      "cost": "1 DP",
+      "effect": "Trigger: 0 HP. Explode. 20ft Radius. 4d6 Fire/Force Damage (Reflex Half)."
+    },
+    {
+      "name": "Repair Protocol",
+      "cost": "1 DP",
+      "effect": "Regain 10 HP and end one negative condition (Blinded/Weakened)."
+    },
+    {
+      "name": "Lockdown",
+      "cost": "1 DP",
+      "effect": "Create a barrier (Force/Stone/Iron) blocking a 10ft passage or trapping a target. Durability: 20 HP."
+    },
+    {
+      "name": "Vent Coolant",
+      "cost": "1 DP",
+      "effect": "20ft Radius cloud. Heavily Obscured (Blindness). Start turn in cloud: Take 1d6 Cold Damage."
+    },
+    {
+      "name": "Analyze Pattern",
+      "cost": "1 DP",
+      "effect": "Scan one player. Gain Advantage on all Attack Checks against them for the rest of combat."
+    }
+  ],
+  "flavor": {
+    "activity": [
+      "Standing statue-still.",
+      "Patrolling precise path.",
+      "Cleaning debris/corpses.",
+      "Repeating warning message.",
+      "Repairing self (sparks).",
+      "Venting steam rhythmically.",
+      "Staring at wall (Input wait).",
+      "Marching in lockstep.",
+      "Grinding gears.",
+      "Mimicking last sight."
+    ],
+    "visuals": [
+      "Rusted Iron (Leaking oil).",
+      "Polished Marble.",
+      "Clockwork Brass (Ticking).",
+      "Flesh-Stitched (Golem).",
+      "Crystal/Gem (Glowing).",
+      "Wicker/Wood (Burning core).",
+      "Porcelain (Doll-like).",
+      "Obsidian (Jagged).",
+      "Scrap Heap (Magnetic).",
+      "Hollow Armor."
+    ],
+    "loot": [
+      "Complex Gear (10g).",
+      "Hydraulic Piston (15g).",
+      "Power Core (50g).",
+      "Alchemical Fuel (20g).",
+      "Masterwork Plate (50g).",
+      "Focus Lens (25g).",
+      "Copper Wiring (5g).",
+      "Runic Clay (10g).",
+      "Silver Filigree (30g).",
+      "Black Box (Quest Item)."
+    ]
+  }
+},
+"horrors": {
+  "id": "fam_horrors",
+  "name": "The Horrors",
+  "description": "Aberrations from the Far Realm or the deep earth. They defy biology and logic. Fighting them risks madness as much as physical death.",
+  "universal_traits": [
+    {
+      "name": "Non-Euclidean Anatomy",
+      "effect": "Cannot be Flanked (immune to side-based Sneak Attack) and cannot be Knocked Prone (no up or down)."
+    },
+    {
+      "name": "Alien Mind",
+      "effect": "Immune to Charmed and Confused conditions. Their thoughts are too vast or jagged to manipulate."
+    },
+    {
+      "name": "Harvestable",
+      "effect": "Drop 'Forbidden Curios' (Alien Gems, Brain Fluid). Harvest Check: Survival (WIS) DC 10 + Level."
+    }
+  ],
+  "basic_attacks": [
+    {
+      "name": "Lashing Tentacles",
+      "tags": "Reach, Control",
+      "effect": "Deals {dmg} Weapon Damage. Effect: Reach 10ft. Critical Hit Grapples target."
+    },
+    {
+      "name": "Gnashing Maws",
+      "tags": "Messy",
+      "effect": "Deals {dmg} Weapon Damage. Effect: Hit applies Bleeding condition (1d4/turn)."
+    },
+    {
+      "name": "Crushing Pseudopod",
+      "tags": "Heavy",
+      "effect": "Deals {dmg} Weapon Damage. Effect: Hit forces Reflex Save or Prone."
+    },
+    {
+      "name": "Psychic Blast",
+      "tags": "Pierce",
+      "effect": "Deals {dmg} Psychic Damage. Effect: Ignores Armor Score completely."
+    },
+    {
+      "name": "Acid Spittle",
+      "type": "Ranged",
+      "tags": "Splash",
+      "effect": "Range 30ft. Deals {dmg} Acid Damage. Effect: Hit reduces Armor Score by 1."
+    },
+    {
+      "name": "Bone Spikes",
+      "tags": "Retribution",
+      "effect": "Deals {dmg} Weapon Damage. Effect: Melee attackers take 1d4 Damage."
+    },
+    {
+      "name": "Mind-Whip",
+      "type": "Ranged",
+      "tags": "Daze",
+      "effect": "Range 15ft. Deals {dmg} Weapon Damage. Effect: Hit forces Will Save or Dazed 1 round."
+    },
+    {
+      "name": "Absorption",
+      "tags": "Grapple",
+      "effect": "Deals {dmg} Weapon Damage. Effect: Hit Grapples target and pulls them adjacent."
+    }
+  ],
+  "role_passives": [
+    {
+      "name": "Amorphous",
+      "role": "Lurker",
+      "effect": "Can squeeze through 1-inch gaps. Advantage to escape Grapples."
+    },
+    {
+      "name": "Regeneration",
+      "role": "Brute",
+      "effect": "Regain 5 HP at start of turn. Stopped by Fire or Acid damage."
+    },
+    {
+      "name": "Regeneration",
+      "role": "Soldier",
+      "effect": "Regain 5 HP at start of turn. Stopped by Fire or Acid damage."
+    },
+    {
+      "name": "Aura of Madness",
+      "role": "Controller",
+      "effect": "Creatures starting turn within 10ft must make Will Save vs Save DC or be Dazed 1 round."
+    },
+    {
+      "name": "Aura of Madness",
+      "role": "Solo",
+      "effect": "Creatures starting turn within 10ft must make Will Save vs Save DC or be Dazed 1 round."
+    },
+    {
+      "name": "Magic Resistance",
+      "role": "Soldier",
+      "effect": "Gains +2 Armor Score against Spells and Magical Effects."
+    },
+    {
+      "name": "Caustic Blood",
+      "role": "Brute",
+      "effect": "Melee attackers take 1d4 Acid Damage on hit."
+    }
+  ],
+  "actions": [
+    {
+      "name": "Tentacle Lash",
+      "type": "Melee",
+      "effect": "Reach 10ft. On Hit: Normal Damage and Target is Grappled."
+    },
+    {
+      "name": "Psychic Bore",
+      "type": "Magic",
+      "effect": "Ranged (60ft). On Hit: Psychic Damage (Ignores Armor). Target loses Concentration on spells."
+    },
+    {
+      "name": "Engulf / Absorb",
+      "type": "Melee",
+      "effect": "Against Grappled target. Move into space. Target Restrained. Auto Acid Damage at start of turn."
+    },
+    {
+      "name": "Gaze of Entropy",
+      "type": "Ranged",
+      "effect": "Target makes Fortitude Save vs Save DC. Fail: Weakened (Half Damage dealt) for 1 minute."
+    },
+    {
+      "name": "Gibbering",
+      "type": "AoE",
+      "effect": "20ft Radius. Will Save vs Save DC. Fail: Confused for 1 round."
+    },
+    {
+      "name": "Flesh-Warp",
+      "type": "Melee",
+      "effect": "On Hit: Fortitude Save. Fail: Limb becomes rubbery (Drop Item or Fall Prone) for 1 minute."
+    }
+  ],
+  "danger_abilities": [
+    {
+      "name": "Mind Blast",
+      "cost": "1 DP",
+      "effect": "30ft Cone. Will Save vs Save DC. Fail: 3d6 Psychic Damage (Ignores Armor) and Stunned 1 round."
+    },
+    {
+      "name": "Spatial Warp",
+      "cost": "1 DP",
+      "effect": "Teleport self and one adjacent creature (Will Save negates) to any point within 60ft."
+    },
+    {
+      "name": "Fission",
+      "cost": "1 DP",
+      "effect": "Trigger: Take Slashing/Lightning dmg. Split into two copies. Both have Half current HP."
+    },
+    {
+      "name": "Void Shield",
+      "cost": "1 DP",
+      "effect": "Gain 20 Temp HP. While Shield holds, Immune to Magic."
+    },
+    {
+      "name": "Reality Tear",
+      "cost": "1 DP",
+      "effect": "20ft Radius Zone. Zero-Gravity. Creatures float and have Disadvantage on DEX/Attacks unless flying/anchored."
+    },
+    {
+      "name": "Dominate",
+      "cost": "1 DP",
+      "effect": "Target makes Will Save. Fail: Charmed and immediately makes a Reaction Attack against an ally."
+    }
+  ],
+  "flavor": {
+    "activity": [
+      "Vibrating reality.",
+      "Merging with terrain.",
+      "Mimicking backwards speech.",
+      "Staring through walls.",
+      "Building nest of glass.",
+      "Swimming through air.",
+      "Dissolving victim.",
+      "Tracing geometry.",
+      "Weeping ichor.",
+      "Hovering motionless."
+    ],
+    "visuals": [
+      "Translucent Jelly.",
+      "Non-Euclidean Geometry.",
+      "Stretched Humanoid.",
+      "Insectoid/Chitin.",
+      "Cohesive Gas.",
+      "Fungal/Moldy.",
+      "Organic Metal.",
+      "Living Silhouette.",
+      "Inside-Out Anatomy.",
+      "Mass of Worms."
+    ],
+    "loot": [
+      "Alien Gem (50g).",
+      "Brain Fluid (25g).",
+      "Strange Metal (20g).",
+      "Geometric Geode (30g).",
+      "Mutagenic Gland (40g).",
+      "Void Dust (15g).",
+      "Flexible Chitin (20g).",
+      "Resonating Spine (10g).",
+      "Grim Grimoire (100g).",
+      "Crystallized Lobe (50g)."
+    ]
+  }
+},
+"spirits": {
+  "id": "fam_spirits",
+  "name": "The Spirits",
+  "description": "Visitors from other planes. Elementals, Fey, Demons, and Devils. They follow alien logic and are bound by ancient laws. To defeat them is to banish them.",
+  "universal_traits": [
+    {
+      "name": "Planar Resistance",
+      "effect": "Resistance (Half Damage) to Non-Magical Weapons. Vulnerable (Double Damage) to their Bane (Silver for Fiends, Cold Iron for Fey, Opposing Element for Elementals)."
+    },
+    {
+      "name": "Dissolution",
+      "effect": "When destroyed, they dissolve into ash, light, or slime, returning to their home plane (no corpse). Equipment drops normally."
+    },
+    {
+      "name": "Harvestable",
+      "effect": "Drop 'Essence' (Crystallized Mana, Elemental Cores). Harvest Check: Lore (INT) DC 10 + Level."
+    }
+  ],
+  "basic_attacks": [
+    {
+      "name": "Flame Lash",
+      "tags": "Finesse",
+      "effect": "Deals {dmg} Fire Damage. Effect: Critical Hit applies Burning."
+    },
+    {
+      "name": "Stone Slam",
+      "tags": "Heavy",
+      "effect": "Deals {dmg} Physical Damage. Effect: Hit forces Reflex Save or Prone."
+    },
+    {
+      "name": "Ice Shard",
+      "type": "Ranged",
+      "tags": "Pierce",
+      "effect": "Deals {dmg} Cold Damage. Effect: Ignores 1 point of Armor Score."
+    },
+    {
+      "name": "Lightning Arc",
+      "tags": "Splash",
+      "effect": "Deals {dmg} Lightning Damage. Effect: Hit prevents Reactions until next turn."
+    },
+    {
+      "name": "Shadow Blade",
+      "tags": "Parry",
+      "effect": "Deals {dmg} Necrotic Damage. Effect: +1 Defense DC vs Melee."
+    },
+    {
+      "name": "Psychic Gaze",
+      "type": "Ranged",
+      "tags": "Daze",
+      "effect": "Deals {dmg} Psychic Damage. Effect: Hit forces Will Save or Dazed."
+    },
+    {
+      "name": "Corrosive Touch",
+      "tags": "Sunder",
+      "effect": "Deals {dmg} Acid Damage. Effect: Hit reduces Armor Score by 1."
+    },
+    {
+      "name": "Gust / Wave",
+      "tags": "Control",
+      "effect": "Deals {dmg} Bludgeoning Damage. Effect: Hit Pushes target 10ft."
+    }
+  ],
+  "role_passives": [
+    {
+      "name": "Elemental Body",
+      "role": "Brute",
+      "effect": "Radiates hazardous energy. Grapplers or Unarmed attackers take 1d6 Elemental Damage."
+    },
+    {
+      "name": "Elemental Body",
+      "role": "Skirmisher",
+      "effect": "Radiates hazardous energy. Grapplers or Unarmed attackers take 1d6 Elemental Damage."
+    },
+    {
+      "name": "Magic Resistance",
+      "role": "Soldier",
+      "effect": "Gains +2 Armor Score against Spells and Magical Effects."
+    },
+    {
+      "name": "Magic Resistance",
+      "role": "Controller",
+      "effect": "Gains +2 Armor Score against Spells and Magical Effects."
+    },
+    {
+      "name": "Hover",
+      "role": "Artillery",
+      "effect": "Floats 1-5ft. Ignores ground-based Difficult Terrain and cannot be Knocked Prone."
+    },
+    {
+      "name": "Hover",
+      "role": "Solo",
+      "effect": "Floats 1-5ft. Ignores ground-based Difficult Terrain and cannot be Knocked Prone."
+    },
+    {
+      "name": "Glamour",
+      "role": "Skirmisher",
+      "effect": "Start of Encounter: Players make Will Save. Fail: Disadvantage on Attacks against this unit (Illusion/Beauty). Save ends."
+    },
+    {
+      "name": "Incorporeal",
+      "role": "Lurker",
+      "effect": "Can move through objects. Resistance to non-magical physical attacks."
+    }
+  ],
+  "actions": [
+    {
+      "name": "Elemental Touch",
+      "type": "Melee",
+      "effect": "Ignores Armor Score. Deals specific Elemental Damage (Fire, Cold, Necrotic)."
+    },
+    {
+      "name": "Blink Strike",
+      "type": "Melee",
+      "effect": "Teleport 15ft immediately before attacking. Attack has Advantage."
+    },
+    {
+      "name": "Charm / Fear",
+      "type": "Ranged",
+      "effect": "30ft Range. Target makes Will Save vs Save DC. Fail: Charmed or Frightened for 1 minute."
+    },
+    {
+      "name": "Life Drain",
+      "type": "Melee",
+      "effect": "On Hit: Necrotic Damage. The Spirit regains HP equal to half the damage dealt."
+    },
+    {
+      "name": "Possession",
+      "type": "Magic",
+      "effect": "Target makes Will Save. Fail: Dominated. Takes 1d6 Psychic damage/turn. Caster is removed from board (inside target)."
+    },
+    {
+      "name": "Elemental Blast",
+      "type": "Ranged",
+      "effect": "60ft Range. 2d8 Elemental Damage. Splash: Adjacent creatures make Reflex Save for Half."
+    }
+  ],
+  "danger_abilities": [
+    {
+      "name": "Summon Kin",
+      "cost": "1 DP",
+      "effect": "Portal opens. 1d4 Minions (Mephits/Imps) appear at end of round."
+    },
+    {
+      "name": "Nova",
+      "cost": "1 DP",
+      "effect": "20ft Radius burst. 3d6 Elemental Damage (Reflex Half)."
+    },
+    {
+      "name": "Planar Shift",
+      "cost": "1 DP",
+      "effect": "Teleport self and one adjacent creature (Will Save negates) up to 60ft away."
+    },
+    {
+      "name": "Polymorph",
+      "cost": "1 DP",
+      "effect": "Target makes Will Save. Fail: Turned into harmless critter (1 HP, 0 AS, Stunned) for 1 round."
+    },
+    {
+      "name": "Elemental Wall",
+      "cost": "1 DP",
+      "effect": "Create Wall (20ft long). Fire/Ice deals damage; Stone blocks movement."
+    },
+    {
+      "name": "Possession",
+      "cost": "1 DP",
+      "effect": "Spirit dives into player. Will Save vs Save DC. Fail: Spirit controls player's next Action. Player takes 1d10 Internal Psychic Damage."
+    }
+  ],
+  "flavor": {
+    "activity": [
+      "Bargaining for a soul.",
+      "Dancing in mushroom circle.",
+      "Consuming magic from item.",
+      "Torturing a ghost.",
+      "Maintaining a portal.",
+      "Mimicking party voices.",
+      "Meditating in orbit.",
+      "Building body from mud.",
+      "Singing painful song.",
+      "Sleeping in lava/ice."
+    ],
+    "visuals": [
+      "Glitching Reality.",
+      "Geometric Light.",
+      "Chimera/Hybrid.",
+      "Masked Humanoid.",
+      "Starry Void.",
+      "Liquid Metal/Fire.",
+      "Insect Swarm.",
+      "Hollow Armor.",
+      "Angelic Eyes.",
+      "Crystalline."
+    ],
+    "loot": [
+      "Crystallized Mana (10g).",
+      "Elemental Core (50g).",
+      "Fairy Dust (20g).",
+      "Demon Horn (25g).",
+      "Angel Feather (50g).",
+      "Ectoplasm (15g).",
+      "Sulfur (5g).",
+      "Ever-Burning Coal (30g).",
+      "Bottled Lightning (40g).",
+      "True Name Scroll."
+    ]
+  }
+},
+"wyrms": {
+  "id": "fam_wyrms",
+  "name": "The Wyrms",
+  "description": "Dragons, drakes, and hydras. Lords of the sky and deep caverns. They possess cruel intelligence, elemental blood, and an obsession with wealth.",
+  "universal_traits": [
+    {
+      "name": "Draconic Blood",
+      "effect": "Tied to an element (Fire/Cold/Acid/Lightning/Poison). Immune to that element. Vulnerable (Double Damage) to the opposing element."
+    },
+    {
+      "name": "Flight",
+      "effect": "Unless wingless (Drakes/Land-Wyrms), they have a Fly Speed equal to their Ground Speed."
+    },
+    {
+      "name": "The Hoard",
+      "effect": "Defeating a Wyrm yields 3x Loot Rolls. Harvestable: Scales, Blood, Horns. Harvest Check: Survival (WIS) DC 10 + Level."
+    }
+  ],
+  "basic_attacks": [
+    {
+      "name": "Razor Claws",
+      "tags": "Finesse",
+      "effect": "Deals {dmg} Weapon Damage. Effect: Critical Hit applies Bleeding (1d6/turn)."
+    },
+    {
+      "name": "Crushing Jaws",
+      "tags": "Grapple",
+      "effect": "Deals {dmg} Weapon Damage. Effect: Hit Grapples target (Speed 0)."
+    },
+    {
+      "name": "Spiked Tail",
+      "tags": "Reach, Heavy",
+      "effect": "Deals {dmg} Weapon Damage. Effect: Reach 10ft. Hit knocks target Prone."
+    },
+    {
+      "name": "Elemental Maw",
+      "tags": "Pierce",
+      "effect": "Deals {dmg} Elemental Damage. Effect: Ignores Armor Score (AS)."
+    },
+    {
+      "name": "Wing Buffet",
+      "tags": "Control",
+      "effect": "Deals {dmg} Weapon Damage. Effect: Hit Pushes target 15 feet away."
+    },
+    {
+      "name": "Searing Blood",
+      "tags": "Retribution",
+      "effect": "Deals {dmg} Weapon Damage. Effect: Melee attackers take 1d6 Elemental Damage."
+    },
+    {
+      "name": "Acid Spit",
+      "type": "Ranged",
+      "tags": "Sunder",
+      "effect": "Range 30ft. Deals {dmg} Acid Damage. Effect: Hit reduces Armor Score by 1."
+    },
+    {
+      "name": "Horn / Gore",
+      "tags": "Charge",
+      "effect": "Deals {dmg} Weapon Damage. Effect: If moved 20ft before attacking, deal +1d8 Damage."
+    }
+  ],
+  "role_passives": [
+    {
+      "name": "Hardened Scales",
+      "role": "Soldier",
+      "effect": "Armor Score is increased by +1."
+    },
+    {
+      "name": "Hardened Scales",
+      "role": "Brute",
+      "effect": "Armor Score is increased by +1."
+    },
+    {
+      "name": "Frightful Presence",
+      "role": "Solo",
+      "effect": "Enemies starting turn within 30ft must make Will Save vs Save DC or be Frightened for 1 round."
+    },
+    {
+      "name": "Reactive Tail",
+      "role": "Soldier",
+      "effect": "If Flanked or an enemy moves adjacent, use Reaction to make an immediate Tail Attack."
+    },
+    {
+      "name": "Reactive Tail",
+      "role": "Lurker",
+      "effect": "If Flanked or an enemy moves adjacent, use Reaction to make an immediate Tail Attack."
+    },
+    {
+      "name": "Multi-Headed",
+      "role": "Brute",
+      "effect": "Advantage on Initiative/Perception. Make 1 Extra Attack per round. Taking 15+ damage in one hit kills a head (Attack DC -1)."
+    },
+    {
+      "name": "Multi-Headed",
+      "role": "Solo",
+      "effect": "Advantage on Initiative/Perception. Make 1 Extra Attack per round. Taking 15+ damage in one hit kills a head (Attack DC -1)."
+    },
+    {
+      "name": "Legendary Resistance",
+      "role": "Solo",
+      "effect": "1/Combat: If the Wyrm fails a Save, it can choose to Succeed instead."
+    }
+  ],
+  "actions": [
+    {
+      "name": "Bite & Claw",
+      "type": "Melee",
+      "effect": "Multi-Attack: Make Two Attacks (High Dmg Bite / Normal Dmg Claw)."
+    },
+    {
+      "name": "Snatched",
+      "type": "Melee",
+      "effect": "On Hit: Normal Damage. Target is Grappled. If Flying, Wyrm moves 20ft Up, carrying victim."
+    },
+    {
+      "name": "Swallow Whole",
+      "type": "Melee",
+      "effect": "Target must be Grappled. On Hit: Swallowed (Removed from board). Restrained/Blinded. Auto-Damage each turn. Escape: Deal 15 Dmg to stomach (AC 10)."
+    },
+    {
+      "name": "Tail Sweep",
+      "type": "AoE",
+      "effect": "Rear Arc (10ft). Reflex Save vs Attack DC. Fail: Damage + Prone."
+    },
+    {
+      "name": "Elemental Bite",
+      "type": "Melee",
+      "effect": "Ignores Armor Score. Deals Physical + Elemental Damage."
+    },
+    {
+      "name": "Wingover",
+      "type": "Move",
+      "effect": "Push all adjacent creatures 10ft away. Move up to Half Speed without provoking counter-attacks."
+    }
+  ],
+  "danger_abilities": [
+    {
+      "name": "Breath Weapon",
+      "cost": "1 DP",
+      "effect": "Cone (30ft) or Line (60ft). Reflex Save vs Save DC. Fail: 4d6 Elemental Damage."
+    },
+    {
+      "name": "Roar of the Ancients",
+      "cost": "1 DP",
+      "effect": "60ft Radius. Will Save vs Save DC. Fail: Frightened 1 round and Drop Weapons."
+    },
+    {
+      "name": "Flyby Snatch",
+      "cost": "1 DP",
+      "effect": "Move Fly Speed (No OA). Grapple one target along path. Success: Carry them for rest of move."
+    },
+    {
+      "name": "Elemental Aura",
+      "cost": "1 DP",
+      "effect": "Nova. 15ft Radius. 2d6 Elemental Damage (No Save)."
+    },
+    {
+      "name": "Incinerate / Freeze",
+      "cost": "1 DP",
+      "effect": "Target one creature. Automatic Elemental Damage (Weapon Die). Apply Permanent Injury (e.g., Burnt Lungs, -1 Stamina) until cured."
+    },
+    {
+      "name": "Legendary Recovery",
+      "cost": "1 DP",
+      "effect": "Trigger: When Stunned/Blinded. End one condition immediately and take a Move Action."
+    }
+  ],
+  "flavor": {
+    "activity": [
+      "Sleeping on coins.",
+      "Eating large prey.",
+      "Counting hoard.",
+      "Arguing with self (Hydra).",
+      "Sharpening claws on statue.",
+      "Bathing in lava/acid.",
+      "Watching from high peak.",
+      "Teaching young (Wyrmlings).",
+      "Molting (Irritable).",
+      "Singing deep draconic song."
+    ],
+    "visuals": [
+      "Rusted/Corroded scales.",
+      "Crystalline/Translucent.",
+      "Rotting (Dracolich).",
+      "Deep-Sea (Bioluminescent).",
+      "Gem-Studded.",
+      "Feathered (Coatl).",
+      "Obsidian (Jagged).",
+      "Albino (Cave dweller).",
+      "Fungal/Mossy.",
+      "Metallic (Gold/Silver)."
+    ],
+    "loot": [
+      "Dragon Scale (20g).",
+      "Wyrm Tooth (10g).",
+      "Elemental Gland (50g).",
+      "Dragon Blood (25g).",
+      "Undigested Gem (50g).",
+      "Copper Hoard (Bulk).",
+      "Marble Statue (Art).",
+      "Masterwork Gear.",
+      "Rare Blueprint.",
+      "Dragon Egg (500g+)."
+    ]
+  }
+},
+"titans": {
+  "id": "fam_titans",
+  "name": "The Titans",
+  "description": "Giants, Ogres, and Trolls. Walking natural disasters who dominate the battlefield through sheer mass and reach. Fighting them is not a duel; it is a siege.",
+  "universal_traits": [
+    {
+      "name": "Long Reach",
+      "effect": "Melee Reach is 10ft (Large) or 15ft (Huge). They can attack enemies who cannot reach them back."
+    },
+    {
+      "name": "Hurl Debris",
+      "effect": "Can rip up rocks/furniture to make Ranged Attacks (60ft) dealing standard weapon damage."
+    },
+    {
+      "name": "Siege Monster",
+      "effect": "Deals Double Damage to objects and structures. Ignores non-magical Difficult Terrain (rubble)."
+    },
+    {
+      "name": "Bulk Loot",
+      "effect": "Wealth is carried in massive sacks. High value, but high slot cost (e.g., barrels of wine, livestock, raw ore)."
+    }
+  ],
+  "basic_attacks": [
+    {
+      "name": "Tree Trunk / Club",
+      "tags": "Heavy",
+      "effect": "Deals {dmg} Weapon Damage. Effect: Hit forces Reflex Save or Prone."
+    },
+    {
+      "name": "Boulder",
+      "type": "Ranged",
+      "tags": "Splash",
+      "effect": "Range 60ft. Deals {dmg} Weapon Damage. Effect: Adjacent creatures make Reflex Save for Half Damage."
+    },
+    {
+      "name": "Iron-Shod Boots",
+      "tags": "Sunder",
+      "effect": "Deals {dmg} Weapon Damage. Effect: Hit reduces Armor Score by 1."
+    },
+    {
+      "name": "Anchor / Chain",
+      "tags": "Control",
+      "effect": "Deals {dmg} Weapon Damage. Effect: Reach 15ft. Hit Grapples and Pulls adjacent."
+    },
+    {
+      "name": "Massive Greatsword",
+      "tags": "Cleave",
+      "effect": "Deals {dmg} Weapon Damage. Effect: Hit deals Half Damage to one adjacent enemy."
+    },
+    {
+      "name": "Elemental Blade",
+      "tags": "Pierce",
+      "effect": "Deals {dmg} Elemental Damage. Effect: Ignores Armor Score (AS)."
+    },
+    {
+      "name": "Net / Sack",
+      "tags": "Capture",
+      "effect": "No Damage. Effect: Hit Restrains target. Escape DC is Strength-based."
+    },
+    {
+      "name": "Fists",
+      "tags": "Grapple",
+      "effect": "Deals {dmg} Weapon Damage. Effect: Hit Grapples target."
+    }
+  ],
+  "role_passives": [
+    {
+      "name": "Regeneration",
+      "role": "Brute",
+      "effect": "Regain 10 HP at start of turn. Stopped by Fire or Acid damage."
+    },
+    {
+      "name": "Wide Swing",
+      "role": "Soldier",
+      "effect": "On a Hit, deal Half Damage to one other enemy adjacent to the target."
+    },
+    {
+      "name": "Wide Swing",
+      "role": "Controller",
+      "effect": "On a Hit, deal Half Damage to one other enemy adjacent to the target."
+    },
+    {
+      "name": "Thick Skull",
+      "role": "Brute",
+      "effect": "Advantage on Saves against Psychic Damage and Stunned condition."
+    },
+    {
+      "name": "Thick Skull",
+      "role": "Minion",
+      "effect": "Advantage on Saves against Psychic Damage and Stunned condition."
+    },
+    {
+      "name": "Thick Skull",
+      "role": "Soldier",
+      "effect": "Advantage on Saves against Psychic Damage and Stunned condition."
+    },
+    {
+      "name": "Trampling Charge",
+      "role": "Soldier",
+      "effect": "If moving 20ft straight toward target, hit knocks target Prone (Reflex Save negates)."
+    },
+    {
+      "name": "Trampling Charge",
+      "role": "Solo",
+      "effect": "If moving 20ft straight toward target, hit knocks target Prone (Reflex Save negates)."
+    },
+    {
+      "name": "Sure-Footed",
+      "role": "Artillery",
+      "effect": "Cannot be Pushed or Knocked Prone by creatures smaller than it."
+    },
+    {
+      "name": "Sure-Footed",
+      "role": "Skirmisher",
+      "effect": "Cannot be Pushed or Knocked Prone by creatures smaller than it."
+    },
+    {
+      "name": "Levitation",
+      "role": "Artillery",
+      "effect": "Floats above ground. Immune to Prone and ground-based hazards."
+    },
+    {
+      "name": "Levitation",
+      "role": "Lurker",
+      "effect": "Floats above ground. Immune to Prone and ground-based hazards."
+    },
+    {
+      "name": "Two Heads",
+      "role": "Solo",
+      "effect": "Advantage on Initiative and Saves vs Sleep/Stun."
+    }
+  ],
+  "actions": [
+    {
+      "name": "Smash",
+      "type": "Melee",
+      "effect": "On Hit: High Damage (Upgrade die). Target is automatically Knocked Prone."
+    },
+    {
+      "name": "Sweep",
+      "type": "AoE",
+      "effect": "10ft Semi-Circle. Defense vs Attack DC. Fail: Damage and Pushed 10ft."
+    },
+    {
+      "name": "Fling Victim",
+      "type": "Melee",
+      "effect": "Grapple Check. Success: Throw target 30ft. Take 1d6 per 10ft Falling Dmg and land Prone."
+    },
+    {
+      "name": "Bite/Eat",
+      "type": "Melee",
+      "effect": "On Hit: Damage + Heal self for half amount. If target dies, allies must Save vs Fear."
+    },
+    {
+      "name": "Stomp",
+      "type": "AoE",
+      "effect": "5ft Radius. Reflex Save vs Attack DC. Fail: Damage equal to STR Mod and Speed Halved (1 round)."
+    },
+    {
+      "name": "Bellow",
+      "type": "Support",
+      "effect": "All allies within 30ft gain Advantage on their next Attack Check."
+    }
+  ],
+  "danger_abilities": [
+    {
+      "name": "Earthquake",
+      "cost": "1 DP",
+      "effect": "30ft Radius. Reflex Save vs Save DC. Fail: Prone. Area becomes Difficult Terrain."
+    },
+    {
+      "name": "Structure Collapse",
+      "cost": "1 DP",
+      "effect": "Smash pillar/ceiling. 15ft Radius. 4d10 Bludgeoning (Reflex Half). Fail: Restrained (Buried)."
+    },
+    {
+      "name": "Rage",
+      "cost": "1 DP",
+      "effect": "1 Minute. Deal +1d6 Damage. Defense DC reduced by 2."
+    },
+    {
+      "name": "Grab & Squeeze",
+      "cost": "1 DP",
+      "effect": "Auto-Grapple target within reach. Deal automatic STR Mod damage at start of turns."
+    },
+    {
+      "name": "Batter",
+      "cost": "1 DP",
+      "effect": "Home run swing. Reflex Save vs Attack DC. Fail: Double Damage and Pushed 30ft."
+    },
+    {
+      "name": "War Cry",
+      "cost": "1 DP",
+      "effect": "60ft Radius. Fortitude Save vs Save DC. Fail: Stunned 1 round."
+    }
+  ],
+  "flavor": {
+    "activity": [
+      "Boiling stew in a cauldron.",
+      "Sleeping loudly (Snoring).",
+      "Painting wall with mud/blood.",
+      "Sharpening tree-trunk spear.",
+      "Arguing with self (Ettin).",
+      "Counting copper coins.",
+      "Gnawing on horse bones.",
+      "Wrestling practice.",
+      "Singing deep songs.",
+      "Fascinated by tiny trinket."
+    ],
+    "visuals": [
+      "Fungal/Mossy (Hill).",
+      "Crystalline/Ice (Frost).",
+      "Molten/Charcoal (Fire).",
+      "Rotting (Undead).",
+      "Scrap-Armored.",
+      "Mutated/Cyclopean.",
+      "Runed Skin (Stone).",
+      "Noble Silks (Cloud).",
+      "Bestial/Hairy.",
+      "Elemental Legs."
+    ],
+    "loot": [
+      "Terrified Livestock (Alive).",
+      "Keg of Ale (2 Slots).",
+      "Wagon Wheel Shield.",
+      "5,000 Copper Pieces (50 Slots).",
+      "Bank Vault Door (Scrap).",
+      "Necklace of Helmets.",
+      "Raw Silver Ore (Boulder).",
+      "Roasted Pig.",
+      "Captive Cage.",
+      "Massive Iron Key."
+    ]
+  }
+},
+"watchers": {
+  "id": "fam_watchers",
+  "name": "The Watchers",
+  "description": "Alien intelligences that resemble floating spheres dominated by a single central eye and surrounded by eye-stalks. They are tyrants of the dark, obsessed with observation and control.",
+  "universal_traits": [
+    {
+      "name": "Panopticon",
+      "effect": "Cannot be Flanked (immune to side-based Sneak Attack) and cannot be Surprised."
+    },
+    {
+      "name": "Hover",
+      "effect": "Floats 1-10ft. Ignores ground-based Difficult Terrain (grease/rubble) and cannot be Knocked Prone unless reduced to 0 HP."
+    },
+    {
+      "name": "Harvestable",
+      "effect": "Drop 'Arcane Curios' (Lenses, Humours, Corneas). Harvest Check: Lore (INT) DC 10 + Level."
+    }
+  ],
+  "basic_attacks": [
+    {
+      "name": "Searing Ray",
+      "type": "Ranged",
+      "tags": "Splash",
+      "effect": "Deals {dmg} Fire Damage. Effect: Hit forces Defense Check vs Burning."
+    },
+    {
+      "name": "Frost Ray",
+      "type": "Ranged",
+      "tags": "Control",
+      "effect": "Deals {dmg} Cold Damage. Effect: Hit Freezes target (Speed 0)."
+    },
+    {
+      "name": "Telekinetic Ray",
+      "type": "Ranged",
+      "tags": "Heavy",
+      "effect": "Deals {dmg} Force Damage. Effect: Hit Throws target 30ft + Prone."
+    },
+    {
+      "name": "Fear Ray",
+      "type": "Ranged",
+      "tags": "Daze",
+      "effect": "No Damage. Effect: Hit forces Will Save or Frightened."
+    },
+    {
+      "name": "Charm Ray",
+      "type": "Ranged",
+      "tags": "Control",
+      "effect": "No Damage. Effect: Hit forces Will Save or Charmed."
+    },
+    {
+      "name": "Enervation Ray",
+      "type": "Ranged",
+      "tags": "Sunder",
+      "effect": "Deals {dmg} Necrotic Damage. Effect: Hit Weakens target."
+    },
+    {
+      "name": "Petrification Ray",
+      "type": "Ranged",
+      "tags": "Capture",
+      "effect": "No Damage. Effect: Hit Restrains target. Second Hit Petrifies."
+    },
+    {
+      "name": "Death Ray",
+      "type": "Ranged",
+      "tags": "Pierce",
+      "effect": "Deals {dmg} Necrotic Damage. Effect: High Damage. 0 HP = Death."
+    }
+  ],
+  "role_passives": [
+    {
+      "name": "Anti-Magic Cone",
+      "role": "Solo",
+      "effect": "Central Eye projects 30-60ft Cone. Inside, no magic functions. Rotates at start of turn."
+    },
+    {
+      "name": "Anti-Magic Cone",
+      "role": "Controller",
+      "effect": "Central Eye projects 30-60ft Cone. Inside, no magic functions. Rotates at start of turn."
+    },
+    {
+      "name": "Reflective Cornea",
+      "role": "Soldier",
+      "effect": "If a Ranged Spell Attack misses, it bounces back. Caster must roll Defense vs their own Spell DC or be hit."
+    },
+    {
+      "name": "Reflective Cornea",
+      "role": "Artillery",
+      "effect": "If a Ranged Spell Attack misses, it bounces back. Caster must roll Defense vs their own Spell DC or be hit."
+    },
+    {
+      "name": "Paranoid Vigilance",
+      "role": "Solo",
+      "effect": "Add Proficiency Die to Initiative. If acting first in Round 1, fire one Ray as Free Action."
+    },
+    {
+      "name": "Paranoid Vigilance",
+      "role": "Minion",
+      "effect": "Add Proficiency Die to Initiative. If acting first in Round 1, fire one Ray as Free Action."
+    },
+    {
+      "name": "Mana Drain",
+      "role": "Skirmisher",
+      "effect": "Creatures starting turn within 20ft lose 1d4 MP. If 0 MP, take Psychic Damage instead."
+    },
+    {
+      "name": "Distracting Gaze",
+      "role": "Soldier",
+      "effect": "Enemies within 10ft have Disadvantage on Attack Checks (Unnerving stare)."
+    }
+  ],
+  "actions": [
+    {
+      "name": "Ray Volley",
+      "type": "Ranged",
+      "effect": "Fire 2 Random Rays (Roll d8 on Ray Table). Can target different creatures."
+    },
+    {
+      "name": "Focused Beam",
+      "type": "Ranged",
+      "effect": "Fire 1 specific Ray Type with Advantage."
+    },
+    {
+      "name": "Spinning Fusillade",
+      "type": "AoE",
+      "effect": "20ft Radius. Reflex Save vs Attack DC. Fail: Hit by Random Ray (Roll d8)."
+    },
+    {
+      "name": "Telekinetic Grip",
+      "type": "Ranged",
+      "effect": "Target makes Strength Save. Fail: Restrained (Held in air) and moved 20ft."
+    },
+    {
+      "name": "Bite",
+      "type": "Melee",
+      "effect": "On Hit: Low Damage. Target is Grappled (Jaw-lock)."
+    }
+  ],
+  "danger_abilities": [
+    {
+      "name": "Prismatic Storm",
+      "cost": "1 DP",
+      "effect": "Fire 4 Random Rays at random targets within 60ft."
+    },
+    {
+      "name": "Anti-Magic Pulse",
+      "cost": "1 DP",
+      "effect": "Dispel all active magical effects/buffs/summons within 60ft."
+    },
+    {
+      "name": "Tyrant's Command",
+      "cost": "1 DP",
+      "effect": "Target makes Will Save. Fail: Dominated (1 round). Uses Reaction to attack ally."
+    },
+    {
+      "name": "Disintegrate",
+      "cost": "1 DP",
+      "effect": "Target takes 6d10 Force Damage (Dodge Half). If 0 HP, turned to dust."
+    },
+    {
+      "name": "Reality Shift",
+      "cost": "1 DP",
+      "effect": "Telekinetically move 3 creatures/objects 20ft instantly (No Save)."
+    },
+    {
+      "name": "Paranoid Snap",
+      "cost": "1 DP",
+      "effect": "Trigger: When damaged. Immediately fire one Random Ray at attacker."
+    }
+  ],
+  "flavor": {
+    "activity": [
+      "Sorting gems telekinetically.",
+      "Dreaming (Warping reality).",
+      "Dictating to scribe.",
+      "Dissecting adventurer.",
+      "Scrying a distant location.",
+      "Arguing with eye stalks.",
+      "Timing gravity drops.",
+      "Polishing central eye.",
+      "Building trap.",
+      "Sleeping (One eye open)."
+    ],
+    "visuals": [
+      "Fleshy/Veined.",
+      "Mechanical/Brass.",
+      "Crystalline Geode.",
+      "Undead (Death Tyrant).",
+      "Eldritch Tentacles.",
+      "Orb of Pure Light.",
+      "Fungal Spore-Puff.",
+      "Deep Sea (Bioluminescent).",
+      "Stone Statue.",
+      "Infernal/Burning."
+    ],
+    "loot": [
+      "Central Lens (100g).",
+      "Eye Stalk (20g).",
+      "Vitreous Humor (50g).",
+      "Crystallized Tear (10g).",
+      "Petrified Adventurer.",
+      "Telekinetic Ring (50g).",
+      "Scroll of Dispel Magic.",
+      "Strange Geode (30g).",
+      "Perfect Map.",
+      "Eye of the Tyrant (Artifact)."
+    ]
+  }
+},
+"amorphous": {
+  "id": "fam_amorphous",
+  "name": "The Amorphous",
+  "description": "Slimes, jellies, and oozes. Life without structure. They dissolve organic matter and metal alike. Fighting them is a nightmare of corrosion and suffocation.",
+  "universal_traits": [
+    {
+      "name": "Liquid Anatomy",
+      "effect": "Immune to Flanking, Prone, and Grappled. Critical Hits against them count as Normal Hits (No Bonus Effect/Luck gain)."
+    },
+    {
+      "name": "Squeeze",
+      "effect": "Can move through gaps as small as 1 inch without slowing down."
+    },
+    {
+      "name": "Blind-Sight",
+      "effect": "Immune to Gaze Attacks and Invisibility. Senses heat/vibration."
+    },
+    {
+      "name": "Harvestable",
+      "effect": "Drop 'Alchemical Slime' and Undigested Loot. Harvest Check: Craft & Tinker (INT) DC 10 + Level."
+    }
+  ],
+  "basic_attacks": [
+    {
+      "name": "Acid Lash",
+      "tags": "Sunder",
+      "effect": "Deals {dmg} Acid Damage. Effect: Hit reduces Armor Score by 1."
+    },
+    {
+      "name": "Sticky Tendril",
+      "tags": "Grapple",
+      "effect": "Deals {dmg} Weapon Damage. Effect: Hit Grapples and pulls adjacent."
+    },
+    {
+      "name": "Dense Slam",
+      "tags": "Heavy",
+      "effect": "Deals {dmg} Weapon Damage. Effect: Hit forces Reflex Save or Prone."
+    },
+    {
+      "name": "Caustic Spittle",
+      "type": "Ranged",
+      "tags": "Splash",
+      "effect": "Range 30ft. Deals {dmg} Acid Damage. Effect: Adjacent creatures make Reflex Save for Half."
+    },
+    {
+      "name": "Shaped Blade",
+      "tags": "Finesse",
+      "effect": "Deals {dmg} Weapon Damage. Effect: Critical Hit applies Bleeding."
+    },
+    {
+      "name": "Suffocating Bulk",
+      "tags": "Control",
+      "effect": "Deals {dmg} Weapon Damage. Effect: Hit Silences target."
+    },
+    {
+      "name": "Crystal Fist",
+      "tags": "Pierce",
+      "effect": "Deals {dmg} Weapon Damage. Effect: Ignores 1 point of Armor Score."
+    },
+    {
+      "name": "Vibrating Touch",
+      "tags": "Daze",
+      "effect": "Deals {dmg} Weapon Damage. Effect: Hit forces Fortitude Save or Dazed."
+    }
+  ],
+  "role_passives": [
+    {
+      "name": "Corrosive Body",
+      "role": "Brute",
+      "effect": "Touching/Grappling/Unarmed Attacking the ooze deals 1d4 Acid Damage. Non-magical weapons hitting it take -1 penalty."
+    },
+    {
+      "name": "Corrosive Body",
+      "role": "Soldier",
+      "effect": "Touching/Grappling/Unarmed Attacking the ooze deals 1d4 Acid Damage. Non-magical weapons hitting it take -1 penalty."
+    },
+    {
+      "name": "False Appearance",
+      "role": "Lurker",
+      "effect": "Indistinguishable from object/puddle while motionless. Advantage on first attack (Ambush)."
+    },
+    {
+      "name": "Split",
+      "role": "Brute",
+      "effect": "Reaction: When taking Slashing/Lightning damage, splits into two smaller oozes with half HP each."
+    },
+    {
+      "name": "Sticky Climber",
+      "role": "Skirmisher",
+      "effect": "Spider Climb. Advantage on checks to maintain Grapple."
+    },
+    {
+      "name": "Magic Absorbent",
+      "role": "Solo",
+      "effect": "Immune to Force Damage (Magic Missile). Heals 1 HP for every point of Force damage prevented."
+    }
+  ],
+  "actions": [
+    {
+      "name": "Engulf",
+      "type": "Melee",
+      "effect": "Move into target space. Target rolls Defense. Fail: Engulfed (Restrained, Blinded, Suffocating). Auto-Damage at start of turn."
+    },
+    {
+      "name": "Corrode Armor",
+      "type": "Melee",
+      "effect": "On Hit: Normal Damage. Target's Armor Score is reduced by 1 (Permanent until Repaired)."
+    },
+    {
+      "name": "Adhesive Strike",
+      "type": "Melee",
+      "effect": "On Hit: Weapon sticks to Ooze. Player must drop weapon or be Grappled."
+    },
+    {
+      "name": "Slime Shot",
+      "type": "Ranged",
+      "effect": "Range 30ft. On Hit: Target Slowed (Speed Halved, No Dash) until cleaned."
+    },
+    {
+      "name": "Shapechange",
+      "type": "Utility",
+      "effect": "Transform into object of same size (Mimic)."
+    }
+  ],
+  "danger_abilities": [
+    {
+      "name": "Mitosis",
+      "cost": "1 DP",
+      "effect": "Trigger: Taken Damage. Split into two copies. Each has Half the current HP."
+    },
+    {
+      "name": "Violent Eruption",
+      "cost": "1 DP",
+      "effect": "15ft Radius. Reflex Save vs Attack DC. Fail: 4d6 Acid Damage and Blinded by slime."
+    },
+    {
+      "name": "Sudden Surge",
+      "cost": "1 DP",
+      "effect": "Move Double Speed. Pass through enemies without OA. Enemies passed through take 2d6 Acid Damage."
+    },
+    {
+      "name": "Devour",
+      "cost": "1 DP",
+      "effect": "Constrict Engulfed/Grappled target. Deal Double Damage. Heal for half amount dealt."
+    },
+    {
+      "name": "Liquid Form",
+      "cost": "1 DP",
+      "effect": "Trigger: Stunned/Restrained. Collapse and reform 5ft away. End all negative conditions."
+    },
+    {
+      "name": "Acid Spray",
+      "cost": "1 DP",
+      "effect": "20ft Cone. 3d6 Acid Damage (Reflex Half). Floor becomes Difficult Terrain."
+    }
+  ],
+  "flavor": {
+    "activity": [
+      "Cleaning floor (dissolving trash).",
+      "Dripping from ceiling.",
+      "Digesting visible skeleton.",
+      "Mimicking a chest.",
+      "Vibrating near magic.",
+      "Flowing under door.",
+      "Bubbling (Foul gas).",
+      "Glowing (Bioluminescent).",
+      "Dividing.",
+      "Stagnating like a puddle."
+    ],
+    "visuals": [
+      "Transparent Cube.",
+      "Black Oil (Flammable).",
+      "Neon Green/Pink.",
+      "Stone-Texture (Mimic).",
+      "Blood Clot.",
+      "Mercury/Liquid Metal.",
+      "Fungal Slurry.",
+      "Freezing Slush.",
+      "Molten Gold.",
+      "Void Shadow."
+    ],
+    "loot": [
+      "Floating Skeleton.",
+      "Sealed Scroll Case.",
+      "Magic Ring (Acid Proof).",
+      "Gemstones (Undigested).",
+      "Glass Vial.",
+      "Pitted Gold Coins.",
+      "Stone Tablet.",
+      "Crystal Weapon.",
+      "Gold Tooth.",
+      "Alchemical Slime (25g)."
+    ]
+  }
+},
+"verdant": {
+  "id": "fam_verdant",
+  "name": "The Verdant",
+  "description": "Plant-monsters. Choking vines, carnivorous flowers, and fungal colonies. They are silent, resilient, and reclaim the dungeon for nature. They manipulate terrain and poison the air.",
+  "universal_traits": [
+    {
+      "name": "Botanical Biology",
+      "effect": "Immune to Charmed, Sleep, and Confused conditions. Do not breathe (immune to suffocation)."
+    },
+    {
+      "name": "Flammable",
+      "effect": "Vulnerable (Double Damage) to Fire Damage (unless aquatic/rock-based)."
+    },
+    {
+      "name": "Harvestable",
+      "effect": "Drop 'Herbal Reagents' (Saps, Spores, Bark). Harvest Check: Survival (WIS) DC 10 + Level."
+    }
+  ],
+  "basic_attacks": [
+    {
+      "name": "Whip-Vines",
+      "tags": "Control",
+      "effect": "Deals {dmg} Weapon Damage. Effect: Reach 10ft. Hit pulls target 5ft closer."
+    },
+    {
+      "name": "Heavy Branch",
+      "tags": "Heavy",
+      "effect": "Deals {dmg} Weapon Damage. Effect: Hit forces Reflex Save or Prone."
+    },
+    {
+      "name": "Needle Spray",
+      "type": "Ranged",
+      "tags": "Pierce",
+      "effect": "Range 30ft. Deals {dmg} Weapon Damage. Effect: Ignores 1 point of Armor Score."
+    },
+    {
+      "name": "Toxic Spores",
+      "tags": "Splash",
+      "effect": "Deals {dmg} Poison Damage. Effect: Hit applies Poisoned condition."
+    },
+    {
+      "name": "Sticky Sap",
+      "tags": "Sunder",
+      "effect": "Deals {dmg} Weapon Damage. Effect: Hit Halves Speed until cleaned."
+    },
+    {
+      "name": "Vampiric Root",
+      "tags": "Grapple",
+      "effect": "Deals {dmg} Necrotic Damage. Effect: Heals for half damage dealt."
+    },
+    {
+      "name": "Thorn Burst",
+      "tags": "Messy",
+      "effect": "Deals {dmg} Weapon Damage. Effect: Critical Hit applies Bleeding."
+    },
+    {
+      "name": "Constricting Coil",
+      "tags": "Grapple",
+      "effect": "Deals {dmg} Weapon Damage. Effect: Hit Grapples target."
+    }
+  ],
+  "role_passives": [
+    {
+      "name": "Thorny Skin",
+      "role": "Soldier",
+      "effect": "Grapplers or Unarmed attackers take 1d4 Piercing Damage."
+    },
+    {
+      "name": "Thorny Skin",
+      "role": "Brute",
+      "effect": "Grapplers or Unarmed attackers take 1d4 Piercing Damage."
+    },
+    {
+      "name": "False Appearance",
+      "role": "Lurker",
+      "effect": "Indistinguishable from normal plant while motionless. Advantage on first attack (Ambush)."
+    },
+    {
+      "name": "False Appearance",
+      "role": "Minion",
+      "effect": "Indistinguishable from normal plant while motionless. Advantage on first attack (Ambush)."
+    },
+    {
+      "name": "Grasping Ground",
+      "role": "Controller",
+      "effect": "Ground within 10ft is Difficult Terrain (Roots/Vines)."
+    },
+    {
+      "name": "Photosynthetic Regeneration",
+      "role": "Solo",
+      "effect": "Regain 5 HP at start of turn if in Bright Light. Fire damage stops this for 1 round."
+    },
+    {
+      "name": "Toxic Spores",
+      "role": "Brute",
+      "effect": "Creatures starting turn adjacent must make Fortitude Save vs Save DC or be Poisoned 1 round."
+    },
+    {
+      "name": "Toxic Spores",
+      "role": "Controller",
+      "effect": "Creatures starting turn adjacent must make Fortitude Save vs Save DC or be Poisoned 1 round."
+    },
+    {
+      "name": "Deep Roots",
+      "role": "Soldier",
+      "effect": "Cannot be Knocked Prone or Moved against will while on natural ground."
+    }
+  ],
+  "actions": [
+    {
+      "name": "Vine Lash",
+      "type": "Melee",
+      "effect": "Reach 15ft. On Hit: Normal Damage and Target pulled 10ft closer."
+    },
+    {
+      "name": "Slam",
+      "type": "Melee",
+      "effect": "On Hit: High Damage (Upgrade die type). Simple crushing force."
+    },
+    {
+      "name": "Needle Volley",
+      "type": "Ranged",
+      "effect": "Range 30/60ft. Make Attack Rolls against up to Two targets within 5ft of each other."
+    },
+    {
+      "name": "Engulf",
+      "type": "Melee",
+      "effect": "Target must be Grappled. Swallow target. Restrained, Blinded, Suffocating. Auto-Damage at start of turn."
+    },
+    {
+      "name": "Hypnotic Pollen",
+      "type": "Magic",
+      "effect": "Ranged Cloud. Will Save vs Save DC. Fail: Dazed (Hallucinating). Fail by 5+: Stunned (Sleep)."
+    }
+  ],
+  "danger_abilities": [
+    {
+      "name": "Entangle",
+      "cost": "1 DP",
+      "effect": "20ft Radius. Reflex Save vs Save DC. Fail: Restrained (Speed 0). Area is Difficult Terrain."
+    },
+    {
+      "name": "Pollen Nova",
+      "cost": "1 DP",
+      "effect": "15ft Radius. Fortitude Save vs Save DC. Fail: Unconscious (Sleep) for 1 min or until damaged."
+    },
+    {
+      "name": "Rapid Growth",
+      "cost": "1 DP",
+      "effect": "Instantly regain 15 HP and end one negative condition."
+    },
+    {
+      "name": "Seed Bomb",
+      "cost": "1 DP",
+      "effect": "Launch pod. 1d4 Minions (Twig Blights) appear at destination at end of round."
+    },
+    {
+      "name": "Wall of Thorns",
+      "cost": "1 DP",
+      "effect": "Create Wall (20ft long). Blocks sight/move. 2d6 Piercing Dmg to pass through."
+    },
+    {
+      "name": "Devour",
+      "cost": "1 DP",
+      "effect": "Constrict Engulfed/Grappled target. Deal Double Damage. Heal for half amount dealt."
+    }
+  ],
+  "flavor": {
+    "activity": [
+      "Rotting in compost.",
+      "Absorbing a corpse.",
+      "Turning toward sun.",
+      "Venting spores rhythmically.",
+      "Creaking/Singing.",
+      "Mimicking a bush.",
+      "Blooming rapidly.",
+      "Dripping sticky sap.",
+      "Weaving a cage.",
+      "Floating on draft."
+    ],
+    "visuals": [
+      "Fungal/Spongy.",
+      "Deadwood/Brittle.",
+      "Swampy/Moss-covered.",
+      "Floral (Bright petals).",
+      "Thorny (Cactus).",
+      "Vine-Mass.",
+      "Bark-Armored.",
+      "Crystalline/Glass.",
+      "Pale/Albino.",
+      "Charred/Burnt."
+    ],
+    "loot": [
+      "Ironwood Bark (20g).",
+      "Toxic Spore Sac (15g).",
+      "Rare Tuber (Ration).",
+      "Sticky Sap (15g).",
+      "Razor Leaf (5g).",
+      "Phosphorescent Moss (5g).",
+      "Heart-Wood (50g).",
+      "Paralysis Pollen (25g).",
+      "Amber Chunk (30g).",
+      "Living Seed (100g)."
+    ]
+  }
+},
+"monstrosities": {
+  "id": "fam_monstrosities",
+  "name": "The Monstrosities",
+  "description": "Mutants and hybrids. Owlbears, basilisks, and chimeras. Born of magical experiments or curses, they combine the worst traits of multiple beasts. They are apex predators with unnatural abilities.",
+  "universal_traits": [
+    {
+      "name": "Hybrid Mind",
+      "effect": "Immune to Charmed. Cannot be calmed or distracted by Survival checks (unlike Beasts)."
+    },
+    {
+      "name": "Darkvision",
+      "effect": "Can see perfectly in total darkness."
+    },
+    {
+      "name": "Harvestable",
+      "effect": "Drop 'Trophy Parts' (Beaks, Spikes, Glands). Harvest Check: Survival (WIS) DC 10 + Level."
+    }
+  ],
+  "basic_attacks": [
+    {
+      "name": "Razor Claws",
+      "tags": "Finesse",
+      "effect": "Deals {dmg} Weapon Damage. Effect: Critical Hit applies Bleeding."
+    },
+    {
+      "name": "Crushing Beak",
+      "tags": "Sunder",
+      "effect": "Deals {dmg} Weapon Damage. Effect: Hit reduces Armor Score by 1."
+    },
+    {
+      "name": "Scorpion Stinger",
+      "tags": "Pierce",
+      "effect": "Deals {dmg} Poison Damage. Effect: Ignores 1 point of Armor Score."
+    },
+    {
+      "name": "Tentacle Lash",
+      "tags": "Reach, Control",
+      "effect": "Deals {dmg} Weapon Damage. Effect: Reach 10ft. Hit pulls target 5ft closer."
+    },
+    {
+      "name": "Heavy Hooves",
+      "tags": "Heavy",
+      "effect": "Deals {dmg} Weapon Damage. Effect: Hit forces Reflex Save or Prone."
+    },
+    {
+      "name": "Spine Volley",
+      "type": "Ranged",
+      "tags": "Splash",
+      "effect": "Range 60ft. Deals {dmg} Weapon Damage. Effect: Adjacent creatures take Half Damage."
+    },
+    {
+      "name": "Petrifying Touch",
+      "tags": "Control",
+      "effect": "Deals {dmg} Weapon Damage. Effect: Hit Restrains target (hardening skin)."
+    },
+    {
+      "name": "Elemental Maw",
+      "tags": "Messy",
+      "effect": "Deals {dmg} Elemental Damage. Effect: Hit deals +1d6 extra damage next turn."
+    }
+  ],
+  "role_passives": [
+    {
+      "name": "Displacement",
+      "role": "Skirmisher",
+      "effect": "Appears shifted from actual location. Attacks against it have Disadvantage. Disabled for 1 round if hit."
+    },
+    {
+      "name": "Displacement",
+      "role": "Lurker",
+      "effect": "Appears shifted from actual location. Attacks against it have Disadvantage. Disabled for 1 round if hit."
+    },
+    {
+      "name": "Keen Senses",
+      "role": "Soldier",
+      "effect": "Advantage on Scrutiny. Cannot be Surprised."
+    },
+    {
+      "name": "Keen Senses",
+      "role": "Solo",
+      "effect": "Advantage on Scrutiny. Cannot be Surprised."
+    },
+    {
+      "name": "Spiked Hide",
+      "role": "Brute",
+      "effect": "Grapplers or Unarmed attackers take 1d6 Piercing Damage."
+    },
+    {
+      "name": "Pounce",
+      "role": "Brute",
+      "effect": "If moving 20ft straight toward target and hitting, target must make Reflex Save or be Knocked Prone."
+    },
+    {
+      "name": "Pounce",
+      "role": "Skirmisher",
+      "effect": "If moving 20ft straight toward target and hitting, target must make Reflex Save or be Knocked Prone."
+    },
+    {
+      "name": "Amphibious / Flyer",
+      "role": "Any",
+      "effect": "Has Swim or Fly speed equal to Ground speed (depending on creature type)."
+    }
+  ],
+  "actions": [
+    {
+      "name": "Multi-Attack",
+      "type": "Melee",
+      "effect": "Make Two Attacks against one target. If both hit, deal +1d6 extra Damage."
+    },
+    {
+      "name": "Petrifying Gaze",
+      "type": "Ranged",
+      "effect": "Range 30ft. Fortitude Save vs Save DC. Fail: Restrained (Turning to stone). Fail 2nd save at end of turn: Petrified."
+    },
+    {
+      "name": "Tail Spikes",
+      "type": "Ranged",
+      "effect": "Range 60ft. Make Attack Rolls against up to 3 targets in a 10ft area."
+    },
+    {
+      "name": "Bear Hug",
+      "type": "Melee",
+      "effect": "Target must be Grappled. Deal automatic damage equal to STR Mod + Proficiency Die."
+    },
+    {
+      "name": "Sonic Screech",
+      "type": "AoE",
+      "effect": "15ft Cone. Thunder Damage. Creatures are Deafened (Disadvantage on Cast Checks)."
+    }
+  ],
+  "danger_abilities": [
+    {
+      "name": "Feral Rage",
+      "cost": "1 DP",
+      "effect": "1 Minute. Advantage on all Attacks. Attacks against it also have Advantage."
+    },
+    {
+      "name": "Stone Glare",
+      "cost": "1 DP",
+      "effect": "Target within 30ft. Fortitude Save vs Save DC. Fail: Stunned (Petrified) until cured."
+    },
+    {
+      "name": "Dive Bomb",
+      "cost": "1 DP",
+      "effect": "Flyer only. Drop on target. Deal Weapon Dmg + 2d6 Fall Dmg. Target Prone."
+    },
+    {
+      "name": "Breath Weapon",
+      "cost": "1 DP",
+      "effect": "15ft Cone (Fire/Acid). 3d6 Damage (Reflex Half)."
+    },
+    {
+      "name": "Phase Shift",
+      "cost": "1 DP",
+      "effect": "Trigger: Targeted by Attack. Teleport 15ft to empty space. Attack Misses."
+    },
+    {
+      "name": "Terrifying Screech",
+      "cost": "1 DP",
+      "effect": "30ft Radius. Will Save vs Save DC. Fail: Frightened 1 round. Drop items."
+    }
+  ],
+  "flavor": {
+    "activity": [
+      "Sharpening beak on stone.",
+      "Mimicking victim voices.",
+      "Nesting with shields.",
+      "Stalking a wolf pack.",
+      "Glitching/Vibrating.",
+      "Eating a chest.",
+      "Molting (Aggressive).",
+      "Playing with live food.",
+      "Guarding statue-still.",
+      "Mutating visibly."
+    ],
+    "visuals": [
+      "Construct-Hybrid (Stitched).",
+      "Crystalline Feathers.",
+      "Undead-Like (Ribs showing).",
+      "Elemental-Infused.",
+      "Runed Hide.",
+      "Multi-Limbed.",
+      "Albino (Cave).",
+      "Shadow-Wreathed.",
+      "Armored Chitin.",
+      "Unnaturally Beautiful."
+    ],
+    "loot": [
+      "Intact Beak/Horn (20g).",
+      "Petrifying Eye (50g).",
+      "Displacer Hide (50g).",
+      "Manticore Spike (5g).",
+      "Magical Gland (25g).",
+      "Rare Egg (100g).",
+      "Undigested Gems (50g).",
+      "Wizard's Collar.",
+      "Griffon Feather (10g).",
+      "Heart of the Beast (50g)."
+    ]
+  }
+}}
 }

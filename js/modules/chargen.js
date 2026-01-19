@@ -1,24 +1,20 @@
+/* --- START OF FILE chargen.js --- */
+
 import { I18n } from '../utils/i18n.js';
 import { Dice } from '../utils/dice.js';
 import { Storage } from '../utils/storage.js';
+import { DiceUI } from './dice_ui.js';
 
 export const CharGen = {
 
-    /**
-     * Load an existing character object into the editor
-     */
-    loadCharacter: (savedChar) => {
-        CharGen.char = JSON.parse(JSON.stringify(savedChar));
-        // We do NOT reset currentStep here, we let init() handle the UI setup
-        console.log("Character Loaded:", CharGen.char.name);
-    },
-    
     // State Tracking
     container: null,
     currentStep: 1,
+    isEditMode: false,
     
     // The Character Data Object (The Truth)
     char: {
+        id: null,
         name: "",
         level: 1,
         ancestry: null,  // ID string
@@ -29,18 +25,115 @@ export const CharGen = {
         className: "",
         stats: { STR: null, DEX: null, CON: null, INT: null, WIS: null, CHA: null },
         derived: { maxHP: 0, maxMP: 0, maxSTA: 0, maxLuck: 0, slots: 8 },
+        // Calculated Base values (before overrides)
+        calculated: { maxHP: 0, maxMP: 0, maxSTA: 0, maxLuck: 0, slots: 8 },
+        // Manual Overrides ("God Mode")
+        overrides: {
+            maxHP: null, maxMP: null, maxSTA: null, maxLuck: null,
+            ac: null, initiative: null, speed: null
+        },
+        baseHP: 0, // The rolled base HP (Hit Dice + Con)
+        
+        // Live State
+        current: { hp: null, mp: null, sta: null, luck: null, xp: 0 }, 
+        activeConditions: [], 
+        notes: "",
+        
+        defenses: { dodge: {val:0, die:"-"}, parry: {val:0, die:"-"}, block: {val:0, die:"-"} },
         inventory: [],
-        talents: [],
+        currency: { g: 0, s: 0, c: 0 },
+        talents: [], // Array of Talent Objects
+        
+        // Temp/Creation Data
+        ancestryFeatIndex: null,
         ancestryChoice: null, 
-        ancestrySkill: null
+        ancestrySkill: null,
+        ancestryElement: null,
+        imageId: null,
+        imageUrl: null
     },
 
     // Temporary state for Step 3 (Stats)
     statState: {
         manualMode: false,
-        arrayValues: [], // e.g. [3, 2, 1, 0, 0, -1]
-        assignedIndices: {}, // { 0: 'STR', 1: 'DEX' } -> Maps array index to stat
+        arrayValues: [],
+        assignedIndices: {}, 
         selectedValIndex: null
+    },
+
+    // Temporary state for Leveling
+    levelState: {
+        newHP: 0,
+        selectedTalent: null,
+        selectedStat: null,
+        hitDie: 8,
+        nextLevel: 0
+    },
+
+    /**
+     * Load an existing character object into the editor
+     */
+    loadCharacter: (savedChar) => {
+        // Deep copy
+        CharGen.char = JSON.parse(JSON.stringify(savedChar));
+        
+        // --- DATA MIGRATION FIXES ---
+        
+        // Ensure Overrides exist
+        if (!CharGen.char.overrides) {
+            CharGen.char.overrides = { maxHP: null, maxMP: null, maxSTA: null, maxLuck: null, ac: null, initiative: null, speed: null };
+        }
+        
+        // Ensure new deep overrides exist (Fixes the "undefined reading dodge" error)
+        if (!CharGen.char.overrides.defenses) CharGen.char.overrides.defenses = {};
+        if (!CharGen.char.overrides.skills) CharGen.char.overrides.skills = {};
+
+        // Ensure Calculated exists
+        if (!CharGen.char.calculated) {
+            CharGen.char.calculated = { ...CharGen.char.derived };
+        }
+
+        // Ensure Defenses structure exists
+        if (!CharGen.char.defenses) {
+            CharGen.char.defenses = { dodge: {val:0, die:"-"}, parry: {val:0, die:"-"}, block: {val:0, die:"-"} };
+        }
+        
+        console.log("Character Loaded & Patched:", CharGen.char.name);
+    },
+
+    /**
+     * Reset character state to defaults
+     */
+    resetChar: () => {
+        CharGen.char = {
+            id: null,
+            name: "",
+            level: 1,
+            ancestry: null, background: null,
+            archA: null, archB: null, classId: null, className: "",
+            stats: { STR: null, DEX: null, CON: null, INT: null, WIS: null, CHA: null },
+            derived: { maxHP: 0, maxMP: 0, maxSTA: 0, maxLuck: 0, slots: 8 },
+            calculated: { maxHP: 0, maxMP: 0, maxSTA: 0, maxLuck: 0, slots: 8 },
+            overrides: { maxHP: null, maxMP: null, maxSTA: null, maxLuck: null, ac: null },
+            baseHP: 0,
+            current: { hp: null, mp: null, sta: null, luck: null, xp: 0 }, 
+            defenses: { dodge: {val:0, die:"-"}, parry: {val:0, die:"-"}, block: {val:0, die:"-"} },
+            inventory: [],
+            currency: { g: 0, s: 0, c: 0 },
+            talents: [],
+            ancestryFeatIndex: null,
+            overrides: {
+                maxHP: null, maxMP: null, maxSTA: null, maxLuck: null,
+                ac: null,
+                initiative: null, 
+                speed: null,
+                skills: {},   // Format: { "athletics": { val: 5, die: "1d6" } }
+                defenses: {},  // Format: { "dodge": { val: 12, die: "1d4" } }
+                attacks: {}
+            },
+        };
+        CharGen.statState = { manualMode: false, arrayValues: [], assignedIndices: {}, selectedValIndex: null };
+        CharGen.isEditMode = false;
     },
 
     /**
@@ -49,12 +142,13 @@ export const CharGen = {
     init: (container) => {
         CharGen.container = container;
         
-        // Only reset if we are NOT editing an existing character (no ID)
+        // Initialize Dice UI
+        DiceUI.init(); 
+
         if (!CharGen.char.id) {
             CharGen.resetChar();
             CharGen.currentStep = 1;
         } else {
-            // If editing, start at Step 1 (Bio) with data populated
             CharGen.currentStep = 1;
         }
         
@@ -62,38 +156,28 @@ export const CharGen = {
     },
 
     /**
-     * PHASE 5.3: PLAY MODE ENTRY
-     * Loads the character specifically for the table-ready view.
+     * PLAY MODE ENTRY
      */
     initPlayMode: (charData) => {
-        // FIX: Ensure container is defined even if jumping straight from Library
-        if (!CharGen.container) {
-            CharGen.container = document.getElementById('main-content');
-        }
-
-        // 1. Load Data
-        CharGen.char = JSON.parse(JSON.stringify(charData));
+        if (!CharGen.container) CharGen.container = document.getElementById('main-content');
         
-        // 2. Toggle CSS State
+        DiceUI.init(); 
+        CharGen.loadCharacter(charData);
         document.body.classList.add('mode-play');
         
-        // 3. Render
-        CharGen.renderPlayInterface();
+        // FIX: Call renderSheet directly, passing the container
+        CharGen.renderSheet(CharGen.container);
     },
 
-    /**
-     * CLEANUP & EXIT
-     */
     exitPlayMode: () => {
-        // 1. Auto-Save one last time
+        // 1. Save
         import('../utils/storage.js').then(m => m.Storage.saveCharacter(CharGen.char));
         
-        // 2. Remove CSS State
+        // 2. Remove "Mode Play" class (This restores the sidebar visibility via CSS)
         document.body.classList.remove('mode-play');
         
-        // 3. Remove Toolbar
-        const toolbar = document.querySelector('.play-toolbar');
-        if(toolbar) toolbar.remove();
+        // 3. Clear container
+        CharGen.container.innerHTML = "";
         
         // 4. Return to Library
         const libBtn = document.querySelector('[data-module="library"]');
@@ -101,43 +185,12 @@ export const CharGen = {
     },
 
     /**
-     * Reset character state to defaults
-     */
-    resetChar: () => {
-        CharGen.char = {
-            name: "",
-            level: 1,
-            ancestry: null, background: null,
-            archA: null, archB: null, classId: null, className: "",
-            stats: { STR: null, DEX: null, CON: null, INT: null, WIS: null, CHA: null },
-            derived: { maxHP: 0, maxMP: 0, maxSTA: 0, maxLuck: 0, slots: 8 },
-            baseHP: 0,
-            // --- NEW LIVE STATE ---
-            current: { hp: null, mp: null, sta: null, luck: null, xp: 0 }, 
-            activeConditions: [], // Array of strings e.g. ["Blinded"]
-            notes: "",
-            // ----------------------
-            defenses: { dodge: {val:0, die:"-"}, parry: {val:0, die:"-"}, block: {val:0, die:"-"} },
-            inventory: [],
-            currency: { g: 0, s: 0, c: 0 },
-            talents: []
-        };
-        CharGen.statState = {
-            manualMode: false,
-            arrayValues: [],
-            assignedIndices: {},
-            selectedValIndex: null
-        };
-    },
-
-    /**
-     * Renders the outer layout (Sidebar + Content Area)
+     * Renders the outer layout
      */
     renderShell: () => {
         const t = I18n.t;
         const html = `
             <div class="chargen-layout">
-                <!-- Progress Sidebar -->
                 <div class="chargen-sidebar">
                     <h3>${t('nav_chargen')}</h3>
                     <ul class="step-list">
@@ -148,11 +201,8 @@ export const CharGen = {
                         <li class="step-item" data-step="5">5. ${t('cg_step_sheet')}</li>
                     </ul>
                 </div>
-
-                <!-- Main Input Area -->
                 <div class="chargen-content">
                     <div id="step-container"></div>
-                    
                     <div class="chargen-footer">
                         <button id="btn-prev" class="btn-secondary" disabled>${t('cg_btn_back')}</button>
                         <button id="btn-next" class="btn-primary">${t('cg_btn_next')}</button>
@@ -161,84 +211,29 @@ export const CharGen = {
             </div>
         `;
         CharGen.container.innerHTML = html;
-
-        // Attach Nav Listeners
         document.getElementById('btn-prev').onclick = CharGen.prevStep;
         document.getElementById('btn-next').onclick = CharGen.nextStep;
-
-        // Initial Render of Step 1
         CharGen.renderStep();
     },
 
-    /**
-     * Renders the simplified "Table View" (Now the Character Manager).
-     */
-    renderPlayInterface: () => {
-        // 1. Render the new Manager Layout
-        // The new  function handles clearing the container and setting up the grid/tabs.
-        CharGen.renderSheet(CharGen.container).then(() => {
-            console.log("Play Mode: Manager Rendered.");
-        });
-
-        // 2. Add the Floating Toolbar (Save/Exit)
-        // This sits on top of the manager for quick access.
-        CharGen.renderPlayToolbar();
-    },
-
-    renderPlayToolbar: () => {
-        const toolbar = document.createElement('div');
-        toolbar.className = 'play-toolbar';
-        
-        // Save Button
-        const btnSave = document.createElement('button');
-        btnSave.className = 'play-btn save';
-        btnSave.innerHTML = `<span>💾</span> Save`;
-        btnSave.onclick = () => {
-            import('../utils/storage.js').then(m => {
-                m.Storage.saveCharacter(CharGen.char);
-                // Visual Feedback
-                btnSave.innerHTML = `<span>✅</span> Saved`;
-                setTimeout(() => btnSave.innerHTML = `<span>💾</span> Save`, 1000);
-            });
-        };
-
-        // Exit Button
-        const btnExit = document.createElement('button');
-        btnExit.className = 'play-btn exit';
-        btnExit.innerHTML = `<span>❌</span> Exit`;
-        btnExit.onclick = CharGen.exitPlayMode;
-
-        toolbar.appendChild(btnSave);
-        toolbar.appendChild(btnExit);
-        
-        document.body.appendChild(toolbar);
-    },
-
-    /**
-     * Renders the specific content for the current step
-     */
     renderStep: () => {
         const container = document.getElementById('step-container');
-        const t = I18n.t; // Localization
+        const t = I18n.t;
         container.innerHTML = ''; 
 
-        // Visual Update of Sidebar
         document.querySelectorAll('.step-item').forEach(el => {
             el.classList.toggle('active', parseInt(el.dataset.step) === CharGen.currentStep);
         });
 
-        // Button State Management
         const prevBtn = document.getElementById('btn-prev');
         const nextBtn = document.getElementById('btn-next');
         
         if (prevBtn && nextBtn) {
             prevBtn.disabled = (CharGen.currentStep === 1);
             nextBtn.disabled = false; 
-            // FIX: Localized button text
             nextBtn.textContent = (CharGen.currentStep === 5) ? t('cg_btn_finish') : t('cg_btn_next');
         }
 
-        // Router for Steps
         switch(CharGen.currentStep) {
             case 1: CharGen.renderBio(container); break;
             case 2: CharGen.renderClass(container); break;
@@ -248,43 +243,24 @@ export const CharGen = {
         }
     },
 
-    /**
-     * Navigation Logic
-     */
     nextStep: () => {
-        // Step 1 Validation (Bio)
+        // Validation
         if (CharGen.currentStep === 1 && (!CharGen.char.ancestry || !CharGen.char.background)) {
-            alert("Please select an Ancestry and Background.");
-            return;
+            return alert("Please select an Ancestry and Background.");
         }
-
-        // Step 2 Validation (Class)
         if (CharGen.currentStep === 2) {
-            if (!CharGen.char.archA || !CharGen.char.archB) {
-                alert("Please select two Archetypes.");
-                return;
-            }
-            if (CharGen.char.talents.length < 2) {
-                alert("Please select your 2 Starting Talents.");
-                return;
-            }
+            if (!CharGen.char.archA || !CharGen.char.archB) return alert("Select two Archetypes.");
+            // Determine limit based on Pure vs Hybrid
+            const limit = (CharGen.char.archA === CharGen.char.archB) ? 2 : 2; 
+            if (CharGen.char.talents.length < limit) return alert(`Please select your ${limit} Starting Talents.`);
         }
-
-        // Step 3 Validation (Stats)
         if (CharGen.currentStep === 3) {
-            const stats = CharGen.char.stats;
-            const allAssigned = Object.values(stats).every(v => v !== null);
-            if (!allAssigned && !CharGen.statState.manualMode) {
-                alert("Please assign all stat values.");
-                return;
-            }
+            const allAssigned = Object.values(CharGen.char.stats).every(v => v !== null);
+            if (!allAssigned && !CharGen.statState.manualMode) return alert("Please assign all stat values.");
         }
 
-        // --- NEW LOGIC: FINISH BUTTON ---
         if (CharGen.currentStep === 5) {
-            // Save
             CharGen.saveCharacter();
-            // Redirect to Library
             document.querySelector('[data-module="library"]').click();
             return;
         }
@@ -306,7 +282,7 @@ export const CharGen = {
        STEP 1: BIO & ORIGINS
        ------------------------------------------------------------------ */
     
-renderBio: (el) => {
+    renderBio: (el) => {
         const data = I18n.getData('options');
         const t = I18n.t;
         
@@ -326,7 +302,6 @@ renderBio: (el) => {
             {id: "intimidation", name: "Intimidation (CHA)"}
         ];
 
-        // 1. Build the HTML String
         const html = `
             <div class="split-view">
                 <!-- Inputs -->
@@ -391,7 +366,6 @@ renderBio: (el) => {
                         <label class="form-label" style="font-size:0.9rem;">${t('cg_sel_skill')}</label>
                         <select id="sel-anc-skill">
                             <option value="">-- ${t('btn_view')} --</option>
-                            <!-- Populated dynamically -->
                         </select>
                     </div>
 
@@ -400,7 +374,6 @@ renderBio: (el) => {
                         <label class="form-label" style="font-size:0.9rem;">${t('cg_sel_resist')}</label>
                         <select id="sel-anc-element">
                             <option value="">-- ${t('btn_view')} --</option>
-                            <!-- Populated dynamically -->
                         </select>
                     </div>
 
@@ -424,9 +397,8 @@ renderBio: (el) => {
             </div>
         `;
         
-        // 2. Inject HTML
         el.innerHTML = html;
-        // 3. Select DOM Elements
+        
         const ancSelect = document.getElementById('sel-ancestry');
         const featGroup = document.getElementById('feat-group');
         const featSelect = document.getElementById('sel-anc-feat');
@@ -441,15 +413,12 @@ renderBio: (el) => {
         const elemSelect = document.getElementById('sel-anc-element');
         
         const bgSelect = document.getElementById('sel-background');
-
         const urlInput = document.getElementById('img-url-input');
         const uploadBtn = document.getElementById('btn-upload-img');
         const fileInput = document.getElementById('file-upload-hidden');
 
-        // 4. Define Helper Functions (Scoped to this render)
-
+        // Helpers
         const populateFeats = (ancId) => {
-            // Localize option placeholder
             featSelect.innerHTML = `<option value="">-- ${t('btn_view')} --</option>`;
             if (!ancId) {
                 featGroup.style.display = 'none';
@@ -471,7 +440,6 @@ renderBio: (el) => {
             const ancId = ancSelect.value;
             const featIdx = featSelect.value;
             
-            // Hide all dynamic sections by default
             optDiv.style.display = 'none';
             if (skillDiv) skillDiv.style.display = 'none';
             if (elemDiv) elemDiv.style.display = 'none';
@@ -482,7 +450,6 @@ renderBio: (el) => {
                 const mods = feat.modifiers;
 
                 if (mods) {
-                    // Stat Bonus Choice
                     if (mods.select_bonus) {
                         optDiv.style.display = 'block';
                     } else {
@@ -490,7 +457,6 @@ renderBio: (el) => {
                         optSelect.value = ""; 
                     }
 
-                    // Element Resistance Choice
                     if (mods.select_element && elemDiv) {
                         elemDiv.style.display = 'block';
                         elemSelect.innerHTML = `<option value="">-- ${t('btn_view')} --</option>`;
@@ -499,23 +465,18 @@ renderBio: (el) => {
                             opt.value = el; opt.textContent = el;
                             elemSelect.appendChild(opt);
                         });
-                        // Restore Value
                         if (CharGen.char.ancestryElement) elemSelect.value = CharGen.char.ancestryElement;
                     }
 
-                    // Skill Choice
                     if (mods.select_skill && skillDiv) {
                         skillDiv.style.display = 'block';
                         skillSelect.innerHTML = `<option value="">-- ${t('btn_view')} --</option>`;
-                        // Filter skills based on "any" or specific array in JSON
                         let options = (mods.select_skill === "any") ? allSkills : allSkills.filter(s => mods.select_skill.includes(s.id));
-                        
                         options.forEach(s => {
                             const opt = document.createElement('option');
                             opt.value = s.id; opt.textContent = s.name;
                             skillSelect.appendChild(opt);
                         });
-                        // Restore Value
                         if (CharGen.char.ancestrySkill) skillSelect.value = CharGen.char.ancestrySkill;
                     } else {
                         CharGen.char.ancestrySkill = null;
@@ -535,47 +496,33 @@ renderBio: (el) => {
                 src = CharGen.char.imageUrl;
             }
 
-            if (src) {
-                box.innerHTML = `<img src="${src}" style="width:100%; height:100%; object-fit:cover;">`;
-            } else {
-                box.innerHTML = `<span style="font-size:2rem;">👤</span>`;
-            }
+            if (src) box.innerHTML = `<img src="${src}" style="width:100%; height:100%; object-fit:cover;">`;
+            else box.innerHTML = `<span style="font-size:2rem;">👤</span>`;
         };
 
-        // 5. Restore State (If editing or moving back)
+        // Restore State
         updateImagePreview();
         
         if (CharGen.char.ancestry) {
             ancSelect.value = CharGen.char.ancestry;
             populateFeats(CharGen.char.ancestry);
-            
-            if (CharGen.char.ancestryFeatIndex !== null) {
-                featSelect.value = CharGen.char.ancestryFeatIndex;
-            }
-            
-            checkDynamicOptions(); // Shows the divs
-            
+            if (CharGen.char.ancestryFeatIndex !== null) featSelect.value = CharGen.char.ancestryFeatIndex;
+            checkDynamicOptions();
             if (CharGen.char.ancestryChoice) optSelect.value = CharGen.char.ancestryChoice;
         }
         
-        if (CharGen.char.background) {
-            bgSelect.value = CharGen.char.background;
-        }
+        if (CharGen.char.background) bgSelect.value = CharGen.char.background;
         
-        CharGen.updateBioPreview(); // Updates the text card
+        CharGen.updateBioPreview();
 
-        // 6. Attach Event Listeners
-
-        // Name
+        // Listeners
         document.getElementById('char-name').addEventListener('input', (e) => CharGen.char.name = e.target.value);
 
-        // Ancestry Logic
         ancSelect.addEventListener('change', (e) => {
             CharGen.char.ancestry = e.target.value;
-            CharGen.char.ancestryFeatIndex = null; // Reset choices
+            CharGen.char.ancestryFeatIndex = null;
             CharGen.char.ancestryChoice = null;
             CharGen.char.ancestrySkill = null;
-            
             populateFeats(e.target.value);
             checkDynamicOptions();
             CharGen.updateBioPreview();
@@ -584,7 +531,6 @@ renderBio: (el) => {
         featSelect.addEventListener('change', (e) => {
             CharGen.char.ancestryFeatIndex = e.target.value;
             checkDynamicOptions();
-            // Show tiny description under dropdown
             const anc = data.ancestries.find(a => a.id === CharGen.char.ancestry);
             const feat = anc ? anc.feats[e.target.value] : null;
             document.getElementById('feat-desc-tiny').textContent = feat ? feat.effect : "";
@@ -599,7 +545,6 @@ renderBio: (el) => {
             CharGen.updateBioPreview();
         });
 
-        // Image Upload Logic
         urlInput.addEventListener('change', (e) => {
             CharGen.char.imageUrl = e.target.value;
             CharGen.char.imageId = null;
@@ -612,7 +557,6 @@ renderBio: (el) => {
             if (e.target.files && e.target.files[0]) {
                 const file = e.target.files[0];
                 const { ImageStore } = await import('../utils/image_store.js');
-                
                 try {
                     const id = await ImageStore.saveImage(file);
                     CharGen.char.imageId = id;
@@ -626,10 +570,8 @@ renderBio: (el) => {
             }
         });
 
-        // Randomize Button
         document.getElementById('btn-random-bio').addEventListener('click', () => {
             CharGen.rollRandomBio();
-            // Refresh UI after random data set
             ancSelect.value = CharGen.char.ancestry;
             populateFeats(CharGen.char.ancestry);
             bgSelect.value = CharGen.char.background;
@@ -638,350 +580,12 @@ renderBio: (el) => {
         });
     },
 
-    calculateDerived: () => {
-        const c = CharGen.char;
-        const s = c.stats;
-        const data = I18n.getData('options');
-        
-        if (!data) return;
-
-        // --- 1. Class Logic (Normalized) ---
-        let isFullWarrior = false;
-        let isFullCaster = false;
-        let isFullSpecialist = false;
-        let hasWarrior = false;
-        let hasCaster = false;
-        let hasSpecialist = false;
-        let archA = null;
-        let archB = null;
-
-        // Helper: Check role using Normalization (Guerrero -> Warrior)
-        const checkRole = (arch, targetRole) => {
-            if (!arch) return false;
-            // Normalize the role from JSON (e.g. "Guerrero") to System Key ("Warrior")
-            const normRole = I18n.normalize('roles', arch.role); 
-            // Compare case-insensitive
-            return normRole && normRole.toLowerCase() === targetRole.toLowerCase();
-        };
-
-        if (c.archA && c.archB) {
-            archA = data.archetypes.find(a => a.id === c.archA);
-            archB = data.archetypes.find(a => a.id === c.archB);
-
-            if (archA && archB) {
-                const isWarA = checkRole(archA, "Warrior");
-                const isWarB = checkRole(archB, "Warrior");
-                
-                const isCastA = checkRole(archA, "Spellcaster");
-                const isCastB = checkRole(archB, "Spellcaster");
-                
-                const isSpecA = checkRole(archA, "Specialist");
-                const isSpecB = checkRole(archB, "Specialist");
-
-                isFullWarrior = (isWarA && isWarB);
-                isFullCaster = (isCastA && isCastB);
-                isFullSpecialist = (isSpecA && isSpecB);
-                
-                hasWarrior = (isWarA || isWarB);
-                hasCaster = (isCastA || isCastB);
-                hasSpecialist = (isSpecA || isSpecB);
-            }
-        }
-
-        const d = c.derived;
-        const level = c.level;
-        const str = s.STR || 0;
-        const dex = s.DEX || 0;
-        const con = s.CON || 0;
-        const int = s.INT || 0;
-        const wis = s.WIS || 0;
-        const cha = s.CHA || 0;
-
-        // --- 2. Calculate Base Vitals ---
-        
-        // Hit Points
-        let hitDie = 8;
-        if (isFullWarrior) hitDie = 10;
-        if (isFullCaster) hitDie = 6;
-
-        // Init Base HP if fresh (Level 1 and undefined)
-        if (c.level === 1 && (!c.baseHP || c.baseHP === 0)) {
-            c.baseHP = Math.max(1, hitDie + con);
-        }
-        // Safety for existing chars
-        if (!c.baseHP) c.baseHP = Math.max(1, hitDie + con);
-
-        d.maxHP = c.baseHP;
-
-        // Stamina
-        d.maxSTA = 0;
-        if (isFullWarrior) {
-            const phys = [str, dex, con].sort((a,b) => b - a);
-            d.maxSTA = Math.max(1, phys[0] + phys[1]);
-        } else if (hasWarrior) {
-            d.maxSTA = Math.max(1, str, dex, con);
-        }
-
-        // Mana
-        d.maxMP = 0;
-        if (hasCaster) {
-            let castMod = 0;
-            // Find casting stat by checking Normalized Stat Keys
-            const getCastStat = (arch) => {
-                if (!arch || !arch.primary_stats) return 0;
-                for (let rawStat of arch.primary_stats) {
-                    const normStat = I18n.normalize('stats', rawStat);
-                    if (["INT", "WIS", "CHA"].includes(normStat)) return s[normStat] || 0;
-                }
-                return 0;
-            };
-
-            const modA = getCastStat(archA);
-            const modB = getCastStat(archB);
-            castMod = Math.max(modA, modB);
-            
-            // Fallback
-            if (castMod === 0) castMod = Math.max(int, wis, cha); 
-
-            if (isFullCaster) d.maxMP = ((level + 1) * 2) + castMod;
-            else d.maxMP = (level + 1) + castMod;
-        }
-
-        // Luck
-        d.maxLuck = 1; 
-        if (isFullSpecialist) d.maxLuck = Math.max(1, cha * 2);
-        else if (hasSpecialist) d.maxLuck = Math.max(1, cha);
-
-        // Slots
-        d.slots = 8 + str + con;
-
-        // --- 3. Apply Modifiers ---
-        const applyModifiers = (mods) => {
-            if (!mods) return;
-            if (mods.hp_flat) d.maxHP += mods.hp_flat;
-            if (mods.hp_per_level) d.maxHP += (mods.hp_per_level * level);
-            if (mods.mp_flat) d.maxMP += mods.mp_flat;
-            if (mods.sta_flat) d.maxSTA += mods.sta_flat;
-            if (mods.luck_flat) d.maxLuck += mods.luck_flat;
-            if (mods.slots_flat) d.slots += mods.slots_flat;
-            
-            if (mods.sta_mod) {
-                const normStat = I18n.normalize('stats', mods.sta_mod);
-                d.maxSTA += (s[normStat] || 0);
-            }
-        };
-
-        // Ancestry Mods
-        if (c.ancestry) {
-            const anc = data.ancestries.find(a => a.id === c.ancestry);
-            if (anc && c.ancestryFeatIndex !== null && anc.feats[c.ancestryFeatIndex]) {
-                applyModifiers(anc.feats[c.ancestryFeatIndex].modifiers);
-            }
-            if (c.ancestryChoice) {
-                const tempMod = {};
-                if (c.ancestryChoice === "hp_flat") tempMod.hp_flat = 4;
-                if (c.ancestryChoice === "mp_flat") tempMod.mp_flat = 2;
-                if (c.ancestryChoice === "sta_flat") tempMod.sta_flat = 1;
-                if (c.ancestryChoice === "slots_flat") tempMod.slots_flat = 1;
-                applyModifiers(tempMod);
-            }
-        }
-
-        // Talent Mods
-        if (c.talents.length > 0) {
-            c.talents.forEach(t => {
-                if (t.modifiers) applyModifiers(t.modifiers);
-            });
-        }
-
-        // Class Synergy Mods
-        if (c.classId) {
-            const cls = data.classes.find(cl => cl.id === c.classId);
-            if (cls) {
-                const activeFeats = cls.synergy_feats.filter(f => f.level <= c.level);
-                activeFeats.forEach(f => {
-                    if (f.modifiers) applyModifiers(f.modifiers);
-                });
-            }
-        }
-
-        // --- 4. Minimum Safety ---
-        if (d.maxHP < 1) d.maxHP = 1;
-        if (d.maxMP < 0) d.maxMP = 0;
-        if (d.maxSTA < 0) d.maxSTA = 0;
-        if (d.maxLuck < 1) d.maxLuck = 1;
-        if (d.slots < 8) d.slots = 8;
-
-        // --- 5. Update UI ---
-        CharGen.updateStatPreview(hitDie);
-    },
-    
-    // Check if current class synergy feat grants a free talent choice
-    checkSynergyGrant: () => {
-        const c = CharGen.char;
-        const data = I18n.getData('options');
-        
-        if (!c.classId || !data) return null;
-
-        const cls = data.classes.find(cl => cl.id === c.classId);
-        if (!cls) return null;
-
-        // Find active synergy feats based on level
-        const activeFeats = cls.synergy_feats.filter(f => f.level <= c.level);
-        
-        for (let feat of activeFeats) {
-            // Check if this feat grants a specific talent
-            if (feat.flags && feat.flags.grant_talent) {
-                const talentName = feat.flags.grant_talent;
-                
-                // Look for this talent in our current list with the specific Source Tag
-                const hasIt = c.talents.some(t => t.source === `Synergy: ${feat.name}`);
-                
-                if (!hasIt) {
-                    return { featName: feat.name, grantName: talentName };
-                }
-            }
-        }
-        return null;
-    },
-
-    resolveSynergyGrant: (grantObj) => {
-        console.log("Resolving Synergy Grant:", grantObj);
-        const data = I18n.getData('options');
-        const archA = data.archetypes.find(a => a.id === CharGen.char.archA);
-        const archB = data.archetypes.find(a => a.id === CharGen.char.archB);
-
-        // Find the full Talent Object
-        let targetTalent = archA.talents.find(t => t.name === grantObj.grantName);
-        if (!targetTalent) {
-            targetTalent = archB.talents.find(t => t.name === grantObj.grantName);
-        }
-
-        if (!targetTalent) {
-            console.error(`Talent '${grantObj.grantName}' not found in archetypes.`);
-            alert(`Error: Could not find definition for ${grantObj.grantName}. Check JSON data.`);
-            return;
-        }
-
-        // Safe check for flags
-        const flags = targetTalent.flags || {};
-
-        // If the talent requires a choice, show the modal
-        if (flags.select_mod || flags.select_skill || flags.select_property) {
-            CharGen.renderSynergyChoiceModal(targetTalent, grantObj.featName);
-        } else {
-            // No choice needed, just add it
-            CharGen.char.talents.push({
-                ...targetTalent, 
-                source: `Synergy: ${grantObj.featName}`,
-                cost: "Free",
-                choice: null
-            });
-            CharGen.renderSheet(CharGen.container);
-        }
-    },
-
-    renderSynergyChoiceModal: (talent, synergySourceName) => {
-        console.log("Rendering Choice Modal for:", talent.name);
-        let options = [];
-        let title = `Bonus Talent: ${talent.name}`;
-        const flags = talent.flags || {};
-
-        // 1. Define Options based on Flags
-        if (flags.select_mod) {
-            options = [
-                { val: "empower", label: "Empower (+1 Die)" },
-                { val: "range", label: "Reach (Double Range)" },
-                { val: "widen", label: "Widen (Area +5ft)" },
-                { val: "subtle", label: "Subtle (No Components)" }
-            ];
-        } else if (flags.select_property) {
-            options = [
-                { val: "sunder", label: "Sunder (Armor Break)" },
-                { val: "reach", label: "Reach (Long Weapons)" },
-                { val: "guard", label: "Guard (Defense)" },
-                { val: "heavy", label: "Heavy (Knockdown)" },
-                { val: "finesse", label: "Finesse (Dex Weapons)" }
-            ];
-        } else if (flags.select_bond) {
-            // --- NEW RANGER LOGIC ---
-            options = [
-                { val: "hunter", label: "Bond of the Hunter (+1 Ranged, Track Adv)" },
-                { val: "beast", label: "Bond of the Beast (+1 Pet AC/Dmg)" }
-            ];
-        } else if (flags.select_skill) {
-            const currentSkills = CharGen.calculateSkills();
-            options = currentSkills
-                .filter(s => s.count === 1)
-                .map(s => ({ val: s.id, label: `${s.name} (Upgrade)` }));
-
-            if (options.length === 0) {
-                options = [{ val: "none", label: "No Valid Skills available to upgrade." }];
-            }
-        } else {
-            console.warn("Talent flagged for choice but no type match found:", flags);
-            options = [{ val: "default", label: "Default" }];
-        }
-
-        // 2. Create Modal DOM
-        const overlay = document.createElement('div');
-        overlay.className = 'modal-overlay';
-        overlay.innerHTML = `
-            <div class="modal-content" style="width: 450px; border: 1px solid var(--accent-gold);">
-                <div class="modal-header" style="border-color:var(--accent-blue);">Class Bonus Unlocked</div>
-                <div style="padding:1rem;">
-                    <p style="margin-bottom:10px; color:var(--text-main);">Your class feature <strong>${synergySourceName}</strong> grants you the <strong>${talent.name}</strong> talent for free.</p>
-                    <p class="text-muted" style="font-size:0.9rem; font-style:italic; margin-bottom:15px; color:#aaa;">${talent.effect}</p>
-                    
-                    <label class="form-label" style="display:block; margin-bottom:5px; color:var(--accent-gold);">Make your selection:</label>
-                    <select id="syn-modal-choice" style="width:100%; padding:8px; margin-bottom:20px; background: #222; color: #eee; border:1px solid #555;">
-                        ${options.map(o => `<option value="${o.val}">${o.label}</option>`).join('')}
-                    </select>
-                    
-                    <div style="display:flex; gap:10px;">
-                        <button id="btn-syn-cancel" class="btn-secondary" style="width:50%;">Cancel</button>
-                        <button id="btn-syn-confirm" class="btn-primary" style="width:50%;">Confirm</button>
-                    </div>
-                </div>
-            </div>
-        `;
-        document.body.appendChild(overlay);
-
-        // 3. Attach Listeners
-        document.getElementById('btn-syn-cancel').onclick = () => document.body.removeChild(overlay);
-
-        document.getElementById('btn-syn-confirm').onclick = () => {
-            const choice = document.getElementById('syn-modal-choice').value;
-            
-            if (choice === "none") {
-                alert("Cannot add talent: No valid options available.");
-                document.body.removeChild(overlay);
-                return;
-            }
-
-            // Push to Character Data
-            CharGen.char.talents.push({
-                ...talent,
-                source: `Synergy: ${synergySourceName}`,
-                cost: "Free",
-                choice: choice === "default" ? null : choice
-            });
-
-            console.log("Talent added via Synergy:", talent.name, choice);
-
-            // Cleanup and Refresh
-            document.body.removeChild(overlay);
-            CharGen.calculateDerived();
-            CharGen.renderSheet(CharGen.container);
-        };
-    },
-
     updateBioPreview: () => {
         const data = I18n.getData('options');
         const ancId = CharGen.char.ancestry;
         const bgId = CharGen.char.background;
         const previewEl = document.getElementById('bio-preview');
-        const t = I18n.t; // Localization
+        const t = I18n.t; 
         
         if (!ancId && !bgId) {
             previewEl.innerHTML = `<p class="text-muted" style="text-align:center; margin-top:2rem;">${t('lbl_desc')}</p>`;
@@ -989,8 +593,6 @@ renderBio: (el) => {
         }
 
         let html = '';
-
-        // Ancestry Section
         if (ancId) {
             const anc = data.ancestries.find(a => a.id === ancId);
             if (anc) {
@@ -1006,65 +608,39 @@ renderBio: (el) => {
                 `;
             }
         }
-
-        // Background Section
         if (bgId) {
             const bg = data.backgrounds.find(b => b.id === bgId);
             if (bg) {
-                // Localize Gear List
-                const gearList = bg.gear.map(g => {
-                    // Try to translate if it's a known item, otherwise keep original
-                    // For now, keep original string as item data might not be loaded here
-                    return g; 
-                }).join(', ');
-
                 html += `
                     <div class="preview-section" style="border-top: 1px solid #333; padding-top: 1rem;">
                         <div class="preview-header">${bg.name}</div>
                         <div class="preview-text"><em>${bg.description}</em></div>
-                        
                         <div class="split-view" style="gap: 10px; margin-top:10px;">
-                            <div>
-                                <div class="preview-label">${t('cg_lbl_skill_training')}</div>
-                                <div class="preview-text">${bg.skill}</div>
-                            </div>
-                            <div>
-                                <div class="preview-label">${t('cg_lbl_wealth')}</div>
-                                <div class="preview-text">${bg.gear[bg.gear.length-1]}</div> 
-                            </div>
+                            <div><div class="preview-label">${t('cg_lbl_skill_training')}</div><div class="preview-text">${bg.skill}</div></div>
+                            <div><div class="preview-label">${t('cg_lbl_wealth')}</div><div class="preview-text">${bg.gear[bg.gear.length-1]}</div></div>
                         </div>
-
                         <div class="feat-box">
                             <div style="font-weight:bold; color:var(--accent-blue);">${bg.feat.name}</div>
                             <div>${bg.feat.effect}</div>
                         </div>
-
                         <div class="preview-label" style="margin-top:10px;">${t('cg_lbl_starting_gear')}:</div>
                         <div class="preview-text" style="font-size: 0.8rem;">${bg.gear.slice(0, -1).join(', ')}</div>
                     </div>
                 `;
             }
         }
-
         previewEl.innerHTML = html;
     },
 
     rollRandomBio: () => {
         const data = I18n.getData('options');
-        
         const randAnc = data.ancestries[Math.floor(Math.random() * data.ancestries.length)];
         const randBg = data.backgrounds[Math.floor(Math.random() * data.backgrounds.length)];
-
-        // Set values
         CharGen.char.ancestry = randAnc.id;
         CharGen.char.background = randBg.id;
-
-        // Update UI
+        CharGen.char.ancestryFeatIndex = 0; 
         document.getElementById('sel-ancestry').value = randAnc.id;
         document.getElementById('sel-background').value = randBg.id;
-        
-        // Update Preview
-        CharGen.updateBioPreview();
     },
 
     /* ------------------------------------------------------------------
@@ -1084,7 +660,6 @@ renderBio: (el) => {
                             ${data.archetypes.map(a => `<option value="${a.id}">${a.name} (${a.role})</option>`).join('')}
                         </select>
                     </div>
-
                     <div class="form-group">
                         <label class="form-label">${t('cg_lbl_arch_b')}</label>
                         <select id="sel-arch-b">
@@ -1092,14 +667,12 @@ renderBio: (el) => {
                             ${data.archetypes.map(a => `<option value="${a.id}">${a.name} (${a.role})</option>`).join('')}
                         </select>
                     </div>
-
                     <button id="btn-random-class" class="roll-btn">🎲 ${t('cg_btn_roll_class')}</button>
                 </div>
                 <div class="info-column">
                     <div id="class-preview" class="preview-card"></div>
                 </div>
             </div>
-
             <div id="talent-selection-ui" class="talent-section" style="display:none;">
                 <div style="margin-bottom:10px;">
                     <h3 style="margin:0;">${t('cg_lbl_talents')}</h3>
@@ -1113,34 +686,25 @@ renderBio: (el) => {
         `;
         el.innerHTML = html;
 
-        // Restore State
         if (CharGen.char.archA) document.getElementById('sel-arch-a').value = CharGen.char.archA;
         if (CharGen.char.archB) document.getElementById('sel-arch-b').value = CharGen.char.archB;
 
-        // Initial Preview
         CharGen.updateClassPreview();
 
-        // Listeners
         document.getElementById('sel-arch-a').addEventListener('change', (e) => {
             CharGen.char.archA = e.target.value;
-            CharGen.char.talents = []; // Reset talents on change
+            CharGen.char.talents = []; 
             CharGen.updateClassPreview();
         });
-
         document.getElementById('sel-arch-b').addEventListener('change', (e) => {
             CharGen.char.archB = e.target.value;
-            CharGen.char.talents = []; // Reset talents on change
+            CharGen.char.talents = []; 
             CharGen.updateClassPreview();
         });
-
-        // Fix: Ensure listener is attached correctly
-        const randBtn = document.getElementById('btn-random-class');
-        if (randBtn) {
-            randBtn.addEventListener('click', (e) => {
-                e.preventDefault(); // Prevent any weird form behaviors
-                CharGen.rollRandomClass();
-            });
-        }
+        document.getElementById('btn-random-class').addEventListener('click', (e) => {
+            e.preventDefault();
+            CharGen.rollRandomClass();
+        });
     },
 
     updateClassPreview: () => {
@@ -1152,18 +716,14 @@ renderBio: (el) => {
         const t = I18n.t;
         const fmt = I18n.fmt;
 
-        // 1. Validation
         if (!idA || !idB) {
             previewEl.innerHTML = `<p style="color:#666; text-align:center; margin-top:2rem;">${t('lbl_desc')}</p>`;
             talentUI.style.display = 'none';
             return;
         }
 
-        // 2. Fetch Data
         const archA = data.archetypes.find(a => a.id === idA);
         const archB = data.archetypes.find(a => a.id === idB);
-        
-        // Find Class Logic
         const foundClass = data.classes.find(c => 
             (c.components[0] === archA.name && c.components[1] === archB.name) ||
             (c.components[0] === archB.name && c.components[1] === archA.name)
@@ -1171,35 +731,23 @@ renderBio: (el) => {
 
         if (!foundClass) return;
 
-        // Update State
         CharGen.char.classId = foundClass.id;
         CharGen.char.className = foundClass.name;
 
-        // --- HELPER: Render Archetype Detail Block ---
         const renderArchDetail = (arch) => {
-            // Translate stats array [STR, DEX] -> [FUE, DES]
             const translatedStats = arch.primary_stats.map(s => t('stat_' + I18n.normalize('stats', s).toLowerCase())).join(', ');
-
             return `
             <div style="padding:10px; font-size:0.85rem; color:#ccc; border-top:1px solid #444;">
                 <div style="margin-bottom:8px; font-style:italic;">${arch.description}</div>
-                
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px; margin-bottom:8px; font-family:var(--font-mono); font-size:0.75rem;">
                     <div><span style="color:var(--accent-blue);">${t('cg_lbl_role')}:</span> ${t('role_' + I18n.normalize('roles', arch.role).toLowerCase())}</div>
                     <div><span style="color:var(--accent-blue);">${t('cg_lbl_resource')}:</span> ${arch.resource}</div>
                     <div><span style="color:var(--accent-blue);">${t('cg_lbl_stats')}:</span> ${translatedStats}</div>
                     <div><span style="color:var(--accent-blue);">${t('cg_lbl_skill')}:</span> ${arch.proficiencies.skills.join(', ')}</div>
                 </div>
-
-                <div style="font-size:0.75rem;">
-                    <div><strong style="color:var(--text-muted);">${t('cg_lbl_weapons')}:</strong> ${arch.proficiencies.weapons.join(', ')}</div>
-                    <div><strong style="color:var(--text-muted);">${t('cg_lbl_armor')}:</strong> ${arch.proficiencies.armor.join(', ')}</div>
-                </div>
-            </div>
-            `;
+            </div>`;
         };
 
-        // --- HELPER: Render Synergy Feats ---
         let featsHtml = '';
         if (foundClass.synergy_feats) {
             foundClass.synergy_feats.forEach(feat => {
@@ -1207,9 +755,8 @@ renderBio: (el) => {
                 if (feat.level === 1) badgeColor = 'var(--accent-blue)';
                 if (feat.level === 5) badgeColor = 'var(--accent-gold)';
                 if (feat.level === 10) badgeColor = 'var(--accent-crimson)';
-
                 featsHtml += `
-                    <div style="margin-bottom:10px; padding-bottom:10px; border-bottom:1px dashed #444; last-child:border-bottom:none;">
+                    <div style="margin-bottom:10px; padding-bottom:10px; border-bottom:1px dashed #444;">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2px;">
                             <span style="font-size:0.75rem; color:${badgeColor}; font-weight:bold; text-transform:uppercase;">${fmt('cg_lbl_synergy_lvl', {lvl: feat.level})}</span>
                             ${feat.cost ? `<span style="font-size:0.7rem; color:#666;">${feat.cost}</span>` : ''}
@@ -1221,51 +768,126 @@ renderBio: (el) => {
             });
         }
 
-        // --- 3. Build HTML Structure ---
-        const html = `
+        previewEl.innerHTML = `
             <div class="preview-section">
-                <!-- Class Header -->
                 <div class="preview-header" style="color:var(--accent-gold); border-bottom: 2px solid var(--accent-gold); padding-bottom:5px; margin-bottom:10px;">
                     <span style="font-size:1.6rem; text-transform:uppercase; letter-spacing:1px;">${foundClass.name}</span>
                 </div>
                 <div class="preview-text" style="margin-bottom:1.5rem; font-style:italic; color:#aaa;">${foundClass.description}</div>
-                
-                <!-- Section 1: Synergy Feats (Open by Default) -->
-                <details class="accordion-box" open>
-                    <summary class="accordion-header">${t('cg_class_features')}</summary>
-                    <div class="accordion-content">
-                        ${featsHtml}
-                    </div>
-                </details>
-
-                <!-- Section 2: Archetype A -->
-                <details class="accordion-box">
-                    <summary class="accordion-header">${archA.name}</summary>
-                    ${renderArchDetail(archA)}
-                </details>
-
-                <!-- Section 3: Archetype B -->
-                <details class="accordion-box">
-                    <summary class="accordion-header">${archB.name}</summary>
-                    ${renderArchDetail(archB)}
-                </details>
+                <details class="accordion-box" open><summary class="accordion-header">${t('cg_class_features')}</summary><div class="accordion-content">${featsHtml}</div></details>
+                <details class="accordion-box"><summary class="accordion-header">${archA.name}</summary>${renderArchDetail(archA)}</details>
+                <details class="accordion-box"><summary class="accordion-header">${archB.name}</summary>${renderArchDetail(archB)}</details>
             </div>
         `;
-        previewEl.innerHTML = html;
-
-        // Render Talent Selectors
         talentUI.style.display = 'block';
         CharGen.renderTalentSelectors(archA, archB);
     },
 
+    renderTalentSelectors: (archA, archB) => {
+        const container = document.getElementById('talent-columns');
+        const instruct = document.getElementById('talent-instruction');
+        const isPure = (archA.id === archB.id);
+        const t = I18n.t;
+        const fmt = I18n.fmt;
+        
+        container.innerHTML = '';
+        const makeList = (arch, colId) => {
+            let html = `<div class="talent-col" id="${colId}"><h4>${fmt('cg_lbl_talents_header', {name: arch.name})}</h4>`;
+            arch.talents.forEach((t, idx) => {
+                const isSelected = CharGen.char.talents.some(sel => sel.name === t.name);
+                html += `
+                    <div class="talent-opt ${isSelected ? 'selected' : ''}" data-arch="${arch.id}" data-idx="${idx}" data-col="${colId}">
+                        <div><span class="talent-opt-name">${t.name}</span><span class="talent-opt-cost">${t.cost}</span></div>
+                        <span class="talent-opt-desc">${t.effect}</span>
+                    </div>
+                `;
+            });
+            return html + `</div>`;
+        };
+
+        if (isPure) {
+            instruct.textContent = t('cg_txt_pure');
+            container.innerHTML = makeList(archA, 'col-pure');
+            container.style.gridTemplateColumns = "1fr";
+        } else {
+            instruct.textContent = t('cg_txt_hybrid');
+            container.innerHTML = makeList(archA, 'col-a') + makeList(archB, 'col-b');
+            container.style.gridTemplateColumns = "1fr 1fr";
+        }
+
+        container.querySelectorAll('.talent-opt').forEach(el => {
+            el.addEventListener('click', (e) => {
+                const target = e.currentTarget; 
+                CharGen.toggleTalent(target.dataset.arch, parseInt(target.dataset.idx), target.dataset.col);
+            });
+        });
+        CharGen.updateTalentCount();
+    },
+
+    toggleTalent: (archId, talentIdx, colId) => {
+        const data = I18n.getData('options');
+        const arch = data.archetypes.find(a => a.id === archId);
+        const talent = arch.talents[talentIdx];
+        const existIdx = CharGen.char.talents.findIndex(t => t.name === talent.name);
+
+        if (existIdx > -1) {
+            CharGen.char.talents.splice(existIdx, 1);
+            CharGen.renderTalentSelectors(data.archetypes.find(a => a.id === CharGen.char.archA), data.archetypes.find(a => a.id === CharGen.char.archB));
+            return;
+        } 
+        
+        if (talent.flags && (talent.flags.select_skill || talent.flags.select_mod || talent.flags.select_property)) {
+            CharGen.renderChoiceModal(talent, archId, talentIdx, colId);
+            return; 
+        }
+
+        CharGen.confirmTalentAdd(talent, archId, null);
+        CharGen.renderTalentSelectors(data.archetypes.find(a => a.id === CharGen.char.archA), data.archetypes.find(a => a.id === CharGen.char.archB));
+    },
+
+    updateTalentCount: () => {
+        const countEl = document.getElementById('talent-count');
+        const count = CharGen.char.talents.length;
+        if(countEl) {
+            countEl.textContent = `${count}/2 Selected`;
+            countEl.style.color = (count === 2) ? 'var(--accent-gold)' : 'var(--text-muted)';
+        }
+    },
+
+    rollRandomClass: () => {
+        const data = I18n.getData('options');
+        const rollA = Math.floor(Math.random() * data.archetypes.length);
+        const rollB = Math.floor(Math.random() * data.archetypes.length);
+        const archA = data.archetypes[rollA];
+        const archB = data.archetypes[rollB];
+        CharGen.char.archA = archA.id;
+        CharGen.char.archB = archB.id;
+        CharGen.char.talents = []; 
+        document.getElementById('sel-arch-a').value = archA.id;
+        document.getElementById('sel-arch-b').value = archB.id;
+        CharGen.updateClassPreview();
+    },
+
+    handleLevelUpChoice: (talent) => {
+        const data = I18n.getData('options');
+        // Find Archetype ID based on source Name (stored in talent object during selection)
+        let arch = data.archetypes.find(a => a.name === talent.sourceName);
+        
+        // Fallback: If sourceName is missing (Milestone), defaults to Arch A
+        if (!arch) arch = data.archetypes.find(a => a.id === CharGen.char.archA);
+        
+        // Call the existing Choice Modal, passing 'levelup' as the context ID
+        // Signature: (talent, archId, talentIdx, context)
+        CharGen.renderChoiceModal(talent, arch.id, 0, 'levelup');
+    },
+
     renderChoiceModal: (talent, archId, talentIdx, colId) => {
-        // 1. Determine what kind of choice is needed
         let title = `Choice Required: ${talent.name}`;
         let options = [];
 
         // A. Skill Choice
         if (talent.flags.select_skill) {
-            const currentSkills = CharGen.calculateSkills();
+            const currentSkills = CharGen.calculateSkills(); // Helper defined in later batch
             
             if (talent.name === "Expertise") {
                 // Upgrade Trained (d4) to Expert (d6)
@@ -1278,8 +900,7 @@ renderBio: (el) => {
                     return;
                 }
             } else {
-                // Pick any skill (e.g. Adaptable Learner)
-                // Simplified list for context
+                // Pick any skill
                  const allSkillIds = ["athletics", "acrobatics", "stealth", "craft", "lore", "investigate", "scrutiny", "survival", "medicine", "influence", "deception", "intimidation"];
                  options = allSkillIds.map(id => ({ val: id, label: id.charAt(0).toUpperCase() + id.slice(1) }));
             }
@@ -1304,7 +925,6 @@ renderBio: (el) => {
             ];
         }
 
-        // --- BUILD MODAL HTML ---
         const overlay = document.createElement('div');
         overlay.className = 'modal-overlay';
         overlay.innerHTML = `
@@ -1326,30 +946,38 @@ renderBio: (el) => {
 
         document.body.appendChild(overlay);
 
-        // Handlers
         document.getElementById('btn-modal-cancel').onclick = () => document.body.removeChild(overlay);
         
         document.getElementById('btn-modal-confirm').onclick = () => {
             const choice = document.getElementById('modal-choice').value;
-            
-            // Add talent with choice
-            CharGen.confirmTalentAdd(talent, archId, choice);
-            
             document.body.removeChild(overlay);
-            
-            // --- CONTEXT AWARE REFRESH ---
-            if (CharGen.currentStep === 2) {
-                // We are in Creation Mode
-                CharGen.renderTalentSelectorsFromIDs(CharGen.char.archA, CharGen.char.archB);
-            } else {
-                // We are in Level Up / Sheet Mode
-                CharGen.calculateDerived();
-                CharGen.renderSheet(CharGen.container);
+
+            // BRANCH LOGIC BASED ON CONTEXT
+            if (colId === 'levelup') {
+                // 1. Update the Level State with the choice
+                // We create a new object to ensure the choice is baked in
+                CharGen.levelState.selectedTalent = {
+                    ...talent,
+                    choice: choice
+                };
+                
+                // 2. Resume Level Up Application
+                CharGen.applyLevelUp();
+            } 
+            else {
+                // Standard Creation/Edit Mode Logic
+                CharGen.confirmTalentAdd(talent, archId, choice);
+                
+                if (CharGen.currentStep === 2) {
+                    CharGen.renderTalentSelectorsFromIDs(CharGen.char.archA, CharGen.char.archB);
+                } else {
+                    CharGen.recalcAll();
+                    CharGen.renderSheet(CharGen.container);
+                }
             }
         };
     },
 
-    // Helper to re-render using IDs stored in char
     renderTalentSelectorsFromIDs: (idA, idB) => {
         const data = I18n.getData('options');
         const a = data.archetypes.find(x => x.id === idA);
@@ -1357,170 +985,24 @@ renderBio: (el) => {
         CharGen.renderTalentSelectors(a, b);
     },
 
-    renderTalentSelectors: (archA, archB) => {
-        const container = document.getElementById('talent-columns');
-        const instruct = document.getElementById('talent-instruction');
-        const isPure = (archA.id === archB.id);
-        const t = I18n.t;
-        const fmt = I18n.fmt;
-        
-        container.innerHTML = '';
-
-        // Helper to render a list
-        const makeList = (arch, colId) => {
-            // Localize header: "Soldier Talents" -> "Talentos de Soldado"
-            let html = `<div class="talent-col" id="${colId}"><h4>${fmt('cg_lbl_talents_header', {name: arch.name})}</h4>`;
-            arch.talents.forEach((t, idx) => {
-                const isSelected = CharGen.char.talents.some(sel => sel.name === t.name);
-                html += `
-                    <div class="talent-opt ${isSelected ? 'selected' : ''}" 
-                         data-arch="${arch.id}" 
-                         data-idx="${idx}" 
-                         data-col="${colId}">
-                        <div>
-                            <span class="talent-opt-name">${t.name}</span>
-                            <span class="talent-opt-cost">${t.cost}</span>
-                        </div>
-                        <span class="talent-opt-desc">${t.effect}</span>
-                    </div>
-                `;
-            });
-            html += `</div>`;
-            return html;
-        };
-
-        if (isPure) {
-            instruct.textContent = t('cg_txt_pure');
-            container.innerHTML = makeList(archA, 'col-pure');
-            container.style.gridTemplateColumns = "1fr";
-        } else {
-            instruct.textContent = t('cg_txt_hybrid');
-            container.innerHTML = makeList(archA, 'col-a') + makeList(archB, 'col-b');
-            container.style.gridTemplateColumns = "1fr 1fr";
-        }
-
-        container.querySelectorAll('.talent-opt').forEach(el => {
-            el.addEventListener('click', (e) => {
-                const target = e.currentTarget; 
-                const archId = target.dataset.arch;
-                const idx = parseInt(target.dataset.idx);
-                const colId = target.dataset.col;
-                CharGen.toggleTalent(archId, idx, colId);
-            });
-        });
-        
-        CharGen.updateTalentCount();
-    },
-
-    updateTalentCount: () => {
-        const countEl = document.getElementById('talent-count');
-        const count = CharGen.char.talents.length;
-        const limit = (CharGen.char.archA === CharGen.char.archB) ? 2 : 2; // Actually creation limit is always 2
-        const t = I18n.t;
-        const fmt = I18n.fmt;
-        
-        if(countEl) {
-            countEl.textContent = fmt('cg_lbl_selected', {current: count, max: limit});
-            countEl.style.color = (count === limit) ? 'var(--accent-gold)' : 'var(--text-muted)';
-        }
-    },
-
-    toggleTalent: (archId, talentIdx, colId) => {
-        const data = I18n.getData('options');
-        const arch = data.archetypes.find(a => a.id === archId);
-        const talent = arch.talents[talentIdx];
-        
-        // CHECK 1: Is it already selected?
-        // We match by name AND choice (if applicable)
-        const existIdx = CharGen.char.talents.findIndex(t => t.name === talent.name);
-
-        if (existIdx > -1) {
-            // REMOVE
-            // If it's repeatable, we might need to check WHICH instance to remove if there are choices.
-            // For this UI iteration, clicking a selected talent removes it.
-            CharGen.char.talents.splice(existIdx, 1);
-            CharGen.renderTalentSelectors(
-                data.archetypes.find(a => a.id === CharGen.char.archA), 
-                data.archetypes.find(a => a.id === CharGen.char.archB)
-            );
-            return;
-        } 
-        
-        // CHECK 2: Does it require a choice?
-        if (talent.flags && (talent.flags.select_skill || talent.flags.select_mod || talent.flags.select_property)) {
-            CharGen.renderChoiceModal(talent, archId, talentIdx, colId);
-            return; // Stop here, Modal handles the rest
-        }
-
-        // Standard Add
-        CharGen.confirmTalentAdd(talent, archId, null);
-        CharGen.renderTalentSelectors(
-            data.archetypes.find(a => a.id === CharGen.char.archA), 
-            data.archetypes.find(a => a.id === CharGen.char.archB)
-        );
-    },
-
     confirmTalentAdd: (talent, archId, choiceValue) => {
         const data = I18n.getData('options');
         const arch = data.archetypes.find(a => a.id === archId);
         
-        // Only enforce creation limits during Step 2
         if (CharGen.currentStep === 2) {
             const isPure = (CharGen.char.archA === CharGen.char.archB);
-            
             if (isPure) {
-                if (CharGen.char.talents.length >= 2) {
-                    alert("Limit reached: 2 Talents maximum.");
-                    return;
-                }
+                if (CharGen.char.talents.length >= 2) return alert("Limit reached.");
                 CharGen.char.talents.push({...talent, source: arch.name, choice: choiceValue});
             } else {
-                // Hybrid: 1 from A, 1 from B
-                // Check if we already have a talent from this Archetype Source
+                // Hybrid Logic: Replace existing from same source or add new
                 const existingFromSourceIdx = CharGen.char.talents.findIndex(t => t.source === arch.name);
-                
-                if (existingFromSourceIdx > -1) {
-                    // Replace existing
-                    CharGen.char.talents.splice(existingFromSourceIdx, 1);
-                }
+                if (existingFromSourceIdx > -1) CharGen.char.talents.splice(existingFromSourceIdx, 1);
                 CharGen.char.talents.push({...talent, source: arch.name, choice: choiceValue});
             }
         } else {
-            // Level Up Mode: Just add the talent
-            // Note: Duplicate checking for non-repeatables is handled by getValidTalentOptions before this point
             CharGen.char.talents.push({...talent, source: arch.name, choice: choiceValue});
         }
-    },
-
-    updateTalentCount: () => {
-        const countEl = document.getElementById('talent-count');
-        const count = CharGen.char.talents.length;
-        if(countEl) {
-            countEl.textContent = `${count}/2 Selected`;
-            countEl.style.color = (count === 2) ? 'var(--accent-gold)' : 'var(--text-muted)';
-        }
-    },
-
-    rollRandomClass: () => {
-        const data = I18n.getData('options');
-        const rollA = Math.floor(Math.random() * data.archetypes.length);
-        const rollB = Math.floor(Math.random() * data.archetypes.length);
-
-        const archA = data.archetypes[rollA];
-        const archB = data.archetypes[rollB];
-
-        // Update State
-        CharGen.char.archA = archA.id;
-        CharGen.char.archB = archB.id;
-        
-        // Reset Talents because archetype changed
-        CharGen.char.talents = []; 
-
-        // Update UI
-        document.getElementById('sel-arch-a').value = archA.id;
-        document.getElementById('sel-arch-b').value = archB.id;
-
-        CharGen.updateClassPreview();
     },
 
     /* ------------------------------------------------------------------
@@ -1530,8 +1012,6 @@ renderBio: (el) => {
     renderStats: (el) => {
         const t = I18n.t;
         const isManual = CharGen.statState.manualMode;
-        
-        // Define stats explicitly for iteration
         const statKeys = ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'];
 
         const html = `
@@ -1575,7 +1055,6 @@ renderBio: (el) => {
         `;
         el.innerHTML = html;
 
-        // --- Event Listeners ---
         document.getElementById('toggle-manual').addEventListener('change', (e) => {
             CharGen.statState.manualMode = e.target.checked;
             CharGen.statState.assignedIndices = {};
@@ -1587,8 +1066,7 @@ renderBio: (el) => {
             document.getElementById('btn-roll-stats').addEventListener('click', CharGen.rollStats);
             el.querySelectorAll('.pool-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
-                    const idx = parseInt(e.target.dataset.idx);
-                    CharGen.statState.selectedValIndex = idx;
+                    CharGen.statState.selectedValIndex = parseInt(e.target.dataset.idx);
                     CharGen.renderStats(el);
                 });
             });
@@ -1614,15 +1092,8 @@ renderBio: (el) => {
         return CharGen.statState.arrayValues.map((val, idx) => {
             const isUsed = Object.keys(CharGen.statState.assignedIndices).includes(String(idx));
             const isSelected = (CharGen.statState.selectedValIndex === idx);
-            
-            // Helper class for visual feedback
-            let classes = "pool-btn";
-            if (isUsed) classes += " used";
-            if (isSelected) classes += " selected";
-
-            return `<button class="${classes}" data-idx="${idx}" ${isUsed ? 'disabled' : ''}>
-                    ${val >= 0 ? '+'+val : val}
-                    </button>`;
+            let classes = "pool-btn" + (isUsed ? " used" : "") + (isSelected ? " selected" : "");
+            return `<button class="${classes}" data-idx="${idx}" ${isUsed ? 'disabled' : ''}>${val >= 0 ? '+'+val : val}</button>`;
         }).join('');
     },
 
@@ -1631,7 +1102,6 @@ renderBio: (el) => {
         let values = [];
         let name = "";
 
-        // Standard Array Logic
         switch(roll) {
             case 1: values = [1,1,1,1,1,0]; name = "The Jack"; break;
             case 2: values = [2,1,1,1,0,0]; name = "The Standard"; break;
@@ -1654,243 +1124,259 @@ renderBio: (el) => {
         
         const arrayNameEl = document.getElementById('array-name');
         if(arrayNameEl) arrayNameEl.innerHTML = `<strong>Roll ${roll}: ${name}</strong>`;
-        
-        // Re-render to show buttons
         CharGen.renderStats(document.getElementById('step-container'));
     },
 
     assignStatFromPool: (statKey) => {
         const state = CharGen.statState;
-
-        // If clicking a filled box, clear it (return value to pool)
         if (CharGen.char.stats[statKey] !== null) {
             const idxToRemove = Object.keys(state.assignedIndices).find(key => state.assignedIndices[key] === statKey);
             if (idxToRemove) {
                 delete state.assignedIndices[idxToRemove];
                 CharGen.char.stats[statKey] = null;
                 state.selectedValIndex = null;
-                
-                // Refresh
                 CharGen.renderStats(document.getElementById('step-container'));
-                CharGen.calculateDerived(); // Recalc on change
-                CharGen.validateStats();
                 return;
             }
         }
-
-        // If clicking an empty box with a value selected
         if (state.selectedValIndex !== null) {
             const val = state.arrayValues[state.selectedValIndex];
             state.assignedIndices[state.selectedValIndex] = statKey;
             CharGen.char.stats[statKey] = val;
             state.selectedValIndex = null;
-            
-            // Refresh
             CharGen.renderStats(document.getElementById('step-container'));
-            CharGen.calculateDerived(); // Recalc on change
-            CharGen.validateStats();
         }
     },
 
     validateStats: () => {
         const btnNext = document.getElementById('btn-next');
         if (!btnNext) return;
-
-        if (CharGen.statState.manualMode) {
-            btnNext.disabled = false;
-        } else {
-            const allAssigned = Object.values(CharGen.char.stats).every(v => v !== null);
-            btnNext.disabled = !allAssigned;
-        }
+        if (CharGen.statState.manualMode) btnNext.disabled = false;
+        else btnNext.disabled = !Object.values(CharGen.char.stats).every(v => v !== null);
     },
 
+    /**
+     * Scans equipped items for passive bonuses.
+     */
+    /**
+     * Scans equipped items for passive bonuses.
+     * Robust Regex to catch "Max HP +5", "Armor Score +1", etc.
+     */
+    getMagicItemBonuses: () => {
+        const c = CharGen.char;
+        const bonuses = { hp: 0, mp: 0, sta: 0, luck: 0, as: 0, slots: 0 };
+        
+        // 1. Filter: Equipped items that might be magical
+        // We check isMagic flag, specific types, or if it has a magicEffect string
+        const itemsToCheck = c.inventory.filter(i => 
+            i.equipped && (i.isMagic || i.type === "Trinket" || i.type === "Wondrous" || i.magicEffect)
+        );
+
+        itemsToCheck.forEach(item => {
+            // Combine all text fields
+            const text = `${item.name} ${item.description || ''} ${item.effect || ''} ${item.magicEffect || ''}`.toLowerCase();
+
+            // --- REGEX PARSERS ---
+            
+            // HP: Matches "Max HP +5", "+5 HP", "Health +10"
+            const matchHP = text.match(/(?:max\s*hp|health|hit\s*points?)\s*(?:\+|:|\sby)?\s*(\d+)/);
+            
+            // MP: Matches "Max MP +2", "Mana +2"
+            const matchMP = text.match(/(?:max\s*mp|mana)\s*(?:\+|:|\sby)?\s*(\d+)/);
+            
+            // STA: Matches "Max Stamina +1", "Stamina +1", "STA +1"
+            const matchSTA = text.match(/(?:max\s*stamina|sta)\s*(?:\+|:|\sby)?\s*(\d+)/);
+            
+            // Luck: Matches "Max Luck +1", "Luck +1"
+            const matchLuck = text.match(/(?:max\s*luck|luck)\s*(?:\+|:|\sby)?\s*(\d+)/);
+            
+            // Armor: Matches "Armor Score +1", "AS +1", "AC +1", "+1 Armor"
+            const matchAS = text.match(/(?:armor|ac|as)\s*(?:score)?\s*(?:\+|:|\sby)?\s*(\d+)/);
+            
+            // Slots: Matches "Inventory +2", "Slots +2"
+            const matchSlots = text.match(/(?:inventory|slots)\s*(?:\+|:|\sby)?\s*(\d+)/);
+
+            if (matchHP) bonuses.hp += parseInt(matchHP[1]);
+            if (matchMP) bonuses.mp += parseInt(matchMP[1]);
+            if (matchSTA) bonuses.sta += parseInt(matchSTA[1]);
+            if (matchLuck) bonuses.luck += parseInt(matchLuck[1]);
+            if (matchAS) bonuses.as += parseInt(matchAS[1]);
+            if (matchSlots) bonuses.slots += parseInt(matchSlots[1]);
+        });
+
+        return bonuses;
+    },
+
+    getArchetypeDisplay: () => {
+        const c = CharGen.char;
+        const data = I18n.getData('options');
+        if (!data || !c.archA || !c.archB) return "";
+
+        // Find names (e.g., "The Arcanist") and strip "The " for brevity if desired, 
+        // or just use full names. Let's use full names from JSON.
+        const a = data.archetypes.find(x => x.id === c.archA)?.name || "?";
+        const b = data.archetypes.find(x => x.id === c.archB)?.name || "?";
+        
+        return `${a} + ${b}`;
+    },
+
+    /**
+     * CORE CALCULATION PIPELINE
+     */
     calculateDerived: () => {
         const c = CharGen.char;
         const s = c.stats;
         const data = I18n.getData('options');
-        
         if (!data) return;
 
-        let isFullWarrior = false;
-        let isFullCaster = false;
-        let isFullSpecialist = false;
-        let hasWarrior = false;
-        let hasCaster = false;
-        let hasSpecialist = false;
-        let archA = null;
-        let archB = null;
+        // --- PHASE 1: CLASS LOGIC ---
+        let isFullWarrior = false, isFullCaster = false, isFullSpecialist = false;
+        let hasWarrior = false, hasCaster = false, hasSpecialist = false;
+        let archA = null, archB = null;
 
-        // --- ROBUST ROLE CHECKING ---
-        // Instead of checking the string "Warrior", we check the ID prefix or specific IDs
-        // Assuming IDs are like "arch_soldier", "arch_brute" etc.
-        // We map IDs to Roles manually here to be 100% safe against translation errors.
-        
-        const ROLE_MAP = {
-            "arch_soldier": "Warrior", "arch_brute": "Warrior", "arch_guardian": "Warrior", "arch_skirmisher": "Warrior",
-            "arch_arcanist": "Spellcaster", "arch_occultist": "Spellcaster", "arch_priest": "Spellcaster", "arch_primalist": "Spellcaster",
-            "arch_rogue": "Specialist", "arch_warden": "Specialist", "arch_leader": "Specialist", "arch_crafter": "Specialist"
+        const checkRole = (arch, targetRole) => {
+            if (!arch) return false;
+            const normRole = I18n.normalize('roles', arch.role);
+            return normRole && normRole.toLowerCase() === targetRole.toLowerCase();
         };
 
         if (c.archA && c.archB) {
             archA = data.archetypes.find(a => a.id === c.archA);
             archB = data.archetypes.find(a => a.id === c.archB);
-
             if (archA && archB) {
-                const roleA = ROLE_MAP[c.archA];
-                const roleB = ROLE_MAP[c.archB];
+                const isWarA = checkRole(archA, "Warrior");
+                const isWarB = checkRole(archB, "Warrior");
+                const isCastA = checkRole(archA, "Spellcaster");
+                const isCastB = checkRole(archB, "Spellcaster");
+                const isSpecA = checkRole(archA, "Specialist");
+                const isSpecB = checkRole(archB, "Specialist");
 
-                isFullWarrior = (roleA === "Warrior" && roleB === "Warrior");
-                isFullCaster = (roleA === "Spellcaster" && roleB === "Spellcaster");
-                isFullSpecialist = (roleA === "Specialist" && roleB === "Specialist");
-                
-                hasWarrior = (roleA === "Warrior" || roleB === "Warrior");
-                hasCaster = (roleA === "Spellcaster" || roleB === "Spellcaster");
-                hasSpecialist = (roleA === "Specialist" || roleB === "Specialist");
+                isFullWarrior = (isWarA && isWarB);
+                isFullCaster = (isCastA && isCastB);
+                isFullSpecialist = (isSpecA && isSpecB);
+                hasWarrior = (isWarA || isWarB);
+                hasCaster = (isCastA || isCastB);
+                hasSpecialist = (isSpecA || isSpecB);
             }
         }
 
-        const d = c.derived;
-        const level = c.level;
-        const str = s.STR || 0;
-        const dex = s.DEX || 0;
-        const con = s.CON || 0;
-        const int = s.INT || 0;
-        const wis = s.WIS || 0;
-        const cha = s.CHA || 0;
-
-        // --- 2. Calculate Base Vitals ---
-        
-        // Hit Points
+        // --- PHASE 2: CALCULATE BASE TOTALS ---
         let hitDie = 8;
         if (isFullWarrior) hitDie = 10;
         if (isFullCaster) hitDie = 6;
 
-        // Init Base HP if fresh (Level 1 and undefined)
-        if (c.level === 1 && (!c.baseHP || c.baseHP === 0)) {
-            c.baseHP = Math.max(1, hitDie + con);
+        // Level 1: HP is deterministic (Max Die + CON). 
+        // We recalculate this constantly to ensure Stats changes in the Wizard update the HP.
+        if (c.level === 1) {
+            c.baseHP = Math.max(1, hitDie + (s.CON || 0));
+        } 
+        // Higher Levels: Rely on stored cumulative rolls. 
+        // Safety fallback if data is missing.
+        else if (!c.baseHP) {
+            c.baseHP = Math.max(1, hitDie + (s.CON || 0));
         }
-        // Safety for existing chars
-        if (!c.baseHP) c.baseHP = Math.max(1, hitDie + con);
+        
+        let calcHP = c.baseHP;
 
-        d.maxHP = c.baseHP;
-
-        // Stamina
-        d.maxSTA = 0;
+        let calcSTA = 0;
         if (isFullWarrior) {
-            const phys = [str, dex, con].sort((a,b) => b - a);
-            d.maxSTA = Math.max(1, phys[0] + phys[1]);
-        } else if (hasWarrior) {
-            d.maxSTA = Math.max(1, str, dex, con);
-        }
+            const phys = [(s.STR||0), (s.DEX||0), (s.CON||0)].sort((a,b) => b - a);
+            calcSTA = Math.max(1, phys[0] + phys[1]);
+        } else if (hasWarrior) calcSTA = Math.max(1, (s.STR||0), (s.DEX||0), (s.CON||0));
 
-        // Mana
-        d.maxMP = 0;
+        let calcMP = 0;
         if (hasCaster) {
-            let castMod = 0;
-            // Primary Stats are arrays strings ["STR", "DEX"]. 
-            // In Spanish JSON they might be ["FUE", "DES"] if translated.
-            // We need to Normalize the stat key.
-            
             const getCastStat = (arch) => {
                 if (!arch || !arch.primary_stats) return 0;
                 for (let rawStat of arch.primary_stats) {
-                    const normStat = I18n.normalize('stats', rawStat); // "FUE" -> "STR"
+                    const normStat = I18n.normalize('stats', rawStat);
                     if (["INT", "WIS", "CHA"].includes(normStat)) return s[normStat] || 0;
                 }
                 return 0;
             };
-
             const modA = getCastStat(archA);
             const modB = getCastStat(archB);
-            castMod = Math.max(modA, modB);
-            
-            // Fallback
-            if (castMod === 0) castMod = Math.max(int, wis, cha); 
-
-            if (isFullCaster) d.maxMP = ((level + 1) * 2) + castMod;
-            else d.maxMP = (level + 1) + castMod;
+            let castMod = Math.max(modA, modB);
+            if (castMod === 0) castMod = Math.max((s.INT||0), (s.WIS||0), (s.CHA||0));
+            if (isFullCaster) calcMP = ((c.level + 1) * 2) + castMod;
+            else calcMP = (c.level + 1) + castMod;
         }
 
-        // Luck
-        d.maxLuck = 1; 
-        if (isFullSpecialist) d.maxLuck = Math.max(1, cha * 2);
-        else if (hasSpecialist) d.maxLuck = Math.max(1, cha);
+        let calcLuck = 1;
+        if (isFullSpecialist) calcLuck = Math.max(1, (s.CHA||0) * 2);
+        else if (hasSpecialist) calcLuck = Math.max(1, (s.CHA||0));
 
-        // Slots
-        d.slots = 8 + str + con;
+        let calcSlots = 8 + (s.STR||0) + (s.CON||0);
 
-        // --- 3. Apply Modifiers ---
+        // --- PHASE 3: APPLY BONUSES (Feats/Items) ---
         const applyModifiers = (mods) => {
             if (!mods) return;
-            if (mods.hp_flat) d.maxHP += mods.hp_flat;
-            if (mods.hp_per_level) d.maxHP += (mods.hp_per_level * level);
-            if (mods.mp_flat) d.maxMP += mods.mp_flat;
-            if (mods.sta_flat) d.maxSTA += mods.sta_flat;
-            if (mods.luck_flat) d.maxLuck += mods.luck_flat;
-            if (mods.slots_flat) d.slots += mods.slots_flat;
-            
+            if (mods.hp_flat) calcHP += mods.hp_flat;
+            if (mods.hp_per_level) calcHP += (mods.hp_per_level * c.level);
+            if (mods.mp_flat) calcMP += mods.mp_flat;
+            if (mods.sta_flat) calcSTA += mods.sta_flat;
+            if (mods.luck_flat) calcLuck += mods.luck_flat;
+            if (mods.slots_flat) calcSlots += mods.slots_flat;
             if (mods.sta_mod) {
                 const normStat = I18n.normalize('stats', mods.sta_mod);
-                d.maxSTA += (s[normStat] || 0);
+                calcSTA += (s[normStat] || 0);
             }
         };
 
-        // Ancestry Mods
         if (c.ancestry) {
             const anc = data.ancestries.find(a => a.id === c.ancestry);
-            if (anc && c.ancestryFeatIndex !== null && anc.feats[c.ancestryFeatIndex]) {
-                applyModifiers(anc.feats[c.ancestryFeatIndex].modifiers);
-            }
+            if (anc && c.ancestryFeatIndex !== null) applyModifiers(anc.feats[c.ancestryFeatIndex].modifiers);
             if (c.ancestryChoice) {
-                const tempMod = {};
-                if (c.ancestryChoice === "hp_flat") tempMod.hp_flat = 4;
-                if (c.ancestryChoice === "mp_flat") tempMod.mp_flat = 2;
-                if (c.ancestryChoice === "sta_flat") tempMod.sta_flat = 1;
-                if (c.ancestryChoice === "slots_flat") tempMod.slots_flat = 1;
-                applyModifiers(tempMod);
+                if (c.ancestryChoice === "hp_flat") calcHP += 4;
+                if (c.ancestryChoice === "mp_flat") calcMP += 2;
+                if (c.ancestryChoice === "sta_flat") calcSTA += 1;
+                if (c.ancestryChoice === "slots_flat") calcSlots += 1;
             }
         }
-
-        // Talent Mods
-        if (c.talents.length > 0) {
-            c.talents.forEach(t => {
-                if (t.modifiers) applyModifiers(t.modifiers);
-            });
-        }
-
-        // Class Synergy Mods
+        
+        c.talents.forEach(t => { if(t.modifiers) applyModifiers(t.modifiers); });
         if (c.classId) {
-            const cls = data.classes.find(cl => cl.id === c.classId);
-            if (cls) {
-                const activeFeats = cls.synergy_feats.filter(f => f.level <= c.level);
-                activeFeats.forEach(f => {
-                    if (f.modifiers) applyModifiers(f.modifiers);
-                });
-            }
+             const cls = data.classes.find(cl => cl.id === c.classId);
+             if (cls) cls.synergy_feats.filter(f => f.level <= c.level).forEach(f => {
+                 if(f.modifiers) applyModifiers(f.modifiers);
+             });
         }
 
-        // --- 4. Minimum Safety ---
-        if (d.maxHP < 1) d.maxHP = 1;
-        if (d.maxMP < 0) d.maxMP = 0;
-        if (d.maxSTA < 0) d.maxSTA = 0;
-        if (d.maxLuck < 1) d.maxLuck = 1;
-        if (d.slots < 8) d.slots = 8;
+        // --- PHASE 3.5: MAGIC ITEMS ---
+        const itemMods = CharGen.getMagicItemBonuses();
+        calcHP += itemMods.hp;
+        calcMP += itemMods.mp;
+        calcSTA += itemMods.sta;
+        calcLuck += itemMods.luck;
+        calcSlots += itemMods.slots;
 
-        // --- 5. Update UI ---
-        CharGen.updateStatPreview(hitDie);
+        // --- PHASE 4: RESOLVE OVERRIDES ---
+        c.calculated = {
+            maxHP: Math.max(1, calcHP),
+            maxMP: Math.max(0, calcMP),
+            maxSTA: Math.max(0, calcSTA),
+            maxLuck: Math.max(1, calcLuck),
+            slots: Math.max(8, calcSlots)
+        };
+
+        c.derived.maxHP = c.overrides.maxHP !== null ? c.overrides.maxHP : c.calculated.maxHP;
+        c.derived.maxMP = c.overrides.maxMP !== null ? c.overrides.maxMP : c.calculated.maxMP;
+        c.derived.maxSTA = c.overrides.maxSTA !== null ? c.overrides.maxSTA : c.calculated.maxSTA;
+        c.derived.maxLuck = c.overrides.maxLuck !== null ? c.overrides.maxLuck : c.calculated.maxLuck;
+        c.derived.slots = c.calculated.slots;
+
+        const stepContainer = document.getElementById('step-container');
+        if (stepContainer && CharGen.currentStep === 3) CharGen.updateStatPreview(hitDie);
     },
 
     updateStatPreview: (hitDie) => {
         const d = CharGen.char.derived;
-        const s = CharGen.char.stats;
         const el = document.getElementById('stats-preview');
-        const t = I18n.t; // Localization
-        
+        const t = I18n.t;
         if (!el) return;
         
         el.innerHTML = `
             <div class="preview-header" style="color:var(--accent-gold); border-bottom:1px solid #444; margin-bottom:1rem; padding-bottom:5px;">${t('mon_chassis')}</div>
-            
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom: 1rem;">
                 <div class="resource-box" style="border:1px solid var(--accent-crimson); background:rgba(138, 44, 44, 0.1); padding:10px; text-align:center;">
                     <div style="font-size:0.7rem; color:#aaa; text-transform:uppercase;">${t('sheet_hp')}</div>
@@ -1902,7 +1388,6 @@ renderBio: (el) => {
                     <div style="font-family:var(--font-mono); font-size:1.8rem; font-weight:bold; color:#eee;">${d.slots}</div>
                 </div>
             </div>
-
             <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:5px;">
                 <div class="resource-box" style="border:1px solid ${d.maxSTA > 0 ? '#388e3c' : '#333'}; padding:8px; text-align:center; opacity: ${d.maxSTA > 0 ? 1 : 0.4};">
                     <div style="font-size:0.6rem; color:#aaa;">${t('sheet_sta')}</div>
@@ -1920,11 +1405,11 @@ renderBio: (el) => {
         `;
     },
 
-/* ------------------------------------------------------------------
-       STEP 4: GEAR (Cleaned)
+    /* ------------------------------------------------------------------
+       STEP 4: GEAR (Shop & Inventory)
        ------------------------------------------------------------------ */
 
-renderGear: (el) => {
+    renderGear: (el) => {
         const t = I18n.t;
         const w = CharGen.char.currency || { g: 0, s: 0, c: 0 };
         const fmt = I18n.fmt;
@@ -1965,7 +1450,6 @@ renderGear: (el) => {
         `;
         el.innerHTML = html;
         
-        // Shop Tab Switching
         el.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 el.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -1974,9 +1458,8 @@ renderGear: (el) => {
             });
         });
 
-        // Background Gear Button
         const bgBtn = document.getElementById('btn-bg-gear');
-        const hasBgItems = CharGen.char.inventory.some(i => i.type === "Background");
+        const hasBgItems = CharGen.char.inventory.some(i => i.type === "Background" || i.description === "Background Item");
         if(hasBgItems) {
             bgBtn.disabled = true;
             bgBtn.textContent = `✅ ${t('cg_btn_kit_added')}`;
@@ -1986,7 +1469,6 @@ renderGear: (el) => {
             });
         }
 
-        // Initial Render
         CharGen.renderShopList('weapons');
         CharGen.updateInventoryUI();
     },
@@ -2020,10 +1502,8 @@ renderGear: (el) => {
 
         container.innerHTML = html;
 
-        // Bind Add Buttons
         container.querySelectorAll('.add-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                // Retrieve item from data again to copy it
                 let list = [];
                 if (btn.dataset.cat === 'weapons') list = data.weapons;
                 else if (btn.dataset.cat === 'armor') list = data.armor;
@@ -2035,69 +1515,12 @@ renderGear: (el) => {
         });
     },
 
-    renderTalentList: () => {
-        const container = document.getElementById('shop-container');
-        const data = I18n.getData('options');
-        
-        // Determine available talents based on Archetypes
-        const archA = data.archetypes.find(a => a.id === CharGen.char.archA);
-        const archB = data.archetypes.find(a => a.id === CharGen.char.archB);
-        
-        if (!archA || !archB) {
-            container.innerHTML = '<p class="text-muted p-2">Select Class first.</p>';
-            return;
-        }
-
-        // Combine lists, removing duplicates if Pure Class
-        let pool = [];
-        
-        // Helper to tag source
-        const tag = (t, source) => ({...t, sourceName: source});
-
-        if (archA.id === archB.id) {
-            // Pure Class
-            pool = archA.talents.map(t => tag(t, archA.name));
-        } else {
-            // Hybrid
-            pool = [
-                ...archA.talents.map(t => tag(t, archA.name)),
-                ...archB.talents.map(t => tag(t, archB.name))
-            ];
-        }
-
-        const html = pool.map((talent, idx) => `
-            <div class="shop-item">
-                <div style="flex-grow:1;">
-                    <div style="font-weight:bold; color:var(--accent-blue);">${talent.name}</div>
-                    <div style="font-size:0.75rem; color:#aaa;">${talent.type} | ${talent.cost} | ${talent.sourceName}</div>
-                    <div style="font-size:0.7rem; color:#888;">${talent.effect}</div>
-                </div>
-                <button class="add-btn" data-idx="${idx}">+</button>
-            </div>
-        `).join('');
-
-        container.innerHTML = html;
-
-        // Bind Add Buttons (Store temp pool in DOM or closure? Let's just rebuild it)
-        container.querySelectorAll('.add-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const t = pool[btn.dataset.idx];
-                CharGen.addTalent(t);
-            });
-        });
-    },
-
     /* --- ECONOMY HELPERS --- */
     
-    // Convert a cost string (e.g., "15g", "5s", "10g") to total Copper value
     parseCostToCopper: (costStr) => {
         if (!costStr || costStr === "-") return 0;
-
         const clean = String(costStr).toLowerCase().replace(/,/g, '').trim();
-
-        // Regex: Capture number and unit
-        const match = clean.match(/(\d+)\s*([a-zñ]+)/); // added ñ for 'año' edge cases, mainly just [a-z]
-        
+        const match = clean.match(/(\d+)\s*([a-zñ]+)/); 
         if (!match) return 0;
 
         const val = parseInt(match[1], 10);
@@ -2108,17 +1531,15 @@ renderGear: (el) => {
         // Silver / Plata
         if (unit.startsWith('s') || unit.startsWith('p')) return val * 10;
         
-        return val; // Default Copper
+        return val; // Copper
     },
 
-    // Convert character's current wealth to total Copper
     getWalletTotal: () => {
         const w = CharGen.char.currency || { g: 0, s: 0, c: 0 };
         return (w.g * 100) + (w.s * 10) + (w.c);
     },
 
     updateWallet: (totalCopper) => {
-        // A. Update Data Model
         const g = Math.floor(totalCopper / 100);
         const rem1 = totalCopper % 100;
         const s = Math.floor(rem1 / 10);
@@ -2126,53 +1547,36 @@ renderGear: (el) => {
 
         CharGen.char.currency = { g, s, c };
 
-        // B. Update UI immediately
         const walletEl = document.getElementById('wallet-display');
         if (walletEl) {
             walletEl.innerHTML = `💰 ${g}g ${s}s ${c}c`;
-            
-            // Visual feedback (Flash Gold)
             walletEl.style.transition = "color 0.2s";
-            walletEl.style.color = "#fff"; // Flash white
+            walletEl.style.color = "#fff"; 
             setTimeout(() => {
-                walletEl.style.color = "var(--accent-gold)"; // Return to Gold
+                walletEl.style.color = "var(--accent-gold)"; 
             }, 300);
         }
     },
 
-    // Update character wallet from a total Copper amount (Greedy Exchange)
-    setWalletFromTotal: (totalCopper) => {
-        const g = Math.floor(totalCopper / 100);
-        const rem1 = totalCopper % 100;
-        const s = Math.floor(rem1 / 10);
-        const c = rem1 % 10;
-        
-        CharGen.char.currency = { g, s, c };
-        
-        // IMMEDIATE UI UPDATE
-        const walletEl = document.getElementById('wallet-display');
-        if (walletEl) {
-            walletEl.innerHTML = `💰 ${g}g ${s}s ${c}c`;
-            // Add a visual flash effect
-            walletEl.style.color = '#fff';
-            setTimeout(() => walletEl.style.color = 'var(--accent-gold)', 300);
-        }
-    },
-
-    /* --- INVENTORY LOGIC (ROBUST) --- */
+    /* --- INVENTORY LOGIC --- */
 
     _sanitizeItem: (item) => {
-        // Ensure item has a type for logic checks
-        // Normalize checking against localized names
+        // If it already has a valid magic type, leave it alone
+        if (item.type === "Trinket" || item.type === "Wondrous" || item.type === "Potion" || item.type === "Scroll") {
+            return item;
+        }
+
         const name = item.name.toLowerCase();
         
+        // Auto-detect type if missing
         if (!item.type) {
             if (name.includes("shield") || name.includes("escudo")) item.type = "Shield";
             else if (item.as > 0) item.type = "Armor";
+            else if (item.isMagic) item.type = "Trinket"; // Default magic to Trinket
             else item.type = "Gear";
         }
         
-        // Normalize type for internal logic (Armor/Shield/Melee/Ranged)
+        // Normalize combat types for logic checks
         const typeLower = item.type.toLowerCase();
         if (typeLower.includes("shield") || typeLower.includes("escudo")) item.type = "Shield";
         else if (typeLower.includes("armor") || typeLower.includes("armadura")) item.type = "Armor";
@@ -2191,23 +1595,18 @@ renderGear: (el) => {
 
         if (!bg || !bg.gear) return;
 
-        let currentCopper = 0;
+        let currentCopper = CharGen.getWalletTotal();
         const existingNames = CharGen.char.inventory.map(i => i.name);
 
         bg.gear.forEach(gearStr => {
-            // FIX: Check for English OR Spanish currency terms
-            // Matches: gold, silver, copper, oro, plata, cobre
             if (gearStr.match(/(gold|silver|copper|oro|plata|cobre)/i)) {
                 currentCopper += CharGen.parseCostToCopper(gearStr);
-                return; // Stop processing this string, it's money, not an item
+                return;
             }
 
             if (existingNames.includes(gearStr)) return;
 
-            // Name Parsing (Remove parenthesis details for lookup)
             const cleanName = gearStr.replace(/\s*\(.*?\)\s*/g, '').trim();
-            
-            // DB Lookup
             const dbList = [...itemsData.weapons, ...itemsData.armor, ...itemsData.gear, ...itemsData.reagents];
             let dbItem = dbList.find(i => i.name.toLowerCase() === cleanName.toLowerCase());
             if (!dbItem) dbItem = dbList.find(i => cleanName.toLowerCase().includes(i.name.toLowerCase()));
@@ -2235,7 +1634,6 @@ renderGear: (el) => {
             finalItem = CharGen._sanitizeItem(finalItem);
             finalItem.equipped = false;
             
-            // Auto-Equip Logic
             const inv = CharGen.char.inventory;
             if (finalItem.type === "Melee" || finalItem.type === "Ranged") {
                 if (!inv.some(i => (i.type === "Melee" || i.type === "Ranged") && i.equipped)) finalItem.equipped = true;
@@ -2248,9 +1646,7 @@ renderGear: (el) => {
             CharGen.char.inventory.push(finalItem);
         });
 
-        // Update Wallet
-        const currentTotal = CharGen.getWalletTotal();
-        CharGen.updateWallet(currentTotal + currentCopper);
+        CharGen.updateWallet(currentCopper);
 
         const btn = document.getElementById('btn-bg-gear');
         if (btn) {
@@ -2264,26 +1660,37 @@ renderGear: (el) => {
         CharGen.recalcAll();
     },
 
-    addToInventory: (item) => {
+    addToInventory: (item, ignoreCost = false) => {
         const costCopper = CharGen.parseCostToCopper(item.cost);
         const currentCopper = CharGen.getWalletTotal();
 
-        if (costCopper > 0 && currentCopper < costCopper) {
+        // Economy Check: Only if NOT ignoring cost
+        if (!ignoreCost && costCopper > 0 && currentCopper < costCopper) {
             const walletEl = document.getElementById('wallet-display');
             if (walletEl) {
-                walletEl.style.color = "var(--accent-crimson)";
-                setTimeout(() => walletEl.style.color = "var(--accent-gold)", 500);
+                // Visual feedback for "Can't Afford"
+                const originalColor = walletEl.style.color;
+                walletEl.style.color = "#d32f2f"; // Red
+                walletEl.style.fontWeight = "bold";
+                setTimeout(() => {
+                    walletEl.style.color = originalColor || "var(--accent-gold)";
+                    walletEl.style.fontWeight = "normal";
+                }, 500);
             }
-            return; 
+            console.warn("Not enough gold to add item:", item.name);
+            return; // Stop here
         }
 
-        if (costCopper > 0) CharGen.updateWallet(currentCopper - costCopper);
+        // Deduct Gold (only if not free)
+        if (!ignoreCost && costCopper > 0) {
+            CharGen.updateWallet(currentCopper - costCopper);
+        }
 
         let newItem = JSON.parse(JSON.stringify(item));
         newItem = CharGen._sanitizeItem(newItem);
         newItem.equipped = false;
 
-        // Smart Auto-Equip for Shop
+        // Smart Auto-Equip
         const inv = CharGen.char.inventory;
         if (newItem.type === "Melee" || newItem.type === "Ranged") {
              if (!inv.some(i => (i.type === "Melee" || i.type === "Ranged") && i.equipped)) newItem.equipped = true;
@@ -2298,17 +1705,10 @@ renderGear: (el) => {
         CharGen.recalcAll();
     },
 
-    // Helper to refresh everything
-    recalcAll: () => {
-        CharGen.calculateDerived();
-        CharGen.calculateDefenses();
-        CharGen.calculateArmorScore();
-    },
-
     removeFromInventory: (index) => {
         CharGen.char.inventory.splice(index, 1);
         CharGen.updateInventoryUI();
-        CharGen.calculateDefenses(); 
+        CharGen.recalcAll(); 
     },
 
     updateInventoryUI: () => {
@@ -2319,7 +1719,6 @@ renderGear: (el) => {
         
         if (!listEl) return;
 
-        // Calculate Slots
         let currentSlots = 0;
         CharGen.char.inventory.forEach(i => currentSlots += (i.slots || 0));
         currentSlots = Math.round(currentSlots * 100) / 100;
@@ -2327,16 +1726,15 @@ renderGear: (el) => {
         const maxSlots = CharGen.char.derived.slots;
         const pct = Math.min(100, (currentSlots / maxSlots) * 100);
 
-        // Render Meter
-        fillEl.style.width = `${pct}%`;
-        fillEl.style.backgroundColor = currentSlots > maxSlots ? 'var(--accent-crimson)' : 'var(--accent-gold)';
-        textEl.textContent = `${currentSlots} / ${maxSlots} Slots`;
-        warnEl.style.display = currentSlots > maxSlots ? 'block' : 'none';
+        if(fillEl) {
+            fillEl.style.width = `${pct}%`;
+            fillEl.style.backgroundColor = currentSlots > maxSlots ? 'var(--accent-crimson)' : 'var(--accent-gold)';
+            textEl.textContent = `${currentSlots} / ${maxSlots} Slots`;
+            warnEl.style.display = currentSlots > maxSlots ? 'block' : 'none';
+        }
 
-        // Render List
         listEl.innerHTML = CharGen.char.inventory.map((item, idx) => {
-            // Check if item is equipable
-            const isEquipable = (item.type === "Melee" || item.type === "Ranged" || item.as > 0 || item.name.includes("Shield"));
+            const isEquipable = (item.type === "Melee" || item.type === "Ranged" || item.as > 0 || item.type === "Shield" || item.type === "Armor");
             const eqClass = item.equipped ? "equipped" : "";
             const eqText = item.equipped ? "E" : "-";
             
@@ -2359,7 +1757,6 @@ renderGear: (el) => {
             `;
         }).join('');
 
-        // Listeners
         listEl.querySelectorAll('.remove-btn').forEach(btn => {
             btn.addEventListener('click', (e) => CharGen.removeFromInventory(e.target.dataset.idx));
         });
@@ -2374,215 +1771,255 @@ renderGear: (el) => {
         const isEquipping = !item.equipped; 
 
         if (isEquipping) {
-            // 1. Check Requirements
             const check = CharGen.checkRequirements(item);
             if (!check.pass) {
                 alert(`Cannot equip ${item.name}.\n${check.msg}`);
                 return;
             }
 
-            // 2. Check Exclusivity
             const inv = CharGen.char.inventory;
             
             if (item.type === "Armor") {
-                // Unequip other Armor (but not Shields)
                 inv.forEach(i => { if(i.type === "Armor") i.equipped = false; });
             } else if (item.type === "Shield") {
-                // Unequip other Shields
                 inv.forEach(i => { if(i.type === "Shield") i.equipped = false; });
             }
-            // Weapons can have multiple equipped (Dual Wielding or Ranged/Melee swap), 
-            // so we don't auto-unequip them here, user must unequip manually if needed.
         }
 
         item.equipped = isEquipping;
-        
         CharGen.updateInventoryUI();
         CharGen.recalcAll();
     },
 
-    /* --- TALENT LOGIC --- */
+    checkRequirements: (item) => {
+        if (!item.req) return { pass: true };
 
-    addTalent: (talent) => {
-        // Check duplicates
-        if (CharGen.char.talents.some(t => t.name === talent.name)) return;
-        
-        // Check limit (Level 1)
-        // Pure Class = 2 Talents. Hybrid = 1 Talent.
-        const limit = (CharGen.char.archA === CharGen.char.archB) ? 2 : 1;
-        
-        if (CharGen.char.talents.length >= limit) {
-            alert(`Level 1 Limit Reached: ${limit} Talent(s). Remove one to add another.`);
-            return;
+        const stats = CharGen.char.stats;
+        const requirements = item.req.split(',').map(s => s.trim());
+        let errorMsg = "";
+
+        for (let r of requirements) {
+            const match = r.match(/([A-Z]+)\s*([+-]?\d+)/);
+            if (match) {
+                const statName = match[1];
+                const requiredVal = parseInt(match[2]);
+                const myVal = stats[statName] || 0;
+
+                if (myVal < requiredVal) {
+                    errorMsg += `${statName} ${requiredVal} (You have ${myVal}). `;
+                }
+            }
         }
 
-        CharGen.char.talents.push(talent);
-        CharGen.updateTalentUI();
+        if (errorMsg) return { pass: false, msg: errorMsg };
+        return { pass: true };
     },
 
-    removeTalent: (index) => {
-        CharGen.char.talents.splice(index, 1);
-        CharGen.updateTalentUI();
-    },
-
-    updateTalentUI: () => {
-        const container = document.getElementById('talent-list-container');
-        const limitMsg = document.getElementById('talent-limit-msg');
-        if (!container) return;
-
-        const limit = (CharGen.char.archA === CharGen.char.archB) ? 2 : 1;
-        limitMsg.textContent = `Level 1 Limit: ${CharGen.char.talents.length} / ${limit}`;
-        if (CharGen.char.talents.length > limit) limitMsg.style.color = 'var(--accent-crimson)';
-        else limitMsg.style.color = '#888';
-
-        container.innerHTML = CharGen.char.talents.map((t, idx) => `
-            <div class="inv-item" style="border-left: 2px solid var(--accent-blue);">
-                <span style="font-size:0.85rem;">${t.name}</span>
-                <button class="remove-btn" onclick="CharGen.removeTalent(${idx})">×</button>
-            </div>
-        `).join('');
-    },
-/* ------------------------------------------------------------------
-       STEP 5: FINAL SHEET
+    /* ------------------------------------------------------------------
+       STEP 5: FINAL SHEET & MANAGER
        ------------------------------------------------------------------ */
 
-renderSheet: async (container) => {
-    const c = CharGen.char;
+    renderSheet: async (container) => {
+        const c = CharGen.char;
 
-    // 1. Data Safety
-    if (c.current.hp === null) c.current.hp = c.derived.maxHP;
-    if (c.current.mp === null) c.current.mp = c.derived.maxMP;
-    if (c.current.sta === null) c.current.sta = c.derived.maxSTA;
-    if (c.current.luck === null) c.current.luck = c.derived.maxLuck;
+        // 1. Data Safety
+        if (c.current.hp === null) c.current.hp = c.derived.maxHP;
+        if (c.current.mp === null) c.current.mp = c.derived.maxMP;
+        if (c.current.sta === null) c.current.sta = c.derived.maxSTA;
+        if (c.current.luck === null) c.current.luck = c.derived.maxLuck;
 
-    CharGen.recalcAll();
+        CharGen.recalcAll();
+        
+        // 2. Clear Container
+        container.innerHTML = '';
+        
+        // 3. Cleanup & Create Print Container
+        const existingPrint = document.getElementById('print-sheet-root');
+        if (existingPrint) existingPrint.remove();
+
+        const printArea = document.createElement('div');
+        printArea.id = 'print-sheet-root';
+        printArea.className = 'print-only';
+        document.body.appendChild(printArea);
+
+        // 4. Build Application Layout
+        const layout = document.createElement('div');
+        layout.className = 'char-manager-layout';
+        
+        layout.appendChild(CharGen.renderHUD());     
+        layout.appendChild(CharGen.renderTabs());    
+        
+        const contentArea = document.createElement('div');
+        contentArea.id = 'char-manager-content';
+        contentArea.className = 'char-tab-content';
+        layout.appendChild(contentArea);
+
+        container.appendChild(layout);
+
+        // 5. Initialize
+        CharGen.switchTab('main');
+        
+        // Render hidden print view
+        await CharGen.renderPrintVersion(printArea);
+        
+        CharGen.attachManagerListeners();
+    },
+
+    /**
+     * GOD MODE: Render value or input based on state
+     */
+    renderEditableValue: (key, currentVal, calcVal, isResource = true) => {
+        const isOverridden = CharGen.char.overrides[key] !== null;
+        
+        if (CharGen.isEditMode) {
+            return `
+                <div style="display:flex; align-items:center; gap:2px; justify-content:flex-end;">
+                    <input type="number" class="god-mode-input" 
+                        value="${currentVal}" 
+                        onchange="import('./js/modules/chargen.js').then(m => m.CharGen.setOverride('${key}', this.value))">
+                    ${isOverridden ? 
+                        `<button class="btn-reset-override" title="Reset to ${calcVal}" 
+                          onclick="import('./js/modules/chargen.js').then(m => m.CharGen.clearOverride('${key}'))">↺</button>` 
+                        : ''}
+                </div>
+            `;
+        } else {
+            const className = isOverridden ? 'val-overridden' : '';
+            const tooltip = isOverridden ? `title="Base: ${calcVal} (Overridden)"` : '';
+            
+            // IF Resource (HP/MP), show "/ Max". IF Static (AC), just show Number.
+            const displayHTML = isResource ? `<span class="res-max">/ ${currentVal}</span>` : `<span class="res-val-static">${currentVal}</span>`;
+            
+            return `<span class="${className}" ${tooltip}>${displayHTML}</span>`;
+        }
+    },
     
-    // 2. Clear Container
-    container.innerHTML = '';
+    setOverride: (key, val) => {
+        CharGen.char.overrides[key] = parseInt(val);
+        CharGen.recalcAll(); 
+        CharGen.renderSheet(CharGen.container); 
+    },
+
+    clearOverride: (key) => {
+        CharGen.char.overrides[key] = null;
+        CharGen.recalcAll();
+        CharGen.renderSheet(CharGen.container);
+    },
     
-    // --- 3. CLEANUP PREVIOUS PRINT VIEWS ---
-    // Remove any existing print container attached to body to prevent duplicates
-    const existingPrint = document.getElementById('print-sheet-root');
-    if (existingPrint) existingPrint.remove();
+    toggleEditMode: () => {
+        CharGen.isEditMode = !CharGen.isEditMode;
+        CharGen.renderSheet(CharGen.container);
+    },
 
-    // --- 4. CREATE NEW PRINT CONTAINER ON BODY ---
-    // This moves it outside the #app-container so it doesn't get hidden by UI rules
-    const printArea = document.createElement('div');
-    printArea.id = 'print-sheet-root';
-    printArea.className = 'print-only';
-    document.body.appendChild(printArea);
+    renderHUD: () => {
+        const c = CharGen.char;
+        const t = I18n.t;
+        
+        if (!c.calculated) CharGen.calculateDerived();
 
-    // 5. Build Application Layout (Screen)
-    const layout = document.createElement('div');
-    layout.className = 'char-manager-layout';
-    
-    layout.appendChild(CharGen.renderHUD());     
-    layout.appendChild(CharGen.renderTabs());    
-    
-    const contentArea = document.createElement('div');
-    contentArea.id = 'char-manager-content';
-    contentArea.className = 'char-tab-content';
-    layout.appendChild(contentArea);
+        const xpThreshold = c.level * 10;
+        const canLevelUp = (c.current.xp >= xpThreshold) && (c.level < 10);
+        
+        const lvlBtnClass = canLevelUp ? "pulse-anim" : "";
+        const lvlBtnText = canLevelUp ? t('btn_level_up_ready') : t('btn_level_up');
+        const lvlBtnStyle = canLevelUp ? "" : "opacity: 0.5;";
 
-    container.appendChild(layout);
+        const hp = c.current.hp !== null ? c.current.hp : c.derived.maxHP;
+        const mp = c.current.mp !== null ? c.current.mp : c.derived.maxMP;
+        const sta = c.current.sta !== null ? c.current.sta : c.derived.maxSTA;
+        const luck = c.current.luck !== null ? c.current.luck : c.derived.maxLuck;
 
-    // 6. Initialize
-    CharGen.switchTab('main');
-    
-    // Render the print view into the isolated container
-    await CharGen.renderPrintVersion(printArea);
-    
-    CharGen.attachManagerListeners();
-},
+        const hpPct = Math.min(100, (hp / c.derived.maxHP) * 100);
+        const mpPct = Math.min(100, (mp / c.derived.maxMP) * 100);
+        const staPct = Math.min(100, (sta / c.derived.maxSTA) * 100);
+        const luckPct = Math.min(100, (luck / c.derived.maxLuck) * 100);
+        
+        // --- NEW: Get Archetype String ---
+        const archDisplay = CharGen.getArchetypeDisplay();
 
-renderHUD: () => {
-    const c = CharGen.char;
-    const t = I18n.t;
-    
-    const hp = c.current.hp !== null ? c.current.hp : c.derived.maxHP;
-    const maxHP = c.derived.maxHP || 1;
-    const mp = c.current.mp !== null ? c.current.mp : c.derived.maxMP;
-    const maxMP = c.derived.maxMP || 0;
-    const sta = c.current.sta !== null ? c.current.sta : c.derived.maxSTA;
-    const maxSTA = c.derived.maxSTA || 0;
-    const luck = c.current.luck !== null ? c.current.luck : c.derived.maxLuck;
-    const maxLuck = c.derived.maxLuck || 0;
-
-    const hpPct = Math.min(100, (hp / maxHP) * 100);
-    const mpPct = Math.min(100, (mp / maxMP) * 100);
-    const staPct = Math.min(100, (sta / maxSTA) * 100);
-    const luckPct = Math.min(100, (luck / maxLuck) * 100);
-
-    const div = document.createElement('div');
-    div.className = 'char-hud';
-    div.innerHTML = `
-        <div class="hud-header">
-            <div class="hud-identity">
-                <input type="text" class="edit-name" value="${c.name}" data-field="name" placeholder="${t('cg_lbl_name')}">
-                <div class="hud-subtitle">
-                    ${c.className || 'Adventurer'} &bull; Lvl ${c.level}
+        const div = document.createElement('div');
+        div.className = 'char-hud';
+        div.innerHTML = `
+            <div class="hud-header">
+                <div class="hud-identity">
+                    <input type="text" class="edit-name" value="${c.name}" data-field="name" placeholder="${t('cg_lbl_name')}">
+                    <div class="hud-subtitle">
+                        ${c.className || 'Adventurer'} <span style="color:#666; font-size:0.9em;">(${archDisplay})</span> &bull; Lvl ${c.level}
+                    </div>
+                </div>
+                
+                <div class="hud-controls">
+                    <button id="btn-lvl-trigger" class="hud-btn btn-levelup ${lvlBtnClass}" style="${lvlBtnStyle}" title="${t('btn_level_up')}">
+                        <span>⬆</span> <span class="btn-text">${lvlBtnText}</span>
+                    </button>
+                    <button id="btn-toggle-edit" class="hud-btn ${CharGen.isEditMode ? 'active' : ''}" title="Toggle Edit Mode"><span>✎</span></button>
+                    <button id="btn-print-trigger" class="hud-btn" title="${t('btn_print')}"><span>🖨️</span></button>
+                    <button id="btn-save-trigger" class="hud-btn" title="${t('btn_save')}"><span>💾</span></button>
+                    <button id="btn-exit-play" class="hud-btn exit" title="Exit"><span>✕</span></button>
                 </div>
             </div>
-            <div class="hud-controls">
-                <button id="btn-print-trigger" class="btn-icon" title="${t('btn_print')}">🖨️</button>
-                <button id="btn-save-trigger" class="btn-icon" title="${t('btn_save')}">💾</button>
-            </div>
-        </div>
 
-        <div class="hud-vitals-row">
-            <div class="level-capsule">
-                <div class="lvl-group">
-                    <span class="lvl-label">LVL</span>
-                    <input type="number" class="lvl-input edit-tiny" value="${c.level}" data-field="level">
-                </div>
-                <div style="width:1px; height:30px; background:#333;"></div>
-                <div class="lvl-group">
-                    <span class="lvl-label">XP</span>
-                    <div style="display:flex; align-items:baseline;">
-                        <input type="number" class="lvl-input" value="${c.current.xp || 0}" data-vital="xp">
-                        <span style="font-size:0.8rem; color:#666;">/ 10</span>
+            <div class="hud-vitals-row">
+                <div class="level-capsule">
+                    <div class="lvl-group">
+                        <span class="lvl-label">LVL</span>
+                        <input type="number" class="lvl-input edit-tiny" value="${c.level}" data-field="level" ${!CharGen.isEditMode ? 'readonly' : ''}>
+                    </div>
+                    <div style="width:1px; height:30px; background:#333;"></div>
+                    <div class="lvl-group">
+                        <span class="lvl-label">XP</span>
+                        <div style="display:flex; align-items:baseline;">
+                            <input type="number" class="lvl-input" value="${c.current.xp || 0}" data-vital="xp">
+                            <span style="font-size:0.8rem; color:#666;">/ ${xpThreshold}</span>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="resource-grid">
-                <div class="res-card red">
-                    <div class="res-label">${t('sheet_hp')}</div>
-                    <div class="res-values">
-                        <input type="number" class="res-input v-cur" value="${hp}" data-vital="hp">
-                        <span class="res-max">/ ${maxHP}</span>
+                <div class="resource-grid">
+                    <div class="res-card red">
+                        <div class="res-label">${t('sheet_hp')}</div>
+                        <div class="res-values">
+                            <input type="number" class="res-input v-cur" value="${hp}" data-vital="hp">
+                            ${CharGen.renderEditableValue('maxHP', c.derived.maxHP, c.calculated.maxHP)}
+                        </div>
+                        <div class="res-bar"><div class="res-fill" style="width:${hpPct}%"></div></div>
                     </div>
-                    <div class="res-bar"><div class="res-fill" style="width:${hpPct}%"></div></div>
-                </div>
-                <div class="res-card green">
-                    <div class="res-label">${t('sheet_sta')}</div>
-                    <div class="res-values">
-                        <input type="number" class="res-input v-cur" value="${sta}" data-vital="sta">
-                        <span class="res-max">/ ${maxSTA}</span>
+                    <div class="res-card green">
+                        <div class="res-label">${t('sheet_sta')}</div>
+                        <div class="res-values">
+                            <input type="number" class="res-input v-cur" value="${sta}" data-vital="sta">
+                             ${CharGen.renderEditableValue('maxSTA', c.derived.maxSTA, c.calculated.maxSTA)}
+                        </div>
+                        <div class="res-bar"><div class="res-fill" style="width:${staPct}%"></div></div>
                     </div>
-                    <div class="res-bar"><div class="res-fill" style="width:${staPct}%"></div></div>
-                </div>
-                <div class="res-card blue">
-                    <div class="res-label">${t('sheet_mp')}</div>
-                    <div class="res-values">
-                        <input type="number" class="res-input v-cur" value="${mp}" data-vital="mp">
-                        <span class="res-max">/ ${maxMP}</span>
+                    <div class="res-card blue">
+                        <div class="res-label">${t('sheet_mp')}</div>
+                        <div class="res-values">
+                            <input type="number" class="res-input v-cur" value="${mp}" data-vital="mp">
+                             ${CharGen.renderEditableValue('maxMP', c.derived.maxMP, c.calculated.maxMP)}
+                        </div>
+                        <div class="res-bar"><div class="res-fill" style="width:${mpPct}%"></div></div>
                     </div>
-                    <div class="res-bar"><div class="res-fill" style="width:${mpPct}%"></div></div>
-                </div>
-                <div class="res-card gold">
-                    <div class="res-label">${t('sheet_luck')}</div>
-                    <div class="res-values">
-                        <input type="number" class="res-input v-cur" value="${luck}" data-vital="luck">
-                        <span class="res-max">/ ${maxLuck}</span>
+                    <div class="res-card gold">
+                        <div class="res-label">${t('sheet_luck')}</div>
+                        <div class="res-values">
+                            <input type="number" class="res-input v-cur" value="${luck}" data-vital="luck">
+                             ${CharGen.renderEditableValue('maxLuck', c.derived.maxLuck, c.calculated.maxLuck)}
+                        </div>
+                        <div class="res-bar"><div class="res-fill" style="width:${luckPct}%"></div></div>
                     </div>
-                    <div class="res-bar"><div class="res-fill" style="width:${luckPct}%"></div></div>
                 </div>
             </div>
-        </div>
-    `;
-    return div;
-},
+        `;
+        
+        div.querySelector('#btn-toggle-edit').addEventListener('click', CharGen.toggleEditMode);
+        const btnLvl = div.querySelector('#btn-lvl-trigger');
+        if(btnLvl) btnLvl.addEventListener('click', CharGen.initLevelUp);
+        const btnExit = div.querySelector('#btn-exit-play');
+        if(btnExit) btnExit.addEventListener('click', CharGen.exitPlayMode);
+        
+        return div;
+    },
 
     renderTabs: () => {
         const t = I18n.t;
@@ -2591,13 +2028,13 @@ renderHUD: () => {
         div.innerHTML = `
             <button class="char-tab-btn active" data-target="main">⚔️ ${t('cg_combat_stats')}</button>
             <button class="char-tab-btn" data-target="inventory">🎒 ${t('sheet_inv')}</button>
+            <button class="char-tab-btn" data-target="magic">🔮 ${t('magic_tab_title')}</button>
             <button class="char-tab-btn" data-target="features">✨ ${t('sheet_features')}</button>
             <button class="char-tab-btn" data-target="notes">📝 ${t('sheet_notes')}</button>
         `;
         
-        // Tab Switching Logic
         div.querySelectorAll('.char-tab-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
+            btn.addEventListener('click', (e) => {
                 div.querySelectorAll('.char-tab-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 CharGen.switchTab(btn.dataset.target);
@@ -2612,178 +2049,331 @@ renderHUD: () => {
         container.innerHTML = '';
         
         switch(tabName) {
-            case 'main':
-                CharGen.renderTabMain(container);
-                break;
-            case 'inventory':
-                CharGen.renderTabInventory(container);
-                break;
-            case 'features':
-                CharGen.renderTabFeatures(container);
-                break;
-            case 'notes':
-                CharGen.renderTabNotes(container);
-                break;
+            case 'main': CharGen.renderTabMain(container); break;
+            case 'inventory': CharGen.renderTabInventory(container); break;
+            case 'magic': CharGen.renderTabMagic(container); break;
+            case 'features': CharGen.renderTabFeatures(container); break;
+            case 'notes': CharGen.renderTabNotes(container); break;
         }
     },
 
-    renderTabMain: (container) => {
-    const c = CharGen.char;
-    const t = I18n.t;
-    
-    CharGen.recalcAll(); 
+renderTabMain: (container) => {
+        const c = CharGen.char;
+        const t = I18n.t;
+        const isEdit = CharGen.isEditMode;
+        
+        CharGen.recalcAll(); 
 
-    const armorScore = CharGen.calculateArmorScore();
-    const def = c.defenses;
+        const armorScore = CharGen.calculateArmorScore();
+        const def = c.defenses;
+        const defOverrides = c.overrides.defenses || {}; 
+        
+        // Handle Init/Speed overrides
+        const initVal = c.overrides.initiative !== null ? c.overrides.initiative : (c.stats.DEX || 0);
+        const speedVal = c.overrides.speed !== null ? c.overrides.speed : "30'";
 
-    container.innerHTML = `
-        <div class="manager-grid">
+        // --- RENDER HELPERS ---
+
+        // 1. Skill Row
+        const renderSkillRow = (s) => {
+            const modStr = s.statMod >= 0 ? `+${s.statMod}` : s.statMod;
+            // Name is already localized by calculateSkills()
             
-            <!-- COLUMN 1 -->
-            <div class="mgr-col">
-                <div>
-                    <div class="mgr-header">${t('cg_step_stats')}</div>
-                    <div class="attr-grid">
-                        ${['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'].map(stat => `
-                            <div class="attr-card">
-                                <span class="attr-lbl">${t('stat_' + stat.toLowerCase())}</span>
-                                <input type="number" class="attr-val attr-input" data-stat="${stat}" value="${c.stats[stat] || 0}">
+            if (isEdit) {
+                return `
+                <div class="skill-row edit-mode">
+                    <span class="skill-name" style="flex:1;">${s.name} <small>(${s.stat})</small></span>
+                    <span class="skill-mod" style="width:40px; color:#666;">${modStr}</span>
+                    <select class="js-skill-die god-mode-input" data-id="${s.id}" style="width:70px;">
+                        <option value="-" ${s.die==='-'?'selected':''}>-</option>
+                        <option value="1d4" ${s.die==='1d4'?'selected':''}>d4</option>
+                        <option value="1d6" ${s.die==='1d6'?'selected':''}>d6</option>
+                        <option value="1d8" ${s.die==='1d8'?'selected':''}>d8</option>
+                    </select>
+                </div>`;
+            } else {
+                const dieClass = String(s.die).includes('d6') ? 'expert' : (String(s.die).includes('d4') ? 'trained' : '');
+                return `
+                <div class="skill-row interactive js-roll-skill" data-name="${s.name}" data-mod="${s.statMod}" data-die="${s.die}">
+                    <span class="skill-name ${s.isOverridden ? 'val-overridden' : ''}" style="flex:1;">${s.name} <small style="color:#666;">(${s.stat})</small></span>
+                    <span class="skill-mod" style="width:40px; text-align:center; color:#888;">${modStr}</span>
+                    <span class="skill-die ${dieClass}" style="width:50px; text-align:right;">${s.die !== '-' ? '+' + s.die : ''}</span>
+                </div>`;
+            }
+        };
+
+        // 2. Attack Row
+        const attacks = [];
+        const str = c.stats.STR || 0;
+        // Unarmed
+        attacks.push({ id: "unarmed", name: t('wep_unarmed'), tags: t('tag_melee'), atk: str, dmg: `1d4 + ${str}` });
+
+        // Weapons
+        c.inventory.filter(i => (i.type === 'Melee' || i.type === 'Ranged') && i.equipped).forEach((w, i) => {
+            const isFinesse = w.tags && (String(w.tags).includes("Finesse") || String(w.tags).includes("Sutil"));
+            const isRanged = w.type === 'Ranged' || w.type === 'A Distancia';
+            let mod = c.stats.STR || 0;
+            if (isRanged) mod = c.stats.DEX || 0;
+            else if (isFinesse) mod = Math.max(c.stats.STR || 0, c.stats.DEX || 0);
+            
+            // Check Overrides
+            const uid = `wep_${i}`;
+            const ov = c.overrides.attacks?.[uid] || {};
+            
+            attacks.push({
+                id: uid,
+                name: w.name,
+                tags: w.type, // Usually localized by item data, or we could map it
+                atk: ov.atk !== undefined ? ov.atk : mod,
+                dmg: ov.dmg !== undefined ? ov.dmg : `${w.damage} + ${mod}`,
+                isOverridden: (ov.atk !== undefined || ov.dmg !== undefined)
+            });
+        });
+
+        const renderAttackRow = (atk) => {
+            if (isEdit) {
+                return `
+                <div class="attack-card edit-mode" style="display:flex; flex-direction:column; gap:5px;">
+                    <div style="font-weight:bold; color:#aaa;">${atk.name}</div>
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <label style="font-size:0.7rem;">${t('lbl_atk_bonus')}:</label>
+                        <input type="number" class="js-atk-mod god-mode-input" data-id="${atk.id}" value="${atk.atk}" style="width:50px;">
+                        <label style="font-size:0.7rem;">${t('mon_stat_dmg')}:</label>
+                        <input type="text" class="js-atk-dmg god-mode-input" data-id="${atk.id}" value="${atk.dmg}" style="width:100px;">
+                    </div>
+                </div>`;
+            } else {
+                return `
+                <div class="attack-card roll-action js-roll-attack" data-name="${atk.name}" data-mod="${atk.atk}" data-dmg="${atk.dmg}">
+                    <div class="atk-main">
+                        <span class="atk-name ${atk.isOverridden ? 'val-overridden' : ''}">${atk.name}</span>
+                        <span class="atk-tags">${atk.tags}</span>
+                    </div>
+                    <div class="atk-roll">
+                        <span class="atk-bonus">${t('lbl_atk_bonus')} ${atk.atk >= 0 ? '+' : ''}${atk.atk}</span>
+                        <span class="atk-dmg">${atk.dmg}</span>
+                    </div>
+                </div>`;
+            }
+        };
+
+        // 3. Defense Row Helper
+        const renderDefense = (label, type, dataObj) => {
+            if (isEdit) {
+                 return `
+                <div class="skill-row edit-mode">
+                    <span class="skill-name">${label}</span>
+                    <div style="display:flex; gap:2px;">
+                        <input type="number" class="god-mode-input js-def-val" data-type="${type}" value="${dataObj.val || 0}" style="width:50px;">
+                        <input type="text" class="god-mode-input js-def-die" data-type="${type}" value="${dataObj.die}" style="width:50px;">
+                        ${defOverrides[type] ? `<button class="btn-reset-override" onclick="import('./js/modules/chargen.js').then(m => m.CharGen.clearDefenseOverride('${type}'))">↺</button>` : ''}
+                    </div>
+                </div>`;
+            } else {
+                return `
+                <div class="skill-row interactive js-roll-def" data-label="${label}" data-die="${dataObj.die}" data-val="${dataObj.val || 0}">
+                    <span class="skill-name">${label}</span>
+                    <span class="skill-val ${defOverrides[type] ? 'val-overridden' : ''}">
+                        ${dataObj.val !== null ? (dataObj.val >= 0 ? '+'+dataObj.val : dataObj.val) : '--'} 
+                        ${dataObj.die !== '-' ? '('+dataObj.die+')' : ''}
+                    </span>
+                </div>`;
+            }
+        };
+
+        // --- RENDER HTML ---
+        container.innerHTML = `
+            <div class="manager-grid">
+                <!-- COL 1 -->
+                <div class="mgr-col">
+                    <div>
+                        <div class="mgr-header">${t('cg_step_stats')}</div>
+                        <div class="attr-grid">
+                            ${['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'].map(stat => `
+                                <div class="attr-card ${!isEdit ? 'interactive js-roll-stat' : ''}" data-stat="${stat}" data-mod="${c.stats[stat] || 0}">
+                                    <span class="attr-lbl">${t('stat_' + stat.toLowerCase())}</span>
+                                    ${isEdit ? 
+                                      `<input type="number" class="god-mode-input js-stat-edit" data-stat="${stat}" value="${c.stats[stat]||0}">` 
+                                      : 
+                                      `<div class="attr-val-display">${(c.stats[stat] || 0) >= 0 ? '+' : ''}${c.stats[stat] || 0}</div>`
+                                    }
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    <div>
+                        <div class="mgr-header">${t('sheet_def')}</div>
+                        <div class="def-row">
+                            <div class="def-card"><span class="def-label">${t('sheet_ac')}</span>
+                                <div class="def-val">${CharGen.renderEditableValue('ac', armorScore, armorScore, false)}</div>
                             </div>
-                        `).join('')}
+                            <div class="def-card"><span class="def-label">${t('cg_initiative')}</span>
+                                <div class="def-val">${CharGen.renderEditableValue('initiative', initVal, c.stats.DEX||0, false)}</div>
+                            </div>
+                            <div class="def-card"><span class="def-label">${t('mon_stat_spd')}</span>
+                                <div class="def-val">${CharGen.renderEditableValue('speed', speedVal, "30'", false)}</div>
+                            </div>
+                        </div>
+                        <!-- Defenses List -->
+                        <div style="margin-top:10px; background:#1a1a1a; padding:10px; border-radius:4px; border:1px solid #333;">
+                            ${renderDefense(`${t('def_dodge')} (DEX)`, 'dodge', def.dodge)}
+                            ${renderDefense(`${t('def_parry')} (STR)`, 'parry', def.parry)}
+                            ${renderDefense(`${t('def_block')} (CON)`, 'block', def.block)}
+                        </div>
                     </div>
                 </div>
-
-                <div>
-                    <div class="mgr-header">${t('sheet_def')}</div>
-                    <div class="def-row">
-                        <div class="def-card">
-                            <span class="def-label">${t('sheet_ac')}</span>
-                            <div class="def-val">${armorScore}</div>
-                        </div>
-                        <div class="def-card">
-                            <span class="def-label">${t('cg_initiative')}</span>
-                            <div class="def-val">${(c.stats.DEX || 0) >= 0 ? '+' : ''}${c.stats.DEX || 0}</div>
-                        </div>
-                        <div class="def-card">
-                            <span class="def-label">${t('mon_stat_spd')}</span>
-                            <div class="def-val">30'</div>
-                        </div>
+                <!-- COL 2 -->
+                <div class="mgr-col">
+                    <div>
+                        <div class="mgr-header">${t('sheet_attacks')}</div>
+                        <div class="attack-list">${attacks.map(renderAttackRow).join('')}</div>
                     </div>
-
-                    <div style="margin-top:10px; background:#1a1a1a; padding:10px; border-radius:4px; border:1px solid #333;">
-                        <div class="skill-row">
-                            <span class="skill-name">${t('sheet_dodge')} (DEX)</span>
-                            <span class="skill-val">${def.dodge.val >= 0 ? '+' : ''}${def.dodge.val} ${def.dodge.die !== '-' ? '('+def.dodge.die+')' : ''}</span>
-                        </div>
-                        <div class="skill-row">
-                            <span class="skill-name">${t('sheet_parry')} (STR)</span>
-                            <span class="skill-val">${def.parry.val !== null ? (def.parry.val >= 0 ? '+'+def.parry.val : def.parry.val) : '--'}</span>
-                        </div>
-                        <div class="skill-row" style="border-bottom:none;">
-                            <span class="skill-name">${t('sheet_block')} (CON)</span>
-                            <span class="skill-val">${def.block.val !== null ? (def.block.val >= 0 ? '+'+def.block.val : def.block.val) : '--'}</span>
+                    <div>
+                        <div class="mgr-header">${t('sheet_skills')}</div>
+                        <div class="skills-grid" style="display:grid; grid-template-columns:1fr; gap:0;">
+                            ${CharGen.calculateSkills().map(renderSkillRow).join('')}
                         </div>
                     </div>
                 </div>
             </div>
+        `;
 
-            <!-- COLUMN 2 -->
-            <div class="mgr-col">
-                <div>
-                    <div class="mgr-header">${t('sheet_attacks')}</div>
-                    <div id="combat-attacks-list" class="attack-list">
-                        ${CharGen.renderAttackButtons()}
-                    </div>
-                </div>
+        // --- ATTACH LISTENERS ---
+        // (Listeners code is same as previous batch, just ensure it's included)
+        CharGen.attachMainTabListeners(container, isEdit);
+    },
 
-                <div>
-                    <div class="mgr-header">${t('sheet_skills')}</div>
-                    <div class="skills-grid">
-                        ${CharGen.renderSkillButtons()}
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
+    // Helper to keep renderTabMain clean
+    attachMainTabListeners: (container, isEdit) => {
+         if (isEdit) {
+            container.querySelectorAll('.js-stat-edit').forEach(el => {
+                el.addEventListener('change', (e) => {
+                    CharGen.char.stats[e.target.dataset.stat] = parseInt(e.target.value);
+                    CharGen.recalcAll(); CharGen.renderSheet(CharGen.container);
+                });
+            });
+            container.querySelectorAll('.js-skill-die').forEach(el => {
+                el.addEventListener('change', (e) => CharGen.setSkillOverride(e.target.dataset.id, e.target.value));
+            });
+            container.querySelectorAll('.js-def-val').forEach(el => {
+                el.addEventListener('change', (e) => CharGen.setDefenseOverride(e.target.dataset.type, 'val', e.target.value));
+            });
+            container.querySelectorAll('.js-def-die').forEach(el => {
+                el.addEventListener('change', (e) => CharGen.setDefenseOverride(e.target.dataset.type, 'die', e.target.value));
+            });
+            container.querySelectorAll('.js-atk-mod').forEach(el => {
+                el.addEventListener('change', (e) => CharGen.setAttackOverride(e.target.dataset.id, 'atk', parseInt(e.target.value)));
+            });
+            container.querySelectorAll('.js-atk-dmg').forEach(el => {
+                el.addEventListener('change', (e) => CharGen.setAttackOverride(e.target.dataset.id, 'dmg', e.target.value));
+            });
+        } else {
+            container.querySelectorAll('.js-roll-stat').forEach(el => {
+                el.addEventListener('click', () => CharGen.performRoll(el.dataset.stat + ' Check', null, parseInt(el.dataset.mod)));
+            });
+            container.querySelectorAll('.js-roll-def').forEach(el => {
+                el.addEventListener('click', () => CharGen.performRoll(el.dataset.label, el.dataset.die, parseInt(el.dataset.val)));
+            });
+            container.querySelectorAll('.js-roll-attack').forEach(el => {
+                el.addEventListener('click', () => {
+                    const name = el.dataset.name;
+                    const mod = parseInt(el.dataset.mod);
+                    const dmg = el.dataset.dmg;
+                    
+                    // 1. Roll Attack (Immediate)
+                    CharGen.performRoll(`${name} (Atk)`, null, mod, 'attack');
+                    
+                    // 2. Roll Damage (Delayed for visual pacing)
+                    setTimeout(() => {
+                        // FIX: Use the imported Dice object directly
+                        const res = Dice.roll(dmg);
+                        DiceUI.show(`${name} (Dmg)`, res, 'damage');
+                    }, 800);
+                });
+            });
+            container.querySelectorAll('.js-roll-skill').forEach(el => {
+                el.addEventListener('click', () => {
+                    const die = el.dataset.die === '-' ? null : el.dataset.die;
+                    CharGen.performRoll(el.dataset.name, die, parseInt(el.dataset.mod), 'check');
+                });
+            });
+        }
+    },
 
-    // Bind Attribute Inputs
-    container.querySelectorAll('.attr-input').forEach(input => {
-        input.addEventListener('change', (e) => {
-            const stat = e.target.dataset.stat;
-            const val = parseInt(e.target.value) || 0;
-            CharGen.char.stats[stat] = val;
-            
-            CharGen.recalcAll();
-            CharGen.renderSheet(CharGen.container);
-        });
-    });
+    // --- SKILL & DEFENSE OVERRIDE HELPERS ---
 
-    // Bind Attack Rolls
-    container.querySelectorAll('.attack-card').forEach(btn => {
-        btn.addEventListener('click', () => {
-            // Placeholder: In future phases this calls the dice roller
-            alert(`Attack Roll: ${btn.dataset.name}`);
-        });
-    });
-},
+    setSkillOverride: (id, die) => {
+        if (!CharGen.char.overrides.skills) CharGen.char.overrides.skills = {};
+        CharGen.char.overrides.skills[id] = { die: die };
+        CharGen.renderSheet(CharGen.container);
+    },
+
+    clearSkillOverride: (id) => {
+        if (CharGen.char.overrides.skills) delete CharGen.char.overrides.skills[id];
+        CharGen.renderSheet(CharGen.container);
+    },
+
+    setDefenseOverride: (type, field, value) => {
+        if (!CharGen.char.overrides.defenses) CharGen.char.overrides.defenses = {};
+        if (!CharGen.char.overrides.defenses[type]) CharGen.char.overrides.defenses[type] = { val: 0, die: '-' };
+        
+        CharGen.char.overrides.defenses[type][field] = (field === 'val') ? parseInt(value) : value;
+        CharGen.renderSheet(CharGen.container);
+    },
+
+    clearDefenseOverride: (type) => {
+        if (CharGen.char.overrides.defenses) delete CharGen.char.overrides.defenses[type];
+        CharGen.recalcAll();
+        CharGen.renderSheet(CharGen.container);
+    },
+
+    // Update renderSkillButtons to accept a renderer callback
+    renderSkillButtons: (renderer) => {
+        const skills = CharGen.calculateSkills();
+        return skills.map(s => renderer(s)).join('');
+    },
+
+    performRoll: (label, profDie, mod, type = 'check') => {
+        let pDie = 0;
+        if (profDie && profDie.includes('d')) {
+            pDie = parseInt(profDie.split('d')[1]);
+        }
+        const result = Dice.rollCheck(mod, pDie);
+        DiceUI.show(label, result, type);
+    },
 
     renderAttackButtons: () => {
         const c = CharGen.char;
         const t = I18n.t;
         
-        // 1. Unarmed Strike
+        // Unarmed
         const str = c.stats.STR || 0;
         let html = `
-            <div class="attack-card roll-action" data-name="Unarmed">
-                <div class="atk-main">
-                    <span class="atk-name">${t('wep_unarmed')}</span>
-                    <span class="atk-tags">Melee</span>
-                </div>
-                <div class="atk-roll">
-                    <span class="atk-bonus">Atk: ${str >= 0 ? '+' : ''}${str}</span>
-                    <span class="atk-dmg">1d4 ${str >= 0 ? '+' : ''}${str}</span>
-                </div>
+            <div class="attack-card roll-action" data-name="${t('wep_unarmed')}" data-mod="${str}" data-dmg="1d4+${str}">
+                <div class="atk-main"><span class="atk-name">${t('wep_unarmed')}</span><span class="atk-tags">Melee</span></div>
+                <div class="atk-roll"><span class="atk-bonus">Atk: ${str >= 0 ? '+' : ''}${str}</span><span class="atk-dmg">1d4 ${str >= 0 ? '+' : ''}${str}</span></div>
             </div>
         `;
 
-        // 2. Equipped Weapons
         const weapons = c.inventory.filter(i => (i.type === 'Melee' || i.type === 'Ranged') && i.equipped);
-        
         weapons.forEach(w => {
             const isFinesse = w.tags && (w.tags.includes("Finesse") || w.tags.includes("Sutil"));
             const isRanged = w.type === 'Ranged' || w.type === 'A Distancia';
             
-            // Determine Modifier
             let mod = c.stats.STR || 0;
             if (isRanged) mod = c.stats.DEX || 0;
             else if (isFinesse) mod = Math.max(c.stats.STR || 0, c.stats.DEX || 0);
             
             const sign = mod >= 0 ? '+' : '';
-            
-            // Translate tags
-            const tagStr = w.tags ? w.tags.map(tag => {
-                const key = "tag_" + tag.toLowerCase().replace(/ /g, "_");
-                return t(key) !== key ? t(key) : tag;
-            }).join(', ') : '';
+            const dmgString = `${w.damage}+${mod}`; 
 
             html += `
-                <div class="attack-card roll-action" data-name="${w.name}">
-                    <div class="atk-main">
-                        <span class="atk-name">${w.name}</span>
-                        <span class="atk-tags">${tagStr}</span>
-                    </div>
-                    <div class="atk-roll">
-                        <span class="atk-bonus">Atk ${sign}${mod}</span>
-                        <span class="atk-dmg">${w.damage} ${sign}${mod}</span>
-                    </div>
+                <div class="attack-card roll-action" data-name="${w.name}" data-mod="${mod}" data-dmg="${dmgString}">
+                    <div class="atk-main"><span class="atk-name">${w.name}</span><span class="atk-tags">${w.type}</span></div>
+                    <div class="atk-roll"><span class="atk-bonus">Atk ${sign}${mod}</span><span class="atk-dmg">${w.damage} ${sign}${mod}</span></div>
                 </div>
             `;
         });
-
-        if (weapons.length === 0) {
-            html += `<div style="font-size:0.8rem; color:#666; padding:5px; font-style:italic;">Equip weapons in Inventory tab.</div>`;
-        }
-
         return html;
     },
 
@@ -2791,11 +2381,10 @@ renderHUD: () => {
         const skills = CharGen.calculateSkills();
         return skills.map(s => {
             const isTrained = s.count > 0;
-            // Use CSS classes to color text
             const dieClass = s.die === 'd6' ? 'expert' : (s.die === 'd4' ? 'trained' : '');
-            
+            const statMod = CharGen.char.stats[s.statKey] || 0; 
             return `
-                <div class="skill-row">
+                <div class="skill-row skill-row-btn interactive" data-name="${s.name}" data-die="${s.die}" data-mod="${statMod}">
                     <span class="skill-name" style="${isTrained ? 'color:#eee;' : 'color:#666;'}">${s.name}</span>
                     <span class="skill-die ${dieClass}">${s.die !== '-' ? '+' + s.die : ''}</span>
                 </div>
@@ -2803,105 +2392,195 @@ renderHUD: () => {
         }).join('');
     },
 
-    renderTabInventory: (container) => {
-    const c = CharGen.char;
-    const t = I18n.t;
-    
-    // Calculate Capacity
-    let currentSlots = c.inventory.reduce((sum, i) => sum + (i.slots || 0), 0);
-    const maxSlots = c.derived.slots || 10;
-    
-    container.innerHTML = `
-        <div class="wealth-bar">
-            <div class="wealth-item">
-                <label>Gold</label>
-                <input type="number" class="wealth-input" data-type="g" value="${c.currency.g}">
-            </div>
-            <div class="wealth-item">
-                <label>Silver</label>
-                <input type="number" class="wealth-input" data-type="s" value="${c.currency.s}">
-            </div>
-            <div class="wealth-item">
-                <label>Copper</label>
-                <input type="number" class="wealth-input" data-type="c" value="${c.currency.c}">
-            </div>
-            <div style="flex-grow:1; text-align:right; font-family:var(--font-mono); font-size:0.9rem; color:#888;">
-                Capacity: <span style="color:${currentSlots > maxSlots ? 'var(--accent-crimson)' : 'white'}">${currentSlots} / ${maxSlots}</span>
-            </div>
-            <button id="btn-open-shop" class="btn-primary" style="margin-left:20px;">🛒 ${t('btn_shop')}</button>
-        </div>
-
-        <div class="inv-grid-layout">
-            <div class="inv-header-bar">
-                <span style="flex:2">Item Name</span>
-                <span style="width:80px; text-align:center;">Slots</span>
-                <span style="width:100px; text-align:right;">Actions</span>
-            </div>
-            <div id="inv-list">
-                ${c.inventory.map((item, idx) => `
-                    <div class="inv-manager-row">
-                        <div class="col-name">
-                            <span class="inv-name" style="${item.equipped ? 'color:var(--accent-gold)' : ''}">${item.name} ${item.equipped ? ' (E)' : ''}</span>
-                            <span class="inv-meta">${item.type} &bull; ${item.damage || item.as ? (item.damage || 'AS ' + item.as) : 'Item'}</span>
-                        </div>
-                        <div class="col-slots">${item.slots}</div>
-                        <div class="col-actions">
-                            ${(item.type === 'Melee' || item.type === 'Ranged' || item.type === 'Armor' || item.type === 'Shield') ? 
-                                `<button class="btn-icon-small action-equip" data-idx="${idx}" title="Equip/Unequip">${item.equipped ? '✅' : '🛡️'}</button>` : ''}
-                            <button class="btn-icon-small action-delete" data-idx="${idx}" title="Delete">🗑️</button>
-                        </div>
-                    </div>
-                `).join('')}
-            </div>
-        </div>
-    `;
-
-    // Listeners
-    container.querySelectorAll('.wealth-input').forEach(inp => {
-        inp.addEventListener('change', (e) => c.currency[e.target.dataset.type] = parseInt(e.target.value) || 0);
-    });
-    
-    document.getElementById('btn-open-shop').onclick = CharGen.openShopModal;
-    
-    container.querySelectorAll('.action-equip').forEach(btn => {
-        btn.onclick = (e) => {
-            CharGen.toggleEquip(e.target.dataset.idx);
-            CharGen.renderTabInventory(container); // Re-render to show change
-        };
-    });
-    
-    container.querySelectorAll('.action-delete').forEach(btn => {
-        btn.onclick = (e) => {
-            if(confirm('Delete item?')) {
-                CharGen.removeFromInventory(e.target.dataset.idx);
-                CharGen.renderTabInventory(container);
-            }
-        };
-    });
-},
-
-    renderManagerRow: (item, idx) => {
+renderTabInventory: (container) => {
+        const c = CharGen.char;
         const t = I18n.t;
-        const isEquipped = item.equipped;
-        const isEquipable = (item.type === "Melee" || item.type === "Ranged" || item.type === "Armor" || item.type === "Shield");
+        let currentSlots = c.inventory.reduce((sum, i) => sum + (i.slots || 0), 0);
+        currentSlots = Math.round(currentSlots * 100) / 100;
+        const maxSlots = c.derived.slots || 10;
         
-        return `
-            <div class="inv-manager-row ${isEquipped ? 'equipped' : ''}">
-                <div style="flex:2; display:flex; flex-direction:column;">
-                    <span class="inv-name">${item.name}</span>
-                    <span class="inv-meta">${item.type} ${item.damage ? `• ${item.damage}` : ''} ${item.as ? `• AS ${item.as}` : ''}</span>
+        container.innerHTML = `
+            <div class="wealth-bar">
+                <div class="wealth-item"><label>${t('inv_gold')}</label><input type="number" class="wealth-input" data-type="g" value="${c.currency.g}"></div>
+                <div class="wealth-item"><label>${t('inv_silver')}</label><input type="number" class="wealth-input" data-type="s" value="${c.currency.s}"></div>
+                <div class="wealth-item"><label>${t('inv_copper')}</label><input type="number" class="wealth-input" data-type="c" value="${c.currency.c}"></div>
+                <div style="flex-grow:1; text-align:right; font-family:var(--font-mono); font-size:0.9rem; color:#888;">
+                    ${t('inv_capacity')}: <span style="color:${currentSlots > maxSlots ? 'var(--accent-crimson)' : 'white'}">${currentSlots} / ${maxSlots}</span>
                 </div>
-                <div style="width:60px; text-align:center; font-family:var(--font-mono);">${item.slots}</div>
-                <div style="width:100px; text-align:right; display:flex; justify-content:flex-end; gap:5px;">
-                    ${isEquipable ? 
-                        `<button class="btn-icon-small action-equip" data-idx="${idx}" title="${isEquipped ? 'Unequip' : 'Equip'}">
-                            ${isEquipped ? '✅' : '🛡️'}
-                        </button>` : ''
-                    }
-                    <button class="btn-icon-small action-delete" data-idx="${idx}" title="${t('btn_delete')}">🗑️</button>
+                <button id="btn-open-shop" class="btn-primary" style="margin-left:20px;">🛒 ${t('btn_shop')}</button>
+            </div>
+            <div class="inv-grid-layout">
+                <div class="inv-header-bar">
+                    <span style="flex:2">${t('inv_item_header')}</span>
+                    <span style="width:80px; text-align:center;">${t('inv_slots_header')}</span>
+                    <span style="width:100px; text-align:right;">${t('inv_actions_header')}</span>
+                </div>
+                <div id="inv-list">
+                    ${c.inventory.map((item, idx) => `
+                        <div class="inv-manager-row">
+                            <div class="col-name">
+                                <span class="inv-name" style="${item.equipped ? 'color:var(--accent-gold)' : ''}">${item.name} ${item.equipped ? ' (E)' : ''}</span>
+                                <span class="inv-meta">${item.type} &bull; ${item.damage || item.as ? (item.damage || 'AS ' + item.as) : t('inv_item_header')}</span>
+                            </div>
+                            <div class="col-slots">${item.slots}</div>
+                            <div class="col-actions">
+                                ${(item.type === 'Melee' || item.type === 'Ranged' || item.type === 'Armor' || item.type === 'Shield') ? 
+                                    `<button class="btn-icon-small action-equip" data-idx="${idx}" title="Equip/Unequip">${item.equipped ? '✅' : '🛡️'}</button>` : ''}
+                                <button class="btn-icon-small action-delete" data-idx="${idx}" title="Delete">🗑️</button>
+                            </div>
+                        </div>
+                    `).join('')}
                 </div>
             </div>
         `;
+
+        container.querySelectorAll('.wealth-input').forEach(inp => {
+            inp.addEventListener('change', (e) => c.currency[e.target.dataset.type] = parseInt(e.target.value) || 0);
+        });
+        document.getElementById('btn-open-shop').onclick = CharGen.openShopModal;
+        container.querySelectorAll('.action-equip').forEach(btn => {
+            btn.onclick = (e) => { CharGen.toggleEquip(e.target.dataset.idx); CharGen.renderTabInventory(container); };
+        });
+        container.querySelectorAll('.action-delete').forEach(btn => {
+            btn.onclick = (e) => { if(confirm(t('btn_confirm') + '?')) { CharGen.removeFromInventory(e.target.dataset.idx); CharGen.renderTabInventory(container); }};
+        });
+    },
+
+    renderTabMagic: (container) => {
+        const c = CharGen.char;
+        const t = I18n.t;
+
+        // Filter: Magic items or items with effects
+        const magicItems = c.inventory.filter(i => 
+            i.isMagic === true || 
+            (i.magicEffect && i.magicEffect.length > 0) ||
+            i.type === "Trinket" ||
+            i.type === "Wondrous" ||
+            i.type === "Potion" ||
+            i.type === "Scroll" ||
+            (i.name && (i.name.includes("Magic") || i.name.includes("Mágico")))
+        );
+
+        container.innerHTML = `
+            <div class="wealth-bar" style="justify-content:space-between;">
+                <div style="font-family:var(--font-header); font-size:1.2rem; color:var(--accent-blue);">
+                    ${t('magic_header')}
+                </div>
+                <button id="btn-import-magic" class="btn-primary">⚡ ${t('magic_import')}</button>
+            </div>
+
+            <div class="magic-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap:1rem;">
+                ${magicItems.length > 0 ? magicItems.map((item) => {
+                    // Find the REAL index in the main inventory array
+                    const realIdx = c.inventory.indexOf(item);
+                    
+                    return `
+                    <div class="lib-card item ${item.equipped ? 'official' : ''}" style="min-height:auto;">
+                        <div class="lib-card-body">
+                            <div class="lib-card-name" style="${item.equipped ? 'color:var(--accent-gold)' : ''}">
+                                ${item.equipped ? '★ ' : ''}${item.name}
+                            </div>
+                            <div class="lib-card-meta">${item.type} &bull; ${item.slots} ${t('inv_slots_header')}</div>
+                            <div style="font-size:0.85rem; color:#ccc; margin-top:5px; font-style:italic;">
+                                ${item.magicEffect || item.description || ''}
+                            </div>
+                        </div>
+                        <div class="lib-card-footer">
+                            <button class="lib-btn ${item.equipped ? 'primary' : ''} js-magic-equip" data-idx="${realIdx}">
+                                ${item.equipped ? t('btn_cancel') : 'Equip / Attune'}
+                            </button>
+                            <button class="lib-btn delete js-magic-delete" data-idx="${realIdx}">
+                                ${t('btn_delete')}
+                            </button>
+                        </div>
+                    </div>`;
+                }).join('') : `<div style="grid-column:1/-1; text-align:center; padding:2rem; color:#666;">${t('magic_empty')}</div>`}
+            </div>
+        `;
+        
+        // --- ATTACH LISTENERS ---
+
+        // Import Button
+        const btnImport = document.getElementById('btn-import-magic');
+        if (btnImport) btnImport.onclick = CharGen.openMagicImportModal;
+
+        // Equip/Attune Buttons
+        container.querySelectorAll('.js-magic-equip').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const idx = parseInt(e.target.dataset.idx);
+                CharGen.toggleEquip(idx);
+                // Force re-render of THIS tab to update button state (Equip -> Unequip)
+                CharGen.renderTabMagic(container);
+            });
+        });
+
+        // Delete Buttons
+        container.querySelectorAll('.js-magic-delete').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                if (confirm(t('btn_confirm') + '?')) {
+                    const idx = parseInt(e.target.dataset.idx);
+                    CharGen.removeFromInventory(idx);
+                    // Force re-render
+                    CharGen.renderTabMagic(container);
+                }
+            });
+        });
+    },
+
+    openMagicImportModal: () => {
+        // Use global Storage
+        const libraryItems = Storage.getItems().filter(i => i.isMagic || i.type === "Trinket" || i.magicEffect);
+
+        const overlay = document.createElement('div');
+        overlay.className = 'modal-overlay';
+        
+        overlay.innerHTML = `
+            <div class="modal-content" style="width:600px; height:80vh; display:flex; flex-direction:column;">
+                <div class="modal-header">
+                    Import Magic Item
+                    <button class="btn-close-modal" style="float:right; background:none; border:none; color:white;">✕</button>
+                </div>
+                <div style="flex-grow:1; overflow-y:auto; padding:10px;">
+                    ${libraryItems.length === 0 ? '<p style="text-align:center; color:#888;">No magic items found in Library.<br>Go to the Artificer to forge some!</p>' : ''}
+                    ${libraryItems.map(item => `
+                        <div class="shop-item">
+                            <div style="flex:1">
+                                <div style="color:var(--accent-blue); font-weight:bold;">${item.name}</div>
+                                <div style="font-size:0.8rem; color:#888;">${item.magicEffect || item.description}</div>
+                            </div>
+                            <button class="add-btn" data-id="${item.id}">+</button>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+
+        // Bind Add Buttons
+        overlay.querySelectorAll('.add-btn').forEach(btn => {
+            btn.onclick = () => {
+                const item = libraryItems.find(i => i.id === btn.dataset.id);
+                if (item) {
+                    const newItem = JSON.parse(JSON.stringify(item));
+                    
+                    // Force Magic Flags
+                    newItem.equipped = false; 
+                    newItem.isMagic = true; 
+                    
+                    // --- FIX: Pass 'true' to ignore gold cost ---
+                    CharGen.addToInventory(newItem, true); 
+                    
+                    const main = document.getElementById('char-manager-content');
+                    if (main) CharGen.renderTabMagic(main);
+                    
+                    btn.textContent = "Added";
+                    btn.disabled = true;
+                }
+            };
+        });
+
+        const close = () => overlay.remove();
+        overlay.querySelector('.btn-close-modal').onclick = close;
     },
 
     openShopModal: () => {
@@ -2922,9 +2601,7 @@ renderHUD: () => {
                     <button class="tab-btn" data-tab="gear">${t('cg_tab_gear')}</button>
                 </div>
 
-                <div id="modal-shop-list" class="shop-list" style="flex-grow:1; height:auto;">
-                    <!-- Items injected here -->
-                </div>
+                <div id="modal-shop-list" class="shop-list" style="flex-grow:1; height:auto;"></div>
 
                 <div style="margin-top:1rem; border-top:1px solid #333; padding-top:1rem;">
                     <h4>${t('btn_add_custom')}</h4>
@@ -2938,7 +2615,6 @@ renderHUD: () => {
         `;
         document.body.appendChild(overlay);
 
-        // Logic
         const renderList = (cat) => {
             const data = I18n.getData('items');
             const container = overlay.querySelector('#modal-shop-list');
@@ -2963,18 +2639,14 @@ renderHUD: () => {
                 btn.onclick = () => {
                     const list = (btn.dataset.cat === 'weapons') ? data.weapons : (btn.dataset.cat === 'armor') ? data.armor : [...data.gear, ...data.materials, ...data.reagents];
                     CharGen.addToInventory(list[btn.dataset.idx]);
-                    // Refresh main inventory view behind modal
                     const mainContainer = document.getElementById('char-manager-content');
                     if(mainContainer) CharGen.renderTabInventory(mainContainer);
-                    
-                    // Visual feedback
                     btn.textContent = "✔";
                     setTimeout(() => btn.textContent = "+", 500);
                 };
             });
         };
 
-        // Tabs
         overlay.querySelectorAll('.tab-btn').forEach(btn => {
             btn.onclick = (e) => {
                 overlay.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -2983,7 +2655,6 @@ renderHUD: () => {
             };
         });
 
-        // Custom Item
         overlay.querySelector('#btn-add-custom-item').onclick = () => {
             const name = overlay.querySelector('#cust-item-name').value;
             const slots = parseFloat(overlay.querySelector('#cust-item-slots').value) || 0;
@@ -2995,407 +2666,367 @@ renderHUD: () => {
             }
         };
 
-        // Close
         const close = () => overlay.remove();
         overlay.querySelector('#close-shop').onclick = close;
-        overlay.addEventListener('click', (e) => { if(e.target === overlay) close(); });
-
-        // Initial Load
         renderList('weapons');
     },
 
     renderTabFeatures: (container) => {
-    const c = CharGen.char;
-    const t = I18n.t;
-    const data = I18n.getData('options');
+        const c = CharGen.char;
+        const t = I18n.t;
+        const data = I18n.getData('options');
+        const allFeatures = [];
 
-    // --- 1. Gather Data ---
-    const allFeatures = [];
+        if (c.ancestry && data.ancestries) {
+            const anc = data.ancestries.find(a => a.id === c.ancestry);
+            const featIdx = c.ancestryFeatIndex !== null ? c.ancestryFeatIndex : (anc.feats.length > 0 ? 0 : null);
+            if (anc && featIdx !== null && anc.feats[featIdx]) {
+                const feat = anc.feats[featIdx];
+                allFeatures.push({ name: feat.name, source: `${t('cg_lbl_ancestry')}: ${anc.name}`, type: "Passive", cost: "-", desc: feat.effect, tags: feat.modifiers ? ["Stat Bonus"] : [] });
+            }
+        }
 
-    // A. Ancestry Feat (FIXED)
-    if (c.ancestry && data.ancestries) {
-        const anc = data.ancestries.find(a => a.id === c.ancestry);
-        // Check if an index is saved, otherwise default to 0 if exists
-        const featIdx = c.ancestryFeatIndex !== null ? c.ancestryFeatIndex : (anc.feats.length > 0 ? 0 : null);
-        
-        if (anc && featIdx !== null && anc.feats[featIdx]) {
-            const feat = anc.feats[featIdx];
-            allFeatures.push({
-                name: feat.name,
-                source: `${t('cg_lbl_ancestry')}: ${anc.name}`,
-                type: "Passive",
-                cost: "-",
-                desc: feat.effect,
-                tags: feat.modifiers ? ["Stat Bonus"] : []
+        if (c.background && data.backgrounds) {
+            const bg = data.backgrounds.find(b => b.id === c.background);
+            if (bg && bg.feat) {
+                allFeatures.push({ name: bg.feat.name, source: `${t('cg_lbl_background')}: ${bg.name}`, type: "Passive", cost: "-", desc: bg.feat.effect, tags: ["Utility"] });
+            }
+        }
+
+        if (c.classId && data.classes) {
+            const cls = data.classes.find(x => x.id === c.classId);
+            if (cls && cls.synergy_feats) {
+                cls.synergy_feats.forEach(f => {
+                    if (f.level <= c.level) {
+                        allFeatures.push({ name: f.name, source: `${t('cg_step_class')} (Lvl ${f.level})`, type: f.type || "Passive", cost: f.cost || "-", desc: f.effect, tags: f.stat_options ? ["Stat Choice"] : [] });
+                    }
+                });
+            }
+        }
+
+        if (c.talents && c.talents.length > 0) {
+            c.talents.forEach(tal => {
+                allFeatures.push({ name: tal.name, source: tal.sourceName || t('sheet_arch_talents'), type: tal.type || "Talent", cost: tal.cost, desc: tal.effect, tags: tal.tags || [], choice: tal.choice });
             });
         }
-    }
 
-    // B. Background Feat
-    if (c.background && data.backgrounds) {
-        const bg = data.backgrounds.find(b => b.id === c.background);
-        if (bg && bg.feat) {
-            allFeatures.push({
-                name: bg.feat.name,
-                source: `${t('cg_lbl_background')}: ${bg.name}`,
-                type: "Passive",
-                cost: "-",
-                desc: bg.feat.effect,
-                tags: ["Utility"]
-            });
+        if (allFeatures.length === 0) {
+            container.innerHTML = `<div style="padding:2rem; text-align:center; color:#666;">No features found.</div>`;
+            return;
         }
-    }
 
-    // C. Class Synergy Feats
-    if (c.classId && data.classes) {
-        const cls = data.classes.find(x => x.id === c.classId);
-        if (cls && cls.synergy_feats) {
-            cls.synergy_feats.forEach(f => {
-                if (f.level <= c.level) {
-                    allFeatures.push({
-                        name: f.name,
-                        source: `${t('cg_step_class')} (Lvl ${f.level})`,
-                        type: f.type || "Passive",
-                        cost: f.cost || "-",
-                        desc: f.effect,
-                        tags: f.stat_options ? ["Stat Choice"] : []
-                    });
-                }
-            });
-        }
-    }
+        const getTypeClass = (type) => {
+            const tLower = (type || "").toLowerCase();
+            if (tLower.includes("reaction")) return "reaction";
+            if (tLower.includes("action") || tLower.includes("attack")) return "action";
+            if (tLower.includes("passive")) return "passive";
+            return "utility"; 
+        };
 
-    // D. Selected Archetype Talents
-    if (c.talents && c.talents.length > 0) {
-        c.talents.forEach(tal => {
-            allFeatures.push({
-                name: tal.name,
-                source: tal.sourceName || t('sheet_arch_talents'),
-                type: tal.type || "Talent",
-                cost: tal.cost,
-                desc: tal.effect,
-                tags: tal.tags || [],
-                choice: tal.choice
-            });
-        });
-    }
-
-    // --- 2. Render HTML ---
-    if (allFeatures.length === 0) {
-        container.innerHTML = `<div style="padding:2rem; text-align:center; color:#666;">No features found.</div>`;
-        return;
-    }
-
-    // Helper for CSS classes
-    const getTypeClass = (type) => {
-        const tLower = (type || "").toLowerCase();
-        if (tLower.includes("reaction")) return "reaction";
-        if (tLower.includes("action") || tLower.includes("attack")) return "action";
-        if (tLower.includes("passive")) return "passive";
-        return "utility"; 
-    };
-
-    container.innerHTML = `
-        <div class="manager-grid" style="grid-template-columns: 1fr;">
-            <div class="mgr-header">${t('sheet_features')}</div>
-            <div class="features-grid">
-                ${allFeatures.map(f => `
-                    <div class="feature-card ${getTypeClass(f.type)}">
-                        <div class="feat-header">
-                            <span class="feat-title">${f.name}</span>
-                            ${f.cost !== "-" ? `<span class="feat-cost">${f.cost}</span>` : ""}
+        container.innerHTML = `
+            <div class="manager-grid" style="grid-template-columns: 1fr;">
+                <div class="mgr-header">${t('sheet_features')}</div>
+                <div class="features-grid">
+                    ${allFeatures.map(f => `
+                        <div class="feature-card ${getTypeClass(f.type)}">
+                            <div class="feat-header"><span class="feat-title">${f.name}</span>${f.cost !== "-" ? `<span class="feat-cost">${f.cost}</span>` : ""}</div>
+                            <div class="feat-meta"><span class="feat-source">${f.source}</span><span>${f.type}</span></div>
+                            <div class="feat-desc">${f.desc} ${f.choice ? `<em style="color:var(--accent-gold); display:block; margin-top:5px;">Selection: ${f.choice}</em>` : ''}</div>
                         </div>
-                        <div class="feat-meta">
-                            <span class="feat-source">${f.source}</span>
-                            <span>${f.type}</span>
-                        </div>
-                        <div class="feat-desc">
-                            ${f.desc} ${f.choice ? `<em style="color:var(--accent-gold); display:block; margin-top:5px;">Selection: ${f.choice}</em>` : ''}
-                        </div>
-                    </div>
-                `).join('')}
+                    `).join('')}
+                </div>
             </div>
-        </div>
-    `;
-},
+        `;
+    },
 
     renderTabNotes: async (container) => {
-    const c = CharGen.char;
-    const t = I18n.t;
-    const data = I18n.getData('options');
-
-    // Get Class/Ancestry Names
-    const ancName = data.ancestries.find(a => a.id === c.ancestry)?.name || "-";
-    const bgName = data.backgrounds.find(b => b.id === c.background)?.name || "-";
-    
-    // Resolve Image
-    let imgHTML = `<div class="portrait-placeholder">👤</div>`;
-    if (c.imageUrl) imgHTML = `<img src="${c.imageUrl}">`;
-    else if (c.imageId) {
-        const { ImageStore } = await import('../utils/image_store.js');
-        const url = await ImageStore.getUrl(c.imageId);
-        if(url) imgHTML = `<img src="${url}">`;
-    }
-
-    container.innerHTML = `
-        <div class="bio-layout">
-            <div class="bio-sidebar">
-                <div class="portrait-frame">
-                    ${imgHTML}
-                </div>
-                <div>
-                    <div class="bio-field">
-                        <span class="bio-label">${t('cg_step_class')}</span>
-                        <div class="bio-text">${c.className}</div>
-                    </div>
-                    <div class="bio-field">
-                        <span class="bio-label">${t('cg_lbl_ancestry')}</span>
-                        <div class="bio-text">${ancName}</div>
-                    </div>
-                    <div class="bio-field">
-                        <span class="bio-label">${t('cg_lbl_background')}</span>
-                        <div class="bio-text">${bgName}</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="bio-main">
-                <div class="mgr-header">${t('sheet_notes')}</div>
-                <textarea id="char-notes-input" class="notes-editor" placeholder="Character backstory, session notes, or inventory details...">${c.notes || ''}</textarea>
-            </div>
-        </div>
-    `;
-
-    document.getElementById('char-notes-input').addEventListener('input', (e) => {
-        c.notes = e.target.value;
-    });
-},
-    renderPrintVersion: async (container) => {
-    const c = CharGen.char;
-    const t = I18n.t;
-    const data = I18n.getData('options');
-    const s = c.stats;
-    const def = c.defenses;
-
-    // --- IMAGES ---
-    let imgHTML = `<div style="font-size:3rem; color:#ccc;">👤</div>`;
-    if (c.imageUrl) imgHTML = `<img src="${c.imageUrl}">`;
-    else if (c.imageId) {
-        try {
+        const c = CharGen.char;
+        const t = I18n.t;
+        const data = I18n.getData('options');
+        const ancName = data.ancestries.find(a => a.id === c.ancestry)?.name || "-";
+        const bgName = data.backgrounds.find(b => b.id === c.background)?.name || "-";
+        
+        let imgHTML = `<div class="portrait-placeholder">👤</div>`;
+        if (c.imageUrl) imgHTML = `<img src="${c.imageUrl}">`;
+        else if (c.imageId) {
             const { ImageStore } = await import('../utils/image_store.js');
             const url = await ImageStore.getUrl(c.imageId);
-            if (url) imgHTML = `<img src="${url}">`;
-        } catch(e) {}
-    }
+            if(url) imgHTML = `<img src="${url}">`;
+        }
 
-    // --- DATA PREP ---
-    const armorScore = CharGen.calculateArmorScore();
-    const skills = CharGen.calculateSkills();
-    
-    // Attacks
-    const weapons = c.inventory.filter(i => (i.type === 'Melee' || i.type === 'Ranged') && i.equipped);
-    let attackRows = `<tr><td><b>${t('wep_unarmed')}</b></td><td>${(s.STR>=0?'+':'')+s.STR}</td><td>1d4 ${(s.STR>=0?'+':'')+s.STR}</td><td>-</td></tr>`;
-    
-    weapons.forEach(w => {
-        const isFinesse = w.tags && String(w.tags).includes("Finesse");
-        const isRanged = w.type === 'Ranged';
-        let mod = isRanged ? s.DEX : (isFinesse ? Math.max(s.STR, s.DEX) : s.STR);
-        const sign = mod >= 0 ? '+' : '';
-        attackRows += `<tr><td><b>${w.name}</b></td><td>${sign}${mod}</td><td>${w.damage} ${sign}${mod}</td><td style="font-size:0.8em">${w.tags||'-'}</td></tr>`;
-    });
-
-    // Features
-    let featuresHTML = "";
-    const addFeat = (name, source, desc) => {
-        featuresHTML += `<div class="p-feat-block"><div class="p-feat-head"><span>${name}</span><span style="font-weight:normal; font-size:0.8em">${source}</span></div><div style="font-size:0.9em;">${desc}</div></div>`;
-    };
-
-    if(c.ancestry) {
-        const anc = data.ancestries.find(a => a.id === c.ancestry);
-        const fIdx = c.ancestryFeatIndex || 0;
-        if(anc && anc.feats[fIdx]) addFeat(anc.feats[fIdx].name, t('cg_lbl_ancestry'), anc.feats[fIdx].effect);
-    }
-    if(c.background) {
-        const bg = data.backgrounds.find(b => b.id === c.background);
-        if(bg && bg.feat) addFeat(bg.feat.name, t('cg_lbl_background'), bg.feat.effect);
-    }
-    if(c.classId) {
-        const cls = data.classes.find(x => x.id === c.classId);
-        if(cls) cls.synergy_feats.filter(f => f.level <= c.level).forEach(f => addFeat(f.name, `Class Lvl ${f.level}`, f.effect));
-    }
-    c.talents.forEach(tal => addFeat(tal.name, tal.sourceName || "Talent", tal.effect));
-
-    // Inventory
-    const invHTML = c.inventory.map(i => `<div class="p-list-row"><span>${i.name}</span><span>${i.slots}</span></div>`).join('');
-
-    // --- RENDER ---
-    container.innerHTML = `
-        <!-- PAGE 1 -->
-        <div class="print-page">
-            <div class="p-header-grid">
-                <div class="p-header-info">
-                    <div class="p-id-field" style="grid-column: 1 / -1;">
-                        <span class="p-lbl">${t('lbl_name')}</span>
-                        <span class="p-val-large">${c.name}</span>
-                    </div>
-                    <div class="p-id-field">
-                        <span class="p-lbl">${t('cg_step_class')}</span>
-                        <span class="p-val">${c.className || 'Adventurer'}</span>
-                    </div>
-                    <div class="p-id-field">
-                        <span class="p-lbl">${t('lbl_level')}</span>
-                        <span class="p-val">${c.level} <span class="p-id-sub">(${c.current.xp} XP)</span></span>
-                    </div>
-                    <div class="p-id-field">
-                        <span class="p-lbl">${t('cg_lbl_ancestry')}</span>
-                        <span class="p-val">${data.ancestries.find(a=>a.id===c.ancestry)?.name || '-'}</span>
-                    </div>
-                    <div class="p-id-field">
-                        <span class="p-lbl">${t('cg_lbl_background')}</span>
-                        <span class="p-val">${data.backgrounds.find(b=>b.id===c.background)?.name || '-'}</span>
+        container.innerHTML = `
+            <div class="bio-layout">
+                <div class="bio-sidebar">
+                    <div class="portrait-frame">${imgHTML}</div>
+                    <div>
+                        <div class="bio-field"><span class="bio-label">${t('cg_step_class')}</span><div class="bio-text">${c.className}</div></div>
+                        <div class="bio-field"><span class="bio-label">${t('cg_lbl_ancestry')}</span><div class="bio-text">${ancName}</div></div>
+                        <div class="bio-field"><span class="bio-label">${t('cg_lbl_background')}</span><div class="bio-text">${bgName}</div></div>
                     </div>
                 </div>
-                <div class="p-portrait-box">${imgHTML}</div>
+                <div class="bio-main">
+                    <div class="mgr-header">${t('sheet_notes')}</div>
+                    <textarea id="char-notes-input" class="notes-editor" placeholder="Character backstory, session notes...">${c.notes || ''}</textarea>
+                </div>
             </div>
+        `;
 
-            <div class="p-stats-row">
-                ${['STR','DEX','CON','INT','WIS','CHA'].map(st => `
-                    <div class="p-stat-cell">
-                        <span class="p-lbl">${st}</span>
-                        <span class="p-stat-num">${s[st] !== null ? (s[st]>=0?'+'+s[st]:s[st]) : 0}</span>
+        document.getElementById('char-notes-input').addEventListener('input', (e) => {
+            c.notes = e.target.value;
+        });
+    },
+
+    renderPrintVersion: async (container) => {
+        const c = CharGen.char;
+        const t = I18n.t;
+        const data = I18n.getData('options');
+        const s = c.stats;
+        
+        CharGen.recalcAll();
+        const armorScore = CharGen.calculateArmorScore();
+        const def = c.defenses;
+        const skills = CharGen.calculateSkills();
+        
+        // --- IMAGE ---
+        let imgHTML = `<div style="font-size:3rem; color:#ccc;">👤</div>`;
+        if (c.imageUrl) imgHTML = `<img src="${c.imageUrl}">`;
+        else if (c.imageId) {
+            try {
+                const { ImageStore } = await import('../utils/image_store.js');
+                const url = await ImageStore.getUrl(c.imageId);
+                if (url) imgHTML = `<img src="${url}">`;
+            } catch(e) {}
+        }
+
+        // --- ATTACKS ---
+        const attacks = [];
+        const str = s.STR || 0;
+        // Unarmed
+        attacks.push({ name: t('wep_unarmed'), atk: str, dmg: `1d4 + ${str}`, tags: "Melee" });
+        // Weapons
+        c.inventory.filter(i => (i.type === 'Melee' || i.type === 'Ranged') && i.equipped).forEach((w, i) => {
+            const isFinesse = w.tags && (String(w.tags).includes("Finesse") || String(w.tags).includes("Sutil"));
+            const isRanged = w.type === 'Ranged' || w.type === 'A Distancia';
+            let mod = s.STR || 0;
+            if (isRanged) mod = s.DEX || 0;
+            else if (isFinesse) mod = Math.max(s.STR || 0, s.DEX || 0);
+            
+            // Check overrides
+            const ov = c.overrides.attacks?.[`wep_${i}`] || {};
+            
+            attacks.push({
+                name: w.name,
+                atk: ov.atk !== undefined ? ov.atk : mod,
+                dmg: ov.dmg !== undefined ? ov.dmg : `${w.damage} + ${mod}`,
+                tags: w.tags ? (Array.isArray(w.tags) ? w.tags.join(', ') : w.tags) : w.type
+            });
+        });
+
+        // --- FEATURES ---
+        const features = [];
+        if(c.ancestry && data.ancestries) {
+            const anc = data.ancestries.find(a => a.id === c.ancestry);
+            if(anc) features.push({ name: anc.name + " Traits", source: "Ancestry", desc: anc.description });
+            const fIdx = c.ancestryFeatIndex !== null ? c.ancestryFeatIndex : 0;
+            if(anc && anc.feats[fIdx]) features.push({ name: anc.feats[fIdx].name, source: "Ancestry Feat", desc: anc.feats[fIdx].effect });
+        }
+        if(c.background && data.backgrounds) {
+            const bg = data.backgrounds.find(b => b.id === c.background);
+            if(bg && bg.feat) features.push({ name: bg.feat.name, source: "Background", desc: bg.feat.effect });
+        }
+        if(c.classId && data.classes) {
+            const cls = data.classes.find(x => x.id === c.classId);
+            if(cls) cls.synergy_feats.filter(f => f.level <= c.level).forEach(f => {
+                features.push({ name: f.name, source: `Class Lvl ${f.level}`, desc: f.effect });
+            });
+        }
+        c.talents.forEach(tal => {
+            features.push({ 
+                name: tal.name, 
+                source: tal.sourceName || "Talent", 
+                desc: tal.effect + (tal.choice ? ` <em>(${tal.choice})</em>` : '')
+            });
+        });
+
+       const archDisplay = CharGen.getArchetypeDisplay(); // <--- CALL HELPER
+
+        // --- HTML GENERATION ---
+        container.innerHTML = `
+        <!-- PAGE 1: COMBAT & STATS -->
+        <div class="print-page">
+            
+            <!-- HEADER -->
+            <div class="p-top-grid">
+                <div class="p-img-box">${imgHTML}</div>
+                <div class="p-identity">
+                    <div class="p-char-name">${c.name || "Nameless"}</div>
+                    <div class="p-id-row">
+                        <!-- UPDATE THIS FIELD -->
+                        <div class="p-field">
+                            <label>${t('cg_step_class')}</label>
+                            <span>${c.className} <span style="font-size:0.7em; font-weight:normal; color:#444;">(${archDisplay})</span></span>
+                        </div>
+                        <div class="p-field"><label>${t('lbl_level')}</label><span>${c.level}</span></div>
+                        <div class="p-field"><label>${t('cg_lbl_ancestry')}</label><span>${data.ancestries.find(a=>a.id===c.ancestry)?.name || '-'}</span></div>
+                        <div class="p-field"><label>${t('cg_lbl_background')}</label><span>${data.backgrounds.find(b=>b.id===c.background)?.name || '-'}</span></div>
                     </div>
-                `).join('')}
+                </div>
             </div>
 
-            <div class="p-vitals-row">
-                <div class="p-vital-card"><div class="p-vital-head">${t('sheet_hp')}</div><span class="p-vital-num">${c.derived.maxHP}</span></div>
-                <div class="p-vital-card"><div class="p-vital-head">${t('sheet_sta')}</div><span class="p-vital-num">${c.derived.maxSTA}</span></div>
-                <div class="p-vital-card"><div class="p-vital-head">${t('sheet_mp')}</div><span class="p-vital-num">${c.derived.maxMP}</span></div>
-                <div class="p-vital-card"><div class="p-vital-head">${t('sheet_luck')}</div><span class="p-vital-num">${c.derived.maxLuck}</span></div>
+            <!-- VITALS STRIP -->
+            <div class="p-vitals-bar">
+                <div class="p-vital-box"><label>${t('sheet_hp')}</label><span>${c.derived.maxHP}</span></div>
+                <div class="p-vital-box"><label>${t('sheet_mp')}</label><span>${c.derived.maxMP}</span></div>
+                <div class="p-vital-box"><label>${t('sheet_sta')}</label><span>${c.derived.maxSTA}</span></div>
+                <div class="p-vital-box"><label>${t('sheet_luck')}</label><span>${c.derived.maxLuck}</span></div>
+                <div class="p-vital-box"><label>${t('cg_lbl_slots')}</label><span>${c.derived.slots}</span></div>
             </div>
 
-            <div class="p-main-cols">
-                <!-- LEFT COL -->
-                <div>
+            <!-- MAIN BODY -->
+            <div class="p-columns-2">
+                
+                <!-- LEFT COLUMN: STATS -->
+                <div class="p-col-left">
                     <div class="p-section">
-                        <div class="p-lbl" style="text-align:center;">${t('sheet_ac')}</div>
-                        <div class="p-ac-val" style="text-align:center;">${armorScore}</div>
-                        <div style="display:flex; gap:5px; margin-top:5px;">
-                            <div class="p-def-small" style="flex:1; text-align:center;">
-                                <span class="p-lbl">${t('sheet_dodge')}</span><br><b>${def.dodge.val}</b>
-                            </div>
-                            <div class="p-def-small" style="flex:1; text-align:center;">
-                                <span class="p-lbl">${t('sheet_parry')}</span><br><b>${def.parry.val!==null?def.parry.val:'-'}</b>
-                            </div>
+                        <div class="p-header">${t('cg_step_stats')}</div>
+                        <div class="p-attr-row">
+                            ${['STR','DEX','CON','INT','WIS','CHA'].map(st => `
+                                <div class="p-attr"><label>${st}</label><span>${s[st] !== null ? (s[st]>=0?'+'+s[st]:s[st]) : 0}</span></div>
+                            `).join('')}
                         </div>
                     </div>
-                    
+
+                    <div class="p-defense-grid">
+                        <div class="p-def-box"><span class="p-def-val">${armorScore}</span><span class="p-def-lbl">${t('sheet_ac')}</span></div>
+                        <div class="p-def-box"><span class="p-def-val">${def.dodge.val}</span><span class="p-def-lbl">${t('sheet_dodge')}</span></div>
+                        <div class="p-def-box"><span class="p-def-val">${def.parry.val!==null?def.parry.val:'-'}</span><span class="p-def-lbl">${t('sheet_parry')}</span></div>
+                        <div class="p-def-box"><span class="p-def-val">${(c.stats.DEX||0)>=0?'+'+c.stats.DEX:c.stats.DEX}</span><span class="p-def-lbl">${t('cg_initiative')}</span></div>
+                    </div>
+
                     <div class="p-section">
-                        <div class="p-lbl" style="border-bottom:2px solid #000; margin-bottom:5px;">${t('sheet_skills')}</div>
-                        ${skills.map(sk => `
-                            <div class="p-list-row">
-                                <span>${sk.name}</span>
-                                <strong>${sk.die !== '-' ? '+'+sk.die : ''}</strong>
-                            </div>
-                        `).join('')}
+                        <div class="p-header">${t('sheet_skills')}</div>
+                        <div class="p-skill-list">
+                            ${skills.map(sk => {
+                                const mod = sk.statMod >= 0 ? '+'+sk.statMod : sk.statMod;
+                                let className = "p-skill-row";
+                                if(sk.count === 1) className += " trained";
+                                if(sk.count >= 2) className += " expert";
+                                return `<div class="${className}">
+                                    <span>${sk.name} <span style="color:#666">(${sk.stat})</span></span>
+                                    <span>${mod} / <strong>${sk.die !== '-' ? '+'+sk.die : '-'}</strong></span>
+                                </div>`;
+                            }).join('')}
+                        </div>
                     </div>
                 </div>
 
-                <!-- RIGHT COL -->
-                <div>
+                <!-- RIGHT COLUMN: COMBAT -->
+                <div class="p-col-right">
                     <div class="p-section">
-                        <div class="p-lbl" style="border-bottom:2px solid #000;">${t('sheet_attacks')}</div>
-                        <table class="p-atk-table">
-                            <tr><th>Name</th><th>Atk</th><th>Dmg</th><th>Tags</th></tr>
-                            ${attackRows}
+                        <div class="p-header">${t('sheet_attacks')}</div>
+                        <table class="p-table">
+                            <thead><tr><th>Name</th><th width="30">Atk</th><th>Dmg</th><th>Tags</th></tr></thead>
+                            <tbody>
+                                ${attacks.map(a => `
+                                    <tr>
+                                        <td><strong>${a.name}</strong></td>
+                                        <td>${a.atk >= 0 ? '+'+a.atk : a.atk}</td>
+                                        <td>${a.dmg}</td>
+                                        <td style="font-size:8pt; color:#444;">${a.tags}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
                         </table>
                     </div>
 
                     <div class="p-section">
-                        <div class="p-lbl">${t('sheet_notes')}</div>
-                        <div class="p-notes">${c.notes || ''}</div>
+                        <div class="p-header">Equipped / Worn</div>
+                        <div style="font-size:9pt; line-height:1.4;">
+                            ${c.inventory.filter(i => i.equipped).map(i => `
+                                <div>• <strong>${i.name}</strong> (${i.type}) - ${i.magicEffect || i.effect || i.description || '-'}</div>
+                            `).join('') || "None"}
+                        </div>
+                    </div>
+
+                    <div class="p-section">
+                        <div class="p-header">${t('sheet_notes')}</div>
+                        <div class="p-notes-box">${c.notes || ''}</div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- PAGE 2 -->
+        <!-- PAGE 2: INVENTORY & FEATURES -->
         <div class="print-page">
-            <div class="p-header">INVENTORY & ABILITIES</div>
             
-            <div class="p-wealth-strip">
+            <div class="p-currency">
                 <span>GOLD: ${c.currency.g}</span>
                 <span>SILVER: ${c.currency.s}</span>
                 <span>COPPER: ${c.currency.c}</span>
-                <span>SLOTS: ${c.derived.slots}</span>
             </div>
 
-            <div style="column-count: 2; column-gap: 20px;">
-                <div class="p-section" style="break-inside: avoid;">
-                    <div class="p-lbl" style="border-bottom:2px solid #000; margin-bottom:5px;">${t('sheet_inv')}</div>
-                    ${invHTML}
-                </div>
+            <div class="p-grid-3">
                 
-                <div style="break-inside: avoid;">
-                    <div class="p-lbl" style="border-bottom:2px solid #000; margin-bottom:10px;">${t('sheet_features')}</div>
-                    ${featuresHTML}
+                <!-- LEFT: INVENTORY -->
+                <div class="p-section">
+                    <div class="p-header">${t('sheet_inv')} (Backpack)</div>
+                    <table class="p-table">
+                        <thead><tr><th>Item</th><th width="30">Slot</th></tr></thead>
+                        <tbody>
+                            ${c.inventory.filter(i => !i.equipped && !i.isMagic).map(i => `
+                                <tr><td>${i.name}</td><td style="text-align:center;">${i.slots}</td></tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+
+                    <div class="p-header" style="margin-top:20px;">Magic & Attuned</div>
+                    ${c.inventory.filter(i => i.isMagic || i.type === "Trinket").map(i => `
+                        <div class="p-magic-item">
+                            <div style="font-weight:bold;">${i.name} ${i.equipped ? '(E)' : ''}</div>
+                            <div style="font-size:8pt; font-style:italic;">${i.magicEffect || i.description}</div>
+                        </div>
+                    `).join('')}
+                </div>
+
+                <!-- RIGHT: FEATURES -->
+                <div class="p-section">
+                    <div class="p-header">${t('sheet_features')}</div>
+                    ${features.map(f => `
+                        <div class="p-feat-card">
+                            <div class="p-feat-title"><span>${f.name}</span><span class="p-feat-source">${f.source}</span></div>
+                            <div class="p-feat-desc">${f.desc}</div>
+                        </div>
+                    `).join('')}
                 </div>
             </div>
         </div>
-    `;
-},
+        `;
+    },
 
     attachManagerListeners: () => {
-        // 1. HUD Listeners (Name, Level, Vitals)
-        // Helper to bind inputs to state paths
         const bind = (selector, type) => {
             document.querySelectorAll(selector).forEach(el => {
                 el.addEventListener('change', (e) => {
                     let val = e.target.value;
-                    // Convert to number if it's not the name field
                     if (type !== 'name') val = parseInt(val) || 0;
-
                     if (type === 'name') CharGen.char.name = val;
                     if (type === 'level') CharGen.char.level = val;
-                    
-                    // Vitals Logic
                     if (el.dataset.vital) {
                         const key = el.dataset.vital;
-                        
-                        // Handle Current Values (hp, mp, sta, luck)
-                        if (['hp', 'mp', 'sta', 'luck'].includes(key)) {
-                            CharGen.char.current[key] = val;
-                        }
-                        
-                        // Handle Max Values (Manual Overrides for "God Mode")
-                        // If Max changes, we must re-render the HUD to update progress bar widths
-                        if (['maxHP', 'maxMP', 'maxSTA', 'maxLuck'].includes(key)) {
-                            CharGen.char.derived[key] = val;
-                            
-                            const newHUD = CharGen.renderHUD();
-                            const oldHUD = document.querySelector('.char-hud');
-                            if (oldHUD) {
-                                oldHUD.replaceWith(newHUD);
-                                CharGen.attachManagerListeners(); // Re-attach listeners to new DOM elements
-                            }
-                            return; // Stop execution here to avoid redundant binding
-                        }
+                        if (['hp', 'mp', 'sta', 'luck'].includes(key)) CharGen.char.current[key] = val;
                     }
                 });
             });
         };
-        
-        bind('.edit-transparent', 'name');
+        bind('.edit-name', 'name');
         bind('.edit-tiny', 'level');
-        bind('.edit-vital', 'vital');
-        bind('.edit-vital-max', 'vital');
+        bind('.res-input', 'vital');
+        bind('.lvl-input', 'vital');
 
-        // 2. Toolbar Actions
         const btnSave = document.getElementById('btn-save-trigger');
         if (btnSave) {
             btnSave.onclick = () => {
                 CharGen.saveCharacter();
-                // Simple visual feedback
                 const originalHTML = btnSave.innerHTML;
                 btnSave.innerHTML = "✅";
                 setTimeout(() => btnSave.innerHTML = originalHTML, 1000);
@@ -3405,15 +3036,13 @@ renderHUD: () => {
         const btnPrint = document.getElementById('btn-print-trigger');
         if (btnPrint) {
             btnPrint.onclick = () => {
-                // Critical: Update the hidden print view with latest data before printing
-                // This ensures any manual edits made in the HUD appear on the PDF
                 const printArea = document.getElementById('print-sheet-root');
                 if (printArea) CharGen.renderPrintVersion(printArea);
-                
                 window.print();
             };
         }
     },
+    /* --- BATCH 8: Calculations, Level Up Logic, and Helpers --- */
 
     _renderWeaponRow: (w, stats) => {
         const t = I18n.t;
@@ -3425,136 +3054,20 @@ renderHUD: () => {
         else if (isFinesse) atkMod = Math.max(stats.STR || 0, stats.DEX || 0);
         
         const sign = atkMod >= 0 ? '+' : '';
-        
-        // Translate Tags
         const translatedTags = w.tags ? w.tags.map(tag => {
             const key = "tag_" + tag.toLowerCase().replace(/ /g, "_").replace(/-/g, "_");
             return t(key) !== key ? t(key) : tag;
         }).join(', ') : '';
 
-        return `<tr>
-            <td>${w.name}</td>
-            <td>${sign}${atkMod}</td>
-            <td>${w.damage} ${sign}${atkMod}</td>
-            <td class="tags">${translatedTags}</td>
-        </tr>`;
+        return `<tr><td>${w.name}</td><td>${sign}${atkMod}</td><td>${w.damage} ${sign}${atkMod}</td><td class="tags">${translatedTags}</td></tr>`;
     },
 
-    /**
-     * Attaches listeners to the interactive elements of the Character Sheet.
-     * Robust checks ensure this works in both Wizard and Play modes.
-     */
-    _attachSheetListeners: () => {
-        // 1. Live Resource Tracking (HP, MP, STA, Luck, XP)
-        const bindInput = (id, key) => {
-            const el = document.getElementById(id);
-            if (el) {
-                // Remove old listeners to prevent duplicates if re-rendered
-                const newEl = el.cloneNode(true);
-                el.parentNode.replaceChild(newEl, el);
-                
-                newEl.addEventListener('change', (e) => {
-                    const val = parseInt(e.target.value) || 0;
-                    CharGen.char.current[key] = val;
-                    console.log(`Updated ${key} to ${val}`);
-                });
-            }
-        };
-
-        bindInput('inp-hp', 'hp');
-        bindInput('inp-mp', 'mp');
-        bindInput('inp-sta', 'sta');
-        bindInput('inp-luck', 'luck');
-        bindInput('inp-xp', 'xp');
-
-        // 2. Notes Field
-        const notesEl = document.getElementById('inp-notes');
-        if (notesEl) {
-            // Clone to clear old listeners
-            const newNotes = notesEl.cloneNode(true);
-            notesEl.parentNode.replaceChild(newNotes, notesEl);
-            
-            newNotes.addEventListener('input', (e) => {
-                CharGen.char.notes = e.target.value;
-            });
-            // Restore cursor position if needed? Input event usually keeps focus. 
-            // Actually, simpler logic is just setting on change to avoid lag.
-            newNotes.addEventListener('change', (e) => {
-                 CharGen.char.notes = e.target.value;
-            });
-        }
-
-        // 3. Action Buttons (Wizard Mode Only)
-        // These might be hidden via CSS in Play Mode, but we attach safely anyway.
-        
-        const btnSave = document.getElementById('btn-save-lib');
-        if (btnSave) {
-            btnSave.onclick = CharGen.saveCharacter;
-        }
-
-        const btnPrint = document.getElementById('btn-print-pdf');
-        if (btnPrint) {
-            btnPrint.onclick = () => window.print();
-        }
-        
-        const btnLvl = document.getElementById('btn-levelup');
-        if (btnLvl) {
-            if (CharGen.char.level >= 10) { 
-                btnLvl.disabled = true; 
-                btnLvl.textContent = "Max Level"; 
-            } else {
-                btnLvl.onclick = CharGen.initLevelUp;
-            }
-        }
-    },
-
-    _getToolProfs: (char, bg) => {
-        const tools = [];
-        // Extract from Talents
-        char.talents.forEach(t => {
-            if (t.tags && (t.tags.includes("Kit") || t.tags.includes("Crafting"))) {
-                if(t.name.startsWith("Kit:")) tools.push(t.name.replace("Kit: ", ""));
-                else if(t.name === "Poisoner") tools.push("Poisoner's Kit");
-                else if(t.name === "Saboteur") tools.push("Thieves' Tools");
-                else if(t.name === "Master Trapper") tools.push("Thieves' Tools");
-                else if(t.name === "Master Herbalist") tools.push("Herbalism Kit");
-            }
-        });
-        // Extract from Background
-        if (bg.skill && bg.skill.includes("Proficiency")) {
-            tools.push(bg.skill.replace(" Proficiency", ""));
-        }
-        return [...new Set(tools)]; // Unique
-    },
-
-    _loadPortrait: async () => {
-        const imgEl = document.getElementById('char-portrait-img');
-        if (!imgEl) return;
-        
-        // 1. Check for URL
-        if (CharGen.char.imageUrl) {
-            imgEl.src = CharGen.char.imageUrl;
-            return;
-        }
-
-        // 2. Check for IndexedDB Blob
-        if (CharGen.char.imageId) {
-            // Dynamic import to avoid dependency issues if not loaded
-            const { ImageStore } = await import('../utils/image_store.js');
-            const url = await ImageStore.getUrl(CharGen.char.imageId);
-            if (url) imgEl.src = url;
-        }
-    },
-
-    // Save Handler definition remains part of the object
     saveCharacter: () => {
-        // Ensure Storage is imported at the top of the file
-        // import { Storage } from '../utils/storage.js';
-        
         try {
             const id = Storage.saveCharacter(CharGen.char);
-            CharGen.char.id = id; // Update state with new ID
-            alert(`Character "${CharGen.char.name}" saved to Library!`);
+            CharGen.char.id = id; 
+            // Only alert if we are in the wizard flow, not constant saves in manager
+            if (CharGen.currentStep < 5) alert(`Character "${CharGen.char.name}" saved to Library!`);
         } catch (e) {
             console.error("Save failed:", e);
             alert("Failed to save character. See console.");
@@ -3564,66 +3077,56 @@ renderHUD: () => {
     calculateDefenses: () => {
         const c = CharGen.char;
         const s = c.stats;
-        
-        // Default to 0 if stats aren't assigned yet
         const str = s.STR || 0;
         const dex = s.DEX || 0;
         const con = s.CON || 0;
 
-        // --- 1. DODGE (DEX) ---
+        // 1. DODGE (DEX)
         let dodgeVal = dex;
         let dodgeDie = "-"; 
         
-        // Check for Training (e.g. Uncanny Dodge)
         let dodgeRank = 0;
         c.talents.forEach(t => {
-            // Check for proficiency training
             if (t.modifiers && t.modifiers.defense_train === "dodge") dodgeRank++;
-            // Check for flat bonuses (e.g. Evasive)
             if (t.modifiers && t.modifiers.defense_bonus_dodge) dodgeVal += t.modifiers.defense_bonus_dodge;
         });
         
-        // Determine Die based on Rank
         if (dodgeRank === 1) dodgeDie = "1d4";
         if (dodgeRank >= 2) dodgeDie = "1d6";
 
-        // --- 2. PARRY (STR or DEX) ---
-        // Requirement: Must wield a Melee Weapon
-        const hasWeapon = c.inventory.some(i => i.type === "Melee");
-        
+        // 2. PARRY (STR or DEX)
+        const hasWeapon = c.inventory.some(i => i.type === "Melee" && i.equipped);
         let parryVal = null;
         let parryDie = "-";
 
         if (hasWeapon) {
             parryVal = Math.max(str, dex);
-            
-            // Weapon Tags (e.g. "Guard" property)
-            const hasGuardWeapon = c.inventory.some(i => i.tags && i.tags.includes("Guard"));
+            const hasGuardWeapon = c.inventory.some(i => i.tags && i.tags.includes("Guard") && i.equipped);
             if (hasGuardWeapon) parryVal += 1;
-            
-            // Talents
             c.talents.forEach(t => {
                 if (t.modifiers && t.modifiers.defense_bonus_parry) parryVal += t.modifiers.defense_bonus_parry;
             });
         }
 
-        // --- 3. BLOCK (CON) ---
-        // Requirement: Must wield a Shield
-        const hasShield = c.inventory.some(i => i.name.includes("Shield"));
-        
+        // 3. BLOCK (CON)
+        const hasShield = c.inventory.some(i => i.name.includes("Shield") && i.equipped);
         let blockVal = null;
         let blockDie = "-";
         
         if (hasShield) {
             blockVal = con;
-            // Guardian Talents (e.g. Shield Master)
             c.talents.forEach(t => {
                 if (t.modifiers && t.modifiers.defense_bonus_block) blockVal += t.modifiers.defense_bonus_block;
-                // Some talents might add dice to block, logic can be added here similar to dodge
             });
         }
 
-        // Save to State
+        // --- OVERRIDE CHECK ---
+        const ov = c.overrides.defenses || {};
+        
+        if (ov.dodge) { dodgeVal = ov.dodge.val; dodgeDie = ov.dodge.die; }
+        if (ov.parry) { parryVal = ov.parry.val; parryDie = ov.parry.die; }
+        if (ov.block) { blockVal = ov.block.val; blockDie = ov.block.die; }
+
         c.defenses = {
             dodge: { val: dodgeVal, die: dodgeDie },
             parry: { val: parryVal, die: parryDie },
@@ -3633,25 +3136,24 @@ renderHUD: () => {
 
     calculateArmorScore: () => {
         const c = CharGen.char;
-        const data = I18n.getData('options');
         
+        // 1. Check Override First
+        if (c.overrides.ac !== null) return c.overrides.ac;
+
+        const data = I18n.getData('options');
         let wornArmorAS = 0;
         let shieldBonus = 0;
         let naturalArmor = 0;
         let flatBonus = 0;
 
-        // 1. Inventory Check
+        // Inventory Check
         c.inventory.forEach(i => {
             if (!i.equipped) return;
-
-            if (i.type === "Shield") {
-                shieldBonus = Math.max(shieldBonus, i.as || 1);
-            } else if (i.type === "Armor") {
-                wornArmorAS = Math.max(wornArmorAS, i.as || 0);
-            }
+            if (i.type === "Shield") shieldBonus = Math.max(shieldBonus, i.as || 1);
+            else if (i.type === "Armor") wornArmorAS = Math.max(wornArmorAS, i.as || 0);
         });
 
-        // 2. Talents & Feats
+        // Talents & Feats
         let unarmoredDef = false;
         let towerShield = false;
 
@@ -3661,20 +3163,17 @@ renderHUD: () => {
             if (mods.natural_armor) naturalArmor = Math.max(naturalArmor, mods.natural_armor);
         };
 
-        // Ancestry
         if (c.ancestry) {
             const anc = data.ancestries.find(a => a.id === c.ancestry);
             if (anc && anc.feats[c.ancestryFeatIndex]) checkMods(anc.feats[c.ancestryFeatIndex].modifiers);
         }
 
-        // Talents
         c.talents.forEach(t => {
             if (t.modifiers) checkMods(t.modifiers);
             if (t.name === "Unarmored Defense") unarmoredDef = true;
             if (t.name === "Tower Shield Training") towerShield = true;
         });
 
-        // Synergy
         if (c.classId) {
             const cls = data.classes.find(cl => cl.id === c.classId);
             if (cls) {
@@ -3684,49 +3183,56 @@ renderHUD: () => {
             }
         }
 
-        // 3. Resolve
+        // Magic Item Bonuses (New in Step 3)
+        const itemMods = CharGen.getMagicItemBonuses();
+        flatBonus += itemMods.as;
+
+        // Resolve Logic
         if (towerShield && shieldBonus > 0) shieldBonus = 2;
 
         let base = 0;
         if (wornArmorAS > 0) {
             base = wornArmorAS;
         } else {
-            // Unarmored logic
             if (unarmoredDef) {
                 const dex = c.stats.DEX || 0;
                 base = Math.max(0, dex);
-                if (naturalArmor > base) base = naturalArmor; // Take better of Natural or DEX
+                if (naturalArmor > base) base = naturalArmor;
             } else {
                 base = naturalArmor;
             }
         }
         
-        // Final Total
         return base + shieldBonus + flatBonus;
     },
 
-    /* ------------------------------------------------------------------
-       LOGIC: SKILL CALCULATION
-       ------------------------------------------------------------------ */
-    
+    setAttackOverride: (uniqueId, field, value) => {
+        if (!CharGen.char.overrides.attacks) CharGen.char.overrides.attacks = {};
+        if (!CharGen.char.overrides.attacks[uniqueId]) CharGen.char.overrides.attacks[uniqueId] = {};
+        
+        CharGen.char.overrides.attacks[uniqueId][field] = value;
+        CharGen.renderSheet(CharGen.container); // Refresh
+    },
+
     calculateSkills: () => {
-        const data = I18n.getData('options');
         const c = CharGen.char;
-        const t = I18n.t; // Localization
+        const t = I18n.t;
+        const data = I18n.getData('options');
         const skillCounts = {}; 
 
-        const add = (id) => {
-            if (!id) return;
-            skillCounts[id] = (skillCounts[id] || 0) + 1;
+        const add = (id) => { 
+            if (id) skillCounts[id] = (skillCounts[id] || 0) + 1; 
         };
-
+        
+        // Robust Mapper: Checks both ID and Localized Names
         const mapStringToId = (str) => {
             if (!str) return null;
             const s = str.toLowerCase();
+            // English / ID matches
             if (s.includes("athletics") || s.includes("atletismo")) return "athletics";
             if (s.includes("acrobatics") || s.includes("acrobacias")) return "acrobatics";
             if (s.includes("stealth") || s.includes("sigilo")) return "stealth";
-            if (s.includes("craft") || s.includes("artesanía")) return "craft";
+            if (s.includes("craft") || s.includes("artesanía") || s.includes("artesania")) return "craft";
             if (s.includes("lore") || s.includes("saber")) return "lore";
             if (s.includes("investigate") || s.includes("investigar")) return "investigate";
             if (s.includes("scrutiny") || s.includes("escrutinio")) return "scrutiny";
@@ -3734,52 +3240,60 @@ renderHUD: () => {
             if (s.includes("medicine") || s.includes("medicina")) return "medicine";
             if (s.includes("influence") || s.includes("influencia")) return "influence";
             if (s.includes("deception") || s.includes("engaño")) return "deception";
-            if (s.includes("intimidat")) return "intimidation";
+            if (s.includes("intimidation") || s.includes("intimidación") || s.includes("intimidacion")) return "intimidation";
             return null;
         };
 
-        // 1. Ancestry Skills
-        if (c.ancestry && c.ancestryFeatIndex !== null) {
+        // 1. Ancestry
+        if (c.ancestry && c.ancestryFeatIndex !== null && data.ancestries) {
             const anc = data.ancestries.find(a => a.id === c.ancestry);
-            const feat = anc.feats[c.ancestryFeatIndex];
-            if (feat && feat.modifiers) {
-                if (feat.modifiers.skill_train) add(feat.modifiers.skill_train);
-                if (feat.modifiers.select_skill && c.ancestrySkill) add(c.ancestrySkill);
+            if(anc && anc.feats[c.ancestryFeatIndex]) {
+                const f = anc.feats[c.ancestryFeatIndex];
+                if (f.modifiers) {
+                    if (f.modifiers.skill_train) add(f.modifiers.skill_train);
+                    if (f.modifiers.select_skill && c.ancestrySkill) add(c.ancestrySkill);
+                }
             }
         }
 
-        // 2. Background Skills
-        if (c.background) {
+        // 2. Background
+        if (c.background && data.backgrounds) {
             const bg = data.backgrounds.find(b => b.id === c.background);
             if (bg && bg.skill) add(mapStringToId(bg.skill));
         }
 
-        // 3. Archetype Base Skills
-        if (c.archA) {
-            const arch = data.archetypes.find(a => a.id === c.archA);
+        // 3. Archetypes
+        const processArch = (archId) => {
+            if(!archId) return;
+            const arch = data.archetypes.find(a => a.id === archId);
             if (arch && arch.proficiencies && arch.proficiencies.skills) {
                 arch.proficiencies.skills.forEach(s => add(mapStringToId(s)));
             }
-        }
-        if (c.archB) {
-            const arch = data.archetypes.find(a => a.id === c.archB);
-            if (arch && arch.proficiencies && arch.proficiencies.skills) {
-                arch.proficiencies.skills.forEach(s => add(mapStringToId(s)));
-            }
-        }
+        };
+        processArch(c.archA);
+        processArch(c.archB);
 
-        // 4. Talent Choices
-        c.talents.forEach(t => {
-            if (t.flags && t.flags.select_skill && t.choice) {
-                add(t.choice);
-            }
-            if (t.modifiers && t.modifiers.skill_train) {
-                add(t.modifiers.skill_train);
+        // 4. Talents
+        c.talents.forEach(tal => {
+            if (tal.choice && tal.flags && tal.flags.select_skill) add(tal.choice);
+            if (tal.modifiers && tal.modifiers.skill_train) add(tal.modifiers.skill_train);
+        });
+
+        // 5. NEW: MAGIC ITEMS (Equipped)
+        c.inventory.filter(i => i.equipped).forEach(item => {
+            // Check descriptions for "Gain Proficiency in X" or "Gana Competencia en X"
+            const text = `${item.description || ''} ${item.effect || ''} ${item.magicEffect || ''}`.toLowerCase();
+            
+            // Look for keywords indicating skill gain
+            if (text.includes("proficiency") || text.includes("competencia")) {
+                // Map the entire string to see if any skill name is present
+                // This is a greedy check: if the text says "Atletismo", we add Athletics.
+                const skillId = mapStringToId(text);
+                if (skillId) add(skillId);
             }
         });
 
-        // 5. Build Localized List
-        // We define the list here to ensure the ORDER is consistent
+        // 6. Build List
         const fullList = [
             {id: "athletics", name: "Athletics", stat: "STR"},
             {id: "acrobatics", name: "Acrobatics", stat: "DEX"},
@@ -3795,362 +3309,229 @@ renderHUD: () => {
             {id: "intimidation", name: "Intimidation", stat: "CHA"}
         ];
 
-        // Map over the list and apply localization
         return fullList.map(sk => {
-            const count = skillCounts[sk.id] || 0;
+            let count = skillCounts[sk.id] || 0;
             let die = "-";
-            if (count === 1) die = "d4"; // Trained
-            if (count >= 2) die = "d6";  // Expert
-            
-            // Localize Name and Stat
-            // Note: We use the IDs (e.g. 'athletics') to fetch the localized key if I added it to UI_Dictionary
-            // Since I didn't explicitly add skill names in the previous step, I will map them to the stat keys or raw values
-            // Ideally, update i18n with specific skill keys later.
-            // For now, I will capitalize and return the English ID or a simple map
-            
-            const localizedName = {
-                "athletics": "Athletics / Atletismo",
-                "acrobatics": "Acrobatics / Acrobacias",
-                "stealth": "Stealth / Sigilo",
-                "craft": "Craft / Artesanía",
-                "lore": "Lore / Saber",
-                "investigate": "Investigate / Investigar",
-                "scrutiny": "Scrutiny / Escrutinio",
-                "survival": "Survival / Supervivencia",
-                "medicine": "Medicine / Medicina",
-                "influence": "Influence / Influencia",
-                "deception": "Deception / Engaño",
-                "intimidation": "Intimidation / Intimidación"
-            }[sk.id];
+            let isOverridden = false;
 
-            // Localize Stat (STR -> FUE)
+            // Check Override
+            if (c.overrides && c.overrides.skills && c.overrides.skills[sk.id]) {
+                const ov = c.overrides.skills[sk.id];
+                if (ov.die) { die = ov.die; isOverridden = true; }
+            } else {
+                if (count === 1) die = "1d4"; 
+                if (count >= 2) die = "1d6";  
+            }
+            
+            const localizedName = t(`skill_${sk.id}`) === `skill_${sk.id}` ? sk.name : t(`skill_${sk.id}`);
             const localizedStat = t(`stat_${sk.stat.toLowerCase()}`);
+            const statMod = c.stats[sk.stat] || 0;
 
             return {
                 id: sk.id,
                 name: localizedName, 
-                stat: localizedStat,
+                stat: sk.stat,    
+                statLabel: localizedStat, 
+                statMod: statMod, 
+                statKey: sk.stat, 
                 count: count,
-                die: die
+                die: die,
+                isOverridden: isOverridden
             };
         });
     },
-    
-    /* ------------------------------------------------------------------
-       LOGIC: LEVEL UP SYSTEM
-       ------------------------------------------------------------------ */
 
-    // Temporary state for the leveling process
-    levelState: {
-        newHP: 0,
-        selectedTalent: null,
-        selectedStat: null,
-        hitDie: 8
-    },
+    // --- LEVEL UP LOGIC ---
 
     initLevelUp: () => {
         const c = CharGen.char;
         const nextLevel = c.level + 1;
         
-        // Determine Hit Die based on Class Logic
         const data = I18n.getData('options');
         const archA = data.archetypes.find(a => a.id === c.archA);
         const archB = data.archetypes.find(a => a.id === c.archB);
         
-        let hitDie = 8; // Default (Hybrid)
-        if (archA.role === archB.role) {
-            if (archA.role === 'Warrior') hitDie = 10;
-            if (archA.role === 'Spellcaster') hitDie = 6;
+        const roleA = I18n.normalize('roles', archA.role);
+        const roleB = I18n.normalize('roles', archB.role);
+
+        let hitDie = 8; 
+        if (roleA === roleB) {
+            if (roleA === "Warrior") hitDie = 10;
+            else if (roleA === "Spellcaster") hitDie = 6;
         }
         
         CharGen.levelState = {
             newHP: 0,
             selectedTalent: null,
             selectedStat: null,
-            hitDie: hitDie
+            hitDie: hitDie,
+            nextLevel: nextLevel
         };
 
-        CharGen.renderLevelUpModal(nextLevel);
+        CharGen.renderLevelUpModal();
     },
 
-    renderLevelUpModal: (nextLevel) => {
-        const c = CharGen.char;
+    renderLevelUpModal: () => {
         const state = CharGen.levelState;
-        
-        // 1. Create Overlay
+        const c = CharGen.char;
+        const isMilestone = (state.nextLevel === 5 || state.nextLevel === 10);
+
         const overlay = document.createElement('div');
         overlay.className = 'modal-overlay';
         
-        // 2. Build Content
-        let html = `
-            <div class="modal-content">
-                <div class="modal-header">Level Up: ${c.level} ➜ ${nextLevel}</div>
-                
-                <!-- STEP 1: HP -->
-                <div class="levelup-step">
-                    <h4>1. Increase Hit Points (Hit Die: d${state.hitDie})</h4>
-                    <div class="hp-roll-container">
-                        <button id="btn-roll-hp" class="roll-btn">🎲 Roll HP</button>
-                        <div id="hp-result" style="font-family:var(--font-mono); font-size:1.2rem;">--</div>
-                    </div>
-                    <p class="text-muted" style="font-size:0.8rem;">Roll d${state.hitDie} + CON Mod (${c.stats.CON}). Min 1.</p>
-                </div>
-
-                <!-- STEP 2: TALENT -->
-                <div class="levelup-step">
-                    <h4>2. Choose New Talent</h4>
-                    <select id="sel-new-talent" style="width:100%; padding:8px;">
-                        <option value="">-- Select a Talent --</option>
-                        ${CharGen.getValidTalentOptions().map((t, idx) => 
-                            `<option value="${idx}">${t.name} [${t.sourceName}] (${t.cost})</option>`
-                        ).join('')}
-                    </select>
-                    <div id="new-talent-desc" style="margin-top:5px; font-size:0.85rem; color:#ccc; min-height:40px; background:rgba(0,0,0,0.2); padding:5px;"></div>
-                </div>
-
-                <!-- STEP 3: SYNERGY/STAT (Levels 5 & 10) -->
-                ${ (nextLevel === 5 || nextLevel === 10) ? `
+        overlay.innerHTML = `
+            <div class="modal-content" style="width:500px; max-height:85vh; display:flex; flex-direction:column;">
+                <div class="modal-header">Level Up: ${c.level} ➜ ${state.nextLevel}</div>
+                <div style="flex-grow:1; overflow-y:auto; padding:0 10px;">
                     <div class="levelup-step">
-                        <h4>3. Milestone Bonus</h4>
-                        <p style="color:var(--accent-gold);">You gain a <strong>Synergy Feat</strong> automatically!</p>
-                        <label>Select Attribute Boost (+1):</label>
-                        <div class="stat-grid" style="grid-template-columns: repeat(3, 1fr); gap:5px; margin-top:5px;">
-                            ${['STR','DEX','CON','INT','WIS','CHA'].map(s => 
-                                `<button class="stat-boost-btn" data-stat="${s}">${s}</button>`
-                            ).join('')}
+                        <h4>1. Increase HP (d${state.hitDie} + CON)</h4>
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <button id="btn-roll-hp" class="roll-btn">🎲 Roll HP</button>
+                            <div id="hp-result" style="font-family:var(--font-mono); font-size:1.2rem; font-weight:bold;">--</div>
                         </div>
                     </div>
-                ` : ''}
-
-                <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:2rem;">
-                    <button id="btn-cancel-lvl" class="btn-secondary">Cancel</button>
-                    <button id="btn-confirm-lvl" class="btn-primary" disabled>Confirm Level Up</button>
+                    <div class="levelup-step">
+                        <h4>2. Select New Talent</h4>
+                        <select id="lvl-talent-select">
+                            <option value="">-- Choose Talent --</option>
+                            ${CharGen.getValidTalentOptions().map((opt, idx) => `<option value="${idx}">${opt.name} [${opt.sourceName}]</option>`).join('')}
+                        </select>
+                        <div id="lvl-talent-desc" style="margin-top:5px; font-size:0.85rem; color:#aaa; font-style:italic;"></div>
+                    </div>
+                    ${isMilestone ? `
+                    <div class="levelup-step">
+                        <h4 style="color:var(--accent-gold)">3. Milestone Bonus</h4>
+                        <p style="font-size:0.9rem;">You gain a <strong>Synergy Feat</strong> automatically.</p>
+                        <p style="font-size:0.9rem;"><strong>Attribute Boost:</strong> Choose one Stat to increase by +1.</p>
+                        <div class="stat-grid" style="grid-template-columns: repeat(6, 1fr); gap:5px;">
+                            ${['STR','DEX','CON','INT','WIS','CHA'].map(s => `<button class="stat-boost-btn" data-stat="${s}">${s}</button>`).join('')}
+                        </div>
+                    </div>` : ''}
+                </div>
+                <div style="margin-top:20px; display:flex; justify-content:flex-end; gap:10px; padding-top:10px; border-top:1px solid #333;">
+                    <button id="btn-lvl-cancel" class="btn-secondary">Cancel</button>
+                    <button id="btn-lvl-confirm" class="btn-primary" disabled>Confirm</button>
                 </div>
             </div>
         `;
-
-        overlay.innerHTML = html;
         document.body.appendChild(overlay);
 
-        // --- HELPER: Check Readiness ---
-        // Defined before listeners to avoid ReferenceError
-        const checkReady = () => {
-            const confirmBtn = document.getElementById('btn-confirm-lvl');
-            if (!confirmBtn) return;
+        const btnRollHP = overlay.querySelector('#btn-roll-hp');
+        const hpRes = overlay.querySelector('#hp-result');
+        const btnConfirm = overlay.querySelector('#btn-lvl-confirm');
 
-            let ready = state.newHP > 0 && state.selectedTalent !== null;
-            
-            // Milestone Check
-            if (nextLevel === 5 || nextLevel === 10) {
-                if (!state.selectedStat) ready = false;
-            }
-            
-            confirmBtn.disabled = !ready;
+        const validate = () => {
+            let isValid = state.newHP > 0 && state.selectedTalent !== null;
+            if (isMilestone && !state.selectedStat) isValid = false;
+            btnConfirm.disabled = !isValid;
         };
 
-        // --- LISTENERS ---
-
-        // HP Roll
-        const btnRollHP = document.getElementById('btn-roll-hp');
         btnRollHP.onclick = () => {
-            const roll = Math.floor(Math.random() * state.hitDie) + 1;
+            const roll = Dice.roll(`1d${state.hitDie}`).total;
             const conMod = c.stats.CON || 0;
             const total = Math.max(1, roll + conMod);
-            
             state.newHP = total;
-            document.getElementById('hp-result').textContent = `${roll} (Roll) + ${conMod} (CON) = +${total} HP`;
-            btnRollHP.disabled = true; 
-            checkReady();
+            hpRes.textContent = `${total} (${roll} + ${conMod})`;
+            hpRes.style.color = "var(--accent-gold)";
+            btnRollHP.disabled = true;
+            validate();
         };
 
-        // Talent Select
-        const talentSel = document.getElementById('sel-new-talent');
-        const talentDesc = document.getElementById('new-talent-desc');
-        const validTalents = CharGen.getValidTalentOptions();
+        const talSel = overlay.querySelector('#lvl-talent-select');
+        const talDesc = overlay.querySelector('#lvl-talent-desc');
+        const options = CharGen.getValidTalentOptions();
 
-        talentSel.onchange = (e) => {
+        talSel.onchange = (e) => {
             const idx = e.target.value;
             if (idx !== "") {
-                const t = validTalents[idx];
-                state.selectedTalent = t;
-                talentDesc.textContent = `${t.type} • ${t.effect}`;
+                const tal = options[idx];
+                state.selectedTalent = tal;
+                talDesc.textContent = tal.effect;
             } else {
                 state.selectedTalent = null;
-                talentDesc.textContent = "";
+                talDesc.textContent = "";
             }
-            checkReady();
+            validate();
         };
 
-        // Stat Boost (Level 5/10)
-        if (nextLevel === 5 || nextLevel === 10) {
-            const statBtns = document.querySelectorAll('.stat-boost-btn');
-            statBtns.forEach(btn => {
+        if (isMilestone) {
+            overlay.querySelectorAll('.stat-boost-btn').forEach(btn => {
                 btn.onclick = (e) => {
-                    statBtns.forEach(b => b.classList.remove('selected'));
-                    e.target.classList.add('selected');
-                    state.selectedStat = e.target.dataset.stat;
-                    checkReady();
+                    overlay.querySelectorAll('.stat-boost-btn').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    state.selectedStat = btn.dataset.stat;
+                    validate();
                 };
             });
         }
 
-        // Close / Confirm
-        document.getElementById('btn-cancel-lvl').onclick = () => document.body.removeChild(overlay);
-        
-        const confirmBtn = document.getElementById('btn-confirm-lvl');
-        confirmBtn.onclick = () => {
-            CharGen.applyLevelUp(nextLevel);
-            document.body.removeChild(overlay);
+        overlay.querySelector('#btn-lvl-cancel').onclick = () => overlay.remove();
+        btnConfirm.onclick = () => {
+            const t = state.selectedTalent;
+            
+            // CHECK: Does this talent require a choice? (e.g. Expertise, Weapon Spec)
+            if (t.flags && (t.flags.select_skill || t.flags.select_mod || t.flags.select_property || t.flags.select_bond)) {
+                
+                // 1. Close Level Up Modal (temp)
+                overlay.remove();
+                
+                // 2. Open Choice Modal
+                CharGen.handleLevelUpChoice(t);
+                
+            } else {
+                // No choice needed, proceed normally
+                CharGen.applyLevelUp();
+                overlay.remove();
+            }
         };
     },
 
-    /* --- NEW HELPER: CHECK REQUIREMENTS --- */
-    checkRequirements: (item) => {
-        if (!item.req) return { pass: true };
+    applyLevelUp: () => {
+        const c = CharGen.char;
+        const s = CharGen.levelState;
 
-        const stats = CharGen.char.stats;
-        const requirements = item.req.split(',').map(s => s.trim());
-        let errorMsg = "";
+        c.level = s.nextLevel;
+        c.baseHP += s.newHP;
+        c.current.hp += s.newHP; 
+        
+        if (s.selectedTalent) c.talents.push(s.selectedTalent);
+        if (s.selectedStat) c.stats[s.selectedStat] += 1;
+        c.current.xp = 0;
 
-        for (let r of requirements) {
-            // Parse "STR +2" or "CON 13" (if using scores)
-            // Our system uses Modifiers (-2 to +5)
-            const match = r.match(/([A-Z]+)\s*([+-]?\d+)/);
-            if (match) {
-                const statName = match[1];
-                const requiredVal = parseInt(match[2]);
-                const myVal = stats[statName] || 0;
-
-                if (myVal < requiredVal) {
-                    errorMsg += `${statName} ${requiredVal} (You have ${myVal}). `;
-                }
-            }
-        }
-
-        if (errorMsg) return { pass: false, msg: errorMsg };
-        return { pass: true };
+        CharGen.saveCharacter();
+        CharGen.recalcAll();
+        CharGen.renderSheet(CharGen.container);
+        
+        DiceUI.show(`Level Up!`, { total: s.newHP, notation: `HP Increased` }, 'damage');
     },
 
-    /**
-     * Generates a list of purchasable talents based on Archetypes.
-     * Filters out non-repeatable talents that are already known.
-     */
     getValidTalentOptions: () => {
         const c = CharGen.char;
         const data = I18n.getData('options');
         const archA = data.archetypes.find(a => a.id === c.archA);
         const archB = data.archetypes.find(a => a.id === c.archB);
 
-        let pool = [];
-        
-        // Helper to tag source
-        const process = (arch) => {
+        const list = [];
+        const addArch = (arch) => {
+            if(!arch) return;
             arch.talents.forEach(t => {
-                // Check if we already have it
-                const alreadyHas = c.talents.some(known => known.name === t.name);
-                
-                // Check if Repeatable
-                const isRepeatable = t.flags && t.flags.repeatable;
-
-                // Add if (Not Owned) OR (Owned AND Repeatable)
-                if (!alreadyHas || isRepeatable) {
-                    pool.push({ ...t, sourceName: arch.name });
+                const owned = c.talents.some(kt => kt.name === t.name);
+                const repeatable = t.flags && t.flags.repeatable;
+                if (!owned || repeatable) {
+                    const opt = JSON.parse(JSON.stringify(t));
+                    opt.sourceName = arch.name;
+                    list.push(opt);
                 }
             });
         };
-
-        process(archA);
-        // Only process ArchB if different (Hybrid) to avoid duplicates in pool
-        if (archA.id !== archB.id) process(archB);
-
-        return pool;
+        addArch(archA);
+        if (archA.id !== archB.id) addArch(archB);
+        return list;
     },
 
-    /**
-     * Commits the changes to the character object
-     */
-    applyLevelUp: (newLevel) => {
-        const c = CharGen.char;
-        const state = CharGen.levelState;
-        const data = I18n.getData('options');
-
-        // Snapshot previous Maximums to calculate gains later
-        const prevMaxHP = c.derived.maxHP;
-        const prevMaxMP = c.derived.maxMP;
-        const prevMaxLuck = c.derived.maxLuck;
-
-        // 1. Commit Basic Changes
-        c.level = newLevel;
-        
-        // Add the NEW roll to the BASE HP (not the derived max)
-        // This prevents double-counting modifiers like "Toughness"
-        c.baseHP += state.newHP; 
-
-        // 2. Add Talent
-        if (state.selectedTalent) {
-            const t = state.selectedTalent;
-            // Handle Choice Modal for special talents
-            if (t.flags && (t.flags.select_mod || t.flags.select_skill || t.flags.select_property)) {
-                let arch = data.archetypes.find(a => a.name === t.sourceName);
-                if (!arch) arch = data.archetypes.find(a => a.id === c.archA);
-                setTimeout(() => {
-                   CharGen.renderChoiceModal(t, arch.id, 0, 'levelup-context');
-                }, 200); 
-            } else {
-                c.talents.push(t);
-            }
-        }
-
-        // 3. Apply Milestones (Stat Boosts)
-        if (newLevel === 5 || newLevel === 10) {
-            if (state.selectedStat) {
-                c.stats[state.selectedStat] += 1;
-            }
-        }
-
-        // 4. Recalculate Derived Stats
-        // This updates c.derived.maxHP/MP/STA based on new Level and new Stats
+    recalcAll: () => {
         CharGen.calculateDerived();
         CharGen.calculateDefenses();
-
-        // 5. Update Current Values (Heal the difference)
-        // If Max HP went up by 8, Current HP goes up by 8.
-        const hpGain = c.derived.maxHP - prevMaxHP;
-        const mpGain = c.derived.maxMP - prevMaxMP;
-        const luckGain = c.derived.maxLuck - prevMaxLuck;
-
-        if (hpGain > 0) c.current.hp += hpGain;
-        if (mpGain > 0) c.current.mp += mpGain;
-        if (luckGain > 0) c.current.luck += luckGain;
-        
-        // Refresh STA (usually full refresh on level up logic, or just match cap increase)
-        // Let's refill STA completely on level up as a reward
-        c.current.sta = c.derived.maxSTA;
-
-        // 6. Refresh UI
-        if (!state.selectedTalent || !(state.selectedTalent.flags && (state.selectedTalent.flags.select_mod || state.selectedTalent.flags.select_skill || state.selectedTalent.flags.select_property))) {
-            CharGen.renderSheet(CharGen.container);
-            alert(`Level Up Complete! You are now Level ${newLevel}.\nHP Increased by ${hpGain}.`);
-        }
-    },
-
+        CharGen.calculateArmorScore();
+    }
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

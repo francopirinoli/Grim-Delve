@@ -1,10 +1,12 @@
+/* css/print.css */
+
 @media print {
     @page {
         size: A4 portrait;
-        margin: 0.6cm;
+        margin: 0.5cm;
     }
 
-    /* 1. RESET */
+    /* 1. RESET & BASICS */
     html, body {
         width: 100%;
         height: auto !important;
@@ -12,78 +14,71 @@
         padding: 0 !important;
         background: white !important;
         color: black !important;
-        font-family: 'Georgia', serif;
-        font-size: 9pt; /* Smaller font for density */
+        font-family: 'Inter', sans-serif;
+        font-size: 9pt;
         line-height: 1.2;
         overflow: visible !important;
         display: block !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
     }
 
     /* 2. HIDE APP UI */
     #app-container, #sidebar, .char-hud, .char-tabs, .char-tab-content, 
-    #mobile-menu-btn, .play-toolbar, .modal-overlay, button, .btn-icon {
+    #mobile-menu-btn, .play-toolbar, .modal-overlay, button, .btn-icon,
+    #dice-ui-layer {
         display: none !important;
     }
 
-    /* 3. SHOW PRINT */
+    /* 3. SHOW PRINT ROOT */
     .print-only, #print-sheet-root {
         display: block !important;
         visibility: visible !important;
     }
 
-    /* --- LAYOUT GRID --- */
+    /* --- PAGE LAYOUT --- */
     .print-page {
         width: 100%;
-        height: 280mm;
+        height: 290mm; /* Close to A4 height minus margins */
         position: relative;
-        break-after: page;
         page-break-after: always;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
     }
-    .print-page:last-child { break-after: auto; }
+    .print-page:last-child { page-break-after: auto; }
 
-    /* Box Style (The "Sheet" Look) */
+    /* --- COMMON COMPONENTS --- */
     .p-section {
         border: 2px solid #000;
-        margin-bottom: 10px;
         padding: 5px;
-        background: white;
+        background: #fff;
         break-inside: avoid;
     }
 
-    .p-label {
-        font-family: sans-serif;
-        font-weight: bold;
+    .p-header {
+        font-family: 'Cinzel', serif;
+        font-weight: 700;
         text-transform: uppercase;
-        font-size: 7pt;
-        color: #444;
-        border-bottom: 1px solid #ccc;
-        margin-bottom: 2px;
-        display: block;
+        border-bottom: 2px solid #000;
+        margin-bottom: 5px;
+        font-size: 10pt;
+        color: #000;
+        background: #e0e0e0;
+        padding: 2px 5px;
     }
 
-    /* --- HEADER SECTION --- */
-    .p-header-grid {
+    /* --- PAGE 1: HEADER --- */
+    .p-top-grid {
         display: grid;
-        grid-template-columns: 1fr 120px; /* Info | Image */
-        gap: 15px;
-        margin-bottom: 10px;
-        height: 120px;
-    }
-
-    .p-identity-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-columns: 100px 1fr 1fr 1fr; /* Image | Identity | Stats */
         gap: 10px;
+        height: 110px;
     }
-    
-    .p-id-field { display: flex; flex-direction: column; }
-    .p-id-val { font-size: 14pt; font-weight: bold; font-family: sans-serif; }
-    .p-id-sub { font-size: 10pt; }
 
-    /* Fixed Portrait Size */
-    .p-portrait-box {
-        width: 120px;
-        height: 120px;
+    .p-img-box {
+        width: 100px;
+        height: 100px;
         border: 2px solid #000;
         overflow: hidden;
         display: flex;
@@ -91,157 +86,138 @@
         justify-content: center;
         background: #eee;
     }
-    .p-portrait-box img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover; /* Fill the box */
-        object-position: top center;
-    }
+    .p-img-box img { width: 100%; height: 100%; object-fit: cover; }
 
-    /* --- ATTRIBUTES STRIP --- */
-    .p-attr-row {
+    .p-identity {
         display: flex;
+        flex-direction: column;
         justify-content: space-between;
-        margin-bottom: 10px;
-        border: 2px solid #000;
-        background: #f0f0f0;
+        grid-column: 2 / span 3;
     }
-    .p-attr-box {
-        flex: 1;
-        text-align: center;
-        padding: 5px;
-        border-right: 1px solid #000;
+    
+    .p-char-name {
+        font-family: 'Cinzel', serif;
+        font-size: 24pt;
+        font-weight: 900;
+        border-bottom: 2px solid #000;
+        line-height: 1;
+        margin-bottom: 5px;
     }
-    .p-attr-box:last-child { border-right: none; }
-    .p-attr-val { font-size: 16pt; font-weight: 800; font-family: sans-serif; }
 
-    /* --- VITALS --- */
-    .p-vitals-grid {
+    .p-id-row {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
         gap: 10px;
-        margin-bottom: 15px;
     }
-    .p-vital {
-        border: 2px solid #000;
-        text-align: center;
-        padding: 5px;
-        height: 50px;
-    }
-    .p-vital-val { font-size: 18pt; font-weight: bold; }
+    .p-field label { font-size: 7pt; text-transform: uppercase; color: #666; display: block; }
+    .p-field span { font-size: 11pt; font-weight: bold; font-family: 'Fira Code', monospace; }
 
-    /* --- MAIN COLUMNS --- */
-    .p-main-cols {
+    /* --- PAGE 1: VITALS BAR --- */
+    .p-vitals-bar {
         display: grid;
-        grid-template-columns: 1fr 1.8fr; /* Narrow Left, Wide Right */
-        gap: 15px;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 5px;
+        background: #eee;
+        padding: 5px;
+        border: 2px solid #000;
+    }
+    
+    .p-vital-box { text-align: center; border-right: 1px solid #aaa; }
+    .p-vital-box:last-child { border-right: none; }
+    .p-vital-box label { display: block; font-size: 7pt; font-weight: bold; }
+    .p-vital-box span { font-size: 16pt; font-weight: 800; font-family: 'Fira Code', monospace; }
+
+    /* --- PAGE 1: COLUMNS --- */
+    .p-columns-2 {
+        display: grid;
+        grid-template-columns: 35% 65%; /* Narrow Left, Wide Right */
+        gap: 10px;
+        flex-grow: 1;
     }
 
-    /* Defense Box */
-    .p-ac-box {
-        border: 3px solid #000;
-        text-align: center;
-        padding: 10px;
-        margin-bottom: 10px;
-    }
-    .p-ac-val { font-size: 28pt; font-weight: 800; line-height: 1; }
-
-    /* Lists */
-    .p-list-row {
+    /* Attributes & Skills */
+    .p-attr-row {
         display: flex;
         justify-content: space-between;
-        border-bottom: 1px dotted #999;
-        margin-bottom: 2px;
-        font-size: 9pt;
-    }
-
-    /* Attack Table */
-    .p-atk-table { width: 100%; border-collapse: collapse; margin-bottom: 0; }
-    .p-atk-table th { text-align: left; font-size: 8pt; border-bottom: 2px solid #000; }
-    .p-atk-table td { padding: 4px 2px; border-bottom: 1px solid #ccc; font-size: 9pt; }
-    
-    /* Notes Area */
-    .p-notes {
-        border: 1px solid #ccc;
-        height: 150px;
+        margin-bottom: 5px;
+        background: #000;
+        color: #fff;
+        border-radius: 4px;
         padding: 5px;
-        font-family: monospace;
-        font-size: 9pt;
+    }
+    .p-attr { text-align: center; width: 16.6%; }
+    .p-attr label { display: block; font-size: 7pt; color: #aaa; }
+    .p-attr span { font-size: 12pt; font-weight: bold; }
+
+    .p-skill-list { font-size: 8pt; }
+    .p-skill-row {
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 1px dotted #ccc;
+        padding: 2px 0;
+    }
+    .p-skill-row.trained { font-weight: bold; background: #f0f0f0; }
+    .p-skill-row.expert { font-weight: bold; background: #e0e0e0; }
+
+    /* Defense Box */
+    .p-defense-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        gap: 5px;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+    .p-def-box { border: 2px solid #000; padding: 5px; }
+    .p-def-val { font-size: 14pt; font-weight: 900; display: block; }
+    .p-def-lbl { font-size: 7pt; text-transform: uppercase; }
+
+    /* Combat Table */
+    .p-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+    .p-table th { background: #000; color: #fff; padding: 3px; font-size: 8pt; text-align: left; }
+    .p-table td { border-bottom: 1px solid #ccc; padding: 4px; font-size: 9pt; }
+    .p-table tr:nth-child(even) { background: #f9f9f9; }
+
+    /* Notes */
+    .p-notes-box {
+        border: 1px solid #999;
+        height: 150px;
+        font-family: 'Courier New', monospace;
+        padding: 5px;
         white-space: pre-wrap;
     }
 
-    /* --- PAGE 2 --- */
-    .p-wealth-strip {
-        display: flex;
-        justify-content: space-around;
-        background: #ddd;
-        border: 1px solid #000;
-        padding: 5px;
-        font-weight: bold;
-        margin-bottom: 15px;
+    /* --- PAGE 2: GRID --- */
+    .p-grid-3 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
     }
-
-    .p-feat-block {
-        border: 1px solid #000;
-        padding: 5px;
+    
+    .p-feat-card {
+        border: 1px solid #aaa;
         margin-bottom: 5px;
-        background: #fdfdfd;
+        padding: 4px;
+        background: #fafafa;
         page-break-inside: avoid;
     }
-    .p-feat-head { font-weight: bold; border-bottom: 1px dotted #000; display: flex; justify-content: space-between; }
+    .p-feat-title { font-weight: bold; font-size: 9pt; display: flex; justify-content: space-between; border-bottom: 1px dotted #ccc; }
+    .p-feat-source { font-size: 7pt; color: #666; font-style: italic; }
+    .p-feat-desc { font-size: 8pt; margin-top: 2px; }
+
+    .p-magic-item {
+        border: 1px solid #000;
+        background: #f0f0f0;
+        margin-bottom: 5px;
+        padding: 5px;
+    }
     
-    /* Print Colors */
-    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .p-currency {
+        display: flex;
+        justify-content: space-around;
+        border: 2px solid #000;
+        padding: 5px;
+        margin-bottom: 10px;
+        background: #ddd;
+        font-weight: bold;
+    }
 }
-
-/* --- MONSTER CARD PRINT OVERRIDES --- */
-.monster-card {
-    border: 2px solid #000 !important;
-    background: white !important;
-    box-shadow: none !important;
-    page-break-inside: avoid;
-    margin: 0 auto;
-}
-
-.mc-header {
-    background: #000 !important; /* Force black background for print contrast */
-    color: #fff !important;
-    border-bottom: 2px solid #000 !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-}
-
-.mc-name {
-    color: #fff !important; /* Keep name white on black header */
-}
-
-.mc-stats-grid {
-    background: #eee !important;
-    border-bottom: 2px solid #000 !important;
-}
-
-/* IMPORTANT: Image Fixing */
-.sb-image-container {
-    height: 250px !important; /* Force height */
-    overflow: hidden !important; /* Clip image */
-    border-bottom: 2px solid #000 !important;
-    background: #fff !important;
-    position: relative !important;
-    display: block !important;
-}
-
-.sb-image-container img {
-    /* The inline style transform from JS handles position */
-    /* Ensure it prints properly */
-    max-width: none !important;
-    max-height: none !important;
-}
-
-/* Hide UI elements inside card */
-.del-custom { display: none !important; }
-
-/* Colors for print */
-.mc-section-title { color: #000 !important; border-color: #000 !important; }
-.sb-prop-name { color: #000 !important; }
-.mc-stat-val { color: #000 !important; }
-

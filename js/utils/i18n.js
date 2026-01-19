@@ -7,6 +7,40 @@
 
 const UI_DICTIONARY = {
     "en": {
+        "btn_level_up": "Level Up",
+        "btn_level_up_ready": "LEVEL UP!",
+        // Skills
+        "skill_athletics": "Athletics",
+        "skill_acrobatics": "Acrobatics",
+        "skill_stealth": "Stealth",
+        "skill_craft": "Craft",
+        "skill_lore": "Lore",
+        "skill_investigate": "Investigate",
+        "skill_scrutiny": "Scrutiny",
+        "skill_survival": "Survival",
+        "skill_medicine": "Medicine",
+        "skill_influence": "Influence",
+        "skill_deception": "Deception",
+        "skill_intimidation": "Intimidation",
+        // Defenses
+        "def_dodge": "Dodge",
+        "def_parry": "Parry",
+        "def_block": "Block",
+        "lbl_atk_bonus": "Atk",
+        // Inventory Manager
+        "inv_gold": "Gold",
+        "inv_silver": "Silver",
+        "inv_copper": "Copper",
+        "inv_capacity": "Capacity",
+        "inv_item_header": "Item Name",
+        "inv_slots_header": "Slots",
+        "inv_actions_header": "Actions",
+        // Magic Tab
+        "magic_tab_title": "Magic Items",
+        "magic_header": "Attuned / Equipped Magic",
+        "magic_import": "Import from Artificer",
+        "magic_empty": "No magic items found. Use Artificer to create them, then Import here.",
+
         "mon_sect_universal": "Universal Traits",
         "mon_lbl_basic_attack": "Basic Attack",
         "mon_lbl_manual_dmg": "Manual Damage",
@@ -281,6 +315,40 @@ const UI_DICTIONARY = {
         "tbl_btn_roll": "Roll {dice}"
     },
     "es": {
+        "btn_level_up": "Subir Nivel",
+        "btn_level_up_ready": "¡SUBIR NIVEL!",
+        // Skills
+        "skill_athletics": "Atletismo",
+        "skill_acrobatics": "Acrobacias",
+        "skill_stealth": "Sigilo",
+        "skill_craft": "Artesanía",
+        "skill_lore": "Saber",
+        "skill_investigate": "Investigar",
+        "skill_scrutiny": "Escrutinio",
+        "skill_survival": "Supervivencia",
+        "skill_medicine": "Medicina",
+        "skill_influence": "Influencia",
+        "skill_deception": "Engaño",
+        "skill_intimidation": "Intimidación",
+        // Defenses
+        "def_dodge": "Esquivar",
+        "def_parry": "Parada",
+        "def_block": "Bloqueo",
+        "lbl_atk_bonus": "Atq",
+        // Inventory Manager
+        "inv_gold": "Oro",
+        "inv_silver": "Plata",
+        "inv_copper": "Cobre",
+        "inv_capacity": "Capacidad",
+        "inv_item_header": "Objeto",
+        "inv_slots_header": "Espacios",
+        "inv_actions_header": "Acciones",
+        // Magic Tab
+        "magic_tab_title": "Objetos Mágicos",
+        "magic_header": "Magia Vinculada / Equipada",
+        "magic_import": "Importar del Artificiero",
+        "magic_empty": "No hay objetos mágicos. Usa el Artificiero para crearlos e impórtalos aquí.",
+
         "mon_sect_universal": "Rasgos Universales",
         "mon_lbl_basic_attack": "Ataque Básico",
         "mon_lbl_manual_dmg": "Daño Manual",

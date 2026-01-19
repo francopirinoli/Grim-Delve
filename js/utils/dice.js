@@ -1,29 +1,27 @@
 /**
  * dice.js
  * Utility for parsing dice notation and generating random results.
- * Core logic for the Dark Pulp system.
+ * Fixed: Handles negative modifiers (e.g. "1d6+-1") and detailed reporting.
  */
 
 export const Dice = {
 
     /**
-     * Parses a standard dice string (e.g., "1d20", "2d6+4", "d12-1") and rolls it.
-     * @param {string} notation - The dice string to parse.
-     * @returns {object} Result object { total, rolls: [], modifier, notation, isCrit, isWhiff }
+     * Parses a standard dice string.
      */
     roll: (notation) => {
-        if (!notation) return null;
+        if (!notation) return { total: 0, rolls: [], modifier: 0, notation: "0" };
 
-        // Normalize string: remove spaces, convert to lowercase
-        const cleanStr = notation.toLowerCase().replace(/\s/g, '');
+        // 1. Sanitize: "1d6+-1" -> "1d6-1", "1d6+ -1" -> "1d6-1"
+        let cleanStr = notation.toLowerCase().replace(/\s/g, '');
+        cleanStr = cleanStr.replace(/\+-/g, '-').replace(/-\+/g, '-');
 
-        // Regex to parse: (Optional Count)d(Sides)(Optional Modifier)
-        // Group 1: Count, Group 2: Sides, Group 3: +/- Mod
-        const regex = /^(\d*)d(\d+)(?:([+-]\d+))?$/;
+        // Regex: (Count)d(Sides)(Modifier)
+        const regex = /^(\d*)d(\d+)([-+]\d+)?$/;
         const match = cleanStr.match(regex);
 
         if (!match) {
-            console.error(`Invalid dice notation: ${notation}`);
+            console.warn(`Dice: Invalid notation '${notation}'. Returning 0.`);
             return { total: 0, rolls: [], modifier: 0, notation: notation, error: true };
         }
 
@@ -40,9 +38,9 @@ export const Dice = {
             sum += val;
         }
 
-        const total = sum + modifier;
+        const total = Math.max(0, sum + modifier); // Damage usually shouldn't drop below 0
 
-        // Check for Criticals (Natural 20) or Whiffs (Natural 1) on d20s
+        // Check for Crit/Whiff on d20s specifically
         const isCrit = (sides === 20 && rolls.includes(20));
         const isWhiff = (sides === 20 && rolls.includes(1));
 
@@ -50,75 +48,63 @@ export const Dice = {
             total: total,
             rolls: rolls,
             modifier: modifier,
-            notation: notation,
+            notation: cleanStr,
             isCrit: isCrit,
             isWhiff: isWhiff
         };
     },
 
     /**
-     * Performs a Core System Check (d20 + Mod + Proficiency Die).
-     * Handles Advantage and Disadvantage logic.
-     * @param {number} modifier - The Attribute modifier (e.g., +3).
-     * @param {number} profDie - The size of the proficiency die (0, 4, or 6).
-     * @param {string} state - "normal", "advantage", or "disadvantage".
-     * @returns {object} Complex result object.
+     * Performs a Core System Check.
+     * Returns broken down values for UI display.
      */
-    rollCheck: (modifier = 0, profDie = 0, state = "normal") => {
+    rollCheck: (statMod = 0, profDie = 0, state = "normal") => {
         
-        // 1. Roll the d20(s) based on state
+        // 1. Roll the d20(s)
         let d20Rolls = [];
         let d20Result = 0;
         let dropped = null;
 
+        const r1 = Math.floor(Math.random() * 20) + 1;
+        
         if (state === "advantage") {
-            const r1 = Math.floor(Math.random() * 20) + 1;
             const r2 = Math.floor(Math.random() * 20) + 1;
             d20Rolls = [r1, r2];
             d20Result = Math.max(r1, r2);
             dropped = Math.min(r1, r2);
         } else if (state === "disadvantage") {
-            const r1 = Math.floor(Math.random() * 20) + 1;
             const r2 = Math.floor(Math.random() * 20) + 1;
             d20Rolls = [r1, r2];
             d20Result = Math.min(r1, r2);
             dropped = Math.max(r1, r2);
         } else {
-            d20Result = Math.floor(Math.random() * 20) + 1;
-            d20Rolls = [d20Result];
+            d20Result = r1;
+            d20Rolls = [r1];
         }
 
-        // 2. Roll Proficiency Die (if exists)
+        // 2. Roll Proficiency Die
         let profResult = 0;
         if (profDie > 0) {
             profResult = Math.floor(Math.random() * profDie) + 1;
         }
 
         // 3. Calculate Total
-        const total = d20Result + modifier + profResult;
-
-        // 4. Determine Crits/Whiffs based on the KEPT d20
-        const isCrit = (d20Result === 20);
-        const isWhiff = (d20Result === 1);
+        const total = d20Result + statMod + profResult;
 
         return {
             total: total,
             d20_result: d20Result,
             d20_rolls: d20Rolls,
             dropped_roll: dropped,
-            modifier: modifier,
-            prof_die: profDie,
-            prof_result: profResult,
-            isCrit: isCrit,
-            isWhiff: isWhiff,
+            stat_mod: statMod,     // Explicitly return stat mod
+            prof_die_val: profDie, // Size of die (e.g. 4, 6)
+            prof_result: profResult, // Result of die
+            isCrit: (d20Result === 20),
+            isWhiff: (d20Result === 1),
             state: state
         };
     },
 
-    /**
-     * Generates a simple random integer between min and max (inclusive).
-     * Used for Loot Tables and random array selection.
-     */
     randomInt: (min, max) => {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }

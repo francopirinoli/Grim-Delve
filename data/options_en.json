@@ -502,7 +502,7 @@
     }
   ],
   "archetypes": [
-    {
+{
   "id": "arch_soldier",
   "name": "The Soldier",
   "role": "Warrior",
@@ -510,177 +510,288 @@
   "primary_stats": ["STR", "DEX", "INT"],
   "resource": "Stamina",
   "proficiencies": {
-    "armor": ["Light", "Medium", "Shields"],
+    "armor": ["Light", "Medium", "Heavy", "Shields"],
     "weapons": ["Simple", "Martial"],
     "skills": ["Athletics (STR)"]
   },
   "talents": [
     {
-      "name": "Precise Strike",
-      "type": "Maneuver",
-      "cost": "1 STA",
-      "tags": ["Offensive", "Free Action"],
-      "effect": "Trigger: When you hit with a weapon attack. Effect: Add your Proficiency Die to the damage roll. Empower (1 STA): You can declare this before rolling to add the Proficiency Die to the Attack Check instead.",
-      "details": "Useful for bypassing high Defense enemies."
+      "name": "Mastery: Blade Technique",
+      "type": "Mastery",
+      "description": "Refining the art of the sword through rigorous drill.",
+      "ranks": [
+        {
+          "rank": 1,
+          "name": "Precise Strike",
+          "cost": "1 STA",
+          "type": "Free Action",
+          "effect": "Trigger: When you hit with a weapon attack. Effect: Add your Proficiency Die to the damage roll."
+        },
+        {
+          "rank": 2,
+          "name": "Keen Edge",
+          "cost": "-",
+          "type": "Passive",
+          "effect": "You score a Critical Hit on a roll of 19 or 20 with melee weapons."
+        },
+        {
+          "rank": 3,
+          "name": "Perfect Form",
+          "cost": "2 STA",
+          "type": "Reaction",
+          "effect": "Trigger: You miss a melee attack. Effect: Re-roll the Attack Check with Advantage. You must use the new result."
+        }
+      ]
     },
     {
-      "name": "Penetrating Strike",
-      "type": "Maneuver",
-      "cost": "1 STA",
-      "tags": ["Offensive", "Free Action"],
-      "effect": "Trigger: When you make a weapon attack. Effect: The attack ignores 2 points of the target's Armor Score (AS). Empower (1 STA): The attack ignores ALL of the target's Armor Score.",
-      "details": "Essential against heavily armored foes like Golems or Knights."
+      "name": "Mastery: Ironclad",
+      "type": "Mastery",
+      "description": "Conditioning the body to wear heavy steel as a second skin.",
+      "ranks": [
+        {
+          "rank": 1,
+          "name": "Armor Training",
+          "cost": "-",
+          "type": "Passive",
+          "effect": "You gain Proficiency with Heavy Armor. You ignore the CON +2 requirement (you must still meet STR requirement)."
+        },
+        {
+          "rank": 2,
+          "name": "Deflect",
+          "cost": "1 STA",
+          "type": "Reaction",
+          "effect": "Trigger: You take Physical Damage. Effect: Angle your armor to deflect the blow. Reduce damage by 1d8 + CON Modifier."
+        },
+        {
+          "rank": 3,
+          "name": "Adamantine Stance",
+          "cost": "-",
+          "type": "Passive",
+          "effect": "While wearing Heavy Armor, you are Immune to Critical Hits (they become normal hits)."
+        }
+      ]
     },
     {
-      "name": "Riposte",
-      "type": "Maneuver",
-      "cost": "1 STA",
-      "tags": ["Defensive", "Reaction"],
-      "effect": "Trigger: When you successfully Parry a melee attack. Effect: You may immediately make a single melee Attack Check against the attacker.",
-      "details": "Turns defense into offense. Requires a Melee Weapon."
+      "name": "Mastery: Phalanx",
+      "type": "Mastery",
+      "description": "Fighting in formation to protect those beside you.",
+      "ranks": [
+        {
+          "rank": 1,
+          "name": "Shield Brother",
+          "cost": "-",
+          "type": "Passive",
+          "effect": "If you are adjacent to an ally, both you and the ally gain a +1 Bonus to Defense Checks."
+        },
+        {
+          "rank": 2,
+          "name": "Covering Stance",
+          "cost": "1 STA",
+          "type": "Action",
+          "effect": "Until the start of your next turn, you provide Half Cover (+2 Defense) to all adjacent allies."
+        },
+        {
+          "rank": 3,
+          "name": "Testudo",
+          "cost": "2 STA",
+          "type": "Reaction",
+          "effect": "Trigger: An adjacent ally is targeted by an Area of Effect (AoE) attack. Effect: You block the blast. The ally takes 0 Damage."
+        }
+      ]
     },
     {
-      "name": "Cleave",
-      "type": "Maneuver",
-      "cost": "1 STA",
-      "tags": ["Offensive", "Reaction"],
-      "effect": "Trigger: When you hit a creature with a melee attack. Effect: A different enemy adjacent to the original target takes damage equal to your STR Modifier. Empower (1 STA): Make a full Attack Check against the adjacent enemy instead.",
-      "details": "Great for clearing Minions."
+      "name": "Mastery: Tactician",
+      "type": "Mastery",
+      "description": "Reading the battlefield to exploit enemy mistakes.",
+      "ranks": [
+        {
+          "rank": 1,
+          "name": "Feint",
+          "cost": "1 STA",
+          "type": "Action",
+          "effect": "Make an INT vs Will check against an enemy within 30ft. Success: Your next attack against them has Advantage."
+        },
+        {
+          "rank": 2,
+          "name": "Assess Weakness",
+          "cost": "-",
+          "type": "Passive",
+          "effect": "You can use your INT Modifier instead of STR or DEX for Attack and Damage rolls."
+        },
+        {
+          "rank": 3,
+          "name": "Checkmate",
+          "cost": "1 STA",
+          "type": "Free Action",
+          "effect": "Trigger: You hit an enemy. Effect: The next ally to attack this enemy has Advantage and deals +1d6 Damage."
+        }
+      ]
     },
     {
-      "name": "Distracting Strike",
-      "type": "Maneuver",
-      "cost": "1 STA",
-      "tags": ["Support", "Free Action"],
-      "effect": "Trigger: When you hit a creature. Effect: The next ally to attack that creature (before the start of your next turn) has Advantage on their Attack Check.",
-      "details": "Set up your Rogue or Brute for a massive hit."
+      "name": "Mastery: Polearm Tactics",
+      "type": "Mastery",
+      "description": "Controlling space with reach and leverage.",
+      "ranks": [
+        {
+          "rank": 1,
+          "name": "Brace",
+          "cost": "1 STA",
+          "type": "Reaction",
+          "req": "Reach Weapon",
+          "effect": "Trigger: An enemy enters your Reach. Effect: Make a melee Attack Check against them. If you hit, their Speed becomes 0 for the rest of the turn."
+        },
+        {
+          "rank": 2,
+          "name": "Vault",
+          "cost": "1 STA",
+          "type": "Action",
+          "req": "Polearm/Staff",
+          "effect": "Use your weapon to launch yourself. Jump up to 15 feet horizontally or vertically without making an Athletics check. This movement does not provoke Opportunity Attacks."
+        },
+        {
+          "rank": 3,
+          "name": "Sweeping Strike",
+          "cost": "2 STA",
+          "type": "Action",
+          "req": "Reach Weapon",
+          "effect": "Make a single Attack Check. Apply the result to the Defense DC of up to 3 enemies within your Reach. Deal normal weapon damage to each one hit."
+        }
+      ]
     },
     {
-      "name": "Feint",
-      "type": "Maneuver",
-      "cost": "1 STA",
-      "tags": ["Offensive", "Free Action"],
-      "effect": "Action: Make a Check (INT + Proficiency) against the target's Will Save Value. Effect: On a success, your next Attack Check against that target has Advantage.",
-      "details": "Uses tactical knowledge to create an opening."
-    },
-    {
-      "name": "Grit",
-      "type": "Maneuver",
-      "cost": "1 STA",
-      "tags": ["Defensive", "Reaction"],
-      "effect": "Trigger: When you take damage. Effect: Reduce the damage taken by 1d8 + CON Modifier.",
-      "details": "Can reduce damage to 0. Does not require a shield."
-    },
-    {
-      "name": "Discipline",
-      "type": "Maneuver",
-      "cost": "1 STA",
-      "tags": ["Defensive", "Reaction"],
-      "effect": "Trigger: When you fail a check to resist Fear, Charm, or Confusion. Effect: Re-roll the check. You must use the new result.",
-      "details": "Mental fortitude is a soldier's shield."
-    },
-    {
-      "name": "Interceptor",
-      "type": "Maneuver",
-      "cost": "1 STA",
-      "tags": ["Defensive", "Reaction"],
-      "effect": "Trigger: An ally within 5 feet is targeted by an attack. Effect: You switch places with the ally (if willing) and the attack targets you instead.",
-      "details": "You perform your Defense Check against the attack normally."
+      "name": "Mastery: Marksman",
+      "type": "Mastery",
+      "description": "Precision fire with crossbows and bows.",
+      "ranks": [
+        {
+          "rank": 1,
+          "name": "Rapid Reload",
+          "cost": "-",
+          "type": "Passive",
+          "effect": "You ignore the 'Reload' property of weapons (e.g., Crossbows). You can fire them every turn without spending an action to reload."
+        },
+        {
+          "rank": 2,
+          "name": "Suppressive Fire",
+          "cost": "1 STA",
+          "type": "Action",
+          "effect": "Target a 10ft radius area. Until the start of your next turn, any enemy in that area has Disadvantage on Attack Checks. If they move out of the area, you can make a free Ranged Attack against them."
+        },
+        {
+          "rank": 3,
+          "name": "Pinning Shot",
+          "cost": "2 STA",
+          "type": "Action",
+          "effect": "Make a Ranged Attack. Hit: Deal Normal Damage and the target is Restrained (pinned to terrain). They must use an Action to make a Strength Check (DC 15) to pull the projectile free."
+        }
+      ]
     },
     {
       "name": "Second Wind",
       "type": "Maneuver",
       "cost": "2 STA",
-      "tags": ["Utility", "Healing", "1/Combat"],
-      "effect": "Action: You center yourself and regain 1d10 + Level Hit Points. This can only be used once per combat encounter.",
-      "details": "Does not provoke counter-attacks."
-    },
-    {
-      "name": "Phalanx",
-      "type": "Maneuver",
-      "cost": "1 STA",
-      "tags": ["Defensive", "Action"],
-      "req": "Shield",
-      "effect": "Action: You lock your shield. Until the start of your next turn, you gain a +2 Bonus to Block Checks and you cannot be knocked Prone.",
-      "details": "Requires a Shield equipped."
-    },
-    {
-      "name": "Hold the Line",
-      "type": "Maneuver",
-      "cost": "1 STA",
-      "tags": ["Control", "Action"],
-      "effect": "Action: You enter a defensive stance. Until the start of your next turn, any enemy moving out of a space adjacent to you provokes an immediate Opportunity Attack from you. If this attack hits, the enemy's Speed becomes 0 for the rest of the turn.",
-      "details": "Locks enemies in melee with you."
-    },
-    {
-      "name": "Commander's Rebuke",
-      "type": "Maneuver",
-      "cost": "1 STA",
-      "tags": ["Support", "Reaction"],
-      "effect": "Trigger: An enemy within 30ft makes an attack against an ally. Effect: Make a Check (INT + Proficiency) vs. the enemy's Will Save Value. On success, the enemy's attack has Disadvantage.",
-      "details": "Shouting a distraction or order to disrupt the enemy."
-    },
-    {
-      "name": "Tactical Reposition",
-      "type": "Maneuver",
-      "cost": "1 STA",
-      "tags": ["Support", "Action"],
-      "effect": "Action: You and one willing ally you can see within 30 feet both move up to 15 feet. This movement does not provoke counter-attacks.",
-      "details": "Useful for getting a caster out of melee or a brute into it."
+      "tags": ["Healing", "1/Combat"],
+      "effect": "Action: You center yourself and regain 1d10 + Level Hit Points. This can only be used once per combat encounter."
     },
     {
       "name": "Disarming Strike",
       "type": "Maneuver",
       "cost": "1 STA",
-      "tags": ["Offensive", "Control"],
-      "effect": "Action: Make a melee Weapon Attack. On a Hit: Deal normal damage. The target must make a Reflex Save against your Attack Roll result. On a Failure, they drop one held item of your choice.",
-      "details": "Monsters without weapons suffer -2 Attack DC and reduced damage."
+      "tags": ["Control"],
+      "effect": "Action: Make a Melee Attack. Hit: Normal damage. Target must make a Reflex Save vs your Attack Roll. Fail: They drop one held item."
     },
     {
       "name": "Trip Attack",
       "type": "Maneuver",
       "cost": "1 STA",
+      "tags": ["Control"],
+      "effect": "Action: Make a Melee Attack. Hit: Normal damage. Target must make a Reflex Save vs your Attack Roll. Fail: They are knocked Prone."
+    },
+    {
+      "name": "Interceptor",
+      "type": "Maneuver",
+      "cost": "1 STA",
+      "tags": ["Defense", "Reaction"],
+      "effect": "Trigger: Ally within 5ft is attacked. Effect: You switch places with the ally. The attack targets you instead (Roll Defense normally)."
+    },
+    {
+      "name": "Discipline",
+      "type": "Maneuver",
+      "cost": "1 STA",
+      "tags": ["Defense", "Reaction"],
+      "effect": "Trigger: You fail a save vs Fear/Charm/Confusion. Effect: Re-roll the save with Advantage."
+    },
+    {
+      "name": "Sentinel Stance",
+      "type": "Maneuver",
+      "cost": "1 STA",
+      "tags": ["Control"],
+      "effect": "Action: Stance. Until your next turn, any enemy attempting to leave a space adjacent to you provokes an immediate Opportunity Attack from you. If hit, their Speed becomes 0."
+    },
+    {
+      "name": "Shield Bash",
+      "type": "Maneuver",
+      "cost": "1 STA",
       "tags": ["Offensive", "Control"],
-      "effect": "Action: Make a melee Weapon Attack. On a Hit: Deal normal damage. The target must make a Reflex Save against your Attack Roll result. On a Failure, they are knocked Prone.",
-      "details": "Prone enemies grant Advantage to melee attackers."
+      "req": "Shield",
+      "effect": "Action: Slam your shield into a foe. Make a Melee Attack. Hit: Deal 1d4 Bludgeoning damage. Target must make a Fortitude Save vs your Attack Roll or be Stunned for 1 round."
+    },
+    {
+      "name": "Pommel Strike",
+      "type": "Maneuver",
+      "cost": "1 STA",
+      "tags": ["Offensive", "Debuff"],
+      "effect": "Action: Strike with the handle of your weapon. Make a Melee Attack. Hit: Deal 1d4 damage. Target must make a Fortitude Save vs your Attack Roll or be Dazed (Action OR Move only) for 1 round."
     },
     {
       "name": "Toughness",
       "type": "Passive",
       "cost": "-",
-      "tags": ["Repeatable"],
-      "effect": "Your physical conditioning is superior. Your Maximum HP increases by 5.",
+      "tags": ["Health", "Repeatable"],
+      "effect": "Your physical conditioning is superior. Your Maximum Hit Points increase by 5.",
       "flags": { "repeatable": true, "max_rank": 3 },
       "modifiers": { "hp_flat": 5 }
     },
     {
-      "name": "Weapon Specialization",
+      "name": "Conditioning",
       "type": "Passive",
       "cost": "-",
-      "tags": ["Repeatable"],
-      "effect": "Choose one Weapon Property (e.g., Sunder, Reach, Guard, Heavy). You gain a +1 Bonus to Attack Checks when using a weapon with that property.",
-      "flags": { "repeatable": true, "select_property": true },
-      "details": "You can select this multiple times for different properties."
-    },
-    {
-      "name": "Armor Training",
-      "type": "Passive",
-      "cost": "-",
-      "tags": [],
-      "effect": "You gain Proficiency with Heavy Armor. You ignore the CON +2 requirement for wearing it (you must still meet the STR requirement).",
-      "details": "Allows you to wear Heavy Armor without penalty."
-    },
-    {
-      "name": "Tactical Mind",
-      "type": "Passive",
-      "cost": "-",
-      "tags": [],
-      "effect": "You apply your intellect to the flow of battle. Your Maximum Stamina increases by an amount equal to your INT Modifier (minimum 1).",
+      "tags": ["Resource"],
+      "effect": "You have trained your endurance. Your Maximum Stamina increases by an amount equal to your INT Modifier (minimum 1).",
       "modifiers": { "sta_mod": "INT" }
+    },
+    {
+      "name": "Vigilance",
+      "type": "Passive",
+      "cost": "-",
+      "tags": ["Initiative"],
+      "effect": "You cannot be Surprised while you are conscious. You gain a +2 Bonus to Initiative rolls.",
+      "details": "Ensures you act early in the tactical order."
+    },
+    {
+      "name": "Penetrating Strike",
+      "type": "Maneuver",
+      "cost": "1 STA",
+      "tags": ["Offensive"],
+      "effect": "Action: Make a Weapon Attack. This attack ignores up to 3 points of the target's Armor Score (AS)."
+    },
+    {
+      "name": "Grappler",
+      "type": "Passive",
+      "cost": "-",
+      "tags": ["Control"],
+      "effect": "You have Advantage on Athletics checks made to Initiate or Maintain a Grapple. You can Grapple creatures one size larger than yourself."
+    },
+    {
+      "name": "Quick Draw",
+      "type": "Free Action",
+      "cost": "1 STA",
+      "tags": ["Utility"],
+      "effect": "Trigger: On your turn. Effect: You may stow one weapon and draw another as a Free Action. You gain Advantage on the first attack roll made with the newly drawn weapon this turn."
     }
   ]
 },
-    {
+{
   "id": "arch_brute",
   "name": "The Brute",
   "role": "Warrior",
@@ -689,121 +800,186 @@
   "resource": "Stamina",
   "proficiencies": {
     "armor": ["Light", "Medium"],
-    "weapons": ["Simple", "Martial Melee"],
+    "weapons": ["Simple", "Martial"],
     "skills": ["Intimidation (CHA)"]
   },
   "talents": [
+    {
+      "name": "Mastery: Sunderer",
+      "type": "Mastery",
+      "description": "The art of destroying defenses through overwhelming force.",
+      "ranks": [
+        {
+          "rank": 1,
+          "name": "Dent Armor",
+          "cost": "1 STA",
+          "type": "Free Action",
+          "effect": "Trigger: When you hit with a melee attack. Effect: The target's Armor Score (AS) is reduced by 1 for the rest of the encounter. This effect can stack."
+        },
+        {
+          "rank": 2,
+          "name": "Shatter",
+          "cost": "1 STA",
+          "type": "Action",
+          "effect": "Attack an object or a creature's shield. Hit: Deal Double Damage to objects. Against a shield, the shield is destroyed (wooden) or useless until repaired (metal), and the bearer takes half damage."
+        },
+        {
+          "rank": 3,
+          "name": "Ruining Blow",
+          "cost": "2 STA",
+          "type": "Action",
+          "effect": "Make a Melee Attack. Hit: Deal Weapon Damage. The target's Armor Score is reduced to 0 for this attack (Ignoring Armor). If the target has natural armor (scales/rock), they are also Bleeding."
+        }
+      ]
+    },
+    {
+      "name": "Mastery: Brawler",
+      "type": "Mastery",
+      "description": "Fighting dirty with fists, grabs, and living shields.",
+      "ranks": [
+        {
+          "rank": 1,
+          "name": "Iron Grip",
+          "cost": "-",
+          "type": "Passive",
+          "effect": "You have Advantage on Athletics checks to Initiate or Maintain a Grapple. You can Grapple creatures up to one size larger than you."
+        },
+        {
+          "rank": 2,
+          "name": "Crush",
+          "cost": "1 STA",
+          "type": "Action",
+          "effect": "Target a creature you are Grappling. Deal automatic Bludgeoning damage equal to 1d6 + STR Modifier. The target is also Winded (cannot use Reactions) until the start of your next turn."
+        },
+        {
+          "rank": 3,
+          "name": "Meat Shield",
+          "cost": "1 STA",
+          "type": "Reaction",
+          "effect": "Trigger: You are targeted by an attack while Grappling a creature. Effect: Make an Athletics Check vs the Attack Roll. Success: You redirect the attack to the creature you are grappling. They take the damage instead of you."
+        }
+      ]
+    },
+    {
+      "name": "Mastery: Menace",
+      "type": "Mastery",
+      "description": "Using size and aggression to break enemy morale.",
+      "ranks": [
+        {
+          "rank": 1,
+          "name": "Intimidating Glare",
+          "cost": "1 STA",
+          "type": "Action",
+          "effect": "Target one enemy within 30ft. Make an Intimidation (CHA) Check vs their Will Save. Fail: They are Frightened of you for 1 minute (Save ends). They cannot move closer to you."
+        },
+        {
+          "rank": 2,
+          "name": "Prey on the Weak",
+          "cost": "-",
+          "type": "Passive",
+          "effect": "You have Advantage on Attack Checks against creatures that are Frightened, Prone, or Restrained."
+        },
+        {
+          "rank": 3,
+          "name": "Roar of Triumph",
+          "cost": "Free Action",
+          "type": "Reaction",
+          "effect": "Trigger: You reduce an enemy to 0 HP. Effect: All enemies within 30ft must make a Will Save vs your Intimidation Check. Fail: They are Dazed (Action OR Move only) for 1 round."
+        }
+      ]
+    },
+    {
+      "name": "Mastery: Heavy Handed",
+      "type": "Mastery",
+      "description": "Wielding massive weapons with crushing efficiency.",
+      "ranks": [
+        {
+          "rank": 1,
+          "name": "Weighted Blows",
+          "cost": "-",
+          "type": "Passive",
+          "effect": "When you roll a 1 or 2 on a damage die for a Two-Handed weapon, you can re-roll the die and must use the new roll."
+        },
+        {
+          "rank": 2,
+          "name": "Staggering Blow",
+          "cost": "1 STA",
+          "type": "Free Action",
+          "req": "Heavy Weapon",
+          "effect": "Trigger: When you hit a creature with a Heavy weapon. Effect: The target must make a Fortitude Save vs your Attack Roll. Fail: They are Dazed (Action OR Move only) until the end of their next turn."
+        },
+        {
+          "rank": 3,
+          "name": "Pulverize",
+          "cost": "2 STA",
+          "type": "Action",
+          "req": "Heavy Weapon",
+          "effect": "Make a Melee Attack against a Prone or Stunned target. This attack deals Double Damage. If it reduces the target to 0 HP, excess damage carries over to an adjacent enemy."
+        }
+      ]
+    },
+    {
+      "name": "Mastery: Rampage",
+      "type": "Mastery",
+      "description": "Building momentum to crash through enemy lines.",
+      "ranks": [
+        {
+          "rank": 1,
+          "name": "Momentum",
+          "cost": "-",
+          "type": "Passive",
+          "effect": "If you move at least 15 feet in a straight line before attacking, you gain a +2 Bonus to the Damage Roll."
+        },
+        {
+          "rank": 2,
+          "name": "Trample",
+          "cost": "1 STA",
+          "type": "Action",
+          "effect": "Move up to your Speed through enemy spaces. Any enemy you pass through must make a Reflex Save vs your Athletics (STR) Check. Fail: They take 1d6+STR Bludgeoning damage and are knocked Prone."
+        },
+        {
+          "rank": 3,
+          "name": "Killing Spree",
+          "cost": "-",
+          "type": "Reaction",
+          "effect": "Trigger: You reduce an enemy to 0 HP. Effect: You immediately regain 1 Stamina and can make one Melee Attack against a different target within reach."
+        }
+      ]
+    },
     {
       "name": "Savage Strike",
       "type": "Maneuver",
       "cost": "1 STA",
       "tags": ["Offensive", "Free Action"],
-      "effect": "Trigger: When you hit with a melee weapon attack. Effect: Add 1d10 to the damage roll.",
-      "details": "Pure damage output. Best used on critical hits to multiply the dice."
+      "effect": "Trigger: When you hit with a melee weapon attack. Effect: Add 1d8 to the damage roll. If you are wielding a Two-Handed weapon, add 1d10 instead."
     },
     {
-      "name": "Reckless Attacks",
+      "name": "Bull Rush",
       "type": "Maneuver",
       "cost": "1 STA",
-      "tags": ["Buff", "Free Action"],
-      "effect": "Action: You enter a reckless stance for 1 minute. Effect: You have Advantage on all melee Attack Checks, but you have Disadvantage on all Defense Checks.",
-      "details": "High risk, high reward. Ensure you have the HP to survive the retaliation."
+      "tags": ["Movement", "Control"],
+      "effect": "Action: Move up to your Speed in a straight line. If you enter an enemy's space, make an Athletics Check vs their Reflex Save. Success: You push them 10 feet and knock them Prone."
     },
     {
-      "name": "Armor Sunder",
+      "name": "Hurl Object",
       "type": "Maneuver",
       "cost": "1 STA",
-      "tags": ["Debuff", "Free Action"],
-      "effect": "Trigger: When you hit with a melee attack. Effect: The target's Armor Score (AS) is permanently reduced by 1. This effect can stack multiple times on the same target.",
-      "details": "Crucial for taking down heavily armored Soldiers or Constructs."
+      "tags": ["Ranged", "Offensive"],
+      "effect": "Action: Pick up and throw a heavy object (rock, chair, goblin) up to 30ft. Make a Ranged Attack using STR. Hit: Deal 1d8 + STR Damage. If the object was a creature, they also take the damage and land Prone."
     },
     {
-      "name": "Brutal Slam",
-      "type": "Maneuver",
-      "cost": "1 STA",
-      "tags": ["Control", "Free Action"],
-      "effect": "Trigger: When you hit with a melee attack. Effect: Push the target 10 feet away. If they hit a wall or object, they take an additional 1d4 impact damage. Empower (1 STA): Push them 15 feet and knock them Prone.",
-      "details": "Good for positioning enemies into hazards or clearing space."
-    },
-    {
-      "name": "Execute",
-      "type": "Maneuver",
-      "cost": "1 STA",
-      "tags": ["Offensive", "Free Action"],
-      "effect": "Trigger: Before you make an attack against a target that is below 50% HP (Bloodied). Effect: You have Advantage on the Attack. If it hits, deal Double Damage (as if it were a Critical Hit).",
-      "details": "A finisher move. Requires you to identify the enemy's state first."
-    },
-    {
-      "name": "Unstoppable Charge",
-      "type": "Maneuver",
-      "cost": "1 STA",
-      "tags": ["Movement", "Offensive"],
-      "effect": "Action: Move up to your full Speed in a straight line and make a melee Attack at the end of the move. If you moved at least 20 feet, the Attack has Advantage.",
-      "details": "Combines movement and attack into a single powerful opener."
-    },
-    {
-      "name": "Terrifying Bellow",
-      "type": "Maneuver",
-      "cost": "1 STA",
-      "tags": ["Control", "Action"],
-      "effect": "Action: Target one enemy within 30 feet. Make an Intimidation Check (CHA/STR + Prof) vs. their Will Save Value. Success: They are Frightened for 1 minute. Empower (2 STA): Affects ALL enemies within 30 feet.",
-      "details": "Frightened enemies cannot move closer and have Disadvantage on checks."
-    },
-    {
-      "name": "Indomitable",
+      "name": "Shrug It Off",
       "type": "Maneuver",
       "cost": "1 STA",
       "tags": ["Defensive", "Reaction"],
-      "effect": "Trigger: When you fail a check to resist the Stunned, Dazed, or Weakened conditions. Effect: Re-roll the check. You must use the new result.",
-      "details": "Keeps you in the fight when crowd control would otherwise stop you."
+      "effect": "Trigger: You take Physical Damage. Effect: Reduce the damage taken by 1d12 + CON Modifier. You cannot use this if you are wearing Heavy Armor."
     },
     {
-      "name": "Savage Howl",
-      "type": "Maneuver",
-      "cost": "1 STA",
-      "tags": ["Support", "Control", "Reaction"],
-      "effect": "Trigger: When you reduce an enemy to 0 HP. Effect: Allies within 30 feet gain 1d4 Temporary HP. Enemies within 30 feet must save vs. Intimidation or be Frightened for 1 round.",
-      "details": "Turns a kill into a momentum swing for the whole team."
-    },
-    {
-      "name": "Death or Glory",
-      "type": "Maneuver",
-      "cost": "2 STA",
-      "tags": ["Offensive", "High Risk"],
-      "effect": "Action: Make a single melee Attack Check. Treat the result as an Automatic Critical Hit (Natural 20). Cost: You immediately take 1d6 Damage which cannot be reduced by Armor or Resistance.",
-      "details": "Guaranteed massive damage at the cost of your own blood."
-    },
-    {
-      "name": "Mighty Leap",
-      "type": "Maneuver",
-      "cost": "1 STA",
-      "tags": ["Movement", "Offensive"],
-      "effect": "Action: Make an Athletics Check. You jump a number of feet horizontally equal to the result (or half vertically). If you land in an enemy's space, make an Attack vs Defense. Hit: Deal 1d6 Bludgeoning and knock them Prone.",
-      "details": "Bypasses difficult terrain and frontline defenders."
-    },
-    {
-      "name": "Shieldbreaker",
-      "type": "Maneuver",
-      "cost": "1 STA",
-      "tags": ["Utility", "Debuff"],
-      "effect": "Action: Attack an object or a creature wielding a shield. Against Objects: Deal Double Damage. Against Creatures: On a hit, deal no damage, but their Shield is destroyed (Wooden) or unusable until repaired (Metal).",
-      "details": "Removes the +1/+2 Armor Score bonus from shielded enemies."
-    },
-    {
-      "name": "Bloodied Rage",
+      "name": "Thick Hide",
       "type": "Passive",
       "cost": "-",
-      "tags": ["Buff"],
-      "effect": "When you are at or below half your maximum HP, you gain a +1 bonus to all melee damage rolls.",
-      "details": "Encourages living on the edge."
-    },
-    {
-      "name": "Heavy Weapon Master",
-      "type": "Passive",
-      "cost": "-",
-      "tags": ["Buff"],
-      "effect": "When you wield a melee weapon with the Two-Handed property (e.g., Greataxe, Maul), you gain a +1 Bonus to Attack Checks.",
-      "details": "Makes heavy weapons more reliable."
+      "tags": ["Defense"],
+      "effect": "While you are not wearing armor, your Armor Score (AS) is 2. You can still use a Shield. (Does not stack with worn armor)."
     },
     {
       "name": "Vigorous",
@@ -814,45 +990,73 @@
       "modifiers": { "sta_mod": "STR" }
     },
     {
-      "name": "Thick Hide",
-      "type": "Passive",
-      "cost": "-",
-      "tags": ["Defensive"],
-      "effect": "While you are Unarmored, you have a natural Armor Score (AS) of 2. This does not stack with worn armor, but stacks with Shields.",
-      "details": "Allows for a 'Barbarian' playstyle without mail."
-    },
-    {
-      "name": "Menacing",
-      "type": "Passive",
-      "cost": "-",
-      "tags": ["Skill"],
-      "effect": "You have Advantage on Intimidation Checks. Additionally, you can use your STR Modifier instead of CHA for Intimidation rolls.",
-      "details": "Makes you a social threat using physical presence."
-    },
-    {
-      "name": "Iron Jaws",
-      "type": "Passive",
-      "cost": "-",
-      "tags": ["Grapple"],
-      "effect": "You have Advantage on checks to start or escape a Grapple. While grappling a creature, you can deal 1d4 damage as a Free Action once per turn.",
-      "details": "Turns you into a brawler."
-    },
-    {
-      "name": "Brute's Fortitude",
-      "type": "Passive",
-      "cost": "-",
-      "tags": ["Repeatable", "Health"],
-      "effect": "Your Maximum HP increases by an amount equal to your current level.",
-      "flags": { "repeatable": true, "max_rank": 3 },
-      "modifiers": { "hp_per_level": 1 }
-    },
-    {
       "name": "Diehard",
       "type": "Passive",
       "cost": "-",
       "tags": ["Survival"],
-      "effect": "When you are at 0 HP and must make a CON Check (Death Save) to avoid dying, you have Advantage on the roll.",
-      "details": "Makes you significantly harder to kill."
+      "effect": "When you are at 0 HP and must make a CON Check (Death Save) to avoid dying, you have Advantage on the roll."
+    },
+    {
+      "name": "Reckless Swing",
+      "type": "Maneuver",
+      "cost": "-",
+      "tags": ["Offensive", "Risky"],
+      "effect": "Free Action: Declare before attacking. You gain Advantage on your Attack Check. However, all attacks against you have Advantage until the start of your next turn."
+    },
+    {
+      "name": "Fling",
+      "type": "Maneuver",
+      "cost": "1 STA",
+      "tags": ["Control", "Offensive"],
+      "req": "Grappling",
+      "effect": "Action: Choose a creature you are Grappling. Make an Athletics Check vs their Fortitude Save. Success: Throw them up to 15 feet. They take 2d6 Impact damage and land Prone. If thrown into another creature, both take the damage."
+    },
+    {
+      "name": "Stomp",
+      "type": "Maneuver",
+      "cost": "1 STA",
+      "tags": ["AoE", "Control"],
+      "effect": "Action: You slam your foot into the ground. All creatures within 5 feet must make a Reflex Save vs your Athletics Check. Fail: They take 1d4 damage and are knocked Prone."
+    },
+    {
+      "name": "Headbutt",
+      "type": "Maneuver",
+      "cost": "1 STA",
+      "tags": ["Offensive", "Control"],
+      "effect": "Action: Make an Unarmed Strike. Hit: Deal 1d4 damage. Target must make a Fortitude Save vs your Attack Roll. Fail: Target is Stunned for 1 round. You take 1 damage."
+    },
+    {
+      "name": "Brute's Vitality",
+      "type": "Passive",
+      "cost": "-",
+      "tags": ["Health", "Repeatable"],
+      "effect": "Your mass makes you harder to kill. Your Maximum HP increases by an amount equal to your Level + CON Modifier.",
+      "flags": { "repeatable": true, "max_rank": 1 },
+      "modifiers": { "hp_per_level": 1, "hp_mod_sum": ["CON"] }
+    },
+    {
+      "name": "Bloodthirst",
+      "type": "Passive",
+      "cost": "-",
+      "tags": ["Healing"],
+      "effect": "Whenever you reduce a creature of Small size or larger to 0 HP with a melee attack, you gain Temporary HP equal to your CON Modifier (minimum 1).",
+      "details": "Rewards aggression."
+    },
+    {
+      "name": "Imposing Stature",
+      "type": "Passive",
+      "cost": "-",
+      "tags": ["Social", "Skill"],
+      "effect": "You can use your Strength Modifier instead of Charisma for Intimidation checks. You gain Advantage on Intimidation checks against creatures smaller than you.",
+      "details": "Roleplay utility for big characters."
+    },
+    {
+      "name": "Iron Will",
+      "type": "Passive",
+      "cost": "-",
+      "tags": ["Defensive"],
+      "effect": "You have Advantage on Saving Throws to resist Charm, Sleep, or Mind Control effects.",
+      "details": "Too stubborn to be controlled."
     }
   ]
 },
@@ -870,172 +1074,264 @@
   },
   "talents": [
     {
-      "name": "Bastion",
-      "type": "Maneuver",
-      "cost": "1 STA",
-      "tags": ["Defensive", "Reaction"],
-      "req": "Shield",
-      "effect": "Trigger: When you make a Block (CON) Defense Check. Effect: Add +1d6 to your roll. You must be wielding a Shield to use this maneuver.",
-      "details": "Turning a hit into a miss, or a crit into a glancing blow."
+      "name": "Mastery: Shield Arts",
+      "type": "Mastery",
+      "description": "Turning a slab of steel into a weapon and a wall.",
+      "ranks": [
+        {
+          "rank": 1,
+          "name": "Bastion",
+          "cost": "-",
+          "type": "Passive",
+          "req": "Shield",
+          "effect": "While wielding a Shield, you gain a +1 Bonus to Block (CON) Defense Checks."
+        },
+        {
+          "rank": 2,
+          "name": "Shield Slam",
+          "cost": "1 STA",
+          "type": "Action",
+          "req": "Shield",
+          "effect": "Make a Melee Attack with your Shield. Hit: Deal 1d4 + STR Damage. The target must make a Fortitude Save vs your Attack Roll. Fail: They are Dazed (Action OR Move only) until the end of their next turn."
+        },
+        {
+          "rank": 3,
+          "name": "Living Fortress",
+          "cost": "-",
+          "type": "Passive",
+          "req": "Shield",
+          "effect": "You provide Half Cover (+2 Defense) to all allies adjacent to you. You cannot be Flanked."
+        }
+      ]
     },
     {
-      "name": "Bodyguard",
-      "type": "Maneuver",
-      "cost": "1 STA",
-      "tags": ["Defensive", "Reaction"],
-      "effect": "Trigger: When an ally within 10 feet is targeted by an attack. Effect: You move adjacent to them (no counter-attacks) and the attack targets you instead. You perform your Defense Check normally.",
-      "details": "You become the target. Works best if you have high Armor/Defense."
+      "name": "Mastery: Sentinel",
+      "type": "Mastery",
+      "description": "Controlling the battlefield and punishing movement.",
+      "ranks": [
+        {
+          "rank": 1,
+          "name": "Vigilance",
+          "cost": "-",
+          "type": "Reaction",
+          "effect": "Trigger: An enemy makes a melee attack against an ally within your Reach (5ft or 10ft). Effect: Make a Melee Attack against the enemy. If you hit, their attack has Disadvantage."
+        },
+        {
+          "rank": 2,
+          "name": "Halt",
+          "cost": "-",
+          "type": "Passive",
+          "effect": "When you hit a creature with an Opportunity Attack (Reaction), their Speed becomes 0 for the rest of the turn."
+        },
+        {
+          "rank": 3,
+          "name": "Whirlwind Guard",
+          "cost": "1 STA",
+          "type": "Action",
+          "effect": "Stance. Until the start of your next turn, you can make an Opportunity Attack against EVERY enemy that moves out of a square within your Reach (not just one)."
+        }
+      ]
     },
     {
-      "name": "Fortify",
-      "type": "Maneuver",
-      "cost": "1 STA",
-      "tags": ["Defensive", "Buff", "Action"],
-      "effect": "Action: You brace yourself against impact. Effect: Your Armor Score (AS) increases by +1 for 1 minute. Empower (1 STA): Increase AS by +2 instead.",
-      "details": "Stacks with worn armor and shields."
+      "name": "Mastery: Protector",
+      "type": "Mastery",
+      "description": "Sacrificing self to ensure the survival of others.",
+      "ranks": [
+        {
+          "rank": 1,
+          "name": "Bodyguard",
+          "cost": "1 STA",
+          "type": "Reaction",
+          "effect": "Trigger: An ally within 5ft is targeted by an attack. Effect: You switch places with the ally. The attack targets you instead (Roll Defense normally)."
+        },
+        {
+          "rank": 2,
+          "name": "Sacrifice",
+          "cost": "1 STA",
+          "type": "Reaction",
+          "effect": "Trigger: An adjacent ally takes damage. Effect: You take the damage instead. The damage is reduced by 1d8 + CON Modifier (Minimum 1 damage)."
+        },
+        {
+          "rank": 3,
+          "name": "Avenger",
+          "cost": "-",
+          "type": "Passive",
+          "effect": "Whenever an ally within 10 feet of you takes damage from an enemy, you have Advantage on your next Attack Check against that enemy."
+        }
+      ]
     },
     {
-      "name": "Endure",
-      "type": "Maneuver",
-      "cost": "1 STA",
-      "tags": ["Defensive", "Reaction"],
-      "effect": "Trigger: When you fail a check to resist Bleeding, Poisoned, or Burning. Effect: You grit your teeth and automatically pass the check instead.",
-      "details": "Shrugs off damage-over-time effects."
+      "name": "Mastery: Polearm Warden",
+      "type": "Mastery",
+      "description": "Using reach to control the flow of battle.",
+      "ranks": [
+        {
+          "rank": 1,
+          "name": "Distancing Strike",
+          "cost": "1 STA",
+          "type": "Free Action",
+          "req": "Reach Weapon",
+          "effect": "Trigger: When you hit with a melee attack. Effect: Push the target 5 feet away from you. This movement does not provoke Opportunity Attacks."
+        },
+        {
+          "rank": 2,
+          "name": "Leg Sweep",
+          "cost": "1 STA",
+          "type": "Action",
+          "req": "Reach Weapon",
+          "effect": "Make a single Attack Check against up to 2 adjacent enemies within your Reach. On Hit: Deal 1d4 Damage and the target is knocked Prone."
+        },
+        {
+          "rank": 3,
+          "name": "Zone of Denial",
+          "cost": "-",
+          "type": "Passive",
+          "req": "Reach Weapon",
+          "effect": "Any space within your weapon's Reach is considered Difficult Terrain for enemies. They must spend double movement to approach or bypass you."
+        }
+      ]
     },
     {
-      "name": "Warning Strike",
-      "type": "Maneuver",
-      "cost": "1 STA",
-      "tags": ["Offensive", "Reaction"],
-      "effect": "Trigger: When an enemy enters your weapon's Reach. Effect: Make a melee Attack Check against them immediately.",
-      "details": "Punishes enemies for trying to close the distance. Effective with Polearms."
+      "name": "Mastery: Iron Constitution",
+      "type": "Mastery",
+      "description": "Hardening the body against pain and death.",
+      "ranks": [
+        {
+          "rank": 1,
+          "name": "Resilient",
+          "cost": "-",
+          "type": "Passive",
+          "effect": "You have Advantage on Saving Throws to resist Poison, Disease, and the Stunned condition."
+        },
+        {
+          "rank": 2,
+          "name": "Shake It Off",
+          "cost": "1 STA",
+          "type": "Reaction",
+          "effect": "Trigger: You start your turn with a negative condition (Bleeding, Burning, Poisoned). Effect: End one of these conditions immediately."
+        },
+        {
+          "rank": 3,
+          "name": "Unbreakable",
+          "cost": "2 STA",
+          "type": "Reaction",
+          "effect": "Trigger: You are reduced to 0 Hit Points. Effect: You drop to 1 HP instead. You can use this once per combat encounter."
+        }
+      ]
     },
     {
-      "name": "Retaliate",
-      "type": "Maneuver",
-      "cost": "1 STA",
-      "tags": ["Offensive", "Reaction"],
-      "effect": "Trigger: When an enemy misses you with a melee attack. Effect: You have Advantage on your next melee Attack against that specific enemy.",
-      "details": "Wait for them to make a mistake, then punish it."
-    },
-    {
-      "name": "Sweeping Strike",
-      "type": "Maneuver",
-      "cost": "1 STA",
-      "tags": ["Offensive", "AoE"],
-      "req": "Reach Weapon",
-      "effect": "Action: Make a single melee Attack Check. Compare the result to the Defense DC of two adjacent enemies within your reach. Deal normal damage to both on a hit.",
-      "details": "Clears minions or damages clustered brutes."
-    },
-    {
-      "name": "Guardian's Challenge",
-      "type": "Maneuver",
-      "cost": "1 STA",
-      "tags": ["Control", "Debuff"],
-      "effect": "Action: Target one enemy. Make a Check (CON + Prof) vs. their Will Save Value. Success: They are Challenged for 1 minute. While Challenged, they have Disadvantage on any attack that does not target you.",
-      "details": "Forces the boss to focus on the tank."
-    },
-    {
-      "name": "Shield Bash",
-      "type": "Maneuver",
-      "cost": "1 STA",
-      "tags": ["Offensive", "Control"],
-      "req": "Shield",
-      "effect": "Action: Make a Melee Attack with your Shield. Hit: Deal 1d4 damage and the target must make a Fortitude Save vs. your Attack Roll. Fail: Target is Dazed for 1 round.",
-      "details": "Dazed targets cannot take Reactions."
-    },
-    {
-      "name": "Shoulder Check",
-      "type": "Maneuver",
-      "cost": "1 STA",
-      "tags": ["Control", "Free Action"],
-      "effect": "Trigger: When you hit a creature with a melee attack. Effect: Make an Athletics (STR) Check vs. their Reflex Save. Success: Push them 5 feet.",
-      "details": "Useful for peeling enemies off squishy allies."
-    },
-    {
-      "name": "Shield Wall",
-      "type": "Maneuver",
-      "cost": "1 STA",
-      "tags": ["Defensive", "Support"],
-      "req": "Shield",
-      "effect": "Action: You create a defensive bulwark. Until your next turn, you and all adjacent allies have Advantage on ALL Defense Checks (Dodge, Parry, Block).",
-      "details": "The ultimate formation tool."
-    },
-    {
-      "name": "Pin",
-      "type": "Maneuver",
-      "cost": "1 STA",
-      "tags": ["Control", "Offensive"],
-      "req": "Spear or Polearm",
-      "effect": "Action: Make a melee Attack. Hit: Deal normal damage and the target is Grappled (Speed 0, pinned to terrain) unless their Reflex Save beats your Attack roll. You cannot attack with this weapon while maintaining the Pin.",
-      "details": "Locks down a single target completely."
-    },
-    {
-      "name": "Guardian's Fortitude",
+      "name": "Heavy Armor Training",
       "type": "Passive",
       "cost": "-",
-      "tags": ["Health", "Repeatable"],
-      "effect": "Your physical conditioning is immense. Your Maximum HP increases by an amount equal to your CON + STR Modifiers (minimum 1).",
-      "flags": { "repeatable": true, "max_rank": 3 },
-      "modifiers": { "hp_mod_sum": ["CON", "STR"] }
+      "tags": ["Armor"],
+      "effect": "You gain Proficiency with Heavy Armor. You ignore the CON +2 requirement for wearing it (you must still meet the STR requirement).",
+      "details": "Essential for the high-AC fantasy."
     },
     {
-      "name": "Armored Behemoth",
-      "type": "Passive",
-      "cost": "-",
-      "tags": ["Armor Mastery"],
-      "effect": "While wearing Heavy Armor, you gain +1 Armor Score (AS), you can use the Dash action (normally forbidden), and you ignore Disadvantage on Athletics checks.",
-      "details": "Essential for Heavy Armor users to stay mobile."
-    },
-    {
-      "name": "Improved Brace",
-      "type": "Passive",
-      "cost": "-",
-      "tags": ["Weapon Mastery"],
-      "effect": "You can use the 'Brace' weapon property (normally an Action) as a Move Action instead.",
-      "details": "Allows you to set a spear against a charge and still attack or move."
-    },
-    {
-      "name": "Stand Your Ground",
+      "name": "Dig In",
       "type": "Passive",
       "cost": "-",
       "tags": ["Defensive"],
-      "effect": "You have Advantage on checks to resist being Knocked Prone, Grappled, or moved against your will.",
-      "details": "You cannot be easily displaced."
+      "effect": "You have Advantage on checks to resist being Knocked Prone, Pushed, or moved against your will.",
+      "details": "You are the anchor."
+    },
+    {
+      "name": "Goad",
+      "type": "Maneuver",
+      "cost": "1 STA",
+      "tags": ["Control", "Social"],
+      "effect": "Action: Target one enemy within 30ft. Make an Intimidation Check vs their Will Save. Success: The target has Disadvantage on all attacks that do not include you as a target until the start of your next turn."
+    },
+    {
+      "name": "Second Wind",
+      "type": "Maneuver",
+      "cost": "2 STA",
+      "tags": ["Healing", "1/Combat"],
+      "effect": "Action: You center yourself and regain 1d10 + Level Hit Points. This can only be used once per combat encounter."
     },
     {
       "name": "Guardian's Vigor",
       "type": "Passive",
       "cost": "-",
       "tags": ["Resource"],
-      "effect": "Your Maximum Stamina increases by an amount equal to your CON Modifier (minimum 1).",
+      "effect": "You have learned to harness your endurance. Your Maximum Stamina increases by an amount equal to your CON Modifier (minimum 1).",
       "modifiers": { "sta_mod": "CON" }
     },
     {
-      "name": "Protector's Resolve",
-      "type": "Passive",
-      "cost": "-",
-      "tags": ["Support", "Aura"],
-      "effect": "When you are at or below half your maximum HP (Bloodied), all adjacent allies gain a +1 Bonus to their Defense Checks.",
-      "details": "You fight harder when hurt."
-    },
-    {
-      "name": "Shield Master",
-      "type": "Passive",
-      "cost": "-",
-      "tags": ["Defense"],
-      "effect": "Your shield becomes an extension of your body. You gain a permanent +1 Bonus to Block (CON) Defense Checks.",
-      "modifiers": { "defense_bonus_block": 1 },
-      "details": "Makes blocking very reliable."
-    },
-    {
-      "name": "Tower Shield Training",
+      "name": "Tower Shield Specialist",
       "type": "Passive",
       "cost": "-",
       "tags": ["Defense", "Trade-off"],
-      "prereq": "Shield Master",
-      "effect": "You can wield a Tower Shield effectively. Your Shield's Armor Score bonus increases to +2 (Total), but you have Disadvantage on Parry checks.",
-      "details": "Trades weapon deflection for raw damage absorption."
+      "req": "Shield",
+      "effect": "You can wield a Tower Shield effectively. Your Shield's Armor Score bonus increases to +2 (Total), but you suffer Disadvantage on Parry Defense Checks and Initiative rolls.",
+      "details": "Trades speed for raw mitigation."
+    },
+    {
+      "name": "Concussion",
+      "type": "Maneuver",
+      "cost": "1 STA",
+      "tags": ["Offensive", "Control"],
+      "effect": "Action: Make a Melee Attack (Best with Mace/Hammer). Hit: Deal Weapon Damage. Target must make a Fortitude Save vs your Attack Roll. Fail: Target is Confused (Random Action) for 1 round."
+    },
+    {
+      "name": "Shield Charge",
+      "type": "Maneuver",
+      "cost": "1 STA",
+      "tags": ["Movement", "Offensive"],
+      "req": "Shield",
+      "effect": "Action: Move up to your Speed. If you end adjacent to an enemy, make a Melee Attack with your Shield (1d4 + STR Dmg). On Hit: Target is Knocked Prone."
+    },
+    {
+      "name": "Rush to Aid",
+      "type": "Maneuver",
+      "cost": "1 STA",
+      "tags": ["Movement", "Support"],
+      "effect": "Action: Move up to your Speed towards an ally. This movement does not provoke Opportunity Attacks. If you end adjacent to the ally, they gain +2 Defense against the next attack made against them."
+    },
+    {
+      "name": "Armor Maintenance",
+      "type": "Maneuver",
+      "cost": "-",
+      "tags": ["Utility"],
+      "effect": "Action: Spend 1 Dungeon Turn to repair a damaged suit of armor or shield (restoring lost AS). Requires no materials if the damage was minor/recent. DC 11 Craft Check."
+    },
+    {
+      "name": "Warning Shout",
+      "type": "Maneuver",
+      "cost": "1 STA",
+      "tags": ["Support", "Reaction"],
+      "effect": "Trigger: An ally is about to be hit by an attack you can see. Effect: Shout a warning. The ally gains a +2 Bonus to their Defense Check against that specific attack."
+    },
+    {
+      "name": "Interpose",
+      "type": "Maneuver",
+      "cost": "1 STA",
+      "tags": ["Support", "Reaction"],
+      "effect": "Trigger: An ally within 5ft is attacked. Effect: You grant them Half Cover (+2 AC) against the attack by placing your shield or body in the way."
+    },
+    {
+      "name": "Stalwart Defender",
+      "type": "Passive",
+      "cost": "-",
+      "tags": ["Aura", "Defensive"],
+      "effect": "You and all allies within 5 feet of you have Advantage on Saving Throws to resist Fear.",
+      "details": "Your courage holds the line."
+    },
+    {
+      "name": "Vigilant Rest",
+      "type": "Passive",
+      "cost": "-",
+      "tags": ["Survival"],
+      "effect": "You can sleep in armor without penalty. While sleeping or resting, you are not considered Unconscious for the purposes of Perception checks. You wake instantly at signs of danger.",
+      "details": "Ideal for camping in dungeons."
+    },
+    {
+      "name": "Formation Fighting",
+      "type": "Passive",
+      "cost": "-",
+      "tags": ["Support"],
+      "effect": "While you are adjacent to an ally who also has a Shield or Heavy Armor, you both gain +1 to Defense Checks.",
+      "details": "Rewards coordinated positioning."
     }
   ]
 },
@@ -1053,175 +1349,259 @@
   },
   "talents": [
     {
-      "name": "Nimble",
+      "name": "Mastery: Sharpshooter",
+      "type": "Mastery",
+      "description": "Expertise with the bow and crossbow.",
+      "ranks": [
+        {
+          "rank": 1,
+          "name": "Point Blank",
+          "cost": "-",
+          "type": "Passive",
+          "effect": "You do not suffer Disadvantage when making Ranged Attacks against enemies within 5 feet of you."
+        },
+        {
+          "rank": 2,
+          "name": "Parting Shot",
+          "cost": "1 STA",
+          "type": "Reaction",
+          "effect": "Trigger: An enemy ends their turn adjacent to you. Effect: You can move up to 15 feet away without provoking counter-attacks. Immediately after moving, make a single Ranged Attack against them."
+        },
+        {
+          "rank": 3,
+          "name": "Multi-Shot",
+          "cost": "2 STA",
+          "type": "Action",
+          "req": "Bow",
+          "effect": "You nock two arrows at once. Make two separate Ranged Attack Checks against two different targets within 10 feet of each other. If both hit, the second target is Pinned (Speed 0)."
+        }
+      ]
+    },
+    {
+      "name": "Mastery: Dervish",
+      "type": "Mastery",
+      "description": "A storm of blades using two weapons.",
+      "ranks": [
+        {
+          "rank": 1,
+          "name": "Off-Hand Strike",
+          "cost": "1 STA",
+          "type": "Free Action",
+          "req": "Dual Wielding",
+          "effect": "Trigger: When you take the Attack action. Effect: Make one additional attack with your off-hand weapon. Do not add your Ability Modifier to the damage of this extra attack."
+        },
+        {
+          "rank": 2,
+          "name": "Twin-Blade Parry",
+          "cost": "-",
+          "type": "Passive",
+          "req": "Dual Wielding",
+          "effect": "While wielding two weapons, you gain a +1 Bonus to Parry (DEX/STR) Defense Checks."
+        },
+        {
+          "rank": 3,
+          "name": "Whirlwind",
+          "cost": "2 STA",
+          "type": "Action",
+          "req": "Dual Wielding",
+          "effect": "You spin in a circle. Make a melee Attack Check against EVERY enemy adjacent to you. Deal normal weapon damage to each target hit."
+        }
+      ]
+    },
+    {
+      "name": "Mastery: Acrobat",
+      "type": "Mastery",
+      "description": "Using mobility as both defense and offense.",
+      "ranks": [
+        {
+          "rank": 1,
+          "name": "Tumble",
+          "cost": "1 STA",
+          "type": "Action",
+          "effect": "Move up to your Speed. During this move, you can pass through spaces occupied by enemies and do not provoke Opportunity Attacks."
+        },
+        {
+          "rank": 2,
+          "name": "Evasion",
+          "cost": "-",
+          "type": "Passive",
+          "effect": "When you are subjected to an effect that allows a Reflex Save for half damage (like a Fireball), you take 0 damage if you succeed on the save, and only half damage if you fail."
+        },
+        {
+          "rank": 3,
+          "name": "Wall Run",
+          "cost": "-",
+          "type": "Passive",
+          "effect": "You can move along vertical surfaces and across liquids on your turn without falling during the move. If you end your turn in the air/wall, you fall."
+        }
+      ]
+    },
+    {
+      "name": "Mastery: Pugilist",
+      "type": "Mastery",
+      "description": "Turning the body into a lethal weapon.",
+      "ranks": [
+        {
+          "rank": 1,
+          "name": "Iron Fists",
+          "cost": "-",
+          "type": "Passive",
+          "effect": "Your Unarmed Strikes deal 1d6 Damage (instead of 1d4) and gain the Finesse property (can use DEX)."
+        },
+        {
+          "rank": 2,
+          "name": "One-Two Punch",
+          "cost": "1 STA",
+          "type": "Free Action",
+          "req": "Unarmed",
+          "effect": "Trigger: When you hit with an Unarmed Strike. Effect: Make a second Unarmed Strike against the same target immediately."
+        },
+        {
+          "rank": 3,
+          "name": "Stunning Palm",
+          "cost": "2 STA",
+          "type": "Action",
+          "req": "Unarmed",
+          "effect": "Make a Melee Attack. Hit: Deal Normal Damage. The target must make a Fortitude Save vs your Attack Roll. Fail: They are Stunned (Incapacitated) for 1 round."
+        }
+      ]
+    },
+    {
+      "name": "Mastery: Duelist",
+      "type": "Mastery",
+      "description": "The art of the single blade and the empty hand.",
+      "ranks": [
+        {
+          "rank": 1,
+          "name": "Fencer's Stance",
+          "cost": "-",
+          "type": "Passive",
+          "req": "One Weapon, No Shield",
+          "effect": "When wielding a single melee weapon and no shield, you gain a +2 Bonus to Damage Rolls."
+        },
+        {
+          "rank": 2,
+          "name": "Parry",
+          "cost": "1 STA",
+          "type": "Reaction",
+          "req": "Melee Weapon",
+          "effect": "Trigger: You are hit by a melee attack. Effect: Reduce the damage taken by 1d8 + DEX Modifier. If damage is reduced to 0, you may make an immediate counter-attack."
+        },
+        {
+          "rank": 3,
+          "name": "Precision Thrust",
+          "cost": "2 STA",
+          "type": "Action",
+          "effect": "Make a Melee Attack with Advantage. This attack Ignores Armor Score. On a Critical Hit, the target is also Bleeding."
+        }
+      ]
+    },
+    {
+      "name": "Unarmored Agility",
+      "type": "Passive",
+      "cost": "-",
+      "tags": ["Defense"],
+      "effect": "While you are wearing no armor, your Armor Score (AS) is equal to your DEX Modifier (Max +3). You can still use a Shield."
+    },
+    {
+      "name": "Deflect Missile",
       "type": "Maneuver",
       "cost": "1 STA",
       "tags": ["Defensive", "Reaction"],
-      "effect": "Trigger: When you make a Dodge (DEX) Defense Check or an Acrobatics Check. Effect: Add +1d6 to your roll.",
-      "details": "The ultimate survival tool for light armor users."
+      "effect": "Trigger: You are hit by a ranged weapon attack. Effect: Reduce the damage by 1d10 + DEX Modifier. If you reduce the damage to 0, you catch the missile."
     },
     {
-      "name": "Freeflow",
-      "type": "Maneuver",
-      "cost": "1 STA",
-      "tags": ["Movement", "Action"],
-      "effect": "Action: You move up to your full Speed. This movement does not provoke Opportunity Attacks (Disengage).",
-      "details": "Standard tactical repositioning."
-    },
-    {
-      "name": "Piercing Shot",
-      "type": "Maneuver",
-      "cost": "1 STA",
-      "tags": ["Offensive", "Free Action"],
-      "req": "Ranged Weapon",
-      "effect": "Trigger: When you make a Ranged Attack. Effect: The attack ignores 2 points of the target's Armor Score. Empower (1 STA): Ignore ALL Armor Score.",
-      "details": "Crucial for archers facing armored targets."
-    },
-    {
-      "name": "Called Shot",
-      "type": "Maneuver",
-      "cost": "1 STA",
-      "tags": ["Debuff", "Free Action"],
-      "req": "Ranged Weapon",
-      "effect": "Trigger: Declare before making a Ranged Attack. Effect: On a Hit, the target takes normal damage and gains the Bleeding condition (1d4 damage/turn) unless their Fortitude Save equals or exceeds your Attack Roll.",
-      "details": "Trading stamina for damage-over-time."
-    },
-    {
-      "name": "Stunning Strike",
-      "type": "Maneuver",
-      "cost": "2 STA",
-      "tags": ["Control", "Free Action"],
-      "req": "Unarmed Strike",
-      "effect": "Trigger: When you hit with an Unarmed Strike. Effect: The target is Stunned (Incapacitated) for 1 round unless their Fortitude Save equals or exceeds your Attack Roll.",
-      "details": "A high-cost game changer."
-    },
-    {
-      "name": "Flurry",
-      "type": "Maneuver",
-      "cost": "1 STA",
-      "tags": ["Offensive", "Free Action"],
-      "req": "Dual-Wielding",
-      "effect": "Trigger: When you make an attack with your main hand weapon. Effect: You can make Two off-hand attacks instead of one this turn.",
-      "details": "Note: Off-hand attacks suffer Disadvantage unless you have the Dual-Wielding Expert passive."
-    },
-    {
-      "name": "Redirect",
-      "type": "Maneuver",
-      "cost": "1 STA",
-      "tags": ["Defensive", "Reaction"],
-      "effect": "Trigger: When you successfully Dodge a melee attack. Effect: You and one ally adjacent to the enemy gain Advantage on your next melee Attack Check against that enemy.",
-      "details": "Punish them for missing."
-    },
-    {
-      "name": "Acrobatic Tumble",
-      "type": "Maneuver",
-      "cost": "1 STA",
-      "tags": ["Movement", "Offensive"],
-      "effect": "Action: Move up to your full Speed. You can move through enemy spaces without provoking attacks. After moving, make an Acrobatics Check (DC 13). Success: Your next attack this turn has Advantage.",
-      "details": "Getting behind enemy lines."
-    },
-    {
-      "name": "Quick Shot",
-      "type": "Maneuver",
-      "cost": "1 STA",
-      "tags": ["Offensive", "Action"],
-      "req": "Ranged Weapon",
-      "effect": "Action: Make Two separate Ranged Attack Checks. These can be against the same or different targets. Note: Cannot be used with weapons that have the 'Reload' property (like Crossbows) unless you have the Quick Reload passive.",
-      "details": "Volume of fire over precision."
-    },
-    {
-      "name": "Parting Shot",
-      "type": "Maneuver",
-      "cost": "1 STA",
-      "tags": ["Movement", "Offensive"],
-      "req": "Ranged Weapon",
-      "effect": "Action: Move up to half your Speed without provoking counter-attacks. At any point during this move, make a single Ranged Attack Check.",
-      "details": "Kiting tactic."
-    },
-    {
-      "name": "Snap Shot",
-      "type": "Maneuver",
-      "cost": "1 STA",
-      "tags": ["Offensive", "Reaction"],
-      "req": "Ranged Weapon",
-      "effect": "Trigger: An enemy moves into your weapon's normal range or makes a ranged attack against you. Effect: Make a Ranged Attack Check against them immediately.",
-      "details": "The ranged equivalent of an Opportunity Attack."
-    },
-    {
-      "name": "Vaulting Strike",
-      "type": "Maneuver",
-      "cost": "1 STA",
-      "tags": ["Movement", "Offensive"],
-      "req": "Melee Weapon",
-      "effect": "Action: Make an Acrobatics Check (DC 13). Success: Jump over a Medium or smaller creature to an unoccupied space behind them. This movement does not provoke attacks. Land and make a Melee Attack with Advantage.",
-      "details": "Parkour combat."
-    },
-    {
-      "name": "Agile Movement",
-      "type": "Passive",
-      "cost": "-",
-      "tags": ["Speed"],
-      "effect": "Your base Speed increases by 5 feet.",
-      "details": "Simple, always useful."
-    },
-    {
-      "name": "Ranged Specialist",
-      "type": "Passive",
-      "cost": "-",
-      "tags": ["Buff"],
-      "effect": "You gain a +1 Bonus to Attack Checks with Ranged Weapons.",
-      "details": "Essential for archers."
-    },
-    {
-      "name": "Dual-Wielding Expert",
-      "type": "Passive",
-      "cost": "-",
-      "tags": ["Repeatable", "Buff"],
-      "effect": "Rank 1: You no longer have Disadvantage on off-hand attacks. Rank 2: You add your Ability Modifier to the damage of off-hand attacks.",
-      "flags": { "repeatable": true, "max_rank": 2 },
-      "details": "Must be taken twice to unlock full potential."
-    },
-    {
-      "name": "Unarmored Defense",
-      "type": "Passive",
-      "cost": "-",
-      "tags": ["Defensive"],
-      "effect": "While you are wearing no armor, your Armor Score (AS) is equal to your DEX Modifier (Max +3). Shields can still be used.",
-      "details": "Allows high defense without the stealth penalty of armor."
-    },
-    {
-      "name": "Martial Arts",
-      "type": "Passive",
-      "cost": "-",
-      "tags": ["Buff"],
-      "effect": "Your Unarmed Strike gains the Finesse and Light properties. Its damage increases from 1d4 to 1d6.",
-      "details": "Required for Monk-style builds."
-    },
-    {
-      "name": "Quick Reload",
-      "type": "Passive",
-      "cost": "-",
-      "tags": ["Buff"],
-      "effect": "You can reload a weapon with the 'Reload' property (e.g., Crossbows) as a Free Action instead of a Move Action.",
-      "details": "Changes Crossbows from 1 shot/round to multi-shot capable."
-    },
-    {
-      "name": "Flow State",
+      "name": "Skirmisher's Vigor",
       "type": "Passive",
       "cost": "-",
       "tags": ["Resource"],
-      "effect": "Your Maximum Stamina increases by an amount equal to your DEX or WIS Modifier (whichever is higher, minimum 1).",
-      "modifiers": { "sta_mod": "DEX" },
-      "details": "Ensures you have the fuel for your maneuvers."
+      "effect": "You have honed your stamina. Your Maximum Stamina increases by an amount equal to your DEX Modifier (minimum 1).",
+      "modifiers": { "sta_mod": "DEX" }
     },
     {
-      "name": "Evasive",
+      "name": "Throwing Ace",
       "type": "Passive",
       "cost": "-",
-      "tags": ["Defensive"],
-      "effect": "You gain a permanent +1 Bonus to Dodge (DEX) Defense Checks.",
-      "modifiers": { "defense_bonus_dodge": 1 },
-      "details": "The best defense is not being there."
+      "tags": ["Ranged", "Buff"],
+      "effect": "You gain a +1 Bonus to Attack Checks with Thrown weapons. The normal range of your Thrown weapons increases by 20 feet.",
+      "details": "Makes daggers and axes viable at range."
+    },
+    {
+      "name": "Blind-Fight",
+      "type": "Passive",
+      "cost": "-",
+      "tags": ["Utility", "Combat"],
+      "effect": "You do not suffer Disadvantage when attacking enemies you cannot see (Invisible or Darkness), provided you can hear them. You are immune to the Blinded condition caused by non-magical darkness."
+    },
+    {
+      "name": "Feather Step",
+      "type": "Passive",
+      "cost": "-",
+      "tags": ["Movement"],
+      "effect": "You ignore Difficult Terrain (rubble, mud, undergrowth). You have Advantage on Stealth checks to move silently."
+    },
+    {
+      "name": "Cat's Grace",
+      "type": "Passive",
+      "cost": "-",
+      "tags": ["Defense"],
+      "effect": "You have Advantage on all Acrobatics Checks and Reflex Saving Throws."
+    },
+    {
+      "name": "Adrenaline Rush",
+      "type": "Maneuver",
+      "cost": "2 STA",
+      "tags": ["Action Economy"],
+      "effect": "Free Action: You can take one additional Action this turn. This action can only be used to Dash, Disengage, Hide, or Use an Item."
+    },
+    {
+      "name": "Cheap Shot",
+      "type": "Maneuver",
+      "cost": "1 STA",
+      "tags": ["Debuff", "Offensive"],
+      "effect": "Action: Make a Melee or Ranged Attack. Hit: Deal 1d4 Damage. Target must make a Fortitude Save vs Attack Roll. Fail: Target is Dazed (Action OR Move only) or Prone (your choice)."
+    },
+    {
+      "name": "Roll With It",
+      "type": "Maneuver",
+      "cost": "1 STA",
+      "tags": ["Defense", "Reaction"],
+      "effect": "Trigger: You take Falling Damage or Knockback damage. Effect: Reduce the damage by half and you land on your feet (not Prone)."
+    },
+    {
+      "name": "Fleet of Foot",
+      "type": "Passive",
+      "cost": "-",
+      "tags": ["Speed"],
+      "effect": "Your Base Speed increases by 10 feet. You have Advantage on Athletics checks made to Jump."
+    },
+    {
+      "name": "Ambush",
+      "type": "Passive",
+      "cost": "-",
+      "tags": ["Offensive"],
+      "effect": "During the first round of combat, you have Advantage on Attack Checks against any creature that has not acted yet."
+    },
+    {
+      "name": "Sprint",
+      "type": "Maneuver",
+      "cost": "1 STA",
+      "tags": ["Movement"],
+      "effect": "Bonus Action: You take the Dash action (Move up to your Speed again)."
+    },
+    {
+      "name": "Sniper's Nest",
+      "type": "Passive",
+      "cost": "-",
+      "tags": ["Ranged", "Defense"],
+      "effect": "If you do not move during your turn, you gain +2 to Ranged Attack Rolls and you are considered to have Half Cover (+2 Defense) until you move."
+    },
+    {
+      "name": "Dirty Kick",
+      "type": "Maneuver",
+      "cost": "1 STA",
+      "tags": ["Control", "Offensive"],
+      "effect": "Action: Make a Melee Attack (Unarmed). Hit: Deal 1d4 damage. Target must make a Fortitude Save vs your Attack Roll. Fail: Target is Dazed for 1 round or Prone (your choice)."
     }
   ]
 },
@@ -6299,4 +6679,5 @@
       ]
     }
   ]
+
 }

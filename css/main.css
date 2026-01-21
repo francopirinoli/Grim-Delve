@@ -5291,3 +5291,131 @@ input.res-input:focus { border-bottom: 1px solid #fff !important; }
     70% { box-shadow: 0 0 0 10px rgba(197, 160, 89, 0); }
     100% { box-shadow: 0 0 0 0 rgba(197, 160, 89, 0); }
 }
+
+/* --- UNIFIED CARD GRID SYSTEM --- */
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 15px;
+    padding-bottom: 20px;
+}
+
+/* --- SPELL & FEATURE CARDS --- */
+.grim-card {
+    background-color: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 6px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    transition: transform 0.2s, border-color 0.2s;
+    min-height: 180px; /* Uniform height look */
+}
+
+.grim-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--accent-gold);
+}
+
+/* Card Header */
+.gc-header {
+    padding: 10px 15px;
+    background: #222;
+    border-bottom: 1px solid #333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 5px 5px 0 0;
+}
+
+.gc-title {
+    font-family: var(--font-header);
+    color: #e0e0e0;
+    font-size: 1.1rem;
+    font-weight: bold;
+    line-height: 1.2;
+}
+
+.gc-cost {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--accent-blue);
+    background: rgba(74, 111, 165, 0.1);
+    padding: 2px 6px;
+    border: 1px solid var(--accent-blue);
+    border-radius: 3px;
+    white-space: nowrap;
+}
+
+/* Specific Border Colors by Type */
+.grim-card.spell { border-left: 4px solid var(--accent-blue); }
+.grim-card.passive { border-left: 4px solid #555; }
+.grim-card.action { border-left: 4px solid var(--accent-crimson); }
+.grim-card.collection { border-left: 4px solid var(--accent-gold); }
+
+/* Card Meta Data (Range, Duration, Source) */
+.gc-meta {
+    padding: 8px 15px;
+    font-size: 0.75rem;
+    color: #888;
+    background: #1e1e1e;
+    border-bottom: 1px dashed #333;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.gc-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Card Body */
+.gc-body {
+    padding: 15px;
+    font-size: 0.9rem;
+    color: #ccc;
+    line-height: 1.5;
+    flex-grow: 1; /* Pushes footer down */
+}
+
+/* Target DC Highlight */
+.gc-dc {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--accent-gold);
+    font-weight: bold;
+    font-size: 0.8rem;
+    font-family: var(--font-mono);
+}
+
+/* Card Footer (Actions) */
+.gc-footer {
+    padding: 10px 15px;
+    background: #151515;
+    border-top: 1px solid #333;
+    border-radius: 0 0 5px 5px;
+}
+
+.btn-cast {
+    width: 100%;
+    background: rgba(74, 111, 165, 0.2);
+    border: 1px solid var(--accent-blue);
+    color: var(--accent-blue);
+    font-family: var(--font-header);
+    font-weight: bold;
+    padding: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+}
+
+.btn-cast:hover {
+    background: var(--accent-blue);
+    color: white;
+}

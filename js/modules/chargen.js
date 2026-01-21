@@ -791,14 +791,35 @@ export const CharGen = {
         const fmt = I18n.fmt;
         
         container.innerHTML = '';
+        
         const makeList = (arch, colId) => {
             let html = `<div class="talent-col" id="${colId}"><h4>${fmt('cg_lbl_talents_header', {name: arch.name})}</h4>`;
-            arch.talents.forEach((t, idx) => {
-                const isSelected = CharGen.char.talents.some(sel => sel.name === t.name);
+            
+            arch.talents.forEach((tal, idx) => {
+                const isSelected = CharGen.char.talents.some(sel => sel.name === tal.name);
+                const isCollection = tal.type === 'Collection';
+                
+                // Visual distinction for Collections
+                const badge = isCollection ? `<span class="tag-badge">📚 ${tal.spells.length} Spells</span>` : '';
+                
                 html += `
-                    <div class="talent-opt ${isSelected ? 'selected' : ''}" data-arch="${arch.id}" data-idx="${idx}" data-col="${colId}">
-                        <div><span class="talent-opt-name">${t.name}</span><span class="talent-opt-cost">${t.cost}</span></div>
-                        <span class="talent-opt-desc">${t.effect}</span>
+                    <div class="talent-opt ${isSelected ? 'selected' : ''}" 
+                         data-arch="${arch.id}" 
+                         data-idx="${idx}" 
+                         data-col="${colId}"
+                         onclick="import('./js/modules/chargen.js').then(m => m.CharGen.toggleTalent('${arch.id}', ${idx}, '${colId}'))">
+                        
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span class="talent-opt-name">${tal.name}</span>
+                            ${badge}
+                            <span class="talent-opt-cost">${tal.cost || ''}</span>
+                        </div>
+                        
+                        <div class="talent-opt-desc">
+                            ${isCollection ? `<em>${tal.description}</em>` : tal.effect}
+                        </div>
+
+                        ${isCollection && isSelected ? CharGen._renderSpellMiniList(tal.spells) : ''}
                     </div>
                 `;
             });
@@ -814,14 +835,60 @@ export const CharGen = {
             container.innerHTML = makeList(archA, 'col-a') + makeList(archB, 'col-b');
             container.style.gridTemplateColumns = "1fr 1fr";
         }
-
-        container.querySelectorAll('.talent-opt').forEach(el => {
-            el.addEventListener('click', (e) => {
-                const target = e.currentTarget; 
-                CharGen.toggleTalent(target.dataset.arch, parseInt(target.dataset.idx), target.dataset.col);
-            });
-        });
+        
         CharGen.updateTalentCount();
+    },
+
+    // HELPER: Renders tiny preview of spells inside a selected card
+    _renderSpellMiniList: (spells) => {
+        return `
+        <div style="margin-top:5px; padding-top:5px; border-top:1px dashed #444; font-size:0.75rem;">
+            ${spells.map(s => `
+                <div style="display:flex; justify-content:space-between; color:#aaa;">
+                    <span>🔹 ${s.name}</span>
+                    <span>${s.cost}</span>
+                </div>
+            `).join('')}
+        </div>
+        `;
+    },
+
+// 2. UPDATE toggleTalent to refresh the UI so the mini-list appears/disappears
+// Find toggleTalent and ensure it calls renderTalentSelectors at the end
+
+    toggleTalent: (archId, talentIdx, colId) => {
+        const data = I18n.getData('options');
+        const arch = data.archetypes.find(a => a.id === archId);
+        const talent = arch.talents[talentIdx];
+        const existIdx = CharGen.char.talents.findIndex(t => t.name === talent.name);
+
+        if (existIdx > -1) {
+            CharGen.char.talents.splice(existIdx, 1);
+        } else {
+            // Check Limits
+            const isPure = (CharGen.char.archA === CharGen.char.archB);
+            const limit = isPure ? 2 : 2; // (Technically limit is 2 total, 1 per side for hybrid, but simpler to just cap at 2 for now)
+            
+            // Hybrid Enforce: Can only pick 1 from Arch A and 1 from Arch B
+            if (!isPure) {
+                const existingFromSource = CharGen.char.talents.filter(t => t.source === arch.name);
+                if (existingFromSource.length >= 1) {
+                    // Swap logic: Remove the old one from this archetype
+                    const oldIdx = CharGen.char.talents.indexOf(existingFromSource[0]);
+                    CharGen.char.talents.splice(oldIdx, 1);
+                }
+            } else {
+                if (CharGen.char.talents.length >= limit) return alert("Limit reached.");
+            }
+            
+            // Add with Source
+            const talentCopy = JSON.parse(JSON.stringify(talent));
+            talentCopy.source = arch.name;
+            CharGen.char.talents.push(talentCopy);
+        }
+        
+        // Re-render to show/hide the mini-list
+        CharGen.renderTalentSelectorsFromIDs(CharGen.char.archA, CharGen.char.archB);
     },
 
     toggleTalent: (archId, talentIdx, colId) => {
@@ -2446,84 +2513,259 @@ renderTabInventory: (container) => {
         });
     },
 
-    renderTabMagic: (container) => {
+        getFlattenedFeatures: () => {
+        const c = CharGen.char;
+        const features = [];
+
+        // --- Add Static Features (Ancestry/Background/Class) ---
+        // (Note: Retain your existing logic for non-talent features here if it exists in your current file, 
+        // otherwise, this function focuses on the Talents/Spells array)
+
+        if (c.talents) {
+            c.talents.forEach(t => {
+                if (t.type === 'Collection' && t.spells) {
+                    // It's a Grimoire/Liturgy! Unpack it.
+                    t.spells.forEach(spell => {
+                        features.push({
+                            ...spell,
+                            source: t.name,          // e.g. "Grimoire of Fire"
+                            sourceArch: t.source,    // e.g. "The Arcanist" (Added during selection)
+                            isSpell: true,
+                            type: "Spell"
+                        });
+                    });
+                } else {
+                    // Standard Talent
+                    features.push({
+                        ...t,
+                        source: t.source || "Talent",
+                        isSpell: false
+                    });
+                }
+            });
+        }
+        
+        return features;
+    },
+
+renderTabMagic: (container) => {
         const c = CharGen.char;
         const t = I18n.t;
 
-        // Filter: Magic items or items with effects
-        const magicItems = c.inventory.filter(i => 
-            i.isMagic === true || 
-            (i.magicEffect && i.magicEffect.length > 0) ||
-            i.type === "Trinket" ||
-            i.type === "Wondrous" ||
-            i.type === "Potion" ||
-            i.type === "Scroll" ||
-            (i.name && (i.name.includes("Magic") || i.name.includes("Mágico")))
-        );
+        const allFeatures = CharGen.getFlattenedFeatures();
+        const spells = allFeatures.filter(f => f.isSpell);
+
+        const magicItems = c.inventory.map((item, index) => ({...item, originalIndex: index}))
+            .filter(i => i.isMagic === true || i.type === "Trinket" || i.type === "Wondrous" || i.magicEffect);
 
         container.innerHTML = `
-            <div class="wealth-bar" style="justify-content:space-between;">
-                <div style="font-family:var(--font-header); font-size:1.2rem; color:var(--accent-blue);">
-                    ${t('magic_header')}
-                </div>
-                <button id="btn-import-magic" class="btn-primary">⚡ ${t('magic_import')}</button>
-            </div>
-
-            <div class="magic-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap:1rem;">
-                ${magicItems.length > 0 ? magicItems.map((item) => {
-                    // Find the REAL index in the main inventory array
-                    const realIdx = c.inventory.indexOf(item);
+            <div class="split-view-magic" style="display:grid; grid-template-columns: 1fr; gap:2rem;">
+                
+                <!-- SPELLBOOK SECTION -->
+                <div>
+                    <div class="mgr-header" style="display:flex; justify-content:space-between; align-items:center;">
+                        <span>📜 ${t('magic_spellbook')}</span>
+                        <div style="font-size:0.9rem; font-family:var(--font-mono); color:var(--accent-blue);">
+                            MP: <b style="color:white;">${c.current.mp}</b> / ${c.derived.maxMP}
+                        </div>
+                    </div>
                     
-                    return `
-                    <div class="lib-card item ${item.equipped ? 'official' : ''}" style="min-height:auto;">
-                        <div class="lib-card-body">
-                            <div class="lib-card-name" style="${item.equipped ? 'color:var(--accent-gold)' : ''}">
-                                ${item.equipped ? '★ ' : ''}${item.name}
+                    ${spells.length === 0 ? `<p class="text-muted" style="padding:10px;">${t('magic_empty')}</p>` : ''}
+                    
+                    <div class="card-grid">
+                        ${spells.map((s, idx) => {
+                            const dcDisplay = s.cast_dc ? `DC ${s.cast_dc}` : '-';
+                            return `
+                            <div class="grim-card spell">
+                                <div class="gc-header">
+                                    <span class="gc-title">${s.name}</span>
+                                    <span class="gc-cost">${s.cost}</span>
+                                </div>
+                                <div class="gc-meta">
+                                    <span title="${t('lbl_range')}">📏 ${s.range || '-'}</span>
+                                    <span title="${t('lbl_duration')}">⏳ ${s.duration || '-'}</span>
+                                    <span title="${t('lbl_target')}">🎯 ${dcDisplay}</span>
+                                </div>
+                                <div class="gc-body">
+                                    <div class="gc-text">${s.effect}</div>
+                                </div>
+                                <div class="gc-footer">
+                                    <button class="btn-cast" onclick="import('./js/modules/chargen.js').then(m => m.CharGen.castSpell('${s.name}'))">
+                                        ⚡ ${t('btn_cast')}
+                                    </button>
+                                </div>
                             </div>
-                            <div class="lib-card-meta">${item.type} &bull; ${item.slots} ${t('inv_slots_header')}</div>
-                            <div style="font-size:0.85rem; color:#ccc; margin-top:5px; font-style:italic;">
-                                ${item.magicEffect || item.description || ''}
-                            </div>
-                        </div>
-                        <div class="lib-card-footer">
-                            <button class="lib-btn ${item.equipped ? 'primary' : ''} js-magic-equip" data-idx="${realIdx}">
-                                ${item.equipped ? t('btn_cancel') : 'Equip / Attune'}
-                            </button>
-                            <button class="lib-btn delete js-magic-delete" data-idx="${realIdx}">
-                                ${t('btn_delete')}
-                            </button>
-                        </div>
-                    </div>`;
-                }).join('') : `<div style="grid-column:1/-1; text-align:center; padding:2rem; color:#666;">${t('magic_empty')}</div>`}
+                        `}).join('')}
+                    </div>
+                </div>
+
+                <!-- MAGIC ITEMS SECTION -->
+                <div>
+                    <div class="mgr-header">${t('magic_header')}</div>
+                    <button id="btn-import-magic" class="btn-secondary" style="width:100%; margin-bottom:15px; text-align:center;">+ ${t('magic_import')}</button>
+                    
+                    ${magicItems.length === 0 ? `<p class="text-muted" style="padding:10px;">${t('magic_empty')}</p>` : ''}
+
+                    <div class="card-grid">
+                        ${magicItems.map((item) => `
+                            <div class="grim-card item" style="border-left-color: var(--accent-gold);">
+                                <div class="gc-header">
+                                    <span class="gc-title" style="${item.equipped ? 'color:var(--accent-gold);' : ''}">
+                                        ${item.equipped ? '★ ' : ''}${item.name}
+                                    </span>
+                                </div>
+                                <div class="gc-meta">
+                                    <span>${item.type}</span>
+                                    <span>💎 ${item.cost || '-'}</span>
+                                    <span>📦 ${item.slots}</span>
+                                </div>
+                                <div class="gc-body">
+                                    <div class="gc-text" style="font-style:italic; color:#aaa;">
+                                        ${item.magicEffect || item.description || 'No effect description.'}
+                                    </div>
+                                </div>
+                                <div class="gc-footer" style="display:flex; gap:5px;">
+                                    <button class="btn-small js-magic-equip" data-idx="${item.originalIndex}" style="flex:1;">
+                                        ${item.equipped ? t('btn_unequip') : t('btn_equip')}
+                                    </button>
+                                    <button class="btn-small delete js-magic-delete" data-idx="${item.originalIndex}" style="color:var(--accent-crimson); border-color:var(--accent-crimson);">
+                                        ${t('btn_delete')}
+                                    </button>
+                                </div>
+                            </div>`).join('')}
+                    </div>
+                </div>
             </div>
         `;
-        
-        // --- ATTACH LISTENERS ---
 
-        // Import Button
+        // Re-attach Listeners
         const btnImport = document.getElementById('btn-import-magic');
         if (btnImport) btnImport.onclick = CharGen.openMagicImportModal;
 
-        // Equip/Attune Buttons
         container.querySelectorAll('.js-magic-equip').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const idx = parseInt(e.target.dataset.idx);
                 CharGen.toggleEquip(idx);
-                // Force re-render of THIS tab to update button state (Equip -> Unequip)
                 CharGen.renderTabMagic(container);
             });
         });
 
-        // Delete Buttons
         container.querySelectorAll('.js-magic-delete').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 if (confirm(t('btn_confirm') + '?')) {
                     const idx = parseInt(e.target.dataset.idx);
                     CharGen.removeFromInventory(idx);
-                    // Force re-render
                     CharGen.renderTabMagic(container);
                 }
             });
+        });
+    },
+
+    // 3. LOGIC: Cast Spell with Skill Check
+    castSpell: (spellName) => {
+        const c = CharGen.char;
+        const features = CharGen.getFlattenedFeatures();
+        const spell = features.find(f => f.name === spellName);
+        
+        if (!spell) return console.error("Spell not found:", spellName);
+
+        // A. Determine Casting Attribute & Skill
+        // Map Archetype Name (English) to Stat/Skill ID
+        // Note: We use English keys for logic to match IDs in calculateSkills()
+        const ARCH_MAP = {
+            "The Arcanist": { stat: "INT", skillId: "lore" },
+            "The Occultist": { stat: "CHA", skillId: "intimidation" },
+            "The Priest": { stat: "WIS", skillId: "scrutiny" },
+            "The Primalist": { stat: "WIS", skillId: "survival" }
+        };
+
+        // Default to INT if source is unknown (e.g. Racial spell)
+        let castConfig = { stat: "INT", skillId: "lore" }; 
+        
+        // Attempt to find source archetype in the map
+        if (spell.sourceArch && ARCH_MAP[spell.sourceArch]) {
+            castConfig = ARCH_MAP[spell.sourceArch];
+        } else {
+            // Fallback: Check if the character HAS any of these archetypes
+            // This handles cases where sourceArch might be missing in older data
+            const data = I18n.getData('options');
+            const archA = data.archetypes.find(a => a.id === c.archA);
+            const archB = data.archetypes.find(a => a.id === c.archB);
+            
+            if (archA && ARCH_MAP[archA.name]) castConfig = ARCH_MAP[archA.name];
+            else if (archB && ARCH_MAP[archB.name]) castConfig = ARCH_MAP[archB.name];
+        }
+
+        // B. Get Values
+        const statMod = c.stats[castConfig.stat] || 0;
+        
+        // Get Proficiency Die from the Calculated Skills List
+        // We recalculate to ensure we get current modifiers/expert dice
+        const skillsList = CharGen.calculateSkills(); 
+        const skillObj = skillsList.find(s => s.id === castConfig.skillId);
+        
+        let profDieVal = 0;
+        if (skillObj && skillObj.die && skillObj.die !== "-") {
+            profDieVal = parseInt(skillObj.die.replace("1d", "")); // "1d6" -> 6
+        }
+
+        // C. Check Resources
+        let costVal = parseInt(spell.cost) || 0;
+        let useHP = false;
+
+        // Simple parsing: "1 MP", "2 MP", "HP"
+        if (spell.cost.includes("MP")) {
+            if (c.current.mp < costVal) {
+                // Not enough MP? Offer Blood Price
+                if (confirm(`Not enough MP (${c.current.mp}/${costVal}). Cast using ${costVal * 2} HP instead?`)) {
+                    useHP = true;
+                    costVal = costVal * 2;
+                } else {
+                    return; // Cancelled
+                }
+            }
+        } else if (spell.cost.includes("HP")) {
+             useHP = true; // Spells that explicitly cost HP
+        }
+
+        // Deduct Resource
+        if (useHP) c.current.hp -= costVal;
+        else c.current.mp -= costVal;
+
+        // D. Perform the Roll
+        const result = Dice.rollCheck(statMod, profDieVal);
+        
+        // E. Determine Success vs DC
+        // If spell has no DC (e.g. Utility/Buff), default to Success 
+        const dc = spell.cast_dc || 0;
+        let outcomeText = "CAST";
+        let outcomeClass = "magic";
+
+        if (dc > 0) {
+            if (result.total >= dc) {
+                outcomeText = "SUCCESS";
+                outcomeClass = "check"; // Blue toast
+            } else {
+                outcomeText = "FAILURE";
+                outcomeClass = "attack"; // Red toast
+                // Optional: Trigger Mishap on Nat 1?
+                if (result.isWhiff) outcomeText += " (MISHAP!)";
+            }
+        }
+
+        // F. Update UI & Show Toast
+        CharGen.renderSheet(CharGen.container); // Refresh MP bar
+        
+        // Construct detailed string: "Lore (INT) vs DC 12"
+        const detailStr = `${skillObj ? skillObj.name : castConfig.stat} vs DC ${dc > 0 ? dc : '-'}`;
+        
+        // Fire Toast
+        import('./dice_ui.js').then(m => {
+            m.DiceUI.show(
+                `${spell.name}: ${outcomeText}`, 
+                { ...result, notation: detailStr }, 
+                outcomeClass
+            );
         });
     },
 
@@ -2675,38 +2917,87 @@ renderTabInventory: (container) => {
         const c = CharGen.char;
         const t = I18n.t;
         const data = I18n.getData('options');
+        
+        // 1. GATHER FEATURES
         const allFeatures = [];
 
+        // Ancestry
         if (c.ancestry && data.ancestries) {
             const anc = data.ancestries.find(a => a.id === c.ancestry);
             const featIdx = c.ancestryFeatIndex !== null ? c.ancestryFeatIndex : (anc.feats.length > 0 ? 0 : null);
             if (anc && featIdx !== null && anc.feats[featIdx]) {
                 const feat = anc.feats[featIdx];
-                allFeatures.push({ name: feat.name, source: `${t('cg_lbl_ancestry')}: ${anc.name}`, type: "Passive", cost: "-", desc: feat.effect, tags: feat.modifiers ? ["Stat Bonus"] : [] });
+                allFeatures.push({ 
+                    name: feat.name, 
+                    source: `${t('cg_lbl_ancestry')}: ${anc.name}`, 
+                    type: "Passive", 
+                    cost: null, 
+                    desc: feat.effect 
+                });
             }
         }
 
+        // Background
         if (c.background && data.backgrounds) {
             const bg = data.backgrounds.find(b => b.id === c.background);
             if (bg && bg.feat) {
-                allFeatures.push({ name: bg.feat.name, source: `${t('cg_lbl_background')}: ${bg.name}`, type: "Passive", cost: "-", desc: bg.feat.effect, tags: ["Utility"] });
+                allFeatures.push({ 
+                    name: bg.feat.name, 
+                    source: `${t('cg_lbl_background')}: ${bg.name}`, 
+                    type: "Passive", 
+                    cost: null, 
+                    desc: bg.feat.effect 
+                });
             }
         }
 
+        // Class Synergy Feats
         if (c.classId && data.classes) {
             const cls = data.classes.find(x => x.id === c.classId);
             if (cls && cls.synergy_feats) {
                 cls.synergy_feats.forEach(f => {
                     if (f.level <= c.level) {
-                        allFeatures.push({ name: f.name, source: `${t('cg_step_class')} (Lvl ${f.level})`, type: f.type || "Passive", cost: f.cost || "-", desc: f.effect, tags: f.stat_options ? ["Stat Choice"] : [] });
+                        allFeatures.push({ 
+                            name: f.name, 
+                            source: `${t('cg_step_class')} (Lvl ${f.level})`, 
+                            type: f.type || "Passive", 
+                            cost: f.cost || null, 
+                            desc: f.effect 
+                        });
                     }
                 });
             }
         }
 
+        // Talents & Collections
         if (c.talents && c.talents.length > 0) {
             c.talents.forEach(tal => {
-                allFeatures.push({ name: tal.name, source: tal.sourceName || t('sheet_arch_talents'), type: tal.type || "Talent", cost: tal.cost, desc: tal.effect, tags: tal.tags || [], choice: tal.choice });
+                if (tal.type === 'Collection') {
+                    // --- NEW LOGIC: Format the list of spells ---
+                    let spellListHtml = `<div style="margin-top:8px; padding-top:8px; border-top:1px dashed #444;"><strong>${t('lbl_contains')}</strong><ul style="margin:5px 0 0 20px; padding:0; color:#aaa;">`;
+                    if (tal.spells) {
+                        tal.spells.forEach(s => {
+                            spellListHtml += `<li>${s.name} <span style="font-size:0.75em; color:#666;">(${s.cost})</span></li>`;
+                        });
+                    }
+                    spellListHtml += `</ul></div>`;
+
+                    allFeatures.push({
+                        name: tal.name,
+                        source: tal.source || "Archetype Talent",
+                        type: "Collection",
+                        cost: null,
+                        desc: (tal.description || "") + spellListHtml // Append list to desc
+                    });
+                } else {
+                    allFeatures.push({ 
+                        name: tal.name, 
+                        source: tal.source || t('sheet_arch_talents'), 
+                        type: tal.type || "Talent", 
+                        cost: tal.cost, 
+                        desc: tal.effect + (tal.choice ? ` <em>(${tal.choice})</em>` : '')
+                    });
+                }
             });
         }
 
@@ -2715,26 +3006,36 @@ renderTabInventory: (container) => {
             return;
         }
 
-        const getTypeClass = (type) => {
-            const tLower = (type || "").toLowerCase();
-            if (tLower.includes("reaction")) return "reaction";
-            if (tLower.includes("action") || tLower.includes("attack")) return "action";
-            if (tLower.includes("passive")) return "passive";
-            return "utility"; 
-        };
-
+        // 2. RENDER GRID
         container.innerHTML = `
-            <div class="manager-grid" style="grid-template-columns: 1fr;">
-                <div class="mgr-header">${t('sheet_features')}</div>
-                <div class="features-grid">
-                    ${allFeatures.map(f => `
-                        <div class="feature-card ${getTypeClass(f.type)}">
-                            <div class="feat-header"><span class="feat-title">${f.name}</span>${f.cost !== "-" ? `<span class="feat-cost">${f.cost}</span>` : ""}</div>
-                            <div class="feat-meta"><span class="feat-source">${f.source}</span><span>${f.type}</span></div>
-                            <div class="feat-desc">${f.desc} ${f.choice ? `<em style="color:var(--accent-gold); display:block; margin-top:5px;">Selection: ${f.choice}</em>` : ''}</div>
+            <div class="mgr-header">${t('sheet_features')}</div>
+            <div class="card-grid">
+                ${allFeatures.map(f => {
+                    let cssClass = 'passive';
+                    if (f.type && f.type.includes('Action')) cssClass = 'action';
+                    if (f.type === 'Collection') cssClass = 'collection';
+                    if (f.type === 'Spell') cssClass = 'spell';
+
+                    const costHtml = (f.cost && f.cost !== '-') 
+                        ? `<span class="gc-cost">${f.cost}</span>` 
+                        : '';
+
+                    return `
+                        <div class="grim-card ${cssClass}">
+                            <div class="gc-header">
+                                <span class="gc-title">${f.name}</span>
+                                ${costHtml}
+                            </div>
+                            <div class="gc-meta">
+                                <span>${f.source}</span>
+                                <span>${f.type}</span>
+                            </div>
+                            <div class="gc-body">
+                                <div class="gc-text">${f.desc}</div>
+                            </div>
                         </div>
-                    `).join('')}
-                </div>
+                    `;
+                }).join('')}
             </div>
         `;
     },
@@ -3375,6 +3676,7 @@ renderTabInventory: (container) => {
         const state = CharGen.levelState;
         const c = CharGen.char;
         const isMilestone = (state.nextLevel === 5 || state.nextLevel === 10);
+        const t = I18n.t; // Localization helper
 
         const overlay = document.createElement('div');
         overlay.className = 'modal-overlay';
@@ -3392,11 +3694,15 @@ renderTabInventory: (container) => {
                     </div>
                     <div class="levelup-step">
                         <h4>2. Select New Talent</h4>
-                        <select id="lvl-talent-select">
+                        <select id="lvl-talent-select" style="width:100%; padding:8px; margin-bottom:10px;">
                             <option value="">-- Choose Talent --</option>
                             ${CharGen.getValidTalentOptions().map((opt, idx) => `<option value="${idx}">${opt.name} [${opt.sourceName}]</option>`).join('')}
                         </select>
-                        <div id="lvl-talent-desc" style="margin-top:5px; font-size:0.85rem; color:#aaa; font-style:italic;"></div>
+                        
+                        <!-- Description Box -->
+                        <div id="lvl-talent-desc" style="background:#111; padding:10px; border:1px solid #333; border-radius:4px; font-size:0.85rem; line-height:1.4; color:#ccc;">
+                            <em style="color:#666;">Select a talent above to see details...</em>
+                        </div>
                     </div>
                     ${isMilestone ? `
                     <div class="levelup-step">
@@ -3409,8 +3715,8 @@ renderTabInventory: (container) => {
                     </div>` : ''}
                 </div>
                 <div style="margin-top:20px; display:flex; justify-content:flex-end; gap:10px; padding-top:10px; border-top:1px solid #333;">
-                    <button id="btn-lvl-cancel" class="btn-secondary">Cancel</button>
-                    <button id="btn-lvl-confirm" class="btn-primary" disabled>Confirm</button>
+                    <button id="btn-lvl-cancel" class="btn-secondary">${t('btn_cancel')}</button>
+                    <button id="btn-lvl-confirm" class="btn-primary" disabled>${t('btn_confirm')}</button>
                 </div>
             </div>
         `;
@@ -3419,41 +3725,68 @@ renderTabInventory: (container) => {
         const btnRollHP = overlay.querySelector('#btn-roll-hp');
         const hpRes = overlay.querySelector('#hp-result');
         const btnConfirm = overlay.querySelector('#btn-lvl-confirm');
+        const talSel = overlay.querySelector('#lvl-talent-select');
+        const talDesc = overlay.querySelector('#lvl-talent-desc');
+        const options = CharGen.getValidTalentOptions();
 
+        // 1. Validation Logic
         const validate = () => {
             let isValid = state.newHP > 0 && state.selectedTalent !== null;
             if (isMilestone && !state.selectedStat) isValid = false;
             btnConfirm.disabled = !isValid;
         };
 
+        // 2. HP Roll Handler
         btnRollHP.onclick = () => {
-            const roll = Dice.roll(`1d${state.hitDie}`).total;
-            const conMod = c.stats.CON || 0;
-            const total = Math.max(1, roll + conMod);
-            state.newHP = total;
-            hpRes.textContent = `${total} (${roll} + ${conMod})`;
-            hpRes.style.color = "var(--accent-gold)";
-            btnRollHP.disabled = true;
-            validate();
+            const roll = import('../utils/dice.js').then(m => {
+                const res = m.Dice.roll(`1d${state.hitDie}`);
+                const conMod = c.stats.CON || 0;
+                const total = Math.max(1, res.total + conMod);
+                state.newHP = total;
+                hpRes.textContent = `${total} (${res.total} + ${conMod})`;
+                hpRes.style.color = "var(--accent-gold)";
+                btnRollHP.disabled = true;
+                validate();
+            });
         };
 
-        const talSel = overlay.querySelector('#lvl-talent-select');
-        const talDesc = overlay.querySelector('#lvl-talent-desc');
-        const options = CharGen.getValidTalentOptions();
-
+        // 3. Talent Selection Handler (UPDATED for Spellbooks)
         talSel.onchange = (e) => {
             const idx = e.target.value;
             if (idx !== "") {
                 const tal = options[idx];
                 state.selectedTalent = tal;
-                talDesc.textContent = tal.effect;
+                
+                // Logic to display content based on type
+                if (tal.type === 'Collection' && tal.spells) {
+                    // It's a Spellbook! List the contents.
+                    const spellList = tal.spells.map(s => 
+                        `<div style="margin-bottom:6px; padding-bottom:6px; border-bottom:1px dashed #333;">
+                            <div style="display:flex; justify-content:space-between; color:var(--accent-gold);">
+                                <strong>${s.name}</strong> <span>${s.cost}</span>
+                            </div>
+                            <div style="font-size:0.8em; color:#aaa;">${s.effect}</div>
+                        </div>`
+                    ).join('');
+
+                    talDesc.innerHTML = `
+                        <div style="margin-bottom:10px; font-style:italic;">${tal.description}</div>
+                        <div style="border-left:2px solid var(--accent-blue); padding-left:10px;">
+                            ${spellList}
+                        </div>
+                    `;
+                } else {
+                    // It's a standard Passive or Ability
+                    talDesc.innerHTML = tal.effect || tal.description || "No description available.";
+                }
             } else {
                 state.selectedTalent = null;
-                talDesc.textContent = "";
+                talDesc.innerHTML = `<em style="color:#666;">Select a talent above...</em>`;
             }
             validate();
         };
 
+        // 4. Milestone Stat Handler
         if (isMilestone) {
             overlay.querySelectorAll('.stat-boost-btn').forEach(btn => {
                 btn.onclick = (e) => {
@@ -3465,22 +3798,18 @@ renderTabInventory: (container) => {
             });
         }
 
+        // 5. Footer Buttons
         overlay.querySelector('#btn-lvl-cancel').onclick = () => overlay.remove();
+        
         btnConfirm.onclick = () => {
             const t = state.selectedTalent;
             
-            // CHECK: Does this talent require a choice? (e.g. Expertise, Weapon Spec)
+            // Handle Complex Choices (Skill/Bonus Selection)
             if (t.flags && (t.flags.select_skill || t.flags.select_mod || t.flags.select_property || t.flags.select_bond)) {
-                
-                // 1. Close Level Up Modal (temp)
-                overlay.remove();
-                
-                // 2. Open Choice Modal
-                CharGen.handleLevelUpChoice(t);
-                
+                overlay.remove(); // Close Level Up modal temporarily
+                CharGen.handleLevelUpChoice(t); // Open Choice Modal
             } else {
-                // No choice needed, proceed normally
-                CharGen.applyLevelUp();
+                CharGen.applyLevelUp(); // Proceed immediately
                 overlay.remove();
             }
         };

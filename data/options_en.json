@@ -1955,7 +1955,7 @@
     }
   ]
 },
-    {
+{
   "id": "arch_arcanist",
   "name": "The Arcanist",
   "role": "Spellcaster",
@@ -1969,116 +1969,420 @@
   },
   "talents": [
     {
-      "name": "Firebolt",
-      "type": "Spell",
-      "cost": "1 MP",
-      "tags": ["Attack", "Fire"],
-      "effect": "Action: Range 60ft. Make a Ranged Casting Check (vs Defense). On a Hit: Deal 2d6 Fire Damage.",
-      "details": "A standard, reliable attack spell. Base DC 11."
+      "name": "Grimoire of the Battle-Mage",
+      "type": "Collection",
+      "tags": ["Force", "Defense"],
+      "description": "The standard tactical kit for war mages.",
+      "spells": [
+        {
+          "name": "Shield",
+          "cost": "1 MP",
+          "duration": "1 Round",
+          "range": "Self",
+          "cast_dc": 11,
+          "effect": "Reaction. Trigger: You are hit by an attack. Make a Casting Check. Success: You gain a +4 Bonus to Defense against the triggering attack and all other attacks until the start of your next turn."
+        },
+        {
+          "name": "Magic Missile",
+          "cost": "2 MP",
+          "duration": "Instant",
+          "range": "120 ft",
+          "cast_dc": 14,
+          "effect": "Action. Make a Casting Check. Success: You create 3 glowing darts of magical force. They strike unerringly (No Attack Roll needed). Each dart deals 1d4+1 Force damage."
+        },
+        {
+          "name": "Counterspell",
+          "cost": "3 MP",
+          "duration": "Instant",
+          "range": "60 ft",
+          "cast_dc": 16,
+          "effect": "Reaction. Trigger: A creature casts a spell. Make a Casting Check vs. the Caster's Will Save (or Casting Result). Success: The creature's spell fails and has no effect."
+        }
+      ]
     },
     {
-      "name": "Arcane Bolt",
-      "type": "Spell",
-      "cost": "1 MP",
-      "tags": ["Attack", "Force"],
-      "effect": "Action: Range 30ft. Make a Casting Check (DC 11). Success: The bolt unerringly strikes the target. Deal 1d4+1 Force Damage.",
-      "details": "Ignores Armor Score and Cover. Low damage, but guaranteed hit."
+      "name": "Grimoire of the Pyromancer",
+      "type": "Collection",
+      "tags": ["Fire", "Offensive"],
+      "description": "Studies in combustion and heat.",
+      "spells": [
+        {
+          "name": "Firebolt",
+          "cost": "1 MP",
+          "duration": "Instant",
+          "range": "60 ft",
+          "cast_dc": 11,
+          "effect": "Make a Ranged Casting Check vs. Target's Defense. On Hit: Deal 1d10 Fire damage. On Crit: Target gains Burning condition."
+        },
+        {
+          "name": "Fan of Flames",
+          "cost": "2 MP",
+          "duration": "Instant",
+          "range": "15 ft Cone",
+          "cast_dc": 14,
+          "effect": "Flames erupt from your hands. Make a Casting Check. All creatures in the cone compare their Reflex Save vs. your Result. Fail: Take 3d6 Fire damage. Success: Take half damage."
+        },
+        {
+          "name": "Wall of Fire",
+          "cost": "3 MP",
+          "duration": "1 Minute (Concentration)",
+          "range": "60 ft",
+          "cast_dc": 17,
+          "effect": "Create a wall of fire 20ft long and 1ft thick. It blocks line of sight. Any creature passing through or ending its turn in the wall takes 4d6 Fire damage (Reflex vs Result for half)."
+        }
+      ]
     },
     {
-      "name": "Magic Missile",
-      "type": "Spell",
-      "cost": "1 MP",
-      "tags": ["Attack", "Force", "Multi-Target"],
-      "effect": "Action: Range 60ft. Make a Casting Check (DC 13). Success: Create 2 missiles. They strike automatically. Each deals 1d4 Force Damage. You can target different creatures.",
-      "details": "Reliable chip damage or minion clearing."
+      "name": "Grimoire of the Cryomancer",
+      "type": "Collection",
+      "tags": ["Cold", "Control"],
+      "description": "Studies in entropy and flash-freezing.",
+      "spells": [
+        {
+          "name": "Ray of Frost",
+          "cost": "1 MP",
+          "duration": "1 Round",
+          "range": "60 ft",
+          "cast_dc": 12,
+          "effect": "Make a Ranged Casting Check vs. Target's Defense. On Hit: Deal 1d8 Cold damage and the target's Speed is reduced by 10ft."
+        },
+        {
+          "name": "Ice Knife",
+          "cost": "2 MP",
+          "duration": "Instant",
+          "range": "60 ft",
+          "cast_dc": 15,
+          "effect": "Make a Ranged Casting Check vs Target's Defense. On Hit: 1d10 Piercing damage. Whether you hit or miss, the shard explodes: Target and all adjacent creatures must make a Reflex Save vs. your Result or take 2d6 Cold damage."
+        },
+        {
+          "name": "Glacial Tomb",
+          "cost": "3 MP",
+          "duration": "1 Minute (Concentration)",
+          "range": "30 ft",
+          "cast_dc": 18,
+          "effect": "Target one creature. Make a Casting Check vs. their Fortitude Save. Fail: Target is Restrained (encased in ice). At the end of each of their turns, they can repeat the save. If they fail 3 times total, they are Petrified (Frozen) until thawed."
+        }
+      ]
     },
     {
-      "name": "Ray of Frost",
-      "type": "Spell",
-      "cost": "1 MP",
-      "tags": ["Attack", "Cold", "Debuff"],
-      "effect": "Action: Range 30ft. Make a Ranged Casting Check (vs Defense). On a Hit: Deal 1d8 Cold Damage. Unless the target's Fortitude Save beats your Check, their Speed is Halved for 1 round.",
-      "details": "Good for kiting melee enemies."
+      "name": "Grimoire of the Storm",
+      "type": "Collection",
+      "tags": ["Lightning", "Mobility"],
+      "description": "Studies in electricity and rapid conduction.",
+      "spells": [
+        {
+          "name": "Shocking Grasp",
+          "cost": "1 MP",
+          "duration": "1 Round",
+          "range": "Touch",
+          "cast_dc": 11,
+          "effect": "Make a Melee Casting Check vs. Defense (Advantage if target is wearing metal). On Hit: Deal 1d10 Lightning damage and target cannot use Reactions (no Opportunity Attacks)."
+        },
+        {
+          "name": "Arc Lightning",
+          "cost": "2 MP",
+          "duration": "Instant",
+          "range": "60 ft",
+          "cast_dc": 15,
+          "effect": "Make a Ranged Casting Check vs Defense. On Hit: Deal 2d8 Lightning damage. A bolt then leaps to a second target within 15ft of the first (Auto-hit) for 1d8 Lightning damage."
+        },
+        {
+          "name": "Thunder Step",
+          "cost": "3 MP",
+          "duration": "Instant",
+          "range": "Self / 90 ft",
+          "cast_dc": 17,
+          "effect": "You teleport up to 90ft to an unoccupied space. Immediately after you vanish, a boom sounds. Creatures within 10ft of your starting space must make a Fortitude Save vs. your Result. Fail: 3d10 Thunder damage. Success: Half damage."
+        }
+      ]
     },
     {
-      "name": "Lightning Shock",
-      "type": "Spell",
-      "cost": "1 MP",
-      "tags": ["Attack", "Lightning", "Control"],
-      "effect": "Action: Range Touch. Make a Melee Casting Check (vs Defense). On a Hit: Deal 1d10 Lightning Damage. Unless the target's Reflex Save beats your Check, they cannot use Reactions for 1 round.",
-      "details": "Disables Opportunity Attacks, allowing safe movement."
+      "name": "Grimoire of Force",
+      "type": "Collection",
+      "tags": ["Force", "Utility"],
+      "description": "Manipulation of raw kinetic magical energy.",
+      "spells": [
+        {
+          "name": "Arcane Bolt",
+          "cost": "1 MP",
+          "duration": "Instant",
+          "range": "60 ft",
+          "cast_dc": 11,
+          "effect": "A bolt of pure energy. Make a Casting Check vs Defense. On Hit: Deal 1d4+1 Force damage. This attack ignores the target's Armor Score (AS)."
+        },
+        {
+          "name": "Shatter",
+          "cost": "2 MP",
+          "duration": "Instant",
+          "range": "60 ft",
+          "cast_dc": 14,
+          "effect": "A loud ringing noise erupts in a 10ft radius area. Creatures inside make a Fortitude Save vs Casting Result. Fail: 3d8 Thunder damage (Half on success). Inorganic creatures (Constructs) have Disadvantage on the save."
+        },
+        {
+          "name": "Wall of Force",
+          "cost": "3 MP",
+          "duration": "1 Minute (Concentration)",
+          "range": "60 ft",
+          "cast_dc": 18,
+          "effect": "Create an invisible, indestructible wall of force (20ft wide, 10ft high). It blocks all physical objects and spells. It cannot be dispelled, only disintegrated or waited out."
+        }
+      ]
     },
     {
-      "name": "Burning Hands",
-      "type": "Spell",
-      "cost": "1 MP",
-      "tags": ["AoE", "Fire"],
-      "effect": "Action: 15ft Cone. Make a Casting Check (DC 11). This sets the Save DC. All creatures in the area take 2d6 Fire Damage (Reflex Save for Half).",
-      "details": "Close-range crowd control."
+      "name": "Grimoire of Transmutation",
+      "type": "Collection",
+      "tags": ["Buff", "Utility"],
+      "description": "Altering the physical properties of creatures.",
+      "spells": [
+        {
+          "name": "Expeditious Retreat",
+          "cost": "1 MP",
+          "duration": "1 Minute",
+          "range": "Self",
+          "cast_dc": 11,
+          "effect": "Action. Make a Casting Check. Success: Your Speed increases by 10ft, and you can take the Dash action as a Bonus Action on each of your turns."
+        },
+        {
+          "name": "Enlarge / Reduce",
+          "cost": "2 MP",
+          "duration": "1 Minute (Concentration)",
+          "range": "30 ft",
+          "cast_dc": 14,
+          "effect": "Action. Target a creature. Willing targets accept; unwilling make a Fortitude Save vs. Result. Enlarge: Size doubles, +1d4 Strength Damage on attacks. Reduce: Size halves, -1d4 Strength Damage, +2 Stealth."
+        },
+        {
+          "name": "Haste",
+          "cost": "3 MP",
+          "duration": "1 Minute (Concentration)",
+          "range": "30 ft",
+          "cast_dc": 18,
+          "effect": "Action. Choose a willing creature. Speed is doubled, +2 bonus to Defense, and it gains an additional Action on each of its turns (Attack, Dash, or Disengage only). When the spell ends, the target is Dazed for 1 round."
+        }
+      ]
     },
     {
-      "name": "Shield",
-      "type": "Spell",
-      "cost": "1 MP",
-      "tags": ["Buff", "Defensive"],
-      "effect": "Action: Make a Casting Check (DC 11). Success: You create a barrier of force. You gain +2 Armor Score (AS) for 1 minute.",
-      "details": "Stacks with worn armor, unlike Mage Armor."
+      "name": "Grimoire of Illusion",
+      "type": "Collection",
+      "tags": ["Deception", "Defense"],
+      "description": "Deceiving the senses and obscuring truth.",
+      "spells": [
+        {
+          "name": "Blur",
+          "cost": "1 MP",
+          "duration": "1 Minute (Concentration)",
+          "range": "Self",
+          "cast_dc": 12,
+          "effect": "Action. Your body becomes blurred and shifting. Attack Checks against you have Disadvantage. This effect does not work if the attacker relies on senses other than sight."
+        },
+        {
+          "name": "Invisibility",
+          "cost": "2 MP",
+          "duration": "10 Minutes (Concentration)",
+          "range": "Touch",
+          "cast_dc": 15,
+          "effect": "Action. A creature you touch becomes Invisible. It attacks with Advantage, and attacks against it have Disadvantage. The spell ends immediately if the target attacks or casts a spell."
+        },
+        {
+          "name": "Mirror Image",
+          "cost": "3 MP",
+          "duration": "1 Minute",
+          "range": "Self",
+          "cast_dc": 17,
+          "effect": "Action. Create 3 illusory duplicates. When targeted by an attack, roll d20. On 1-10, the duplicate is hit and destroyed (You take no damage). On 11+, you are targeted normally. Duplicates have Defense 10."
+        }
+      ]
     },
     {
-      "name": "Mage Armor",
-      "type": "Spell",
-      "cost": "1 MP",
-      "tags": ["Buff", "Defensive"],
-      "effect": "Action: Range Touch. Make a Casting Check (DC 11). Success: Target unarmored creature's Base Armor Score becomes 1 for 1 hour.",
-      "details": "Essential for survival without physical armor."
+      "name": "Grimoire of Conjuration",
+      "type": "Collection",
+      "tags": ["Control", "Creation"],
+      "description": "Summoning matter to hinder foes.",
+      "spells": [
+        {
+          "name": "Grease",
+          "cost": "1 MP",
+          "duration": "1 Minute",
+          "range": "30 ft",
+          "cast_dc": 11,
+          "effect": "Action. Cover a 10ft square in slick grease. It becomes Difficult Terrain. Any creature entering the area or ending its turn there must make a Reflex Save vs. your Casting Result or fall Prone."
+        },
+        {
+          "name": "Web",
+          "cost": "2 MP",
+          "duration": "1 Hour (Concentration)",
+          "range": "60 ft",
+          "cast_dc": 14,
+          "effect": "Action. Fill a 20ft cube with sticky webs. Area is Difficult Terrain. Creatures starting their turn there must make a Reflex Save vs. Result or be Restrained. They can use an Action to make a Strength check to escape. Webs are flammable."
+        },
+        {
+          "name": "Misty Step",
+          "cost": "3 MP",
+          "duration": "Instant",
+          "range": "Self",
+          "cast_dc": 16,
+          "effect": "Bonus Action (or Move Action). You teleport up to 30 feet to an unoccupied space that you can see. This does not provoke counter-attacks."
+        }
+      ]
     },
     {
-      "name": "Feather Fall",
-      "type": "Spell",
-      "cost": "1 MP",
-      "tags": ["Utility", "Reaction"],
-      "effect": "Reaction: Trigger when you or a creature within 30ft falls. Make a Casting Check (DC 9). Success: The target descends slowly and takes 0 Falling Damage.",
-      "details": "Saves lives in vertical dungeons."
+      "name": "Grimoire of the Mind",
+      "type": "Collection",
+      "tags": ["Enchantment", "Control"],
+      "description": "Spells to cloud the senses and dominate the will.",
+      "spells": [
+        {
+          "name": "Sleep",
+          "cost": "1 MP",
+          "duration": "1 Minute",
+          "range": "60 ft",
+          "cast_dc": 12,
+          "effect": "Action. Roll 5d8. This is the total HP of creatures affected in a 20ft Radius. Starting with the creature with the lowest current HP, targets fall Unconscious (cannot wake until damaged or shaken). Undead and Constructs are immune."
+        },
+        {
+          "name": "Hold Person",
+          "cost": "2 MP",
+          "duration": "1 Minute (Concentration)",
+          "range": "30 ft",
+          "cast_dc": 15,
+          "effect": "Action. Target a Humanoid. Make a Casting Check vs. Will Save. Success: Target is Paralyzed (Stunned, attacks against it are Auto-Crits). The target repeats the save at the end of each of its turns."
+        },
+        {
+          "name": "Confusion",
+          "cost": "3 MP",
+          "duration": "1 Round",
+          "range": "60 ft",
+          "cast_dc": 17,
+          "effect": "Action. Target a 10ft Radius. Creatures must make a Will Save vs. Casting Result. Fail: Creatures are Confused. On their turn, roll d6: 1-2 Do nothing, 3-4 Run in random direction, 5-6 Attack nearest creature (friend or foe)."
+        }
+      ]
     },
     {
-      "name": "Grease",
-      "type": "Spell",
-      "cost": "1 MP",
-      "tags": ["Control", "AoE"],
-      "effect": "Action: Range 30ft. Make a Casting Check (DC 11). Success: A 10ft square becomes Difficult Terrain. Creatures entering or starting there fall Prone unless their Reflex Save beats your Check.",
-      "details": "Non-concentration battlefield control."
+      "name": "Grimoire of Telekinesis",
+      "type": "Collection",
+      "tags": ["Force", "Utility"],
+      "description": "Manipulation of matter and gravity.",
+      "spells": [
+        {
+          "name": "Force Push",
+          "cost": "1 MP",
+          "duration": "Instant",
+          "range": "30 ft",
+          "cast_dc": 11,
+          "effect": "Action. Target a creature or object (Medium or smaller). Make a Casting Check vs. Strength Save. Success: The target is pushed 15ft directly away from you. If it hits a wall, it takes 1d6 Impact damage."
+        },
+        {
+          "name": "Levitate",
+          "cost": "2 MP",
+          "duration": "10 Minutes (Concentration)",
+          "range": "60 ft",
+          "cast_dc": 14,
+          "effect": "Action. One creature or loose object rises vertically up to 20ft. Unwilling targets make a Fortitude Save to grab onto something. A levitating creature cannot move (Speed 0) unless it can push off a surface."
+        },
+        {
+          "name": "Telekinesis",
+          "cost": "3 MP",
+          "duration": "1 Minute (Concentration)",
+          "range": "60 ft",
+          "cast_dc": 18,
+          "effect": "Action. You can manipulate Large or smaller objects/creatures. You can move them 30ft through the air. You can use them as weapons (Casting Check vs Defense, 3d10 damage) or hold them Restrained in the air (Casting vs Strength)."
+        }
+      ]
     },
     {
-      "name": "Web",
-      "type": "Spell",
-      "cost": "1 MP",
-      "tags": ["Control", "AoE"],
-      "effect": "Action: Range 30ft. Make a Casting Check (DC 13). Success: Create a 15ft cube of sticky webs (Difficult Terrain). Creatures starting there are Grappled unless Reflex Save beats your Check.",
-      "details": "Flammable. Burns away if hit by Fire damage."
+      "name": "Grimoire of Sight",
+      "type": "Collection",
+      "tags": ["Divination", "Information"],
+      "description": "Revealing that which is hidden.",
+      "spells": [
+        {
+          "name": "Detect Magic",
+          "cost": "1 MP",
+          "duration": "10 Minutes",
+          "range": "Self (30ft Radius)",
+          "cast_dc": 10,
+          "effect": "Action. You sense the presence of magic within 30ft. You see a faint aura around magic items or creatures. You know the school of magic (e.g., Evocation, Necromancy) if you spend an Action focusing."
+        },
+        {
+          "name": "See Invisibility",
+          "cost": "2 MP",
+          "duration": "1 Hour",
+          "range": "Self",
+          "cast_dc": 14,
+          "effect": "Action. You see Invisible creatures and objects as if they were visible. You can also see into the Ethereal Plane (ghosts appear distinct)."
+        },
+        {
+          "name": "Arcane Eye",
+          "cost": "3 MP",
+          "duration": "1 Hour (Concentration)",
+          "range": "Unlimited",
+          "cast_dc": 17,
+          "effect": "Action. You create an invisible magical eye. You mentally receive visual information from it. It has Darkvision 30ft. You can move it 30ft per turn. It can pass through small holes but cannot pass solid barriers."
+        }
+      ]
     },
     {
-      "name": "Sleep",
-      "type": "Spell",
-      "cost": "1 MP",
-      "tags": ["Control", "AoE"],
-      "effect": "Action: Range 30ft. Make a Casting Check (DC 11). Success: Roll 3d8. This is the total HP of creatures affected in a 15ft area. Starting with the lowest HP, targets fall Unconscious (1 min) until the pool is depleted.",
-      "details": "Extremely powerful against Minions and wounded foes."
+      "name": "Grimoire of Traversal",
+      "type": "Collection",
+      "tags": ["Utility", "Movement"],
+      "description": "Overcoming physical barriers and obstacles.",
+      "spells": [
+        {
+          "name": "Knock",
+          "cost": "1 MP",
+          "duration": "Instant",
+          "range": "60 ft",
+          "cast_dc": 12,
+          "effect": "Action. A loud knock emanates from a locked object (door, chest, shackle). A non-magical lock opens instantly. The sound is audible up to 300ft away (Guaranteed to alert nearby enemies)."
+        },
+        {
+          "name": "Spider Climb",
+          "cost": "2 MP",
+          "duration": "1 Hour",
+          "range": "Touch",
+          "cast_dc": 13,
+          "effect": "Action. A willing creature gains the ability to move up, down, and across vertical surfaces and upside down along ceilings, while leaving its hands free. It gains a Climb Speed equal to its walking speed."
+        },
+        {
+          "name": "Fly",
+          "cost": "3 MP",
+          "duration": "10 Minutes (Concentration)",
+          "range": "Touch",
+          "cast_dc": 18,
+          "effect": "Action. A willing creature gains a Flying Speed of 60ft. When the spell ends, the target falls if it is still aloft, unless it can stop the fall."
+        }
+      ]
     },
     {
-      "name": "Identify",
-      "type": "Spell",
-      "cost": "1 MP",
-      "tags": ["Utility", "Ritual"],
-      "effect": "Action: Touch one object. Make a Casting Check (DC 9). Success: Learn the magical properties, functions, and command words of the item. Takes 1 Dungeon Turn (10 mins).",
-      "details": "Required to use found magic items safely."
-    },
-    {
-      "name": "Dispel Magic",
-      "type": "Spell",
-      "cost": "1 MP",
-      "tags": ["Utility", "Control"],
-      "effect": "Action: Range 60ft. Target one magical effect. Make a Casting Check (DC 13). Success: The spell or effect ends immediately.",
-      "details": "Can strip buffs from enemies or clear traps."
+      "name": "Grimoire of Warding",
+      "type": "Collection",
+      "tags": ["Abjuration", "Defense"],
+      "description": "Magical barriers and counter-measures.",
+      "spells": [
+        {
+          "name": "Mage Armor",
+          "cost": "1 MP",
+          "duration": "1 Hour",
+          "range": "Touch",
+          "cast_dc": 12,
+          "effect": "Target unarmored creature's skin hardens. Their Base Armor Score becomes 1. (This does not stack with worn armor)."
+        },
+        {
+          "name": "Dispel Magic",
+          "cost": "2 MP",
+          "duration": "Instant",
+          "range": "60 ft",
+          "cast_dc": 15,
+          "effect": "Choose one creature, object, or magical effect. Make a Casting Check vs. the DC of the magic (Standard DC 13 if unknown). Success: The spell ends."
+        },
+        {
+          "name": "Globe of Invulnerability",
+          "cost": "3 MP",
+          "duration": "1 Minute (Concentration)",
+          "range": "Self (10ft Radius)",
+          "cast_dc": 18,
+          "effect": "Create a shimmering barrier. Spells of 1 MP or 2 MP cast from outside the barrier cannot affect creatures or objects inside it."
+        }
+      ]
     },
     {
       "name": "Arcane Recovery",
@@ -2087,6 +2391,14 @@
       "tags": ["Resource", "1/Rest"],
       "effect": "Action: You enter a short meditative trance to reorganize your mind. Regain 1d4 Mana Points (MP). Usable once per Long Rest.",
       "details": "Vital for sustaining a long dungeon crawl."
+    },
+    {
+      "name": "Arcane Familiar",
+      "type": "Ability",
+      "cost": "1 MP (Summon)",
+      "tags": ["Minion", "Utility"],
+      "effect": "You summon a tiny magical spirit (e.g., Owl, Cat, Imp). It acts on your turn. It has 1 HP and cannot attack, but it can Scout (share senses up to 100ft) or use the Help action to give you Advantage on one Check per turn. If destroyed, you must spend a Short Rest and 1 MP to resummon it.",
+      "details": "The ultimate scout and lab assistant."
     },
     {
       "name": "Arcane Potency",
@@ -2132,7 +2444,7 @@
     }
   ]
 },
-    {
+{
   "id": "arch_occultist",
   "name": "The Occultist",
   "role": "Spellcaster",
@@ -2146,92 +2458,388 @@
   },
   "talents": [
     {
-      "name": "Blood Bolt",
-      "type": "Spell",
-      "cost": "2 HP",
-      "tags": ["Attack", "Necrotic", "Blood Magic"],
-      "effect": "Action: Range 30ft. You fuel this spell with your own vitality instead of Mana. Take 2 Damage (unavoidable). Make a Ranged Casting Check (vs Defense). On a Hit: Deal 1d10 Necrotic Damage.",
-      "details": "A powerful cantrip that slowly kills you."
+      "name": "Rite of Blood",
+      "type": "Collection",
+      "tags": ["Necrotic", "Healing"],
+      "description": "Magic fueled by the vitality of the living.",
+      "spells": [
+        {
+          "name": "Blood Needle",
+          "cost": "1 MP",
+          "duration": "Instant",
+          "range": "60 ft",
+          "cast_dc": 11,
+          "effect": "Make a Ranged Casting Check vs. Defense. On Hit: Deal 1d8 Necrotic damage. On a Critical Hit, the target gains the Bleeding condition (1d4 damage/turn)."
+        },
+        {
+          "name": "Vampiric Touch",
+          "cost": "2 MP",
+          "duration": "Instant",
+          "range": "Touch",
+          "cast_dc": 14,
+          "effect": "Make a Melee Casting Check vs. Defense. On Hit: Deal 3d6 Necrotic damage. You immediately regain Hit Points equal to half the damage dealt."
+        },
+        {
+          "name": "Exsanguinate",
+          "cost": "3 MP",
+          "duration": "Instant",
+          "range": "30 ft",
+          "cast_dc": 18,
+          "effect": "Target a living creature. Make a Casting Check vs. Fortitude Save. Fail: The target takes 6d6 Necrotic Damage as their blood boils. You regain Hit Points equal to 1/4 of the damage dealt. Success: Half damage, no healing."
+        }
+      ]
     },
     {
-      "name": "Hex",
-      "type": "Spell",
-      "cost": "1 MP",
-      "tags": ["Debuff", "Curse"],
-      "effect": "Action: Range 30ft. Casting Check vs. Target's Will Save. Success: Target is Cursed (1 min). Choose one Stat (STR, DEX, etc.); they have Disadvantage on checks with it. You deal +1d4 Necrotic damage on all hits against them.",
-      "details": "No concentration required, but you can only have one Hex active at a time."
+      "name": "Rite of Shadows",
+      "type": "Collection",
+      "tags": ["Stealth", "Defense"],
+      "description": "Manipulation of darkness and fear.",
+      "spells": [
+        {
+          "name": "Umbral Armor",
+          "cost": "1 MP",
+          "duration": "1 Hour",
+          "range": "Self",
+          "cast_dc": 12,
+          "effect": "You wrap yourself in shadows. You gain +1 Armor Score. While in Dim Light or Darkness, attacks against you have Disadvantage."
+        },
+        {
+          "name": "Darkness",
+          "cost": "2 MP",
+          "duration": "10 Minutes (Concentration)",
+          "range": "60 ft",
+          "cast_dc": 15,
+          "effect": "Create a 15ft Radius sphere of magical darkness. Creatures inside are Blinded (unless they have magical Devil's Sight). Non-magical light cannot illuminate this area."
+        },
+        {
+          "name": "Shadow Step",
+          "cost": "3 MP",
+          "duration": "Instant",
+          "range": "Self",
+          "cast_dc": 18,
+          "effect": "Bonus Action. You teleport from one area of shadow to another up to 60ft away. You immediately gain the Hidden condition, and your next attack this turn has Advantage."
+        }
+      ]
     },
     {
-      "name": "Ray of Sickness",
-      "type": "Spell",
-      "cost": "1 MP",
-      "tags": ["Attack", "Poison", "Debuff"],
-      "effect": "Action: Range 30ft. Ranged Casting Check. On Hit: Deal 1d8 Poison Damage. Unless the target's Fortitude Save beats your Check, they are Poisoned for 1 minute.",
-      "details": "Poisoned creatures take 1d6 damage at the start of their turn."
+      "name": "Rite of the Void",
+      "type": "Collection",
+      "tags": ["Psychic", "Control"],
+      "description": "Channeling the madness of the Far Realm.",
+      "spells": [
+        {
+          "name": "Mind Spike",
+          "cost": "1 MP",
+          "duration": "Instant",
+          "range": "60 ft",
+          "cast_dc": 12,
+          "effect": "Target one creature. Casting Check vs. Will Save. Fail: Target takes 1d10 Psychic damage. This spell leaves no physical mark and makes no noise (Subtle)."
+        },
+        {
+          "name": "Whispers of Madness",
+          "cost": "2 MP",
+          "duration": "1 Round",
+          "range": "30 ft",
+          "cast_dc": 15,
+          "effect": "Target up to 3 creatures within range. Casting Check vs. Will Save. Fail: Targets are Dazed (Action OR Move only) until the end of their next turn as they hear screaming voices."
+        },
+        {
+          "name": "Void Tentacles",
+          "cost": "3 MP",
+          "duration": "1 Minute (Concentration)",
+          "range": "60 ft",
+          "cast_dc": 17,
+          "effect": "Create a 20ft square of black, rubbery tentacles. Area is Difficult Terrain. Creatures starting their turn there take 3d6 Bludgeoning damage and are Restrained unless their Strength Save beats your Result."
+        }
+      ]
     },
     {
-      "name": "Fear",
-      "type": "Spell",
-      "cost": "2 MP",
-      "tags": ["Control", "AoE"],
-      "effect": "Action: 15ft Cone. Make one Casting Check (DC 13). All creatures in the area become Frightened for 1 minute unless their Will Save beats your Check.",
-      "details": "Frightened creatures must flee and cannot move closer to you."
+      "name": "Rite of Ruin",
+      "type": "Collection",
+      "tags": ["Curse", "Debuff"],
+      "description": "Weakening enemies and ensuring their demise.",
+      "spells": [
+        {
+          "name": "Bane",
+          "cost": "1 MP",
+          "duration": "1 Minute (Concentration)",
+          "range": "30 ft",
+          "cast_dc": 12,
+          "effect": "Target up to 3 enemies. Casting Check vs. Will Save. Fail: Targets subtract 1d4 from all Attack Checks and Saving Throws for the duration."
+        },
+        {
+          "name": "Hex",
+          "cost": "2 MP",
+          "duration": "1 Hour (Concentration)",
+          "range": "60 ft",
+          "cast_dc": 14,
+          "effect": "Target one creature. Casting Check vs. Will Save. Success: You deal +1d6 Necrotic damage whenever you hit it. Also, choose one Attribute (e.g. STR); target has Disadvantage on checks with that stat."
+        },
+        {
+          "name": "Curse of Frailty",
+          "cost": "3 MP",
+          "duration": "1 Minute",
+          "range": "30 ft",
+          "cast_dc": 18,
+          "effect": "Target one creature. Casting Check vs. Fortitude Save. Fail: Target gains Vulnerability to all Physical Damage (takes Double Damage). Target can repeat the save at the end of each of its turns."
+        }
+      ]
     },
     {
-      "name": "Blindness",
-      "type": "Spell",
-      "cost": "2 MP",
-      "tags": ["Debuff", "Curse"],
-      "effect": "Action: Range 30ft. Casting Check (DC 13) vs. Target's Fortitude Save. Success: Target is Blinded for 1 minute. They can repeat the save at the end of their turns.",
-      "details": "Blinded enemies grant Advantage to attackers."
+      "name": "Rite of the Grave",
+      "type": "Collection",
+      "tags": ["Necromancy", "Minion"],
+      "description": "Raising the dead and weaponizing corpses.",
+      "spells": [
+        {
+          "name": "Chill Touch",
+          "cost": "1 MP",
+          "duration": "1 Round",
+          "range": "60 ft",
+          "cast_dc": 11,
+          "effect": "Make a Ranged Casting Check vs. Defense. On Hit: Deal 1d8 Necrotic damage. The target cannot regain Hit Points until the start of your next turn. If the target is Undead, it has Disadvantage on attacks against you."
+        },
+        {
+          "name": "Animate Dead",
+          "cost": "2 MP",
+          "duration": "1 Hour",
+          "range": "10 ft",
+          "cast_dc": 14,
+          "effect": "Target a pile of bones or a fresh corpse. It rises as a Skeleton or Zombie Minion under your control. Stats: 5 HP, AC 10, Speed 30, Attack +2 (1d6 damage). It acts on your turn (Commanding it requires a Bonus Action). You can control only one at a time."
+        },
+        {
+          "name": "Corpse Explosion",
+          "cost": "3 MP",
+          "duration": "Instant",
+          "range": "60 ft",
+          "cast_dc": 17,
+          "effect": "Target a corpse (Medium size or larger). It detonates violently. All creatures within 15ft of the corpse take 4d6 Necrotic damage and are knocked Prone. Reflex Save vs. Casting Result for half damage."
+        }
+      ]
     },
     {
-      "name": "Summon Imp",
-      "type": "Spell",
-      "cost": "2 MP",
-      "tags": ["Summon", "Minion"],
-      "effect": "Action: Summon a tiny fiend for 1 hour. Stats: 5 HP, AS 1, Attack +2 (1d4 dmg). It obeys your verbal commands (no action required), but will try to twist the intent of your words.",
-      "details": "Great for scouting or flanking, risky for precise tasks."
+      "name": "Rite of the Infernal",
+      "type": "Collection",
+      "tags": ["Fire", "Offensive"],
+      "description": "Hellfire and demonic wrath.",
+      "spells": [
+        {
+          "name": "Hellish Rebuke",
+          "cost": "1 MP",
+          "duration": "Instant",
+          "range": "60 ft",
+          "cast_dc": 11,
+          "effect": "Reaction. Trigger: You are damaged by a creature. The attacker is surrounded by hellfire. They must make a Reflex Save vs. Casting Result. Fail: 2d10 Fire damage. Success: Half damage."
+        },
+        {
+          "name": "Scorching Ray",
+          "cost": "2 MP",
+          "duration": "Instant",
+          "range": "60 ft",
+          "cast_dc": 15,
+          "effect": "You hurl three rays of fire. Make three separate Ranged Casting Checks. You can target one creature or several. On Hit: Each ray deals 2d6 Fire damage."
+        },
+        {
+          "name": "Hellfire Pillar",
+          "cost": "3 MP",
+          "duration": "Instant",
+          "range": "60 ft",
+          "cast_dc": 18,
+          "effect": "You call down a column of cursed flame. 10ft Radius, 40ft High cylinder. Creatures inside take 4d6 Fire damage and 2d6 Necrotic damage. Reflex Save vs. Casting Result for half."
+        }
+      ]
     },
     {
-      "name": "Shadow Armor",
-      "type": "Spell",
-      "cost": "1 MP",
-      "tags": ["Buff", "Defensive"],
-      "effect": "Action: Range Self. Wreathe yourself in shadows for 1 hour. You gain +1 Armor Score. You have Advantage on Stealth checks in dim light or darkness.",
-      "details": "Defensive and utility buff in one."
+      "name": "Rite of Desire",
+      "type": "Collection",
+      "tags": ["Enchantment", "Control"],
+      "description": "Bending wills through charm and madness.",
+      "spells": [
+        {
+          "name": "Charm Person",
+          "cost": "1 MP",
+          "duration": "1 Hour",
+          "range": "30 ft",
+          "cast_dc": 12,
+          "effect": "Target one humanoid. Casting Check vs. Will Save. Success: Target is Charmed (Friendly, treats you as an acquaintance). The spell ends if you or your allies deal damage to it. Combat Effect: The target will not attack you."
+        },
+        {
+          "name": "Suggestion",
+          "cost": "2 MP",
+          "duration": "8 Hours (Concentration)",
+          "range": "30 ft",
+          "cast_dc": 15,
+          "effect": "You suggest a course of activity (limited to a sentence or two) to a creature that can hear you. Casting Check vs. Will Save. Success: The creature pursues the course of action to the best of its ability. The suggestion must not be obviously self-harming."
+        },
+        {
+          "name": "Crown of Madness",
+          "cost": "3 MP",
+          "duration": "1 Minute (Concentration)",
+          "range": "60 ft",
+          "cast_dc": 17,
+          "effect": "Target one humanoid. Casting Check vs. Will Save. Success: A twisted crown of jagged iron appears on its head. At the start of its turn, it must use its Action to make a melee attack against a creature other than itself that you mentally choose. Target can repeat save at end of turn."
+        }
+      ]
     },
     {
-      "name": "Vampiric Touch",
-      "type": "Spell",
-      "cost": "2 MP",
-      "tags": ["Attack", "Healing", "Necrotic"],
-      "effect": "Action: Range Touch. Make a Melee Casting Check (vs Defense). On Hit: Deal 2d6 Necrotic Damage. You regain HP equal to half the damage dealt.",
-      "details": "Essential for sustaining Blood Magic usage."
+      "name": "Rite of the Chain",
+      "type": "Collection",
+      "tags": ["Summoning", "Utility"],
+      "description": "Binding entities to serve.",
+      "spells": [
+        {
+          "name": "Unseen Servant",
+          "cost": "1 MP",
+          "duration": "1 Hour",
+          "range": "60 ft",
+          "cast_dc": 10,
+          "effect": "Create an invisible, mindless, shapeless force. It can perform simple tasks (fetch, clean, light torches, trigger traps). It has AC 10, 1 HP, and Strength 2. It cannot attack."
+        },
+        {
+          "name": "Summon Lesser Demon",
+          "cost": "2 MP",
+          "duration": "10 Minutes (Concentration)",
+          "range": "30 ft",
+          "cast_dc": 14,
+          "effect": "Summon a Quasit or Dretch. Stats: 15 HP, AC 11, Attack +4 (1d6+2 damage). It acts on your turn. If you lose Concentration, the demon does not disappear but becomes hostile and attacks the nearest non-demon."
+        },
+        {
+          "name": "Planar Binding",
+          "cost": "3 MP",
+          "duration": "1 Minute (Concentration)",
+          "range": "30 ft",
+          "cast_dc": 18,
+          "effect": "Target one Extraplanar creature (Elemental, Fiend, Fey). Casting Check vs. Will Save. Success: The creature is Paralyzed by spectral chains. If it takes damage, the chains break, but it remains Slowed (Half Speed) for the duration."
+        }
+      ]
     },
     {
-      "name": "Charm Person",
-      "type": "Spell",
-      "cost": "1 MP",
-      "tags": ["Control", "Social"],
-      "effect": "Action: Range 30ft. Target Humanoid. Casting Check (DC 11) vs. Will Save. Success: Target is Charmed (Friendly, cannot attack you) for 1 hour or until harmed.",
-      "details": "Combat ends if the leader is Charmed."
+      "name": "Rite of the Flesh",
+      "type": "Collection",
+      "tags": ["Buff", "Transformation"],
+      "description": "Warping the body to survive the unnatural.",
+      "spells": [
+        {
+          "name": "False Life",
+          "cost": "1 MP",
+          "duration": "1 Hour",
+          "range": "Self",
+          "cast_dc": 10,
+          "effect": "Action. You bolster your vitality with necrotic energy. You gain 1d4 + 4 Temporary Hit Points. While you have these Temp HP, you have Advantage on checks to resist Poison."
+        },
+        {
+          "name": "Spider Climb",
+          "cost": "2 MP",
+          "duration": "1 Hour (Concentration)",
+          "range": "Touch",
+          "cast_dc": 13,
+          "effect": "Action. A willing creature gains the ability to move up, down, and across vertical surfaces and upside down along ceilings, while leaving its hands free. It gains a Climb Speed equal to its walking speed."
+        },
+        {
+          "name": "Gaseous Form",
+          "cost": "3 MP",
+          "duration": "10 Minutes (Concentration)",
+          "range": "Self",
+          "cast_dc": 17,
+          "effect": "Action. You transform into a misty cloud. You have a Fly Speed of 10ft and Resistance to non-magical damage. You can pass through small cracks. You cannot attack or cast spells."
+        }
+      ]
     },
     {
-      "name": "Speak w/ Dead",
-      "type": "Spell",
-      "cost": "2 MP",
-      "tags": ["Utility", "Ritual"],
-      "effect": "Action: Touch a corpse. It animates briefly to answer 3 questions. It must answer truthfully, but can be cryptic or hostile. Takes 1 Dungeon Turn.",
-      "details": "The dead know secrets the living have forgotten."
+      "name": "Rite of Passage",
+      "type": "Collection",
+      "tags": ["Teleportation", "Movement"],
+      "description": "Moving through the cracks in reality.",
+      "spells": [
+        {
+          "name": "Shadow Strider",
+          "cost": "1 MP",
+          "duration": "1 Minute",
+          "range": "Self",
+          "cast_dc": 11,
+          "effect": "Action. Your movement becomes a blur. Your Speed increases by 10ft, and opportunity attacks against you are made with Disadvantage."
+        },
+        {
+          "name": "Misty Step",
+          "cost": "2 MP",
+          "duration": "Instant",
+          "range": "Self",
+          "cast_dc": 14,
+          "effect": "Bonus Action. You teleport up to 30 feet to an unoccupied space that you can see. This allows you to escape Grapples or restraints instantly."
+        },
+        {
+          "name": "Dimension Door",
+          "cost": "3 MP",
+          "duration": "Instant",
+          "range": "500 ft",
+          "cast_dc": 18,
+          "effect": "Action. You teleport yourself and one willing creature of your size or smaller to a spot within range. You do not need to see the destination, but if you teleport into a solid object, you take 4d6 Force damage and the spell fails."
+        }
+      ]
     },
     {
-      "name": "Dark Pulse",
-      "type": "Spell",
-      "cost": "2 MP",
-      "tags": ["AoE", "Necrotic", "Risky"],
-      "effect": "Action: 10ft Radius centered on YOU. Make one Casting Check (DC 13). All creatures in range (Enemies AND Allies, excluding you) take 1d8 Necrotic Damage and are Weakened unless Fortitude Save > Check.",
-      "details": "High impact, but friendly fire is guaranteed."
+      "name": "Rite of Secrets",
+      "type": "Collection",
+      "tags": ["Divination", "Lore"],
+      "description": "Extracting truth from the unwilling or the unseen.",
+      "spells": [
+        {
+          "name": "Comprehend Languages",
+          "cost": "1 MP",
+          "duration": "1 Hour",
+          "range": "Self",
+          "cast_dc": 10,
+          "effect": "Action. You understand the literal meaning of any spoken language you hear. You can also read any written language you can touch."
+        },
+        {
+          "name": "Detect Thoughts",
+          "cost": "2 MP",
+          "duration": "1 Minute (Concentration)",
+          "range": "30 ft",
+          "cast_dc": 14,
+          "effect": "Action. You focus on a creature. If they fail a Will Save vs. your Casting Check, you read their surface thoughts (what is foremost on their mind). As an Action, you can probe deeper, forcing another Save. Fail: You gain specific info, but they know you are probing."
+        },
+        {
+          "name": "Contact Entity",
+          "cost": "3 MP",
+          "duration": "Instant",
+          "range": "Self",
+          "cast_dc": 18,
+          "effect": "Ritual (1 Turn). You mentally contact a demi-god, demon, or alien spirit. Ask one question. The GM answers truthfully (cryptically). Cost: You must make a Will Save (DC 15). Fail: You take 3d6 Psychic Damage and are Confused for 1 minute."
+        }
+      ]
+    },
+    {
+      "name": "Rite of Deceit",
+      "type": "Collection",
+      "tags": ["Illusion", "Utility"],
+      "description": "Masks, lies, and silence.",
+      "spells": [
+        {
+          "name": "Disguise Self",
+          "cost": "1 MP",
+          "duration": "1 Hour",
+          "range": "Self",
+          "cast_dc": 11,
+          "effect": "Action. You make yourself look different (including clothing/armor). You can appear 1 foot shorter or taller. A creature can discern it is an illusion with a successful Scrutiny Check vs. your Casting Result."
+        },
+        {
+          "name": "Silence",
+          "cost": "2 MP",
+          "duration": "1 Minute (Concentration)",
+          "range": "60 ft",
+          "cast_dc": 15,
+          "effect": "Action. Create a 20ft Radius sphere of absolute silence. No sound can pass through. Creatures inside cannot cast spells with Verbal components and are immune to Thunder damage."
+        },
+        {
+          "name": "Mislead",
+          "cost": "3 MP",
+          "duration": "1 Hour (Concentration)",
+          "range": "Self",
+          "cast_dc": 17,
+          "effect": "Action. You become Invisible. At the same time, an illusory double of you appears where you stood. You can use your Action to move the double and make it speak. The invisibility ends if you attack or cast a spell."
+        }
+      ]
     },
     {
       "name": "Blood Price",
@@ -2297,18 +2905,10 @@
       "tags": ["Debuff"],
       "effect": "When a creature fails a Saving Throw against one of your spells that inflicts a Condition (e.g., Fear, Blindness), they also take 1d6 Psychic Damage.",
       "details": "Adds bite to your crowd control."
-    },
-    {
-      "name": "Dark Resilience",
-      "type": "Passive",
-      "cost": "-",
-      "tags": ["Defensive"],
-      "effect": "You have Advantage on checks to resist the Frightened or Charmed conditions.",
-      "details": "You have seen worse things in the dark."
     }
   ]
 },
-    {
+{
   "id": "arch_priest",
   "name": "The Priest",
   "role": "Spellcaster",
@@ -2322,108 +2922,388 @@
   },
   "talents": [
     {
-      "name": "Healing Word",
-      "type": "Spell",
-      "cost": "1 MP",
-      "tags": ["Healing", "Ranged"],
-      "effect": "Action: Range 30ft. Make a Casting Check (DC 11). Success: One willing creature regains 1d6 + WIS Modifier Hit Points.",
-      "details": "Can be cast on a Dying creature to stabilize them."
+      "name": "Liturgy of Life",
+      "type": "Collection",
+      "tags": ["Healing", "Restoration"],
+      "description": "Prayers that knit flesh and restore vitality.",
+      "spells": [
+        {
+          "name": "Healing Word",
+          "cost": "1 MP",
+          "duration": "Instant",
+          "range": "60 ft",
+          "cast_dc": 11,
+          "effect": "Action. Make a Casting Check. Success: A living creature you can see regains 1d4 + WIS Mod Hit Points. Effective for stabilizing dying allies at range."
+        },
+        {
+          "name": "Cure Wounds",
+          "cost": "2 MP",
+          "duration": "Instant",
+          "range": "Touch",
+          "cast_dc": 14,
+          "effect": "Action. You lay hands on a creature. Make a Casting Check. Success: The target regains 2d8 + WIS Mod Hit Points. If the target is Prone or Unconscious, they can stand up immediately."
+        },
+        {
+          "name": "Mass Healing Word",
+          "cost": "3 MP",
+          "duration": "Instant",
+          "range": "60 ft",
+          "cast_dc": 17,
+          "effect": "Action. You speak a word of reprieve. Up to 4 creatures within range regain 1d8 + WIS Mod Hit Points. Undead and Constructs are unaffected."
+        }
+      ]
     },
     {
-      "name": "Cure Wounds",
-      "type": "Spell",
-      "cost": "1 MP",
-      "tags": ["Healing", "Touch"],
-      "effect": "Action: Range Touch. Make a Casting Check (DC 11). Success: One willing creature regains 2d6 Hit Points.",
-      "details": "More potent healing requires physical contact."
+      "name": "Liturgy of Light",
+      "type": "Collection",
+      "tags": ["Radiant", "Offensive"],
+      "description": "Calling down the burning judgment of the heavens.",
+      "spells": [
+        {
+          "name": "Sacred Flame",
+          "cost": "1 MP",
+          "duration": "Instant",
+          "range": "60 ft",
+          "cast_dc": 11,
+          "effect": "Action. Target one creature. Make a Casting Check vs. their Reflex Save. Success: Deal 1d8 Radiant Damage. This damage ignores Cover."
+        },
+        {
+          "name": "Guiding Bolt",
+          "cost": "2 MP",
+          "duration": "1 Round",
+          "range": "120 ft",
+          "cast_dc": 15,
+          "effect": "Action. Make a Ranged Casting Check vs. Defense. On Hit: Deal 3d6 Radiant Damage. The next Attack Check made against this target by you or an ally has Advantage."
+        },
+        {
+          "name": "Sunbeam",
+          "cost": "3 MP",
+          "duration": "Instant",
+          "range": "60 ft Line",
+          "cast_dc": 18,
+          "effect": "Action. A beam of brilliant light flashes out (5ft wide). Creatures in the line make a Fortitude Save vs. Casting Result. Fail: 4d8 Radiant Damage and Blinded for 1 round. Success: Half damage."
+        }
+      ]
     },
     {
-      "name": "Sacred Flame",
-      "type": "Spell",
-      "cost": "1 MP",
-      "tags": ["Attack", "Radiant"],
-      "effect": "Action: Range 30ft. Make a Ranged Casting Check (vs Defense). On a Hit: Deal 1d10 Radiant Damage. If the target is Undead, this damage Ignores Armor Score.",
-      "details": "Searing light that burns the unholy."
+      "name": "Liturgy of the Guardian",
+      "type": "Collection",
+      "tags": ["Abjuration", "Defense"],
+      "description": "Shielding the faithful from harm.",
+      "spells": [
+        {
+          "name": "Shield of Faith",
+          "cost": "1 MP",
+          "duration": "1 Minute (Concentration)",
+          "range": "60 ft",
+          "cast_dc": 11,
+          "effect": "Action. One creature gains a shimmering field. Their Armor Score (AS) increases by +1. This stacks with worn armor and shields."
+        },
+        {
+          "name": "Sanctuary",
+          "cost": "2 MP",
+          "duration": "1 Minute",
+          "range": "30 ft",
+          "cast_dc": 14,
+          "effect": "Action. Ward a creature. Any enemy attempting to attack them must make a Will Save vs. Casting Result. On a failure, they lose the attack or must choose a new target. Ends if the warded creature makes an attack or casts a spell."
+        },
+        {
+          "name": "Circle of Power",
+          "cost": "3 MP",
+          "duration": "1 Minute (Concentration)",
+          "range": "Self (30ft Radius)",
+          "cast_dc": 18,
+          "effect": "Action. Holy energy radiates from you. You and all allies in the aura have Advantage on Saving Throws against Spells and Magical Effects. If a spell deals half damage on a save, it deals no damage instead."
+        }
+      ]
     },
     {
-      "name": "Guiding Bolt",
-      "type": "Spell",
-      "cost": "1 MP",
-      "tags": ["Attack", "Radiant", "Support"],
-      "effect": "Action: Range 60ft. Make a Ranged Casting Check (vs Defense). On a Hit: Deal 2d6 Radiant Damage. The next Attack made against this target by an ally has Advantage.",
-      "details": "High damage and setup in one."
+      "name": "Liturgy of War",
+      "type": "Collection",
+      "tags": ["Buff", "Combat"],
+      "description": "Blessings for the front lines.",
+      "spells": [
+        {
+          "name": "Bless",
+          "cost": "1 MP",
+          "duration": "1 Minute (Concentration)",
+          "range": "30 ft",
+          "cast_dc": 12,
+          "effect": "Action. Choose up to 3 allies. Whenever they make an Attack Check or Saving Throw, they add +1 to the result."
+        },
+        {
+          "name": "Spiritual Weapon",
+          "cost": "2 MP",
+          "duration": "1 Minute",
+          "range": "60 ft",
+          "cast_dc": 15,
+          "effect": "Action. You create a floating spectral weapon. When you cast it, and as a Bonus Action on subsequent turns, you can make a Melee Spell Attack against a creature within 5ft of the weapon. On Hit: Deal 1d8 + WIS Mod Force Damage."
+        },
+        {
+          "name": "Crusader's Mantle",
+          "cost": "3 MP",
+          "duration": "1 Minute (Concentration)",
+          "range": "Self (30ft Radius)",
+          "cast_dc": 17,
+          "effect": "Action. Holy power radiates from you. Allies in the aura deal an additional 1d4 Radiant Damage on all weapon attacks."
+        }
+      ]
     },
     {
-      "name": "Bless",
-      "type": "Spell",
-      "cost": "1 MP",
-      "tags": ["Buff", "Multi-Target"],
-      "effect": "Action: Range 30ft. Make a Casting Check (DC 13). Success: Choose up to 2 allies. For 1 minute, they gain a +1 Bonus to ALL d20 Checks (Attacks, Defense, Skills).",
-      "details": "The most efficient buff in the game."
+      "name": "Liturgy of Cleansing",
+      "type": "Collection",
+      "tags": ["Restoration", "Utility"],
+      "description": "Purifying the body and soul of corruption.",
+      "spells": [
+        {
+          "name": "Purify Food and Drink",
+          "cost": "1 MP",
+          "duration": "Instant",
+          "range": "10 ft",
+          "cast_dc": 10,
+          "effect": "Action. All non-magical food and drink within a 5-foot-radius sphere is purified and rendered free of poison and disease. Useful for scavenging in dungeons."
+        },
+        {
+          "name": "Lesser Restoration",
+          "cost": "2 MP",
+          "duration": "Instant",
+          "range": "Touch",
+          "cast_dc": 14,
+          "effect": "Action. You touch a creature and end one Condition afflicting it: Blinded, Deafened, Paralyzed, or Poisoned. It does not cure magical Curses."
+        },
+        {
+          "name": "Remove Curse",
+          "cost": "3 MP",
+          "duration": "Instant",
+          "range": "Touch",
+          "cast_dc": 18,
+          "effect": "Action. You touch a creature or object. All curses affecting it end. If the object is a Cursed Magic Item, it remains cursed, but the owner can safely discard or unequip it."
+        }
+      ]
     },
     {
-      "name": "Shield of Faith",
-      "type": "Spell",
-      "cost": "1 MP",
-      "tags": ["Buff", "Defensive"],
-      "effect": "Action: Range 30ft. Make a Casting Check (DC 11). Success: One ally gains +1 Armor Score (AS) for 1 minute. This stacks with worn armor and shields.",
-      "details": "Can turn a tank into an invulnerable object."
+      "name": "Liturgy of Exorcism",
+      "type": "Collection",
+      "tags": ["Radiant", "Control"],
+      "description": "Driving back the unquiet dead and fiends.",
+      "spells": [
+        {
+          "name": "Turn Undead",
+          "cost": "1 MP",
+          "duration": "1 Minute",
+          "range": "30 ft",
+          "cast_dc": 13,
+          "effect": "Action. You present your holy symbol. All Undead within 30ft must make a Will Save vs. Casting Result. Fail: They are Frightened and must spend their turns fleeing from you. If the Undead has 1 HP (Minion), it is destroyed instantly."
+        },
+        {
+          "name": "Hallow",
+          "cost": "2 MP",
+          "duration": "10 Minutes",
+          "range": "Touch",
+          "cast_dc": 15,
+          "effect": "Ritual (1 Turn). You ward an area (20ft Radius). Celestials, Elementals, Fey, Fiends, and Undead cannot enter the area. Creatures inside cannot be Charmed, Frightened, or Possessed."
+        },
+        {
+          "name": "Dispel Evil",
+          "cost": "3 MP",
+          "duration": "Instant",
+          "range": "Touch",
+          "cast_dc": 17,
+          "effect": "Action. Make a Melee Casting Check against a creature. If it is Possessed or Charmed, the effect ends. If it is a summoned creature (from another plane), it must make a Will Save vs. your Check or be sent back to its home plane."
+        }
+      ]
     },
     {
-      "name": "Protection from Evil",
-      "type": "Spell",
-      "cost": "1 MP",
-      "tags": ["Buff", "Defensive"],
-      "effect": "Action: Range Touch. Make a Casting Check (DC 11). Success: For 1 minute, the target has Advantage on Defense Checks against Undead, Fiends, and Aberrations.",
-      "details": "Vital when fighting Spirits or Horrors."
+      "name": "Liturgy of Providence",
+      "type": "Collection",
+      "tags": ["Divination", "Buff"],
+      "description": "Seeking guidance from higher powers.",
+      "spells": [
+        {
+          "name": "Guidance",
+          "cost": "1 MP",
+          "duration": "1 Minute",
+          "range": "Touch",
+          "cast_dc": 10,
+          "effect": "Action. You touch a willing creature. Once before the spell ends, the target can roll a d4 and add the number rolled to one Ability Check or Saving Throw of its choice."
+        },
+        {
+          "name": "Augury",
+          "cost": "2 MP",
+          "duration": "Instant",
+          "range": "Self",
+          "cast_dc": 14,
+          "effect": "Ritual (1 Turn). You receive an omen from an otherworldly entity about the results of a specific course of action that you plan to take within the next 30 minutes. GM replies: Weal (Good), Woe (Bad), or Mixed."
+        },
+        {
+          "name": "Commune",
+          "cost": "3 MP",
+          "duration": "1 Minute",
+          "range": "Self",
+          "cast_dc": 18,
+          "effect": "Ritual (1 Turn). You contact your deity or a divine proxy. You may ask up to three yes or no questions. You must receive a truthful answer, though powerful magic may hide the truth."
+        }
+      ]
     },
     {
-      "name": "Sanctuary",
-      "type": "Spell",
-      "cost": "1 MP",
-      "tags": ["Buff", "Control"],
-      "effect": "Action: Range Touch. Make a Casting Check (DC 13). Success: Target is Warded for 1 minute. Any enemy attempting to attack them must succeed on a Will Save vs. your Casting Check or lose the attack. Ends if the target attacks.",
-      "details": "Protect the VIP or yourself while healing."
+      "name": "Liturgy of the Spirit",
+      "type": "Collection",
+      "tags": ["Summoning", "Control"],
+      "description": "Conjuring spiritual guardians to control the battlefield.",
+      "spells": [
+        {
+          "name": "Thaumaturgy",
+          "cost": "1 MP",
+          "duration": "1 Minute",
+          "range": "30 ft",
+          "cast_dc": 10,
+          "effect": "Action. You manifest a minor wonder: boom your voice, cause flames to flicker, create harmless tremors, or cause an unlocked door to fly open. Grants Advantage on Intimidation checks."
+        },
+        {
+          "name": "Spirit Guardians",
+          "cost": "2 MP",
+          "duration": "1 Minute (Concentration)",
+          "range": "Self (15ft Radius)",
+          "cast_dc": 16,
+          "effect": "Action. Spectral spirits flit around you. Enemies treat the area as Difficult Terrain. An enemy starting its turn in the area takes 2d8 Radiant or Necrotic damage (Wisdom Save vs. Result for half)."
+        },
+        {
+          "name": "Guardian of Faith",
+          "cost": "3 MP",
+          "duration": "1 Hour",
+          "range": "30 ft",
+          "cast_dc": 17,
+          "effect": "Action. A Large, IMMOBILE spectral guardian appears in an unoccupied space. Any enemy that moves within 10ft of it takes 2d8 Radiant damage (Dexterity Save vs. Result for half). The guardian vanishes after dealing 60 damage total."
+        }
+      ]
     },
     {
-      "name": "Turn Undead",
-      "type": "Spell",
-      "cost": "2 MP",
-      "tags": ["Control", "AoE", "Radiant"],
-      "effect": "Action: 30ft Cone. Make a Casting Check (DC 13). All Undead in the area must make a Will Save vs. your Check. Fail: They take 1d6 Radiant Damage and are Frightened for 1 minute.",
-      "details": "Forces the dead to flee or cower."
+      "name": "Liturgy of Zeal",
+      "type": "Collection",
+      "tags": ["Radiant", "Fire", "Offensive"],
+      "description": "Burning the wicked with divine wrath.",
+      "spells": [
+        {
+          "name": "Word of Radiance",
+          "cost": "1 MP",
+          "duration": "Instant",
+          "range": "Self (5ft Radius)",
+          "cast_dc": 11,
+          "effect": "Action. You utter a burning word. All enemies within 5 feet of you must make a Fortitude Save vs. Casting Result. Fail: They take 1d6 Radiant damage."
+        },
+        {
+          "name": "Blindness / Deafness",
+          "cost": "2 MP",
+          "duration": "1 Minute",
+          "range": "30 ft",
+          "cast_dc": 14,
+          "effect": "Action. Target one creature. Make a Casting Check vs. their Fortitude Save. Success: The target is Blinded or Deafened (your choice). They can repeat the save at the end of each of their turns."
+        },
+        {
+          "name": "Flame Strike",
+          "cost": "3 MP",
+          "duration": "Instant",
+          "range": "60 ft",
+          "cast_dc": 17,
+          "effect": "Action. A vertical column of divine fire roars down. 10ft Radius, 40ft High Cylinder. Creatures inside take 2d6 Fire damage AND 2d6 Radiant damage (4d6 total). Reflex Save vs. Casting Result for half."
+        }
+      ]
     },
     {
-      "name": "Lesser Restoration",
-      "type": "Spell",
-      "cost": "2 MP",
-      "tags": ["Healing", "Utility"],
-      "effect": "Action: Range Touch. Make a Casting Check (DC 13). Success: Immediately end one condition on the target: Blinded, Deafened, or Poisoned.",
-      "details": "Does not cure Diseases or Curses."
+      "name": "Liturgy of Dominion",
+      "type": "Collection",
+      "tags": ["Enchantment", "Social"],
+      "description": "Compelling others to obey divine law.",
+      "spells": [
+        {
+          "name": "Command",
+          "cost": "1 MP",
+          "duration": "1 Round",
+          "range": "60 ft",
+          "cast_dc": 11,
+          "effect": "Action. You speak a one-word command to a creature (e.g., 'Halt', 'Drop', 'Flee'). Target makes a Will Save vs. Casting Result. Fail: They must follow the command on their next turn. Does not work if the command is directly self-harming."
+        },
+        {
+          "name": "Zone of Truth",
+          "cost": "2 MP",
+          "duration": "10 Minutes",
+          "range": "60 ft",
+          "cast_dc": 14,
+          "effect": "Action. You create a 15ft Radius sphere. Creatures inside must make a Will Save. Fail: They cannot speak a deliberate lie. You know whether they passed or failed the save."
+        },
+        {
+          "name": "Geas",
+          "cost": "3 MP",
+          "duration": "24 Hours",
+          "range": "60 ft",
+          "cast_dc": 18,
+          "effect": "1 Minute Cast (Ritual). You place a magical command on a creature to carry out a service or refrain from an action. Will Save vs. Casting Result. Fail: They are Charmed. If they act counter to your instructions, they take 5d10 Psychic damage (once per day)."
+        }
+      ]
     },
     {
-      "name": "Light",
-      "type": "Spell",
-      "cost": "0 MP",
-      "tags": ["Utility", "Cantrip"],
-      "effect": "Action: Range Touch. Make a Casting Check (DC 9). Success: An object glows with Bright Light (20ft radius) for 1 hour.",
-      "details": "Free light source. Saves torches."
+      "name": "Liturgy of Fortitude",
+      "type": "Collection",
+      "tags": ["Buff", "Support"],
+      "description": "Strengthening the body against adversity.",
+      "spells": [
+        {
+          "name": "Aid",
+          "cost": "1 MP",
+          "duration": "8 Hours",
+          "range": "30 ft",
+          "cast_dc": 11,
+          "effect": "Action. Choose up to 3 creatures. Their Maximum Hit Points increase by 5 for the duration. (This stacks with Temporary HP)."
+        },
+        {
+          "name": "Enhance Ability",
+          "cost": "2 MP",
+          "duration": "1 Hour (Concentration)",
+          "range": "Touch",
+          "cast_dc": 14,
+          "effect": "Action. Choose one Attribute (STR, DEX, etc.). The target has Advantage on all Checks made with that Attribute. (Does not apply to Attacks or Saves, only Ability Checks like Athletics or Stealth)."
+        },
+        {
+          "name": "Protection from Energy",
+          "cost": "3 MP",
+          "duration": "1 Hour (Concentration)",
+          "range": "Touch",
+          "cast_dc": 17,
+          "effect": "Action. Choose Acid, Cold, Fire, Lightning, or Thunder. The willing creature gains Resistance (Half Damage) to that damage type."
+        }
+      ]
     },
     {
-      "name": "Detect Magic",
-      "type": "Spell",
-      "cost": "1 MP",
-      "tags": ["Utility", "Information"],
-      "effect": "Action: Range Self. Make a Casting Check (DC 9). Success: For 10 minutes, you can see a faint aura around magical objects or effects within 30ft.",
-      "details": "Useful for looting and trap detection."
-    },
-    {
-      "name": "Divine Intervention",
-      "type": "Ability",
-      "cost": "1 MP",
-      "tags": ["Support", "Reaction"],
-      "effect": "Reaction: Trigger when an ally within 30ft fails a Saving Throw against a magical effect (e.g., Charm, Fear, Hex). Effect: Grant them an immediate Re-roll with Advantage.",
-      "details": "Can prevent a party wipe from crowd control."
+      "name": "Liturgy of Sustenance",
+      "type": "Collection",
+      "tags": ["Utility", "Survival"],
+      "description": "Overcoming the hazards of the wild.",
+      "spells": [
+        {
+          "name": "Create Food and Water",
+          "cost": "1 MP",
+          "duration": "Instant",
+          "range": "5 ft",
+          "cast_dc": 10,
+          "effect": "Action. You create 45 pounds of food and 30 gallons of water. Enough to sustain up to 15 humanoids or 5 steeds for 24 hours. Prevents Exhaustion from hunger."
+        },
+        {
+          "name": "Water Walk",
+          "cost": "2 MP",
+          "duration": "1 Hour",
+          "range": "30 ft",
+          "cast_dc": 13,
+          "effect": "Ritual (1 Turn). Up to 10 willing creatures gain the ability to move across any liquid surface (water, acid, mud, quicksand) as if it were harmless solid ground."
+        },
+        {
+          "name": "Meld into Stone",
+          "cost": "3 MP",
+          "duration": "8 Hours",
+          "range": "Touch",
+          "cast_dc": 16,
+          "effect": "Action. You step into a stone object or surface large enough to contain you. You are invisible and cannot be targeted, but cannot see outside. You can hear faintly. Useful for safe Short/Long Rests in dungeons."
+        }
+      ]
     },
     {
       "name": "Prayer of Solace",
@@ -2432,6 +3312,14 @@
       "tags": ["Resource", "1/Rest"],
       "effect": "Action: You recite a prayer of renewal. Regain 1d4 Mana Points (MP). Usable once per Long Rest.",
       "details": "Ensures you have magic for the final boss."
+    },
+    {
+      "name": "Divine Warding",
+      "type": "Ability",
+      "cost": "1 MP",
+      "tags": ["Support", "Reaction"],
+      "effect": "Reaction: Trigger when an ally within 30ft fails a Saving Throw against a magical effect (e.g., Charm, Fear, Hex). Effect: Grant them an immediate Re-roll with Advantage.",
+      "details": "Can prevent a party wipe from crowd control."
     },
     {
       "name": "Radiant Potency",
@@ -2488,7 +3376,7 @@
   "id": "arch_primalist",
   "name": "The Primalist",
   "role": "Spellcaster",
-  "description": "The avatar of nature's fury. You are not a servant of the wild; you are the storm, the earthquake, and the beast. You shift forms to tear enemies apart or reshape the battlefield with grasping roots.",
+  "description": "The avatar of nature's fury. You are not a servant of the wild; you are the storm, the earthquake, and the beast. You shift forms to tear enemies apart or reshape the battlefield with elemental force.",
   "primary_stats": ["WIS"],
   "resource": "Mana Points (MP)",
   "proficiencies": {
@@ -2498,100 +3386,388 @@
   },
   "talents": [
     {
-      "name": "Shapeshift (Wolf)",
-      "type": "Spell",
-      "cost": "2 MP",
-      "tags": ["Form", "Mobile"],
-      "effect": "Action: Transform for 1 minute. While shifted: Speed 40ft. Unarmed Strike deals 1d6 (Finesse). Gain +1 Bonus to Dodge Checks. Cannot cast spells.",
-      "details": "Best for scouting or flanking enemies."
+      "name": "Aspect of the Volcano",
+      "type": "Collection",
+      "tags": ["Fire", "Transformation"],
+      "description": "Channeling the molten fury of the earth's core.",
+      "spells": [
+        {
+          "name": "Produce Flame",
+          "cost": "1 MP",
+          "duration": "10 Minutes",
+          "range": "Self / 30 ft",
+          "cast_dc": 10,
+          "effect": "Action. A flame appears in your hand (Light source). You can hurl it (Ranged Casting Check vs Defense) to deal 1d8 Fire damage. Throwing it ends the spell immediately."
+        },
+        {
+          "name": "Heat Metal",
+          "cost": "2 MP",
+          "duration": "1 Minute (Concentration)",
+          "range": "60 ft",
+          "cast_dc": 15,
+          "effect": "Action. Target a metal object (weapon/armor). Any creature touching it takes 2d8 Fire damage. If holding it, they must make a Constitution Save or drop it. If wearing it, they take damage automatically and have Disadvantage on Attacks."
+        },
+        {
+          "name": "Form of Living Magma",
+          "cost": "3 MP",
+          "duration": "1 Minute (Concentration)",
+          "range": "Self",
+          "cast_dc": 18,
+          "effect": "Action. You transform into molten rock. 1. You gain Resistance to Physical Damage and Immunity to Fire. 2. Any creature that touches you or hits you with a melee attack takes 1d6 Fire damage. 3. Your melee attacks deal Fire damage."
+        }
+      ]
     },
     {
-      "name": "Shapeshift (Bear)",
-      "type": "Spell",
-      "cost": "2 MP",
-      "tags": ["Form", "Tank"],
-      "effect": "Action: Transform for 1 minute. While shifted: Unarmed Strike deals 1d10. Gain +2 Armor Score (Natural Hide). Advantage on Athletics Checks. Cannot cast spells.",
-      "details": "Best for absorbing damage and holding the line."
+      "name": "Aspect of the Mountain",
+      "type": "Collection",
+      "tags": ["Earth", "Transformation"],
+      "description": "Embodying the unyielding endurance of stone.",
+      "spells": [
+        {
+          "name": "Magic Stone",
+          "cost": "1 MP",
+          "duration": "1 Minute",
+          "range": "Touch",
+          "cast_dc": 11,
+          "effect": "Bonus Action. You imbue 3 pebbles with magic. You or an ally can throw them (Range 60ft) using a Ranged Attack Check (WIS based). On Hit: Deal 1d6 + WIS Mod Bludgeoning damage (Magical)."
+        },
+        {
+          "name": "Earthbind",
+          "cost": "2 MP",
+          "duration": "1 Minute (Concentration)",
+          "range": "120 ft",
+          "cast_dc": 14,
+          "effect": "Action. Target one creature. Make a Casting Check vs. Strength Save. Fail: The target's Fly Speed becomes 0. It falls gently to the ground (60ft per round) and cannot fly for the duration."
+        },
+        {
+          "name": "Form of Living Stone",
+          "cost": "3 MP",
+          "duration": "1 Minute (Concentration)",
+          "range": "Self",
+          "cast_dc": 17,
+          "effect": "Action. Your skin becomes granite. 1. You gain +2 Armor Score (Stacks with Shield). 2. You cannot be Knocked Prone or moved against your will. 3. Siege Monster: Your melee attacks deal Double Damage to objects."
+        }
+      ]
     },
     {
-      "name": "Primal Strike",
-      "type": "Spell",
-      "cost": "1 MP",
-      "tags": ["Attack", "Melee"],
-      "effect": "Action: Range Touch. Your hand becomes a claw, fang, or stone fist. Make a Melee Casting Check. On Hit: Deal 2d8 Slashing/Bludgeoning Damage (Magic).",
-      "details": "A heavy melee hit that uses WIS instead of STR."
+      "name": "Aspect of the Storm",
+      "type": "Collection",
+      "tags": ["Air", "Transformation"],
+      "description": "Harnessing the speed and violence of the gale.",
+      "spells": [
+        {
+          "name": "Thunderclap",
+          "cost": "1 MP",
+          "duration": "Instant",
+          "range": "Self (5ft Radius)",
+          "cast_dc": 11,
+          "effect": "Action. Creates a burst of sound. All creatures within 5 feet must make a Fortitude Save vs. Casting Result. Fail: Take 1d6 Thunder damage and are pushed 5 feet away."
+        },
+        {
+          "name": "Wind Wall",
+          "cost": "2 MP",
+          "duration": "1 Minute (Concentration)",
+          "range": "60 ft",
+          "cast_dc": 15,
+          "effect": "Action. Create a wall of wind (50ft long, 15ft high). Arrows and bolts cannot pass through it (miss automatically). Creatures passing through must make a Strength Save vs. Casting Result or be pushed back."
+        },
+        {
+          "name": "Form of Living Air",
+          "cost": "3 MP",
+          "duration": "1 Minute (Concentration)",
+          "range": "Self",
+          "cast_dc": 18,
+          "effect": "Action. You dissolve into a whirlwind. 1. You gain a Fly Speed of 40ft (Hover). 2. Ranged Attacks against you have Disadvantage. 3. You can move through enemy spaces without provoking counter-attacks."
+        }
+      ]
     },
     {
-      "name": "Thorn Lash",
-      "type": "Spell",
-      "cost": "1 MP",
-      "tags": ["Attack", "Control"],
-      "effect": "Action: Range 30ft. Make a Ranged Casting Check. On Hit: Deal 1d6 Piercing Damage and pull the target 10 feet closer to you.",
-      "details": "Drag enemies into hazards or melee range."
+      "name": "Aspect of the Tide",
+      "type": "Collection",
+      "tags": ["Water", "Transformation"],
+      "description": "Using the crushing weight and fluidity of water.",
+      "spells": [
+        {
+          "name": "Ice Shard",
+          "cost": "1 MP",
+          "duration": "Instant",
+          "range": "60 ft",
+          "cast_dc": 11,
+          "effect": "Action. Ranged Casting Check vs Defense. On Hit: Deal 1d8 Cold damage. This attack ignores 1 point of Armor Score (Piercing)."
+        },
+        {
+          "name": "Tidal Crash",
+          "cost": "2 MP",
+          "duration": "Instant",
+          "range": "15 ft Cone",
+          "cast_dc": 14,
+          "effect": "Action. A wave crashes from your hands. Creatures in the area make a Reflex Save vs. Casting Result. Fail: Take 2d6 Bludgeoning damage and are Knocked Prone. Success: Half damage."
+        },
+        {
+          "name": "Form of Living Water",
+          "cost": "3 MP",
+          "duration": "1 Minute (Concentration)",
+          "range": "Self",
+          "cast_dc": 17,
+          "effect": "Action. You become liquid. 1. You gain Resistance to non-magical physical damage. 2. You can squeeze through 1-inch gaps without slowing. 3. Your melee reach increases by 5ft (Lashing water)."
+        }
+      ]
     },
     {
-      "name": "Entangle",
-      "type": "Spell",
-      "cost": "1 MP",
-      "tags": ["Control", "AoE"],
-      "effect": "Action: Range 30ft. Target a 15ft Square. The area becomes Difficult Terrain. Creatures entering or starting their turn there are Grappled unless Reflex Save > Casting Check.",
-      "details": "Locks down a choke point."
+      "name": "Aspect of the Grove",
+      "type": "Collection",
+      "tags": ["Plant", "Transformation"],
+      "description": "The crushing inevitability of roots and thorns.",
+      "spells": [
+        {
+          "name": "Thorn Whip",
+          "cost": "1 MP",
+          "duration": "Instant",
+          "range": "30 ft",
+          "cast_dc": 11,
+          "effect": "Action. Make a Melee Casting Check (Reach 30ft). On Hit: Deal 1d6 Piercing damage and pull the target 10 feet closer to you."
+        },
+        {
+          "name": "Entangle",
+          "cost": "2 MP",
+          "duration": "1 Minute (Concentration)",
+          "range": "60 ft",
+          "cast_dc": 14,
+          "effect": "Action. Target a 15ft Square. Weeds and vines burst from the ground. The area is Difficult Terrain. Creatures in the area must make a Reflex Save vs. Casting Result or be Restrained."
+        },
+        {
+          "name": "Form of the Iron-Oak",
+          "cost": "3 MP",
+          "duration": "1 Minute (Concentration)",
+          "range": "Self",
+          "cast_dc": 17,
+          "effect": "Action. Your skin becomes bark. 1. Your Armor Score becomes 3 (Natural Armor). 2. Your Melee Reach increases by 5ft. 3. Rooted: You cannot be knocked Prone or moved against your will."
+        }
+      ]
     },
     {
-      "name": "Thunderwave",
-      "type": "Spell",
-      "cost": "1 MP",
-      "tags": ["AoE", "Control"],
-      "effect": "Action: 15ft Cone. Make a Casting Check (DC 11). Creatures in area take 2d6 Thunder Damage and are Pushed 10 feet unless Reflex Save > Check (Half damage, no push).",
-      "details": "Get-off-me tool."
+      "name": "Aspect of the Swarm",
+      "type": "Collection",
+      "tags": ["Insect", "Transformation"],
+      "description": "A thousand tiny bites working as one.",
+      "spells": [
+        {
+          "name": "Infestation",
+          "cost": "1 MP",
+          "duration": "Instant",
+          "range": "30 ft",
+          "cast_dc": 11,
+          "effect": "Action. Target one creature. Make a Casting Check vs. Fortitude Save. Fail: Take 1d6 Poison damage and the target moves 5 feet in a random direction (d4: N, S, E, W)."
+        },
+        {
+          "name": "Cloak of Flies",
+          "cost": "2 MP",
+          "duration": "1 Minute (Concentration)",
+          "range": "Self",
+          "cast_dc": 14,
+          "effect": "Action. An aura of buzzing insects surrounds you (5ft Radius). You gain Advantage on Intimidation checks. Any creature that starts its turn in the aura takes 1d4 Poison damage automatically."
+        },
+        {
+          "name": "Form of the Hive",
+          "cost": "3 MP",
+          "duration": "1 Minute (Concentration)",
+          "range": "Self",
+          "cast_dc": 18,
+          "effect": "Action. You dissolve into a swarm of beetles/wasps. 1. You gain Resistance to Bludgeoning, Piercing, and Slashing damage. 2. You can occupy another creature's space. 3. Vulnerability: You take Double Damage from Area of Effect (AoE) attacks."
+        }
+      ]
     },
     {
-      "name": "Call Lightning",
-      "type": "Spell",
-      "cost": "2 MP",
-      "tags": ["Attack", "Lightning"],
-      "effect": "Action: Range 60ft. Make a Ranged Casting Check (vs Defense). On Hit: Deal 3d6 Lightning Damage. If outdoors in a storm, deal 4d6.",
-      "details": "High single-target damage."
+      "name": "Aspect of the Serpent",
+      "type": "Collection",
+      "tags": ["Poison", "Transformation"],
+      "description": "The silent strike and the crushing coil.",
+      "spells": [
+        {
+          "name": "Venom Spit",
+          "cost": "1 MP",
+          "duration": "Instant",
+          "range": "30 ft",
+          "cast_dc": 11,
+          "effect": "Action. Ranged Casting Check vs Defense. On Hit: Deal 1d8 Poison damage. If the target is Poisoned, deal 1d12 instead."
+        },
+        {
+          "name": "Noxious Breath",
+          "cost": "2 MP",
+          "duration": "Instant",
+          "range": "15 ft Cone",
+          "cast_dc": 15,
+          "effect": "Action. You exhale green gas. Creatures in the cone make a Fortitude Save vs. Casting Result. Fail: 2d6 Poison damage and Sickened (Disadvantage on Attack Checks) for 1 round. Success: Half damage."
+        },
+        {
+          "name": "Form of the Giant Snake",
+          "cost": "3 MP",
+          "duration": "1 Minute (Concentration)",
+          "range": "Self",
+          "cast_dc": 18,
+          "effect": "Action. You elongate and grow scales. 1. You gain a Climb Speed of 30ft. 2. Constrict: When you hit with a melee attack (1d8 dmg), the target is automatically Grappled (Escape DC 15). 3. You have Advantage on attacks against Grappled targets."
+        }
+      ]
     },
     {
-      "name": "Spike Growth",
-      "type": "Spell",
-      "cost": "2 MP",
-      "tags": ["AoE", "Hazard"],
-      "effect": "Action: Range 30ft. Target a 15ft Square. Area becomes Difficult Terrain. Any creature moving through it takes 1d6 Piercing Damage for every 5 feet moved.",
-      "details": "Punishes enemy movement severely."
+      "name": "Aspect of the Raptor",
+      "type": "Collection",
+      "tags": ["Bestial", "Transformation"],
+      "description": "The speed and ferocity of the ancient dinosaurs.",
+      "spells": [
+        {
+          "name": "Primal Strike",
+          "cost": "1 MP",
+          "duration": "Instant",
+          "range": "Touch",
+          "cast_dc": 11,
+          "effect": "Action. Your hand becomes a claw or talon momentarily. Make a Melee Casting Check. On Hit: Deal 1d10 Slashing damage."
+        },
+        {
+          "name": "Pass Without Trace",
+          "cost": "2 MP",
+          "duration": "1 Hour (Concentration)",
+          "range": "Self (30ft Radius)",
+          "cast_dc": 14,
+          "effect": "Action. Shadows and silence follow you. You and all allies within 30ft gain a +5 Bonus to Stealth checks and leave no physical tracks."
+        },
+        {
+          "name": "Form of the Dread-Saur",
+          "cost": "3 MP",
+          "duration": "1 Minute (Concentration)",
+          "range": "Self",
+          "cast_dc": 18,
+          "effect": "Action. You become a bipedal lizard predator. 1. Your Speed increases by 10ft. 2. Pack Tactics: You have Advantage on attacks if an ally is adjacent to your target. 3. Pounce: If you move 20ft straight toward a target and hit, they are knocked Prone."
+        }
+      ]
     },
     {
-      "name": "Barkskin",
-      "type": "Spell",
-      "cost": "1 MP",
-      "tags": ["Buff", "Defensive"],
-      "effect": "Action: Range Touch. Target gains +1 Armor Score (AS) for 1 minute. This stacks with worn armor and shields.",
-      "details": "Makes the tank tankier."
+      "name": "Aspect of Decay",
+      "type": "Collection",
+      "tags": ["Necrotic", "Transformation"],
+      "description": "The inevitable return to the soil.",
+      "spells": [
+        {
+          "name": "Wither",
+          "cost": "1 MP",
+          "duration": "Instant",
+          "range": "Touch",
+          "cast_dc": 11,
+          "effect": "Action. Make a Melee Casting Check. On Hit: Deal 1d10 Necrotic damage. Plants and Water Elementals take maximum damage. The target cannot regain Hit Points until the start of your next turn."
+        },
+        {
+          "name": "Blight",
+          "cost": "2 MP",
+          "duration": "Instant",
+          "range": "30 ft",
+          "cast_dc": 15,
+          "effect": "Action. You draw moisture from a living creature. Casting Check vs. Fortitude Save. Fail: Take 4d8 Necrotic damage. Success: Half damage. Undead and Constructs are immune."
+        },
+        {
+          "name": "Form of the Myconid",
+          "cost": "3 MP",
+          "duration": "1 Minute (Concentration)",
+          "range": "Self",
+          "cast_dc": 18,
+          "effect": "Action. You become a fungal giant. 1. You emit a 10ft aura of spores. Any creature starting its turn there takes 1d6 Poison damage. 2. You can use a Bonus Action to corpse-explode a dead body within 15ft for 2d6 damage to adjacent enemies."
+        }
+      ]
     },
     {
-      "name": "Primal Vigor",
-      "type": "Spell",
-      "cost": "1 MP",
-      "tags": ["Buff", "Healing"],
-      "effect": "Action: Range Self. Draw on the earth's strength. Gain 1d8 Temporary Hit Points for 1 minute.",
-      "details": "Pre-combat buffer."
+      "name": "Aspect of the Moon",
+      "type": "Collection",
+      "tags": ["Radiant", "Transformation"],
+      "description": "The silver light that reveals truth and madness.",
+      "spells": [
+        {
+          "name": "Faerie Fire",
+          "cost": "1 MP",
+          "duration": "1 Minute (Concentration)",
+          "range": "60 ft",
+          "cast_dc": 11,
+          "effect": "Action. 20ft Cube. Creatures in the area must make a Reflex Save vs. Casting Result. Fail: They glow with pale light. Attacks against them have Advantage, and they cannot benefit from Invisibility."
+        },
+        {
+          "name": "Moonbeam",
+          "cost": "2 MP",
+          "duration": "1 Minute (Concentration)",
+          "range": "60 ft",
+          "cast_dc": 15,
+          "effect": "Action. Create a 5ft Radius cylinder of pale light. Creatures entering or starting their turn inside take 2d10 Radiant damage (Fortitude Save for half). Shapeshifters have Disadvantage on the save and revert to original form on failure."
+        },
+        {
+          "name": "Form of the Moon-Beast",
+          "cost": "3 MP",
+          "duration": "1 Minute (Concentration)",
+          "range": "Self",
+          "cast_dc": 17,
+          "effect": "Action. You transform into a snowy Owlbear-like creature. 1. You gain 20 Temporary HP. 2. You gain Darkvision 60ft. 3. Your Unarmed Strike deals 1d10+2 damage and you have Advantage on Perception checks."
+        }
+      ]
     },
     {
-      "name": "Gaseous Form",
-      "type": "Spell",
-      "cost": "2 MP",
-      "tags": ["Utility", "Form"],
-      "effect": "Action: Range Self. Transform into mist for 1 minute. Speed 10ft (Fly). Cannot attack/cast. Advantage on Dodge. Pass through small cracks. Resistance to Non-Magic damage.",
-      "details": "Ultimate escape or infiltration tool."
+      "name": "Aspect of Vitality",
+      "type": "Collection",
+      "tags": ["Healing", "Transformation"],
+      "description": "The burgeoning growth of spring.",
+      "spells": [
+        {
+          "name": "Regrowth",
+          "cost": "1 MP",
+          "duration": "Instant",
+          "range": "Touch",
+          "cast_dc": 10,
+          "effect": "Action. Touch a living creature. They regain 1d4 Hit Points and gain 1d4 Temporary Hit Points. Useful for keeping allies on their feet."
+        },
+        {
+          "name": "Protection from Poison",
+          "cost": "2 MP",
+          "duration": "1 Hour",
+          "range": "Touch",
+          "cast_dc": 13,
+          "effect": "Action. Touch a creature. Cures one Poison effect currently affecting them. For the next hour, they have Resistance to Poison damage and Advantage on saves against being Poisoned."
+        },
+        {
+          "name": "Form of the Spring Spirit",
+          "cost": "3 MP",
+          "duration": "1 Minute (Concentration)",
+          "range": "Self",
+          "cast_dc": 17,
+          "effect": "Action. You become a being of vines and light. 1. Aura of Life: You and allies within 10ft regain 1d4 HP at the start of your turn. 2. You are Immune to Necrotic damage. 3. You can move through plants without slowing."
+        }
+      ]
     },
     {
-      "name": "Speak w/ Animals",
-      "type": "Spell",
-      "cost": "1 MP",
-      "tags": ["Utility", "Social"],
-      "effect": "Action: Range Self. You can speak with and understand natural beasts for 10 minutes. They are not compelled to help, but are generally neutral.",
-      "details": "Gather intel from rats and birds."
+      "name": "Aspect of the Cavern",
+      "type": "Collection",
+      "tags": ["Utility", "Transformation"],
+      "description": "Adaptation to the deep dark.",
+      "spells": [
+        {
+          "name": "Echoing Strike",
+          "cost": "1 MP",
+          "duration": "Instant",
+          "range": "30 ft",
+          "cast_dc": 11,
+          "effect": "Action. Ranged Casting Check. On Hit: Deal 1d8 Thunder damage. The sound reverberates, revealing the target's location if Hidden or Invisible."
+        },
+        {
+          "name": "Darkvision",
+          "cost": "2 MP",
+          "duration": "8 Hours",
+          "range": "Touch",
+          "cast_dc": 13,
+          "effect": "Action. A willing creature gains the ability to see in total darkness up to 60 feet. The vision is in black and white."
+        },
+        {
+          "name": "Form of the Giant Bat",
+          "cost": "3 MP",
+          "duration": "1 Minute (Concentration)",
+          "range": "Self",
+          "cast_dc": 17,
+          "effect": "Action. You transform into a Large bat-monster. 1. You gain a Fly Speed of 40ft. 2. You gain Blindsight 30ft (Blind but can 'see' via sound). 3. Your bite deals 1d8 Piercing and heals you for half the damage dealt."
+        }
+      ]
     },
     {
       "name": "Primal Recovery",
@@ -2608,6 +3784,22 @@
       "tags": ["Utility", "1/Rest"],
       "effect": "Action: Open your senses for 1 minute. You have Advantage on Scrutiny and Survival checks. You automatically sense the location of all living creatures within 30ft. Usable once per Long Rest.",
       "details": "Detect ambushes and invisible foes."
+    },
+    {
+      "name": "Speak with Animals",
+      "type": "Ability",
+      "cost": "1 MP",
+      "tags": ["Utility", "Social"],
+      "effect": "Action: You can speak with and understand natural beasts for 10 minutes. They are not compelled to help, but are generally neutral.",
+      "details": "Gather intel from rats and birds."
+    },
+    {
+      "name": "Beast Sense",
+      "type": "Ability",
+      "cost": "1 MP (Concentration)",
+      "tags": ["Utility", "Scouting"],
+      "effect": "Action: Touch a willing beast (or your companion). For 1 hour, you can use your Action to see through its eyes and hear what it hears. You are blind/deaf to your own surroundings while doing so.",
+      "details": "Safe scouting."
     },
     {
       "name": "Primal Potency",
@@ -2633,23 +3825,6 @@
       "effect": "Your Maximum MP increases by 2.",
       "flags": { "repeatable": true, "max_rank": 3 },
       "modifiers": { "mp_flat": 2 }
-    },
-    {
-      "name": "Primal Studies",
-      "type": "Passive",
-      "cost": "-",
-      "tags": ["Skill", "Repeatable"],
-      "effect": "Choose one Trained Skill (Survival, Scrutiny, Athletics). You become Expert (d6) in that skill.",
-      "flags": { "repeatable": true, "select_skill": true }
-    },
-    {
-      "name": "Primal Form",
-      "type": "Passive",
-      "cost": "-",
-      "tags": ["Buff", "Form"],
-      "prereq": "Shapeshift Spell",
-      "effect": "When you cast a Shapeshift spell, you gain Temporary HP equal to your Level.",
-      "details": "Makes combat forms more durable."
     },
     {
       "name": "Child of the Wild",

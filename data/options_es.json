@@ -1955,713 +1955,1888 @@
         }
       ]
     },
+{
+  "id": "arch_arcanist",
+  "name": "El Arcanista",
+  "role": "Lanzador de Conjuros",
+  "description": "El académico de lo arcano. Tratas la magia como una ciencia, dominando hechizos mediante estudio, modificación y fuerza elemental bruta. Eres la artillería y el arquitecto del campo de batalla.",
+  "primary_stats": ["INT"],
+  "resource": "Puntos de Maná (MP)",
+  "proficiencies": {
+    "armor": ["Ninguna"],
+    "weapons": ["Daga", "Bastón", "Honda"],
+    "skills": ["Saber y Conocimiento (INT)"]
+  },
+  "talents": [
     {
-      "id": "arch_arcanist",
-      "name": "El Arcanista",
-      "role": "Lanzador de Conjuros",
-      "description": "El académico de lo arcano. Tratas la magia como una ciencia, dominando hechizos mediante estudio, modificación y fuerza elemental bruta. Eres la artillería y el arquitecto del campo de batalla.",
-      "primary_stats": ["INT"],
-      "resource": "Puntos de Maná (MP)",
-      "proficiencies": {
-        "armor": ["Ninguna"],
-        "weapons": ["Daga", "Bastón", "Honda"],
-        "skills": ["Saber y Conocimiento (INT)"]
-      },
-      "talents": [
+      "name": "Grimorio del Mago de Batalla",
+      "type": "Colección",
+      "tags": ["Fuerza", "Defensa"],
+      "description": "El kit táctico estándar para magos de guerra.",
+      "spells": [
         {
-          "name": "Virote de Fuego",
-          "type": "Hechizo",
+          "name": "Escudo",
           "cost": "1 MP",
-          "tags": ["Ataque", "Fuego"],
-          "effect": "Acción: Rango 60 pies. Haz una Prueba de Lanzamiento a Distancia (vs Defensa). Al Impactar: Inflige 2d6 Daño de Fuego.",
-          "details": "Un hechizo de ataque estándar y fiable. CD Base 11."
-        },
-        {
-          "name": "Virote Arcano",
-          "type": "Hechizo",
-          "cost": "1 MP",
-          "tags": ["Ataque", "Fuerza"],
-          "effect": "Acción: Rango 30 pies. Haz una Prueba de Lanzamiento (CD 11). Éxito: El virote golpea infaliblemente. Inflige 1d4+1 Daño de Fuerza.",
-          "details": "Ignora Puntuación de Armadura y Cobertura. Daño bajo, pero golpe garantizado."
+          "duration": "1 Ronda",
+          "range": "Propio",
+          "cast_dc": 11,
+          "effect": "Reacción. Disparador: Eres golpeado por un ataque. Haz una Prueba de Lanzamiento. Éxito: Ganas un Bono de +4 a la Defensa contra el ataque desencadenante y todos los demás ataques hasta el inicio de tu próximo turno."
         },
         {
           "name": "Misil Mágico",
-          "type": "Hechizo",
-          "cost": "1 MP",
-          "tags": ["Ataque", "Fuerza", "Multi-Objetivo"],
-          "effect": "Acción: Rango 60 pies. Haz una Prueba de Lanzamiento (CD 13). Éxito: Crea 2 misiles. Impactan automáticamente. Cada uno inflige 1d4 Daño de Fuerza. Puedes elegir diferentes objetivos.",
-          "details": "Daño fiable o limpieza de esbirros."
+          "cost": "2 MP",
+          "duration": "Instantáneo",
+          "range": "120 pies",
+          "cast_dc": 14,
+          "effect": "Acción. Haz una Prueba de Lanzamiento. Éxito: Creas 3 dardos brillantes de fuerza mágica. Golpean infaliblemente (No requiere Tirada de Ataque). Cada dardo inflige 1d4+1 de Daño de Fuerza."
         },
+        {
+          "name": "Contrahechizo",
+          "cost": "3 MP",
+          "duration": "Instantáneo",
+          "range": "60 pies",
+          "cast_dc": 16,
+          "effect": "Reacción. Disparador: Una criatura lanza un hechizo. Haz una Prueba de Lanzamiento vs. la Salvación de Voluntad del Lanzador (o su Resultado de Lanzamiento). Éxito: El hechizo de la criatura falla y no tiene efecto."
+        }
+      ]
+    },
+    {
+      "name": "Grimorio del Piromante",
+      "type": "Colección",
+      "tags": ["Fuego", "Ofensivo"],
+      "description": "Estudios en combustión y calor.",
+      "spells": [
+        {
+          "name": "Descarga de Fuego",
+          "cost": "1 MP",
+          "duration": "Instantáneo",
+          "range": "60 pies",
+          "cast_dc": 11,
+          "effect": "Haz una Prueba de Lanzamiento a Distancia vs. Defensa del Objetivo. Al Impactar: Inflige 1d10 Daño de Fuego. En Crítico: El objetivo gana la condición de Ardiendo."
+        },
+        {
+          "name": "Abanico de Llamas",
+          "cost": "2 MP",
+          "duration": "Instantáneo",
+          "range": "Cono 15 pies",
+          "cast_dc": 14,
+          "effect": "Llamas brotan de tus manos. Haz una Prueba de Lanzamiento. Todas las criaturas en el cono comparan su Salvación de Reflejos vs. tu Resultado. Fallo: Reciben 3d6 Daño de Fuego. Éxito: Mitad de daño."
+        },
+        {
+          "name": "Muro de Fuego",
+          "cost": "3 MP",
+          "duration": "1 Minuto (Concentración)",
+          "range": "60 pies",
+          "cast_dc": 17,
+          "effect": "Creas un muro de fuego de 20 pies de largo y 1 pie de grosor. Bloquea línea de visión. Cualquier criatura que pase a través o termine su turno en el muro recibe 4d6 Daño de Fuego (Reflejos vs Resultado para mitad)."
+        }
+      ]
+    },
+    {
+      "name": "Grimorio del Criomante",
+      "type": "Colección",
+      "tags": ["Frío", "Control"],
+      "description": "Estudios en entropía y congelación instantánea.",
+      "spells": [
         {
           "name": "Rayo de Escarcha",
-          "type": "Hechizo",
           "cost": "1 MP",
-          "tags": ["Ataque", "Frío", "Debilitamiento"],
-          "effect": "Acción: Rango 30 pies. Haz una Prueba de Lanzamiento a Distancia (vs Defensa). Al Impactar: Inflige 1d8 Daño de Frío. A menos que la Salvación de Fortaleza del objetivo supere tu Prueba, su Velocidad se reduce a la mitad por 1 ronda.",
-          "details": "Bueno para mantener distancia con enemigos cuerpo a cuerpo."
+          "duration": "1 Ronda",
+          "range": "60 pies",
+          "cast_dc": 12,
+          "effect": "Haz una Prueba de Lanzamiento a Distancia vs. Defensa del Objetivo. Al Impactar: Inflige 1d8 Daño de Frío y la Velocidad del objetivo se reduce en 10 pies."
         },
         {
-          "name": "Choque Eléctrico",
-          "type": "Hechizo",
-          "cost": "1 MP",
-          "tags": ["Ataque", "Rayo", "Control"],
-          "effect": "Acción: Rango Toque. Haz una Prueba de Lanzamiento Cuerpo a Cuerpo (vs Defensa). Al Impactar: Inflige 1d10 Daño de Rayo. A menos que la Salvación de Reflejos del objetivo supere tu Prueba, no puede usar Reacciones por 1 ronda.",
-          "details": "Deshabilita Ataques de Oportunidad, permitiendo movimiento seguro."
+          "name": "Cuchillo de Hielo",
+          "cost": "2 MP",
+          "duration": "Instantáneo",
+          "range": "60 pies",
+          "cast_dc": 15,
+          "effect": "Haz una Prueba de Lanzamiento a Distancia vs Defensa. Al Impactar: 1d10 Daño Perforante. Ya sea que aciertes o falles, el fragmento explota: Objetivo y criaturas adyacentes deben hacer Salvación de Reflejos vs. tu Resultado o recibir 2d6 Daño de Frío."
         },
         {
-          "name": "Manos Ardientes",
-          "type": "Hechizo",
+          "name": "Tumba Glacial",
+          "cost": "3 MP",
+          "duration": "1 Minuto (Concentración)",
+          "range": "30 pies",
+          "cast_dc": 18,
+          "effect": "Objetivo una criatura. Haz una Prueba de Lanzamiento vs. su Salvación de Fortaleza. Fallo: Objetivo Restringido (encerrado en hielo). Al final de cada uno de sus turnos, puede repetir la salvación. Si falla 3 veces en total, queda Petrificado (Congelado) hasta descongelarse."
+        }
+      ]
+    },
+    {
+      "name": "Grimorio de la Tormenta",
+      "type": "Colección",
+      "tags": ["Rayo", "Movilidad"],
+      "description": "Estudios en electricidad y conducción rápida.",
+      "spells": [
+        {
+          "name": "Agarre Electrizante",
           "cost": "1 MP",
-          "tags": ["AoE", "Fuego"],
-          "effect": "Acción: Cono de 15 pies. Haz una Prueba de Lanzamiento (CD 11). Esto establece la CD de Salvación. Todas las criaturas en el área reciben 2d6 Daño de Fuego (Salvación de Reflejos para Mitad).",
-          "details": "Control de masas a corta distancia."
+          "duration": "1 Ronda",
+          "range": "Toque",
+          "cast_dc": 11,
+          "effect": "Haz una Prueba de Lanzamiento Cuerpo a Cuerpo vs. Defensa (Ventaja si el objetivo usa metal). Al Impactar: Inflige 1d10 Daño de Rayo y el objetivo no puede usar Reacciones."
         },
         {
-          "name": "Escudo",
-          "type": "Hechizo",
-          "cost": "1 MP",
-          "tags": ["Mejora", "Defensivo"],
-          "effect": "Acción: Haz una Prueba de Lanzamiento (CD 11). Éxito: Creas una barrera de fuerza. Ganas +2 Puntuación de Armadura (AS) por 1 minuto.",
-          "details": "Se acumula con armadura usada, a diferencia de Armadura de Mago."
+          "name": "Relámpago en Arco",
+          "cost": "2 MP",
+          "duration": "Instantáneo",
+          "range": "60 pies",
+          "cast_dc": 15,
+          "effect": "Haz una Prueba de Lanzamiento a Distancia vs Defensa. Al Impactar: Inflige 2d8 Daño de Rayo. Un rayo salta a un segundo objetivo a 15 pies del primero (Impacto Automático) por 1d8 Daño de Rayo."
         },
         {
-          "name": "Armadura de Mago",
-          "type": "Hechizo",
+          "name": "Paso de Trueno",
+          "cost": "3 MP",
+          "duration": "Instantáneo",
+          "range": "Propio / 90 pies",
+          "cast_dc": 17,
+          "effect": "Te teletransportas hasta 90 pies a un espacio desocupado. Inmediatamente después de desaparecer, suena un estruendo. Criaturas a 10 pies de tu espacio inicial deben hacer Salvación de Fortaleza vs. tu Resultado. Fallo: 3d10 Daño de Trueno. Éxito: Mitad de daño."
+        }
+      ]
+    },
+    {
+      "name": "Grimorio de Fuerza",
+      "type": "Colección",
+      "tags": ["Fuerza", "Utilidad"],
+      "description": "Manipulación de energía cinética mágica pura.",
+      "spells": [
+        {
+          "name": "Virote Arcano",
           "cost": "1 MP",
-          "tags": ["Mejora", "Defensivo"],
-          "effect": "Acción: Rango Toque. Haz una Prueba de Lanzamiento (CD 11). Éxito: La Puntuación de Armadura Base de una criatura sin armadura se vuelve 1 por 1 hora.",
-          "details": "Esencial para sobrevivir sin armadura física."
+          "duration": "Instantáneo",
+          "range": "60 pies",
+          "cast_dc": 11,
+          "effect": "Un virote de energía pura. Haz una Prueba de Lanzamiento vs Defensa. Al Impactar: Inflige 1d4+1 Daño de Fuerza. Este ataque ignora la Puntuación de Armadura (AS) del objetivo."
         },
         {
-          "name": "Caída de Pluma",
-          "type": "Hechizo",
-          "cost": "1 MP",
-          "tags": ["Utilidad", "Reacción"],
-          "effect": "Reacción: Disparador cuando tú o una criatura a 30 pies cae. Haz una Prueba de Lanzamiento (CD 9). Éxito: El objetivo desciende lentamente y recibe 0 Daño de Caída.",
-          "details": "Salva vidas en mazmorras verticales."
+          "name": "Estallar",
+          "cost": "2 MP",
+          "duration": "Instantáneo",
+          "range": "60 pies",
+          "cast_dc": 14,
+          "effect": "Un fuerte ruido resonante estalla en un área de 10 pies de radio. Criaturas dentro hacen Salvación de Fortaleza vs Resultado de Lanzamiento. Fallo: 3d8 Daño de Trueno (Mitad en éxito). Criaturas inorgánicas (Constructos) tienen Desventaja."
         },
+        {
+          "name": "Muro de Fuerza",
+          "cost": "3 MP",
+          "duration": "1 Minuto (Concentración)",
+          "range": "60 pies",
+          "cast_dc": 18,
+          "effect": "Crea un muro de fuerza invisible e indestructible (20 pies ancho, 10 pies alto). Bloquea todos los objetos físicos y hechizos. No puede ser disipado, solo desintegrado o esperado."
+        }
+      ]
+    },
+    {
+      "name": "Grimorio de Transmutación",
+      "type": "Colección",
+      "tags": ["Mejora", "Utilidad"],
+      "description": "Alterar las propiedades físicas de las criaturas.",
+      "spells": [
+        {
+          "name": "Retirada Expeditiva",
+          "cost": "1 MP",
+          "duration": "1 Minuto",
+          "range": "Propio",
+          "cast_dc": 11,
+          "effect": "Acción. Haz una Prueba de Lanzamiento. Éxito: Tu Velocidad aumenta en 10 pies, y puedes tomar la acción Correr como Acción Bonificada en cada turno."
+        },
+        {
+          "name": "Agrandar / Reducir",
+          "cost": "2 MP",
+          "duration": "1 Minuto (Concentración)",
+          "range": "30 pies",
+          "cast_dc": 14,
+          "effect": "Acción. Objetivo una criatura. Voluntarios aceptan; no dispuestos hacen Salvación Fortaleza vs. Resultado. Agrandar: Tamaño se duplica, +1d4 Daño Fuerza. Reducir: Tamaño se reduce a la mitad, -1d4 Daño Fuerza, +2 Sigilo."
+        },
+        {
+          "name": "Prisa",
+          "cost": "3 MP",
+          "duration": "1 Minuto (Concentración)",
+          "range": "30 pies",
+          "cast_dc": 18,
+          "effect": "Acción. Elige criatura dispuesta. Velocidad duplicada, +2 bono a Defensa, y gana una Acción adicional en cada turno (Atacar, Correr o Destrabarse solo). Cuando termina, objetivo queda Atontado 1 ronda."
+        }
+      ]
+    },
+    {
+      "name": "Grimorio de Ilusión",
+      "type": "Colección",
+      "tags": ["Engaño", "Defensa"],
+      "description": "Engañar a los sentidos y oscurecer la verdad.",
+      "spells": [
+        {
+          "name": "Desdibujar",
+          "cost": "1 MP",
+          "duration": "1 Minuto (Concentración)",
+          "range": "Propio",
+          "cast_dc": 12,
+          "effect": "Acción. Tu cuerpo se vuelve borroso y cambiante. Pruebas de Ataque contra ti tienen Desventaja. No funciona si el atacante no usa la vista."
+        },
+        {
+          "name": "Invisibilidad",
+          "cost": "2 MP",
+          "duration": "10 Minutos (Concentración)",
+          "range": "Toque",
+          "cast_dc": 15,
+          "effect": "Acción. Criatura tocada se vuelve Invisible. Ataca con Ventaja, ataques en su contra tienen Desventaja. Termina si ataca o lanza hechizo."
+        },
+        {
+          "name": "Imagen Espejada",
+          "cost": "3 MP",
+          "duration": "1 Minuto",
+          "range": "Propio",
+          "cast_dc": 17,
+          "effect": "Acción. Creas 3 duplicados ilusorios. Al ser atacado, tira d20. 1-10: Duplicado golpeado y destruido (Sin daño para ti). 11+: Eres atacado normalmente. Duplicados tienen Defensa 10."
+        }
+      ]
+    },
+    {
+      "name": "Grimorio de Conjuración",
+      "type": "Colección",
+      "tags": ["Control", "Creación"],
+      "description": "Invocar materia para obstaculizar enemigos.",
+      "spells": [
         {
           "name": "Grasa",
-          "type": "Hechizo",
           "cost": "1 MP",
-          "tags": ["Control", "AoE"],
-          "effect": "Acción: Rango 30 pies. Haz una Prueba de Lanzamiento (CD 11). Éxito: Un cuadrado de 10 pies se vuelve Terreno Difícil. Criaturas que entren o empiecen allí caen Derribadas a menos que su Salvación de Reflejos supere tu Prueba.",
-          "details": "Control del campo de batalla sin concentración."
+          "duration": "1 Minuto",
+          "range": "30 pies",
+          "cast_dc": 11,
+          "effect": "Acción. Cubre cuadrado de 10 pies en grasa resbaladiza. Terreno Difícil. Criatura entrando o terminando turno debe salvar Reflejos vs. Resultado o caer Derribada."
         },
         {
           "name": "Telaraña",
-          "type": "Hechizo",
-          "cost": "1 MP",
-          "tags": ["Control", "AoE"],
-          "effect": "Acción: Rango 30 pies. Haz una Prueba de Lanzamiento (CD 13). Éxito: Crea un cubo de 15 pies de telarañas pegajosas (Terreno Difícil). Criaturas que empiecen allí quedan Agarradas a menos que su Salvación de Reflejos supere tu Prueba.",
-          "details": "Inflamable. Se quema si recibe daño de Fuego."
+          "cost": "2 MP",
+          "duration": "1 Hora (Concentración)",
+          "range": "60 pies",
+          "cast_dc": 14,
+          "effect": "Acción. Cubo de 20 pies de redes pegajosas. Terreno Difícil. Criaturas empezando turno allí deben salvar Reflejos vs. Resultado o quedar Restringidas. Pueden usar Acción para prueba de Fuerza. Inflamable."
         },
+        {
+          "name": "Paso Brumoso",
+          "cost": "3 MP",
+          "duration": "Instantáneo",
+          "range": "Propio",
+          "cast_dc": 16,
+          "effect": "Acción Bonificada (o Movimiento). Te teletransportas hasta 30 pies a un espacio desocupado que puedas ver. No provoca contraataques."
+        }
+      ]
+    },
+    {
+      "name": "Grimorio de la Mente",
+      "type": "Colección",
+      "tags": ["Encantamiento", "Control"],
+      "description": "Hechizos para nublar los sentidos y dominar la voluntad.",
+      "spells": [
         {
           "name": "Dormir",
-          "type": "Hechizo",
           "cost": "1 MP",
-          "tags": ["Control", "AoE"],
-          "effect": "Acción: Rango 30 pies. Haz una Prueba de Lanzamiento (CD 11). Éxito: Tira 3d8. Este es el total de PV de criaturas afectadas en un área de 15 pies. Empezando por los PV más bajos, los objetivos caen Inconscientes (1 min) hasta agotar la reserva.",
-          "details": "Extremadamente poderoso contra Esbirros y enemigos heridos."
+          "duration": "1 Minuto",
+          "range": "60 pies",
+          "cast_dc": 12,
+          "effect": "Acción. Tira 5d8. Total de PV afectados en Radio 20 pies. Empezando por criatura con PV más bajos, caen Inconscientes (hasta daño o sacudida). No-Muertos/Constructos inmunes."
         },
         {
-          "name": "Identificar",
-          "type": "Hechizo",
+          "name": "Retener Persona",
+          "cost": "2 MP",
+          "duration": "1 Minuto (Concentración)",
+          "range": "30 pies",
+          "cast_dc": 15,
+          "effect": "Acción. Objetivo Humanoide. Prueba Lanzamiento vs. Salvación Voluntad. Éxito: Paralizado (Aturdido, ataques contra él son Auto-Críticos). Repite salvación al final de turno."
+        },
+        {
+          "name": "Confusión",
+          "cost": "3 MP",
+          "duration": "1 Ronda",
+          "range": "60 pies",
+          "cast_dc": 17,
+          "effect": "Acción. Objetivo Radio 10 pies. Salvación Voluntad vs. Resultado. Fallo: Confundidos. En su turno, tira d6: 1-2 Nada, 3-4 Correr al azar, 5-6 Atacar criatura más cercana."
+        }
+      ]
+    },
+    {
+      "name": "Grimorio de Telequinesis",
+      "type": "Colección",
+      "tags": ["Fuerza", "Utilidad"],
+      "description": "Manipulación de materia y gravedad.",
+      "spells": [
+        {
+          "name": "Empujón de Fuerza",
           "cost": "1 MP",
-          "tags": ["Utilidad", "Ritual"],
-          "effect": "Acción: Toca un objeto. Haz una Prueba de Lanzamiento (CD 9). Éxito: Conoces las propiedades mágicas, funciones y palabras de mando del objeto. Toma 1 Turno de Mazmorra (10 mins).",
-          "details": "Requerido para usar objetos mágicos encontrados con seguridad."
+          "duration": "Instantáneo",
+          "range": "30 pies",
+          "cast_dc": 11,
+          "effect": "Acción. Objetivo criatura/objeto (Mediano o menor). Prueba Lanzamiento vs. Salvación Fuerza. Éxito: Empujado 15 pies lejos. Si golpea pared, 1d6 daño Impacto."
+        },
+        {
+          "name": "Levitar",
+          "cost": "2 MP",
+          "duration": "10 Minutos (Concentración)",
+          "range": "60 pies",
+          "cast_dc": 14,
+          "effect": "Acción. Criatura u objeto suelto sube 20 pies verticalmente. No dispuestos salvan Fortaleza para agarrarse. Criatura levitando no puede moverse (Velocidad 0) a menos que se empuje."
+        },
+        {
+          "name": "Telequinesis",
+          "cost": "3 MP",
+          "duration": "1 Minuto (Concentración)",
+          "range": "60 pies",
+          "cast_dc": 18,
+          "effect": "Acción. Manipula objetos/criaturas Grandes o menores. Mueve 30 pies en aire. Úsalos como armas (Prueba Lanzamiento vs Defensa, 3d10 daño) o sostenlos Restringidos (Lanzamiento vs Fuerza)."
+        }
+      ]
+    },
+    {
+      "name": "Grimorio de la Vista",
+      "type": "Colección",
+      "tags": ["Adivinación", "Información"],
+      "description": "Revelando lo que está oculto.",
+      "spells": [
+        {
+          "name": "Detectar Magia",
+          "cost": "1 MP",
+          "duration": "10 Minutos",
+          "range": "Propio (Radio 30 pies)",
+          "cast_dc": 10,
+          "effect": "Acción. Sientes presencia mágica a 30 pies. Ves aura tenue. Conoces escuela (ej: Evocación) gastando Acción."
+        },
+        {
+          "name": "Ver Invisibilidad",
+          "cost": "2 MP",
+          "duration": "1 Hora",
+          "range": "Propio",
+          "cast_dc": 14,
+          "effect": "Acción. Ves criaturas/objetos Invisibles como visibles. Ves Plano Etéreo (fantasmas)."
+        },
+        {
+          "name": "Ojo Arcano",
+          "cost": "3 MP",
+          "duration": "1 Hora (Concentración)",
+          "range": "Ilimitado",
+          "cast_dc": 17,
+          "effect": "Acción. Creas ojo mágico invisible. Recibes info visual. Visión Oscuridad 30 pies. Mueve 30 pies/turno. Pasa huecos pequeños pero no barreras sólidas."
+        }
+      ]
+    },
+    {
+      "name": "Grimorio de Travesía",
+      "type": "Colección",
+      "tags": ["Utilidad", "Movimiento"],
+      "description": "Superar barreras físicas y obstáculos.",
+      "spells": [
+        {
+          "name": "Abrir",
+          "cost": "1 MP",
+          "duration": "Instantáneo",
+          "range": "60 pies",
+          "cast_dc": 12,
+          "effect": "Acción. Golpe sonoro emanando de objeto cerrado. Cerradura no mágica se abre. Sonido audible a 300 pies (Alerta enemigos)."
+        },
+        {
+          "name": "Escalar Araña",
+          "cost": "2 MP",
+          "duration": "1 Hora",
+          "range": "Toque",
+          "cast_dc": 13,
+          "effect": "Acción. Criatura gana capacidad de mover por paredes/techos manos libres. Gana Velocidad de Escalada igual a caminar."
+        },
+        {
+          "name": "Vuelo",
+          "cost": "3 MP",
+          "duration": "10 Minutos (Concentración)",
+          "range": "Toque",
+          "cast_dc": 18,
+          "effect": "Acción. Criatura gana Velocidad de Vuelo 60 pies. Al terminar, cae si está en el aire."
+        }
+      ]
+    },
+    {
+      "name": "Grimorio de Protección",
+      "type": "Colección",
+      "tags": ["Abjuración", "Defensa"],
+      "description": "Barreras mágicas y contramedidas.",
+      "spells": [
+        {
+          "name": "Armadura de Mago",
+          "cost": "1 MP",
+          "duration": "1 Hora",
+          "range": "Toque",
+          "cast_dc": 12,
+          "effect": "Piel de criatura sin armadura se endurece. Su Puntuación de Armadura Base se vuelve 1. (No se apila con armadura usada)."
         },
         {
           "name": "Disipar Magia",
-          "type": "Hechizo",
-          "cost": "1 MP",
-          "tags": ["Utilidad", "Control"],
-          "effect": "Acción: Rango 60 pies. Objetivo un efecto mágico. Haz una Prueba de Lanzamiento (CD 13). Éxito: El hechizo o efecto termina inmediatamente.",
-          "details": "Puede quitar mejoras de enemigos o despejar trampas."
+          "cost": "2 MP",
+          "duration": "Instantáneo",
+          "range": "60 pies",
+          "cast_dc": 15,
+          "effect": "Elige criatura, objeto o efecto mágico. Haz Prueba de Lanzamiento vs. CD de la magia (Estándar CD 13). Éxito: El hechizo termina."
         },
         {
-          "name": "Recuperación Arcana",
-          "type": "Habilidad",
-          "cost": "Acción (Descanso)",
-          "tags": ["Recurso", "1/Descanso"],
-          "effect": "Acción: Entras en un breve trance meditativo para reorganizar tu mente. Recuperas 1d4 Puntos de Maná (MP). Usable una vez por Descanso Largo.",
-          "details": "Vital para sostener una larga exploración de mazmorra."
-        },
-        {
-          "name": "Potencia Arcana",
-          "type": "Pasivo",
-          "cost": "-",
-          "tags": ["Daño"],
-          "effect": "Cuando tiras daño para un Hechizo, añade tu Modificador de INT al total.",
-          "details": "Hace peligrosos incluso a los trucos básicos."
-        },
-        {
-          "name": "Foco Arcano",
-          "type": "Pasivo",
-          "cost": "-",
-          "tags": ["Mejora"],
-          "effect": "Ganas un Bono permanente de +1 a todas las Pruebas de Lanzamiento.",
-          "details": "Reduce la posibilidad de Pifias Mágicas."
-        },
-        {
-          "name": "Mente Expandida",
-          "type": "Pasivo",
-          "cost": "-",
-          "tags": ["Recurso", "Repetible"],
-          "effect": "Tu Maná Máximo (MP) aumenta en 2.",
-          "flags": { "repeatable": true, "max_rank": 3 },
-          "modifiers": { "mp_flat": 2 }
-        },
-        {
-          "name": "Estudios Arcanos",
-          "type": "Pasivo",
-          "cost": "-",
-          "tags": ["Habilidad", "Repetible"],
-          "effect": "Elige una Habilidad Entrenada (Saber, Investigar, Artesanía). Te vuelves Experto (d6) en esa habilidad.",
-          "flags": { "repeatable": true, "select_skill": true }
-        },
-        {
-          "name": "Especialización Arcana",
-          "type": "Pasivo",
-          "cost": "-",
-          "tags": ["Metamagia", "Repetible"],
-          "effect": "Elige una Modificación de Hechizo (Potenciar, Alcance, Ampliar, Sutil). Cuando aplicas este mod a un hechizo, el aumento de CD es +1 (en lugar del +2 normal).",
-          "flags": { "repeatable": true, "select_mod": true },
-          "details": "Permite potenciar hechizos de forma más segura."
+          "name": "Globo de Invulnerabilidad",
+          "cost": "3 MP",
+          "duration": "1 Minuto (Concentración)",
+          "range": "Propio (Radio 10 pies)",
+          "cast_dc": 18,
+          "effect": "Crea barrera brillante. Hechizos de 1 MP o 2 MP lanzados desde fuera no afectan a nada dentro."
         }
       ]
     },
     {
-      "id": "arch_occultist",
-      "name": "El Ocultista",
-      "role": "Lanzador de Conjuros",
-      "description": "Un portador de poder prohibido que negocia con entidades oscuras. Pagas por la magia con sangre, cordura y las almas de tus enemigos. Eres el lanzador más peligroso... a veces para ti mismo.",
-      "primary_stats": ["CHA"],
-      "resource": "Puntos de Maná (MP)",
-      "proficiencies": {
-        "armor": ["Ninguna"],
-        "weapons": ["Daga", "Bastón", "Garrote"],
-        "skills": ["Intimidación (CHA)"]
-      },
-      "talents": [
+      "name": "Recuperación Arcana",
+      "type": "Habilidad",
+      "cost": "Acción (Descanso)",
+      "tags": ["Recurso", "1/Descanso"],
+      "effect": "Acción: Entras en trance meditativo corto. Recuperas 1d4 Puntos de Maná (MP). Usable una vez por Descanso Largo.",
+      "details": "Vital para sostener una exploración larga."
+    },
+    {
+      "name": "Familiar Arcano",
+      "type": "Habilidad",
+      "cost": "1 MP (Invocar)",
+      "tags": ["Esbirro", "Utilidad"],
+      "effect": "Invocas un pequeño espíritu mágico (Búho, Gato, Diablillo). Tiene 1 PV, no ataca. Puede Explorar (compartir sentidos 100 pies) o usar Ayudar para darte Ventaja en una Prueba. Si muere, requiere Descanso Corto y 1 MP para re-invocar.",
+      "details": "El explorador y asistente de laboratorio definitivo."
+    },
+    {
+      "name": "Potencia Arcana",
+      "type": "Pasivo",
+      "cost": "-",
+      "tags": ["Daño"],
+      "effect": "Cuando tiras daño para un Hechizo, añade tu Modificador de INT al total.",
+      "details": "Hace peligrosos incluso a los trucos básicos."
+    },
+    {
+      "name": "Foco Arcano",
+      "type": "Pasivo",
+      "cost": "-",
+      "tags": ["Mejora"],
+      "effect": "Ganas un Bono permanente de +1 a todas las Pruebas de Lanzamiento.",
+      "details": "Reduce la posibilidad de Pifias Mágicas."
+    },
+    {
+      "name": "Mente Expandida",
+      "type": "Pasivo",
+      "cost": "-",
+      "tags": ["Recurso", "Repetible"],
+      "effect": "Tu Maná Máximo (MP) aumenta en 2.",
+      "flags": { "repeatable": true, "max_rank": 3 },
+      "modifiers": { "mp_flat": 2 }
+    },
+    {
+      "name": "Estudios Arcanos",
+      "type": "Pasivo",
+      "cost": "-",
+      "tags": ["Habilidad", "Repetible"],
+      "effect": "Elige una Habilidad Entrenada (Saber, Investigar, Artesanía). Te vuelves Experto (d6) en esa habilidad.",
+      "flags": { "repeatable": true, "select_skill": true }
+    },
+    {
+      "name": "Especialización Arcana",
+      "type": "Pasivo",
+      "cost": "-",
+      "tags": ["Metamagia", "Repetible"],
+      "effect": "Elige una Modificación de Hechizo (Potenciar, Alcance, Ampliar, Sutil). Cuando aplicas este mod, el aumento de CD es +1 (en lugar de +2).",
+      "flags": { "repeatable": true, "select_mod": true },
+      "details": "Permite potenciar hechizos de forma más segura."
+    }
+  ]
+},
+{
+  "id": "arch_occultist",
+  "name": "El Ocultista",
+  "role": "Lanzador de Conjuros",
+  "description": "Un portador de poder prohibido que negocia con entidades oscuras. Pagas por la magia con sangre, cordura y las almas de tus enemigos. Eres el lanzador más peligroso... a veces para ti mismo.",
+  "primary_stats": ["CHA"],
+  "resource": "Puntos de Maná (MP)",
+  "proficiencies": {
+    "armor": ["Ninguna"],
+    "weapons": ["Daga", "Bastón", "Garrote"],
+    "skills": ["Intimidación (CHA)"]
+  },
+  "talents": [
+    {
+      "name": "Rito de Sangre",
+      "type": "Colección",
+      "tags": ["Necrótico", "Curación"],
+      "description": "Magia alimentada por la vitalidad de los vivos.",
+      "spells": [
         {
-          "name": "Virote de Sangre",
-          "type": "Hechizo",
-          "cost": "2 PV",
-          "tags": ["Ataque", "Necrótico", "Magia de Sangre"],
-          "effect": "Acción: Rango 30 pies. Alimentas este hechizo con tu propia vitalidad en lugar de Maná. Recibes 2 de Daño (inevitable). Haz una Prueba de Lanzamiento a Distancia (vs Defensa). Al Impactar: Inflige 1d10 Daño Necrótico.",
-          "details": "Un truco poderoso que te mata lentamente."
-        },
-        {
-          "name": "Maleficio",
-          "type": "Hechizo",
+          "name": "Aguja de Sangre",
           "cost": "1 MP",
-          "tags": ["Debilitamiento", "Maldición"],
-          "effect": "Acción: Rango 30 pies. Prueba de Lanzamiento vs. Salvación de Voluntad del Objetivo. Éxito: Objetivo Maldito (1 min). Elige un Atributo (STR, DEX, etc.); tienen Desventaja en pruebas con él. Infliges +1d4 daño Necrótico en todos los golpes contra él.",
-          "details": "Sin concentración, pero solo puedes tener un Maleficio activo a la vez."
-        },
-        {
-          "name": "Rayo de Enfermedad",
-          "type": "Hechizo",
-          "cost": "1 MP",
-          "tags": ["Ataque", "Veneno", "Debilitamiento"],
-          "effect": "Acción: Rango 30 pies. Prueba de Lanzamiento a Distancia. Al Impactar: Inflige 1d8 Daño de Veneno. A menos que la Salvación de Fortaleza supere tu Prueba, quedan Envenenados por 1 minuto.",
-          "details": "Las criaturas envenenadas reciben 1d6 de daño al inicio de su turno."
-        },
-        {
-          "name": "Miedo",
-          "type": "Hechizo",
-          "cost": "2 MP",
-          "tags": ["Control", "AoE"],
-          "effect": "Acción: Cono de 15 pies. Haz una Prueba de Lanzamiento (CD 13). Todas las criaturas en el área quedan Asustadas por 1 minuto a menos que su Salvación de Voluntad supere tu Prueba.",
-          "details": "Las criaturas asustadas deben huir y no pueden acercarse a ti."
-        },
-        {
-          "name": "Ceguera",
-          "type": "Hechizo",
-          "cost": "2 MP",
-          "tags": ["Debilitamiento", "Maldición"],
-          "effect": "Acción: Rango 30 pies. Prueba de Lanzamiento (CD 13) vs. Salvación de Fortaleza. Éxito: Objetivo Cegado por 1 minuto. Pueden repetir la salvación al final de sus turnos.",
-          "details": "Los enemigos cegados otorgan Ventaja a los atacantes."
-        },
-        {
-          "name": "Invocar Diablillo",
-          "type": "Hechizo",
-          "cost": "2 MP",
-          "tags": ["Invocación", "Esbirro"],
-          "effect": "Acción: Invocas un pequeño demonio por 1 hora. Estadísticas: 5 PV, AS 1, Ataque +2 (1d4 daño). Obedece tus comandos verbales, pero intentará torcer la intención de tus palabras.",
-          "details": "Genial para explorar o flanquear, arriesgado para tareas precisas."
-        },
-        {
-          "name": "Armadura de Sombras",
-          "type": "Hechizo",
-          "cost": "1 MP",
-          "tags": ["Mejora", "Defensivo"],
-          "effect": "Acción: Rango Propio. Te envuelves en sombras por 1 hora. Ganas +1 Puntuación de Armadura. Tienes Ventaja en pruebas de Sigilo en luz tenue o oscuridad.",
-          "details": "Mejora defensiva y de utilidad en uno."
+          "duration": "Instantáneo",
+          "range": "60 pies",
+          "cast_dc": 11,
+          "effect": "Haz una Prueba de Lanzamiento a Distancia vs. Defensa. Al Impactar: Inflige 1d8 Daño Necrótico. En Crítico: El objetivo gana la condición de Sangrado (1d4 daño/turno)."
         },
         {
           "name": "Toque Vampírico",
-          "type": "Hechizo",
           "cost": "2 MP",
-          "tags": ["Ataque", "Curación", "Necrótico"],
-          "effect": "Acción: Rango Toque. Haz una Prueba de Lanzamiento Cuerpo a Cuerpo (vs Defensa). Al Impactar: Inflige 2d6 Daño Necrótico. Recuperas PV igual a la mitad del daño infligido.",
-          "details": "Esencial para sostener el uso de Magia de Sangre."
+          "duration": "Instantáneo",
+          "range": "Toque",
+          "cast_dc": 14,
+          "effect": "Haz una Prueba de Lanzamiento Cuerpo a Cuerpo vs. Defensa. Al Impactar: Inflige 3d6 Daño Necrótico. Inmediatamente recuperas Puntos de Vida iguales a la mitad del daño infligido."
         },
+        {
+          "name": "Desangrar",
+          "cost": "3 MP",
+          "duration": "Instantáneo",
+          "range": "30 pies",
+          "cast_dc": 18,
+          "effect": "Objetivo una criatura viva. Haz una Prueba de Lanzamiento vs. Salvación de Fortaleza. Fallo: El objetivo recibe 6d6 Daño Necrótico mientras su sangre hierve. Tú recuperas PV iguales a 1/4 del daño infligido. Éxito: Mitad de daño, sin curación."
+        }
+      ]
+    },
+    {
+      "name": "Rito de las Sombras",
+      "type": "Colección",
+      "tags": ["Sigilo", "Defensa"],
+      "description": "Manipulación de la oscuridad y el miedo.",
+      "spells": [
+        {
+          "name": "Armadura Umbría",
+          "cost": "1 MP",
+          "duration": "1 Hora",
+          "range": "Propio",
+          "cast_dc": 12,
+          "effect": "Te envuelves en sombras. Ganas +1 Puntuación de Armadura. Mientras estés en Luz Tenue u Oscuridad, los ataques contra ti tienen Desventaja."
+        },
+        {
+          "name": "Oscuridad",
+          "cost": "2 MP",
+          "duration": "10 Minutos (Concentración)",
+          "range": "60 pies",
+          "cast_dc": 15,
+          "effect": "Crea una esfera de oscuridad mágica de 15 pies de radio. Las criaturas dentro están Cegadas (a menos que tengan Visión del Diablo mágica). La luz no mágica no puede iluminar esta área."
+        },
+        {
+          "name": "Paso Sombrío",
+          "cost": "3 MP",
+          "duration": "Instantáneo",
+          "range": "Propio",
+          "cast_dc": 18,
+          "effect": "Acción Bonificada. Te teletransportas desde un área de sombra a otra hasta a 60 pies de distancia. Inmediatamente ganas la condición de Oculto, y tu próximo ataque este turno tiene Ventaja."
+        }
+      ]
+    },
+    {
+      "name": "Rito del Vacío",
+      "type": "Colección",
+      "tags": ["Psíquico", "Control"],
+      "description": "Canalizando la locura del Reino Lejano.",
+      "spells": [
+        {
+          "name": "Pico Mental",
+          "cost": "1 MP",
+          "duration": "Instantáneo",
+          "range": "60 pies",
+          "cast_dc": 12,
+          "effect": "Objetivo una criatura. Prueba de Lanzamiento vs. Salvación de Voluntad. Fallo: Objetivo recibe 1d10 Daño Psíquico. Este hechizo no deja marca física y no hace ruido (Sutil)."
+        },
+        {
+          "name": "Susurros de Locura",
+          "cost": "2 MP",
+          "duration": "1 Ronda",
+          "range": "30 pies",
+          "cast_dc": 15,
+          "effect": "Objetivo hasta 3 criaturas en rango. Prueba de Lanzamiento vs. Salvación de Voluntad. Fallo: Los objetivos están Atontados (Acción O Movimiento solamente) hasta el final de su próximo turno mientras escuchan voces gritando."
+        },
+        {
+          "name": "Tentáculos del Vacío",
+          "cost": "3 MP",
+          "duration": "1 Minuto (Concentración)",
+          "range": "60 pies",
+          "cast_dc": 17,
+          "effect": "Crea un cuadrado de 20 pies de tentáculos negros y gomosos. El área es Terreno Difícil. Las criaturas que comiencen su turno allí reciben 3d6 Daño Contundente y quedan Restringidas a menos que su Salvación de Fuerza supere tu Resultado."
+        }
+      ]
+    },
+    {
+      "name": "Rito de la Ruina",
+      "type": "Colección",
+      "tags": ["Maldición", "Debilitamiento"],
+      "description": "Debilitar enemigos y asegurar su desaparición.",
+      "spells": [
+        {
+          "name": "Perdición",
+          "cost": "1 MP",
+          "duration": "1 Minuto (Concentración)",
+          "range": "30 pies",
+          "cast_dc": 12,
+          "effect": "Objetivo hasta 3 enemigos. Prueba de Lanzamiento vs. Salvación de Voluntad. Fallo: Los objetivos restan 1d4 de todas sus Pruebas de Ataque y Tiradas de Salvación durante la duración."
+        },
+        {
+          "name": "Maleficio",
+          "cost": "2 MP",
+          "duration": "1 Hora (Concentración)",
+          "range": "60 pies",
+          "cast_dc": 14,
+          "effect": "Objetivo una criatura. Prueba de Lanzamiento vs. Salvación de Voluntad. Éxito: Infliges +1d6 Daño Necrótico cada vez que la golpeas. Además, elige un Atributo (ej: STR); el objetivo tiene Desventaja en pruebas con esa estadística."
+        },
+        {
+          "name": "Maldición de Fragilidad",
+          "cost": "3 MP",
+          "duration": "1 Minuto",
+          "range": "30 pies",
+          "cast_dc": 18,
+          "effect": "Objetivo una criatura. Prueba de Lanzamiento vs. Salvación de Fortaleza. Fallo: El objetivo gana Vulnerabilidad a todo Daño Físico (recibe Doble Daño). El objetivo puede repetir la salvación al final de cada uno de sus turnos."
+        }
+      ]
+    },
+    {
+      "name": "Rito de la Tumba",
+      "type": "Colección",
+      "tags": ["Nigromancia", "Esbirro"],
+      "description": "Levantar a los muertos y armar cadáveres.",
+      "spells": [
+        {
+          "name": "Toque Helado",
+          "cost": "1 MP",
+          "duration": "1 Ronda",
+          "range": "60 pies",
+          "cast_dc": 11,
+          "effect": "Haz una Prueba de Lanzamiento a Distancia vs. Defensa. Al Impactar: Inflige 1d8 Daño Necrótico. El objetivo no puede recuperar Puntos de Vida hasta el inicio de tu próximo turno. Si el objetivo es No-Muerto, tiene Desventaja en ataques contra ti."
+        },
+        {
+          "name": "Animar a los Muertos",
+          "cost": "2 MP",
+          "duration": "1 Hora",
+          "range": "10 pies",
+          "cast_dc": 14,
+          "effect": "Objetivo una pila de huesos o un cadáver fresco. Se levanta como un Esqueleto o Zombi Esbirro bajo tu control. Estadísticas: 5 PV, CA 10, Velocidad 30, Ataque +2 (1d6 daño). Actúa en tu turno (Comandarlo requiere una Acción Bonificada). Solo puedes controlar uno a la vez."
+        },
+        {
+          "name": "Explosión de Cadáver",
+          "cost": "3 MP",
+          "duration": "Instantáneo",
+          "range": "60 pies",
+          "cast_dc": 17,
+          "effect": "Objetivo un cadáver (Tamaño Mediano o mayor). Detona violentamente. Todas las criaturas a 15 pies del cadáver reciben 4d6 Daño Necrótico y son Derribadas. Salvación de Reflejos vs. Resultado de Lanzamiento para mitad de daño."
+        }
+      ]
+    },
+    {
+      "name": "Rito Infernal",
+      "type": "Colección",
+      "tags": ["Fuego", "Ofensivo"],
+      "description": "Fuego del infierno e ira demoníaca.",
+      "spells": [
+        {
+          "name": "Reprensión Infernal",
+          "cost": "1 MP",
+          "duration": "Instantáneo",
+          "range": "60 pies",
+          "cast_dc": 11,
+          "effect": "Reacción. Disparador: Eres dañado por una criatura. El atacante es rodeado por fuego infernal. Debe hacer una Salvación de Reflejos vs. Resultado de Lanzamiento. Fallo: 2d10 Daño de Fuego. Éxito: Mitad de daño."
+        },
+        {
+          "name": "Rayo Abrasador",
+          "cost": "2 MP",
+          "duration": "Instantáneo",
+          "range": "60 pies",
+          "cast_dc": 15,
+          "effect": "Lanzas tres rayos de fuego. Haz tres Pruebas de Lanzamiento a Distancia separadas. Puedes apuntar a una criatura o varias. Al Impactar: Cada rayo inflige 2d6 Daño de Fuego."
+        },
+        {
+          "name": "Pilar de Fuego Infernal",
+          "cost": "3 MP",
+          "duration": "Instantáneo",
+          "range": "60 pies",
+          "cast_dc": 18,
+          "effect": "Invocas una columna de llama maldita. Radio 10 pies, Cilindro de 40 pies de alto. Las criaturas dentro reciben 4d6 Daño de Fuego y 2d6 Daño Necrótico. Salvación de Reflejos vs. Resultado de Lanzamiento para mitad."
+        }
+      ]
+    },
+    {
+      "name": "Rito del Deseo",
+      "type": "Colección",
+      "tags": ["Encantamiento", "Control"],
+      "description": "Doblegar voluntades mediante encanto y locura.",
+      "spells": [
         {
           "name": "Hechizar Persona",
-          "type": "Hechizo",
           "cost": "1 MP",
-          "tags": ["Control", "Social"],
-          "effect": "Acción: Rango 30 pies. Objetivo Humanoide. Prueba de Lanzamiento (CD 11) vs. Salvación de Voluntad. Éxito: Objetivo Hechizado (Amistoso, no puede atacarte) por 1 hora o hasta ser dañado.",
-          "details": "El combate termina si el líder está Hechizado."
+          "duration": "1 Hora",
+          "range": "30 pies",
+          "cast_dc": 12,
+          "effect": "Objetivo un humanoide. Prueba de Lanzamiento vs. Salvación de Voluntad. Éxito: El objetivo es Hechizado (Amistoso, te trata como un conocido). El hechizo termina si tú o tus aliados le hacen daño. Efecto en Combate: El objetivo no te atacará."
         },
         {
-          "name": "Hablar con los Muertos",
-          "type": "Hechizo",
+          "name": "Sugestión",
           "cost": "2 MP",
-          "tags": ["Utilidad", "Ritual"],
-          "effect": "Acción: Toca un cadáver. Se anima brevemente para responder 3 preguntas. Debe responder con la verdad, pero puede ser críptico u hostil. Toma 1 Turno de Mazmorra.",
-          "details": "Los muertos conocen secretos que los vivos han olvidado."
+          "duration": "8 Horas (Concentración)",
+          "range": "30 pies",
+          "cast_dc": 15,
+          "effect": "Sugieres un curso de actividad (limitado a una o dos frases) a una criatura que pueda oírte. Prueba de Lanzamiento vs. Salvación de Voluntad. Éxito: La criatura persigue el curso de acción lo mejor que puede. La sugerencia no debe ser obviamente autolesiva."
         },
         {
-          "name": "Pulso Oscuro",
-          "type": "Hechizo",
-          "cost": "2 MP",
-          "tags": ["AoE", "Necrótico", "Arriesgado"],
-          "effect": "Acción: Radio de 10 pies centrado en TI. Haz una Prueba de Lanzamiento (CD 13). Todas las criaturas en rango (Enemigos Y Aliados, excluyéndote) reciben 1d8 Daño Necrótico y son Debilitadas a menos que su Salvación de Fortaleza > Prueba.",
-          "details": "Alto impacto, pero el fuego amigo está garantizado."
-        },
-        {
-          "name": "Precio de Sangre",
-          "type": "Habilidad",
-          "cost": "PV",
-          "tags": ["Recurso", "Acción Gratuita"],
-          "effect": "Acción Gratuita: Al lanzar un hechizo, puedes pagar el coste de MP con Salud. Recibes 2 de Daño por cada 1 MP que reemplaces. Este daño no puede reducirse ni prevenirse.",
-          "details": "Lanza hechizos incluso agotado, si te atreves."
-        },
-        {
-          "name": "Trato Oscuro",
-          "type": "Habilidad",
-          "cost": "-",
-          "tags": ["Mejora", "Arriesgado"],
-          "effect": "Acción Gratuita: Declara antes de lanzar. Ganas Ventaja en la Prueba de Lanzamiento. El Coste: Si sacas un 1 Natural en CUALQUIERA de los dados, activas una Pifia Mágica inmediatamente.",
-          "details": "Duplica tu probabilidad de crítico, pero duplica tu probabilidad de pifia."
-        },
-        {
-          "name": "Consumir Alma",
-          "type": "Habilidad",
-          "cost": "-",
-          "tags": ["Recurso", "Reacción"],
-          "effect": "Reacción: Disparador cuando una criatura muere a 30 pies de ti. Efecto: Arrancan su alma y recuperas 1d4 MP. Usable una vez por combate.",
-          "details": "Mantiene tu reserva de maná fluyendo en peleas largas."
-        },
-        {
-          "name": "Poder Caótico",
-          "type": "Pasivo",
-          "cost": "-",
-          "tags": ["Daño"],
-          "effect": "Cuando tiras daño para un hechizo, añade tu Modificador de CHA al total.",
-          "details": "La fuerza bruta de la personalidad impulsa tu magia."
-        },
-        {
-          "name": "Foco Oscuro",
-          "type": "Pasivo",
-          "cost": "-",
-          "tags": ["Mejora"],
-          "effect": "Ganas un Bono permanente de +1 a todas las Pruebas de Lanzamiento.",
-          "details": "Tu pacto guía tu mano."
-        },
-        {
-          "name": "Magia de Pacto",
-          "type": "Pasivo",
-          "cost": "-",
-          "tags": ["Recurso", "Repetible"],
-          "effect": "Tu Maná Máximo (MP) aumenta en 2.",
-          "flags": { "repeatable": true, "max_rank": 3 },
-          "modifiers": { "mp_flat": 2 }
-        },
-        {
-          "name": "Conocimiento Prohibido",
-          "type": "Pasivo",
-          "cost": "-",
-          "tags": ["Habilidad", "Repetible"],
-          "effect": "Elige una Habilidad Entrenada (Saber, Intimidación, Engaño). Te vuelves Experto (d6) en esa habilidad.",
-          "flags": { "repeatable": true, "select_skill": true }
-        },
-        {
-          "name": "Maldiciones Potentes",
-          "type": "Pasivo",
-          "cost": "-",
-          "tags": ["Debilitamiento"],
-          "effect": "Cuando una criatura falla una Tirada de Salvación contra uno de tus hechizos que inflige una Condición (ej: Miedo, Ceguera), también recibe 1d6 Daño Psíquico.",
-          "details": "Añade mordida a tu control de masas."
-        },
-        {
-          "name": "Resiliencia Oscura",
-          "type": "Pasivo",
-          "cost": "-",
-          "tags": ["Defensivo"],
-          "effect": "Tienes Ventaja en pruebas para resistir las condiciones de Asustado o Hechizado.",
-          "details": "Has visto cosas peores en la oscuridad."
+          "name": "Corona de Locura",
+          "cost": "3 MP",
+          "duration": "1 Minuto (Concentración)",
+          "range": "60 pies",
+          "cast_dc": 17,
+          "effect": "Objetivo un humanoide. Prueba de Lanzamiento vs. Salvación de Voluntad. Éxito: Una corona retorcida de hierro dentado aparece en su cabeza. Al comienzo de su turno, debe usar su Acción para realizar un ataque cuerpo a cuerpo contra una criatura que no sea ella misma que tú elijas mentalmente. El objetivo puede repetir la salvación al final del turno."
         }
       ]
     },
     {
-      "id": "arch_priest",
-      "name": "El Sacerdote",
-      "role": "Lanzador de Conjuros",
-      "description": "Un conducto para el poder divino. Eres el ancla del grupo, proporcionando curación, protección y juicio radiante. No solo rezas; exiges milagros.",
-      "primary_stats": ["WIS"],
-      "resource": "Puntos de Maná (MP)",
-      "proficiencies": {
-        "armor": ["Ligera", "Media", "Escudos"],
-        "weapons": ["Simples"],
-        "skills": ["Escrutinio (WIS)"]
-      },
-      "talents": [
+      "name": "Rito de la Cadena",
+      "type": "Colección",
+      "tags": ["Invocación", "Utilidad"],
+      "description": "Atar entidades para servir.",
+      "spells": [
         {
-          "name": "Palabra Curativa",
-          "type": "Hechizo",
+          "name": "Sirviente Invisible",
           "cost": "1 MP",
-          "tags": ["Curación", "Rango"],
-          "effect": "Acción: Rango 30 pies. Haz una Prueba de Lanzamiento (CD 11). Éxito: Una criatura dispuesta recupera 1d6 + Modificador de WIS Puntos de Vida.",
-          "details": "Se puede lanzar sobre una criatura Moribunda para estabilizarla."
+          "duration": "1 Hora",
+          "range": "60 pies",
+          "cast_dc": 10,
+          "effect": "Crea una fuerza invisible, sin mente y sin forma. Puede realizar tareas simples (traer, limpiar, encender antorchas, activar trampas). Tiene CA 10, 1 PV y Fuerza 2. No puede atacar."
         },
         {
-          "name": "Curar Heridas",
-          "type": "Hechizo",
-          "cost": "1 MP",
-          "tags": ["Curación", "Toque"],
-          "effect": "Acción: Rango Toque. Haz una Prueba de Lanzamiento (CD 11). Éxito: Una criatura dispuesta recupera 2d6 Puntos de Vida.",
-          "details": "Curación más potente requiere contacto físico."
-        },
-        {
-          "name": "Llama Sagrada",
-          "type": "Hechizo",
-          "cost": "1 MP",
-          "tags": ["Ataque", "Radiante"],
-          "effect": "Acción: Rango 30 pies. Haz una Prueba de Lanzamiento a Distancia (vs Defensa). Al Impactar: Inflige 1d10 Daño Radiante. Si el objetivo es No-Muerto, este daño Ignora la Puntuación de Armadura.",
-          "details": "Luz abrasadora que quema a los impíos."
-        },
-        {
-          "name": "Virote Guía",
-          "type": "Hechizo",
-          "cost": "1 MP",
-          "tags": ["Ataque", "Radiante", "Apoyo"],
-          "effect": "Acción: Rango 60 pies. Haz una Prueba de Lanzamiento a Distancia (vs Defensa). Al Impactar: Inflige 2d6 Daño Radiante. El siguiente Ataque realizado contra este objetivo por un aliado tiene Ventaja.",
-          "details": "Daño alto y preparación en uno."
-        },
-        {
-          "name": "Bendición",
-          "type": "Hechizo",
-          "cost": "1 MP",
-          "tags": ["Mejora", "Multi-Objetivo"],
-          "effect": "Acción: Rango 30 pies. Haz una Prueba de Lanzamiento (CD 13). Éxito: Elige hasta 2 aliados. Por 1 minuto, ganan un Bono de +1 a TODAS las Pruebas de d20 (Ataques, Defensa, Habilidades).",
-          "details": "La mejora más eficiente del juego."
-        },
-        {
-          "name": "Escudo de Fe",
-          "type": "Hechizo",
-          "cost": "1 MP",
-          "tags": ["Mejora", "Defensivo"],
-          "effect": "Acción: Rango 30 pies. Haz una Prueba de Lanzamiento (CD 11). Éxito: Un aliado gana +1 Puntuación de Armadura (AS) por 1 minuto. Esto se acumula con armadura y escudos.",
-          "details": "Puede convertir un tanque en un objeto invulnerable."
-        },
-        {
-          "name": "Protección contra el Mal",
-          "type": "Hechizo",
-          "cost": "1 MP",
-          "tags": ["Mejora", "Defensivo"],
-          "effect": "Acción: Rango Toque. Haz una Prueba de Lanzamiento (CD 11). Éxito: Por 1 minuto, el objetivo tiene Ventaja en Pruebas de Defensa contra No-Muertos, Demonios y Aberraciones.",
-          "details": "Vital al luchar contra Espíritus u Horrores."
-        },
-        {
-          "name": "Santuario",
-          "type": "Hechizo",
-          "cost": "1 MP",
-          "tags": ["Mejora", "Control"],
-          "effect": "Acción: Rango Toque. Haz una Prueba de Lanzamiento (CD 13). Éxito: Objetivo Protegido por 1 minuto. Cualquier enemigo que intente atacarlo debe tener éxito en una Salvación de Voluntad vs. tu Prueba de Lanzamiento o perder el ataque. Termina si el objetivo ataca.",
-          "details": "Protege al VIP o a ti mismo mientras curas."
-        },
-        {
-          "name": "Expulsar No-Muertos",
-          "type": "Hechizo",
+          "name": "Invocar Demonio Menor",
           "cost": "2 MP",
-          "tags": ["Control", "AoE", "Radiante"],
-          "effect": "Acción: Cono de 30 pies. Haz una Prueba de Lanzamiento (CD 13). Todos los No-Muertos en el área deben hacer una Salvación de Voluntad vs. tu Prueba. Fallo: Reciben 1d6 Daño Radiante y están Asustados por 1 minuto.",
-          "details": "Obliga a los muertos a huir o encogerse de miedo."
+          "duration": "10 Minutos (Concentración)",
+          "range": "30 pies",
+          "cast_dc": 14,
+          "effect": "Invoca un Quasit o Dretch. Estadísticas: 15 PV, CA 11, Ataque +4 (1d6+2 daño). Actúa en tu turno. Si pierdes la Concentración, el demonio no desaparece, sino que se vuelve hostil y ataca al no-demonio más cercano."
         },
         {
-          "name": "Restablecimiento Menor",
-          "type": "Hechizo",
-          "cost": "2 MP",
-          "tags": ["Curación", "Utilidad"],
-          "effect": "Acción: Rango Toque. Haz una Prueba de Lanzamiento (CD 13). Éxito: Termina inmediatamente una condición en el objetivo: Cegado, Sordo o Envenenado.",
-          "details": "No cura Enfermedades o Maldiciones."
-        },
-        {
-          "name": "Luz",
-          "type": "Hechizo",
-          "cost": "0 MP",
-          "tags": ["Utilidad", "Truco"],
-          "effect": "Acción: Rango Toque. Haz una Prueba de Lanzamiento (CD 9). Éxito: Un objeto brilla con Luz Brillante (radio 20 pies) por 1 hora.",
-          "details": "Fuente de luz gratuita. Ahorra antorchas."
-        },
-        {
-          "name": "Detectar Magia",
-          "type": "Hechizo",
-          "cost": "1 MP",
-          "tags": ["Utilidad", "Información"],
-          "effect": "Acción: Rango Propio. Haz una Prueba de Lanzamiento (CD 9). Éxito: Por 10 minutos, puedes ver un aura tenue alrededor de objetos o efectos mágicos a 30 pies.",
-          "details": "Útil para saquear y detectar trampas."
-        },
-        {
-          "name": "Intervención Divina",
-          "type": "Habilidad",
-          "cost": "1 MP",
-          "tags": ["Apoyo", "Reacción"],
-          "effect": "Reacción: Disparador cuando un aliado a 30 pies falla una Tirada de Salvación contra un efecto mágico (ej: Hechizo, Miedo, Maleficio). Efecto: Otórgales una nueva tirada inmediata con Ventaja.",
-          "details": "Puede prevenir una muerte de grupo por control de masas."
-        },
-        {
-          "name": "Oración de Consuelo",
-          "type": "Habilidad",
-          "cost": "Acción (Descanso)",
-          "tags": ["Recurso", "1/Descanso"],
-          "effect": "Acción: Recitas una oración de renovación. Recuperas 1d4 Puntos de Maná (MP). Usable una vez por Descanso Largo.",
-          "details": "Asegura que tengas magia para el jefe final."
-        },
-        {
-          "name": "Potencia Radiante",
-          "type": "Pasivo",
-          "cost": "-",
-          "tags": ["Daño"],
-          "effect": "Cuando tiras daño para un Hechizo, añade tu Modificador de WIS al total.",
-          "details": "Aumenta tus oraciones ofensivas."
-        },
-        {
-          "name": "Foco Divino",
-          "type": "Pasivo",
-          "cost": "-",
-          "tags": ["Mejora"],
-          "effect": "Ganas un Bono permanente de +1 a todas las Pruebas de Lanzamiento.",
-          "details": "Reduce la posibilidad de fallar una cura."
-        },
-        {
-          "name": "Voluntad Divina",
-          "type": "Pasivo",
-          "cost": "-",
-          "tags": ["Recurso", "Repetible"],
-          "effect": "Tu Maná Máximo (MP) aumenta en 2.",
-          "flags": { "repeatable": true, "max_rank": 3 },
-          "modifiers": { "mp_flat": 2 }
-        },
-        {
-          "name": "Estudios Teológicos",
-          "type": "Pasivo",
-          "cost": "-",
-          "tags": ["Habilidad", "Repetible"],
-          "effect": "Elige una Habilidad Entrenada (Saber, Escrutinio, Medicina). Te vuelves Experto (d6) en esa habilidad.",
-          "flags": { "repeatable": true, "select_skill": true }
-        },
-        {
-          "name": "Sanador Bendito",
-          "type": "Pasivo",
-          "cost": "-",
-          "tags": ["Curación"],
-          "effect": "Cuando lanzas un hechizo que restaura PV, puedes volver a tirar cualquier 1 en los dados. Debes usar el nuevo resultado.",
-          "details": "Hace la curación más consistente."
-        },
-        {
-          "name": "Presteza Divina",
-          "type": "Pasivo",
-          "cost": "-",
-          "tags": ["Economía de Acción"],
-          "effect": "Puedes lanzar cualquier Hechizo de Sacerdote con un coste base de 1 MP como una Acción de Movimiento en lugar de una Acción Estándar.",
-          "details": "Te permite Curar y Atacar/Correr en el mismo turno."
+          "name": "Atadura Planar",
+          "cost": "3 MP",
+          "duration": "1 Minuto (Concentración)",
+          "range": "30 pies",
+          "cast_dc": 18,
+          "effect": "Objetivo una criatura Extraplanar (Elemental, Demonio, Feérico). Prueba de Lanzamiento vs. Salvación de Voluntad. Éxito: La criatura queda Paralizada por cadenas espectrales. Si recibe daño, las cadenas se rompen, pero permanece Ralentizada (Mitad de Velocidad) durante la duración."
         }
       ]
     },
     {
-      "id": "arch_primalist",
-      "name": "El Primalista",
-      "role": "Lanzador de Conjuros",
-      "description": "El avatar de la furia de la naturaleza. No eres un sirviente de lo salvaje; eres la tormenta, el terremoto y la bestia. Cambias de forma para destrozar enemigos o remodelar el campo de batalla con raíces.",
-      "primary_stats": ["WIS"],
-      "resource": "Puntos de Maná (MP)",
-      "proficiencies": {
-        "armor": ["Ligera", "Escudos"],
-        "weapons": ["Simples", "Lanzas", "Hachas de Mano"],
-        "skills": ["Supervivencia (WIS)"]
-      },
-      "talents": [
+      "name": "Rito de la Carne",
+      "type": "Colección",
+      "tags": ["Mejora", "Transformación"],
+      "description": "Deformar el cuerpo para sobrevivir a lo antinatural.",
+      "spells": [
         {
-          "name": "Cambio de Forma (Lobo)",
-          "type": "Hechizo",
+          "name": "Falsa Vida",
+          "cost": "1 MP",
+          "duration": "1 Hora",
+          "range": "Propio",
+          "cast_dc": 10,
+          "effect": "Acción. Refuerzas tu vitalidad con energía necrótica. Ganas 1d4 + 4 Puntos de Vida Temporales. Mientras tengas estos PV Temp, tienes Ventaja en pruebas para resistir Veneno."
+        },
+        {
+          "name": "Escalar Araña",
           "cost": "2 MP",
-          "tags": ["Forma", "Móvil"],
-          "effect": "Acción: Transformación por 1 minuto. Mientras cambias: Velocidad 40 pies. Golpe Desarmado inflige 1d6 (Sutil). Gana +1 Bono a Pruebas de Esquiva. No puedes lanzar hechizos.",
-          "details": "Mejor para explorar o flanquear enemigos."
-        },
-        {
-          "name": "Cambio de Forma (Oso)",
-          "type": "Hechizo",
-          "cost": "2 MP",
-          "tags": ["Forma", "Tanque"],
-          "effect": "Acción: Transformación por 1 minuto. Mientras cambias: Golpe Desarmado inflige 1d10. Gana +2 Puntuación de Armadura (Piel Natural). Ventaja en Pruebas de Atletismo. No puedes lanzar hechizos.",
-          "details": "Mejor para absorber daño y mantener la línea."
-        },
-        {
-          "name": "Golpe Primario",
-          "type": "Hechizo",
-          "cost": "1 MP",
-          "tags": ["Ataque", "Cuerpo a Cuerpo"],
-          "effect": "Acción: Rango Toque. Tu mano se convierte en garra, colmillo o puño de piedra. Haz una Prueba de Lanzamiento Cuerpo a Cuerpo. Al Impactar: Inflige 2d8 Daño Cortante/Contundente (Mágico).",
-          "details": "Un golpe pesado cuerpo a cuerpo que usa WIS en lugar de STR."
-        },
-        {
-          "name": "Látigo de Espinas",
-          "type": "Hechizo",
-          "cost": "1 MP",
-          "tags": ["Ataque", "Control"],
-          "effect": "Acción: Rango 30 pies. Haz una Prueba de Lanzamiento a Distancia. Al Impactar: Inflige 1d6 Daño Perforante y tira del objetivo 10 pies hacia ti.",
-          "details": "Arrastra enemigos a peligros o rango cuerpo a cuerpo."
-        },
-        {
-          "name": "Enredar",
-          "type": "Hechizo",
-          "cost": "1 MP",
-          "tags": ["Control", "AoE"],
-          "effect": "Acción: Rango 30 pies. Objetivo un cuadrado de 15 pies. El área se vuelve Terreno Difícil. Criaturas que entren o empiecen su turno allí son Agarradas a menos que Salvación de Reflejos > Prueba de Lanzamiento.",
-          "details": "Bloquea un punto de estrangulamiento."
-        },
-        {
-          "name": "Onda Atronadora",
-          "type": "Hechizo",
-          "cost": "1 MP",
-          "tags": ["AoE", "Control"],
-          "effect": "Acción: Cono de 15 pies. Haz una Prueba de Lanzamiento (CD 11). Criaturas en el área reciben 2d6 Daño de Trueno y son Empujadas 10 pies a menos que Salvación de Reflejos > Prueba (Mitad daño, sin empuje).",
-          "details": "Herramienta de 'quítate de encima'."
-        },
-        {
-          "name": "Llamar al Rayo",
-          "type": "Hechizo",
-          "cost": "2 MP",
-          "tags": ["Ataque", "Rayo"],
-          "effect": "Acción: Rango 60 pies. Haz una Prueba de Lanzamiento a Distancia (vs Defensa). Al Impactar: Inflige 3d6 Daño de Rayo. Si estás al aire libre en una tormenta, inflige 4d6.",
-          "details": "Alto daño a un solo objetivo."
-        },
-        {
-          "name": "Crecimiento de Espinas",
-          "type": "Hechizo",
-          "cost": "2 MP",
-          "tags": ["AoE", "Peligro"],
-          "effect": "Acción: Rango 30 pies. Objetivo un cuadrado de 15 pies. Área se vuelve Terreno Difícil. Cualquier criatura que se mueva a través recibe 1d6 Daño Perforante por cada 5 pies movidos.",
-          "details": "Castiga severamente el movimiento enemigo."
-        },
-        {
-          "name": "Piel de Corteza",
-          "type": "Hechizo",
-          "cost": "1 MP",
-          "tags": ["Mejora", "Defensivo"],
-          "effect": "Acción: Rango Toque. Objetivo gana +1 Puntuación de Armadura (AS) por 1 minuto. Esto se acumula con armadura usada y escudos.",
-          "details": "Hace al tanque más tanque."
-        },
-        {
-          "name": "Vigor Primario",
-          "type": "Hechizo",
-          "cost": "1 MP",
-          "tags": ["Mejora", "Curación"],
-          "effect": "Acción: Rango Propio. Extrae fuerza de la tierra. Gana 1d8 Puntos de Vida Temporales por 1 minuto.",
-          "details": "Amortiguador pre-combate."
+          "duration": "1 Hora (Concentración)",
+          "range": "Toque",
+          "cast_dc": 13,
+          "effect": "Acción. Una criatura dispuesta gana la capacidad de moverse arriba, abajo y a través de superficies verticales y boca abajo a lo largo de los techos, dejando las manos libres. Gana una Velocidad de Escalada igual a su velocidad al caminar."
         },
         {
           "name": "Forma Gaseosa",
-          "type": "Hechizo",
-          "cost": "2 MP",
-          "tags": ["Utilidad", "Forma"],
-          "effect": "Acción: Rango Propio. Transfórmate en niebla por 1 minuto. Velocidad 10 pies (Vuelo). No puedes atacar/lanzar. Ventaja en Esquiva. Pasa por grietas pequeñas. Resistencia a daño No Mágico.",
-          "details": "Herramienta definitiva de escape o infiltración."
-        },
-        {
-          "name": "Hablar con Animales",
-          "type": "Hechizo",
-          "cost": "1 MP",
-          "tags": ["Utilidad", "Social"],
-          "effect": "Acción: Rango Propio. Puedes hablar y entender a bestias naturales por 10 minutos. No están obligadas a ayudar, pero generalmente son neutrales.",
-          "details": "Obtén información de ratas y pájaros."
-        },
-        {
-          "name": "Recuperación Primaria",
-          "type": "Habilidad",
-          "cost": "Acción (Descanso)",
-          "tags": ["Recurso", "1/Descanso"],
-          "effect": "Acción: Medita sobre la tierra. Recuperas 1d4 Puntos de Maná (MP). Usable una vez por Descanso Largo.",
-          "details": "Sostén tu magia en un día largo."
-        },
-        {
-          "name": "Sintonía Primaria",
-          "type": "Habilidad",
-          "cost": "Acción (Descanso)",
-          "tags": ["Utilidad", "1/Descanso"],
-          "effect": "Acción: Abre tus sentidos por 1 minuto. Tienes Ventaja en pruebas de Escrutinio y Supervivencia. Sientes automáticamente la ubicación de todas las criaturas vivas a 30 pies. Usable una vez por Descanso Largo.",
-          "details": "Detecta emboscadas y enemigos invisibles."
-        },
-        {
-          "name": "Potencia Primaria",
-          "type": "Pasivo",
-          "cost": "-",
-          "tags": ["Daño"],
-          "effect": "Cuando tiras daño para un Hechizo, añade tu Modificador de WIS al total.",
-          "details": "Aumenta el daño de hechizos y ataques transformados."
-        },
-        {
-          "name": "Foco Primario",
-          "type": "Pasivo",
-          "cost": "-",
-          "tags": ["Mejora"],
-          "effect": "Ganas un Bono permanente de +1 a todas las Pruebas de Lanzamiento.",
-          "details": "Consistencia en magia."
-        },
-        {
-          "name": "Corazón Primario",
-          "type": "Pasivo",
-          "cost": "-",
-          "tags": ["Recurso", "Repetible"],
-          "effect": "Tu Maná Máximo (MP) aumenta en 2.",
-          "flags": { "repeatable": true, "max_rank": 3 },
-          "modifiers": { "mp_flat": 2 }
-        },
-        {
-          "name": "Estudios Primarios",
-          "type": "Pasivo",
-          "cost": "-",
-          "tags": ["Habilidad", "Repetible"],
-          "effect": "Elige una Habilidad Entrenada (Supervivencia, Escrutinio, Atletismo). Te vuelves Experto (d6) en esa habilidad.",
-          "flags": { "repeatable": true, "select_skill": true }
-        },
-        {
-          "name": "Forma Primaria",
-          "type": "Pasivo",
-          "cost": "-",
-          "tags": ["Mejora", "Forma"],
-          "prereq": "Hechizo Cambio de Forma",
-          "effect": "Cuando lanzas un hechizo de Cambio de Forma, ganas PV Temporales iguales a tu Nivel.",
-          "details": "Hace las formas de combate más duraderas."
-        },
-        {
-          "name": "Hijo de lo Salvaje",
-          "type": "Pasivo",
-          "cost": "-",
-          "tags": ["Movimiento"],
-          "effect": "Ignoras Terreno Difícil no mágico (enredaderas, escombros, barro). Tienes Ventaja en pruebas de Supervivencia en la naturaleza.",
-          "details": "Supremacía de movilidad al aire libre."
+          "cost": "3 MP",
+          "duration": "10 Minutos (Concentración)",
+          "range": "Propio",
+          "cast_dc": 17,
+          "effect": "Acción. Te transformas en una nube brumosa. Tienes una Velocidad de Vuelo de 10 pies y Resistencia al daño no mágico. Puedes pasar a través de pequeñas grietas. No puedes atacar ni lanzar hechizos."
         }
       ]
+    },
+    {
+      "name": "Rito de Pasaje",
+      "type": "Colección",
+      "tags": ["Teletransportación", "Movimiento"],
+      "description": "Moverse a través de las grietas de la realidad.",
+      "spells": [
+        {
+          "name": "Zancudo de Sombras",
+          "cost": "1 MP",
+          "duration": "1 Minuto",
+          "range": "Propio",
+          "cast_dc": 11,
+          "effect": "Acción. Tu movimiento se vuelve borroso. Tu Velocidad aumenta en 10 pies, y los ataques de oportunidad contra ti se realizan con Desventaja."
+        },
+        {
+          "name": "Paso Brumoso",
+          "cost": "2 MP",
+          "duration": "Instantáneo",
+          "range": "Propio",
+          "cast_dc": 14,
+          "effect": "Acción Bonificada. Te teletransportas hasta 30 pies a un espacio desocupado que puedas ver. Esto te permite escapar de Agarres o restricciones instantáneamente."
+        },
+        {
+          "name": "Puerta Dimensional",
+          "cost": "3 MP",
+          "duration": "Instantáneo",
+          "range": "500 pies",
+          "cast_dc": 18,
+          "effect": "Acción. Te teletransportas a ti mismo y a una criatura dispuesta de tu tamaño o más pequeña a un lugar dentro del alcance. No necesitas ver el destino, pero si te teletransportas a un objeto sólido, recibes 4d6 daño de Fuerza y el hechizo falla."
+        }
+      ]
+    },
+    {
+      "name": "Rito de Secretos",
+      "type": "Colección",
+      "tags": ["Adivinación", "Saber"],
+      "description": "Extrayendo la verdad de los involuntarios o lo invisible.",
+      "spells": [
+        {
+          "name": "Comprender Idiomas",
+          "cost": "1 MP",
+          "duration": "1 Hora",
+          "range": "Propio",
+          "cast_dc": 10,
+          "effect": "Acción. Entiendes el significado literal de cualquier idioma hablado que escuches. También puedes leer cualquier idioma escrito que puedas tocar."
+        },
+        {
+          "name": "Detectar Pensamientos",
+          "cost": "2 MP",
+          "duration": "1 Minuto (Concentración)",
+          "range": "30 pies",
+          "cast_dc": 14,
+          "effect": "Acción. Te enfocas en una criatura. Si falla una Salvación de Voluntad vs. tu Prueba de Lanzamiento, lees sus pensamientos superficiales (lo que tiene en mente). Como Acción, puedes sondear más profundo, forzando otra Salvación. Fallo: Ganas información específica, pero sabe que estás sondeando."
+        },
+        {
+          "name": "Contactar Entidad",
+          "cost": "3 MP",
+          "duration": "Instantáneo",
+          "range": "Propio",
+          "cast_dc": 18,
+          "effect": "Ritual (1 Turno). Contactas mentalmente a un semidiós, demonio o espíritu alienígena. Haz una pregunta. El GM responde con la verdad (crípticamente). Coste: Debes hacer una Salvación de Voluntad (CD 15). Fallo: Recibes 3d6 Daño Psíquico y estás Confundido por 1 minuto."
+        }
+      ]
+    },
+    {
+      "name": "Rito del Engaño",
+      "type": "Colección",
+      "tags": ["Ilusión", "Utilidad"],
+      "description": "Máscaras, mentiras y silencio.",
+      "spells": [
+        {
+          "name": "Disfrazarse",
+          "cost": "1 MP",
+          "duration": "1 Hora",
+          "range": "Propio",
+          "cast_dc": 11,
+          "effect": "Acción. Te haces ver diferente (incluyendo ropa/armadura). Puedes parecer 1 pie más bajo o más alto. Una criatura puede discernir que es una ilusión con una Prueba de Escrutinio exitosa vs. tu Resultado de Lanzamiento."
+        },
+        {
+          "name": "Silencio",
+          "cost": "2 MP",
+          "duration": "1 Minuto (Concentración)",
+          "range": "60 pies",
+          "cast_dc": 15,
+          "effect": "Acción. Crea una esfera de silencio absoluto de 20 pies de radio. Ningún sonido puede pasar. Las criaturas dentro no pueden lanzar hechizos con componentes Verbales y son inmunes al daño de Trueno."
+        },
+        {
+          "name": "Ilusión Desviadora",
+          "cost": "3 MP",
+          "duration": "1 Hora (Concentración)",
+          "range": "Propio",
+          "cast_dc": 17,
+          "effect": "Acción. Te vuelves Invisible. Al mismo tiempo, aparece un doble ilusorio de ti donde estabas. Puedes usar tu Acción para mover el doble y hacerlo hablar. La invisibilidad termina si atacas o lanzas un hechizo."
+        }
+      ]
+    },
+    {
+      "name": "Precio de Sangre",
+      "type": "Habilidad",
+      "cost": "PV",
+      "tags": ["Recurso", "Acción Gratuita"],
+      "effect": "Acción Gratuita: Al lanzar un hechizo, puedes pagar el coste de MP con Salud. Recibes 2 de Daño por cada 1 MP que reemplaces. Este daño no puede reducirse ni prevenirse.",
+      "details": "Lanza incluso cuando estés agotado, si te atreves."
+    },
+    {
+      "name": "Trato Oscuro",
+      "type": "Habilidad",
+      "cost": "-",
+      "tags": ["Mejora", "Arriesgado"],
+      "effect": "Acción Gratuita: Declara antes de lanzar. Ganas Ventaja en la Prueba de Lanzamiento. El Coste: Si sacas un 1 Natural en CUALQUIERA de los dados, activas una Pifia Mágica inmediatamente.",
+      "details": "Duplica tu probabilidad de crítico, pero duplica tu probabilidad de pifia."
+    },
+    {
+      "name": "Consumir Alma",
+      "type": "Habilidad",
+      "cost": "-",
+      "tags": ["Recurso", "Reacción"],
+      "effect": "Reacción: Disparador cuando una criatura muere a 30 pies de ti. Efecto: Arrancan su alma y recuperas 1d4 MP. Usable una vez por combate.",
+      "details": "Mantiene tu reserva de maná fluyendo en peleas largas."
+    },
+    {
+      "name": "Poder Caótico",
+      "type": "Pasivo",
+      "cost": "-",
+      "tags": ["Daño"],
+      "effect": "Cuando tiras daño para un hechizo, añade tu Modificador de CHA al total.",
+      "details": "La fuerza bruta de la personalidad impulsa tu magia."
+    },
+    {
+      "name": "Foco Oscuro",
+      "type": "Pasivo",
+      "cost": "-",
+      "tags": ["Mejora"],
+      "effect": "Ganas un Bono permanente de +1 a todas las Pruebas de Lanzamiento.",
+      "details": "Tu pacto guía tu mano."
+    },
+    {
+      "name": "Magia de Pacto",
+      "type": "Pasivo",
+      "cost": "-",
+      "tags": ["Recurso", "Repetible"],
+      "effect": "Tu Maná Máximo (MP) aumenta en 2.",
+      "flags": { "repeatable": true, "max_rank": 3 },
+      "modifiers": { "mp_flat": 2 }
+    },
+    {
+      "name": "Conocimiento Prohibido",
+      "type": "Pasivo",
+      "cost": "-",
+      "tags": ["Habilidad", "Repetible"],
+      "effect": "Elige una Habilidad Entrenada (Saber, Intimidación, Engaño). Te vuelves Experto (d6) en esa habilidad.",
+      "flags": { "repeatable": true, "select_skill": true }
+    },
+    {
+      "name": "Maldiciones Potentes",
+      "type": "Pasivo",
+      "cost": "-",
+      "tags": ["Debilitamiento"],
+      "effect": "Cuando una criatura falla una Tirada de Salvación contra uno de tus hechizos que inflige una Condición (ej: Miedo, Ceguera), también recibe 1d6 Daño Psíquico.",
+      "details": "Añade mordida a tu control de masas."
     }
-  ],
+  ]
+},
+{
+  "id": "arch_priest",
+  "name": "El Sacerdote",
+  "role": "Lanzador de Conjuros",
+  "description": "Un conducto para el poder divino. Eres el ancla del grupo, proporcionando curación, protección y juicio radiante. No solo rezas; exiges milagros.",
+  "primary_stats": ["WIS"],
+  "resource": "Puntos de Maná (MP)",
+  "proficiencies": {
+    "armor": ["Ligera", "Media", "Escudos"],
+    "weapons": ["Simples"],
+    "skills": ["Escrutinio (WIS)"]
+  },
+  "talents": [
+    {
+      "name": "Liturgia de la Vida",
+      "type": "Colección",
+      "tags": ["Curación", "Restauración"],
+      "description": "Oraciones que tejen la carne y restauran la vitalidad.",
+      "spells": [
+        {
+          "name": "Palabra Curativa",
+          "cost": "1 MP",
+          "duration": "Instantáneo",
+          "range": "60 pies",
+          "cast_dc": 11,
+          "effect": "Acción. Haz una Prueba de Lanzamiento. Éxito: Una criatura viva que puedas ver recupera 1d4 + Modificador de WIS Puntos de Vida. Efectivo para estabilizar aliados moribundos a distancia."
+        },
+        {
+          "name": "Curar Heridas",
+          "cost": "2 MP",
+          "duration": "Instantáneo",
+          "range": "Toque",
+          "cast_dc": 14,
+          "effect": "Acción. Pones tus manos sobre una criatura. Haz una Prueba de Lanzamiento. Éxito: El objetivo recupera 2d8 + Modificador de WIS Puntos de Vida. Si el objetivo está Derribado o Inconsciente, puede levantarse inmediatamente."
+        },
+        {
+          "name": "Palabra Curativa Masiva",
+          "cost": "3 MP",
+          "duration": "Instantáneo",
+          "range": "60 pies",
+          "cast_dc": 17,
+          "effect": "Acción. Dices una palabra de alivio. Hasta 4 criaturas dentro del rango recuperan 1d8 + Modificador de WIS Puntos de Vida. No-Muertos y Constructos no son afectados."
+        }
+      ]
+    },
+    {
+      "name": "Liturgia de la Luz",
+      "type": "Colección",
+      "tags": ["Radiante", "Ofensivo"],
+      "description": "Invocando el juicio ardiente de los cielos.",
+      "spells": [
+        {
+          "name": "Llama Sagrada",
+          "cost": "1 MP",
+          "duration": "Instantáneo",
+          "range": "60 pies",
+          "cast_dc": 11,
+          "effect": "Acción. Objetivo una criatura. Haz una Prueba de Lanzamiento vs. su Salvación de Reflejos. Éxito: Inflige 1d8 Daño Radiante. Este daño ignora Cobertura."
+        },
+        {
+          "name": "Virote Guía",
+          "cost": "2 MP",
+          "duration": "1 Ronda",
+          "range": "120 pies",
+          "cast_dc": 15,
+          "effect": "Acción. Haz una Prueba de Lanzamiento a Distancia vs. Defensa. Al Impactar: Inflige 3d6 Daño Radiante. La siguiente Prueba de Ataque hecha contra este objetivo por ti o un aliado tiene Ventaja."
+        },
+        {
+          "name": "Haz Solar",
+          "cost": "3 MP",
+          "duration": "Instantáneo",
+          "range": "Línea 60 pies",
+          "cast_dc": 18,
+          "effect": "Acción. Un rayo de luz brillante destella (5 pies de ancho). Criaturas en la línea hacen Salvación de Fortaleza vs. Resultado de Lanzamiento. Fallo: 4d8 Daño Radiante y Cegado por 1 ronda. Éxito: Mitad de daño."
+        }
+      ]
+    },
+    {
+      "name": "Liturgia del Guardián",
+      "type": "Colección",
+      "tags": ["Abjuración", "Defensa"],
+      "description": "Protegiendo a los fieles del daño.",
+      "spells": [
+        {
+          "name": "Escudo de Fe",
+          "cost": "1 MP",
+          "duration": "1 Minuto (Concentración)",
+          "range": "60 pies",
+          "cast_dc": 11,
+          "effect": "Acción. Una criatura gana un campo brillante. Su Puntuación de Armadura (AS) aumenta en +1. Esto se acumula con armadura usada y escudos."
+        },
+        {
+          "name": "Santuario",
+          "cost": "2 MP",
+          "duration": "1 Minuto",
+          "range": "30 pies",
+          "cast_dc": 14,
+          "effect": "Acción. Protege a una criatura. Cualquier enemigo intentando atacarla debe hacer una Salvación de Voluntad vs. Resultado de Lanzamiento. Si falla, pierde el ataque o debe elegir otro objetivo. Termina si la criatura protegida ataca o lanza un hechizo."
+        },
+        {
+          "name": "Círculo de Poder",
+          "cost": "3 MP",
+          "duration": "1 Minuto (Concentración)",
+          "range": "Propio (Radio 30 pies)",
+          "cast_dc": 18,
+          "effect": "Acción. Energía sagrada irradia de ti. Tú y todos los aliados en el aura tienen Ventaja en Tiradas de Salvación contra Hechizos y Efectos Mágicos. Si un hechizo inflige mitad de daño en una salvación, inflige cero daño en su lugar."
+        }
+      ]
+    },
+    {
+      "name": "Liturgia de la Guerra",
+      "type": "Colección",
+      "tags": ["Mejora", "Combate"],
+      "description": "Bendiciones para las líneas del frente.",
+      "spells": [
+        {
+          "name": "Bendición",
+          "cost": "1 MP",
+          "duration": "1 Minuto (Concentración)",
+          "range": "30 pies",
+          "cast_dc": 12,
+          "effect": "Acción. Elige hasta 3 aliados. Siempre que hagan una Prueba de Ataque o Tirada de Salvación, añaden +1 al resultado."
+        },
+        {
+          "name": "Arma Espiritual",
+          "cost": "2 MP",
+          "duration": "1 Minuto",
+          "range": "60 pies",
+          "cast_dc": 15,
+          "effect": "Acción. Creas un arma espectral flotante. Cuando la lanzas, y como Acción Bonificada en turnos subsiguientes, puedes hacer un Ataque de Hechizo Cuerpo a Cuerpo contra una criatura a 5 pies del arma. Al Impactar: Inflige 1d8 + Modificador de WIS Daño de Fuerza."
+        },
+        {
+          "name": "Manto del Cruzado",
+          "cost": "3 MP",
+          "duration": "1 Minuto (Concentración)",
+          "range": "Propio (Radio 30 pies)",
+          "cast_dc": 17,
+          "effect": "Acción. Poder sagrado irradia de ti. Aliados en el aura infligen 1d4 Daño Radiante adicional en todos los ataques de arma."
+        }
+      ]
+    },
+    {
+      "name": "Liturgia de la Purificación",
+      "type": "Colección",
+      "tags": ["Restauración", "Utilidad"],
+      "description": "Purificando el cuerpo y el alma de la corrupción.",
+      "spells": [
+        {
+          "name": "Purificar Comida y Bebida",
+          "cost": "1 MP",
+          "duration": "Instantáneo",
+          "range": "10 pies",
+          "cast_dc": 10,
+          "effect": "Acción. Toda la comida y bebida no mágica en una esfera de 5 pies de radio es purificada y liberada de veneno y enfermedad. Útil para carroñear en mazmorras."
+        },
+        {
+          "name": "Restablecimiento Menor",
+          "cost": "2 MP",
+          "duration": "Instantáneo",
+          "range": "Toque",
+          "cast_dc": 14,
+          "effect": "Acción. Tocas a una criatura y terminas una Condición que la aflija: Cegado, Sordo, Paralizado o Envenenado. No cura Maldiciones mágicas."
+        },
+        {
+          "name": "Quitar Maldición",
+          "cost": "3 MP",
+          "duration": "Instantáneo",
+          "range": "Toque",
+          "cast_dc": 18,
+          "effect": "Acción. Tocas a una criatura u objeto. Todas las maldiciones afectándola terminan. Si el objeto es un Objeto Mágico Maldito, permanece maldito, pero el dueño puede descartarlo o desequiparlo con seguridad."
+        }
+      ]
+    },
+    {
+      "name": "Liturgia del Exorcismo",
+      "type": "Colección",
+      "tags": ["Radiante", "Control"],
+      "description": "Rechazando a los muertos inquietos y demonios.",
+      "spells": [
+        {
+          "name": "Expulsar No-Muertos",
+          "cost": "1 MP",
+          "duration": "1 Minuto",
+          "range": "30 pies",
+          "cast_dc": 13,
+          "effect": "Acción. Presentas tu símbolo sagrado. Todos los No-Muertos a 30 pies deben hacer Salvación de Voluntad vs. Resultado de Lanzamiento. Fallo: Están Asustados y deben gastar sus turnos huyendo de ti. Si el No-Muerto tiene 1 PV (Esbirro), es destruido instantáneamente."
+        },
+        {
+          "name": "Santificar",
+          "cost": "2 MP",
+          "duration": "10 Minutos",
+          "range": "Toque",
+          "cast_dc": 15,
+          "effect": "Ritual (1 Turno). Proteges un área (Radio 20 pies). Celestiales, Elementales, Feéricos, Demonios y No-Muertos no pueden entrar. Criaturas dentro no pueden ser Hechizadas, Asustadas o Poseídas."
+        },
+        {
+          "name": "Disipar el Mal",
+          "cost": "3 MP",
+          "duration": "Instantáneo",
+          "range": "Toque",
+          "cast_dc": 17,
+          "effect": "Acción. Haz una Prueba de Lanzamiento Cuerpo a Cuerpo contra una criatura. Si está Poseída o Hechizada, el efecto termina. Si es una criatura invocada (de otro plano), debe hacer una Salvación de Voluntad vs. tu Prueba o ser enviada de vuelta a su plano natal."
+        }
+      ]
+    },
+    {
+      "name": "Liturgia de la Providencia",
+      "type": "Colección",
+      "tags": ["Adivinación", "Mejora"],
+      "description": "Buscando guía de poderes superiores.",
+      "spells": [
+        {
+          "name": "Orientación",
+          "cost": "1 MP",
+          "duration": "1 Minuto",
+          "range": "Toque",
+          "cast_dc": 10,
+          "effect": "Acción. Tocas a una criatura dispuesta. Una vez antes de que termine el hechizo, el objetivo puede tirar un d4 y sumar el número a una Prueba de Habilidad o Tirada de Salvación de su elección."
+        },
+        {
+          "name": "Augurio",
+          "cost": "2 MP",
+          "duration": "Instantáneo",
+          "range": "Propio",
+          "cast_dc": 14,
+          "effect": "Ritual (1 Turno). Recibes un presagio de una entidad de otro mundo sobre los resultados de un curso de acción específico que planeas tomar en los próximos 30 minutos. El GM responde: Bienestar (Bueno), Infortunio (Malo), o Mixto."
+        },
+        {
+          "name": "Comulgar",
+          "cost": "3 MP",
+          "duration": "1 Minuto",
+          "range": "Propio",
+          "cast_dc": 18,
+          "effect": "Ritual (1 Turno). Contactas a tu deidad o un proxy divino. Puedes hacer hasta tres preguntas de sí o no. Debes recibir una respuesta veraz, aunque magia poderosa puede ocultar la verdad."
+        }
+      ]
+    },
+    {
+      "name": "Liturgia del Espíritu",
+      "type": "Colección",
+      "tags": ["Invocación", "Control"],
+      "description": "Conjurando guardianes espirituales para controlar el campo de batalla.",
+      "spells": [
+        {
+          "name": "Taumaturgia",
+          "cost": "1 MP",
+          "duration": "1 Minuto",
+          "range": "30 pies",
+          "cast_dc": 10,
+          "effect": "Acción. Manifiestas una maravilla menor: retumbar tu voz, hacer parpadear llamas, crear temblores inofensivos o abrir una puerta sin llave de golpe. Otorga Ventaja en pruebas de Intimidación."
+        },
+        {
+          "name": "Espíritus Guardianes",
+          "cost": "2 MP",
+          "duration": "1 Minuto (Concentración)",
+          "range": "Propio (Radio 15 pies)",
+          "cast_dc": 16,
+          "effect": "Acción. Espíritus espectrales revolotean a tu alrededor. Enemigos tratan el área como Terreno Difícil. Un enemigo comenzando su turno en el área recibe 2d8 Daño Radiante o Necrótico (Salvación Sabiduría vs. Resultado para mitad)."
+        },
+        {
+          "name": "Guardián de la Fe",
+          "cost": "3 MP",
+          "duration": "1 Hora",
+          "range": "30 pies",
+          "cast_dc": 17,
+          "effect": "Acción. Un guardián espectral Grande e INMÓVIL aparece en un espacio desocupado. Cualquier enemigo que se mueva a 10 pies de él recibe 2d8 Daño Radiante (Salvación Destreza vs. Resultado para mitad). El guardián desaparece tras infligir 60 de daño total."
+        }
+      ]
+    },
+    {
+      "name": "Liturgia del Celo",
+      "type": "Colección",
+      "tags": ["Radiante", "Fuego", "Ofensivo"],
+      "description": "Quemando a los malvados con ira divina.",
+      "spells": [
+        {
+          "name": "Palabra de Resplandor",
+          "cost": "1 MP",
+          "duration": "Instantáneo",
+          "range": "Propio (Radio 5 pies)",
+          "cast_dc": 11,
+          "effect": "Acción. Pronuncias una palabra ardiente. Todos los enemigos a 5 pies de ti deben hacer una Salvación de Fortaleza vs. Resultado de Lanzamiento. Fallo: Reciben 1d6 Daño Radiante."
+        },
+        {
+          "name": "Ceguera / Sordera",
+          "cost": "2 MP",
+          "duration": "1 Minuto",
+          "range": "30 pies",
+          "cast_dc": 14,
+          "effect": "Acción. Objetivo una criatura. Haz una Prueba de Lanzamiento vs. su Salvación de Fortaleza. Éxito: El objetivo queda Cegado o Sordo (tu elección). Pueden repetir la salvación al final de cada uno de sus turnos."
+        },
+        {
+          "name": "Golpe de Llama",
+          "cost": "3 MP",
+          "duration": "Instantáneo",
+          "range": "60 pies",
+          "cast_dc": 17,
+          "effect": "Acción. Una columna vertical de fuego divino ruge hacia abajo. Radio 10 pies, Cilindro Alto 40 pies. Criaturas dentro reciben 2d6 Daño de Fuego Y 2d6 Daño Radiante (4d6 total). Salvación Reflejos vs. Resultado de Lanzamiento para mitad."
+        }
+      ]
+    },
+    {
+      "name": "Liturgia del Dominio",
+      "type": "Colección",
+      "tags": ["Encantamiento", "Social"],
+      "description": "Obligando a otros a obedecer la ley divina.",
+      "spells": [
+        {
+          "name": "Orden Imperiosa",
+          "cost": "1 MP",
+          "duration": "1 Ronda",
+          "range": "60 pies",
+          "cast_dc": 11,
+          "effect": "Acción. Dices una orden de una palabra a una criatura (ej: 'Alto', 'Suelta', 'Huye'). Objetivo hace Salvación Voluntad vs. Resultado Lanzamiento. Fallo: Deben seguir la orden en su próximo turno. No funciona si la orden es directamente autolesiva."
+        },
+        {
+          "name": "Zona de la Verdad",
+          "cost": "2 MP",
+          "duration": "10 Minutos",
+          "range": "60 pies",
+          "cast_dc": 14,
+          "effect": "Acción. Creas una esfera de 15 pies de Radio. Criaturas dentro deben hacer una Salvación de Voluntad. Fallo: No pueden decir una mentira deliberada. Sabes si pasaron o fallaron la salvación."
+        },
+        {
+          "name": "Geas (Misión)",
+          "cost": "3 MP",
+          "duration": "24 Horas",
+          "range": "60 pies",
+          "cast_dc": 18,
+          "effect": "Lanzamiento 1 Minuto (Ritual). Colocas una orden mágica en una criatura para realizar un servicio o abstenerse de una acción. Salvación Voluntad vs. Resultado Lanzamiento. Fallo: Están Hechizados. Si actúan contra tus instrucciones, reciben 5d10 Daño Psíquico (una vez por día)."
+        }
+      ]
+    },
+    {
+      "name": "Liturgia de la Fortaleza",
+      "type": "Colección",
+      "tags": ["Mejora", "Apoyo"],
+      "description": "Fortaleciendo el cuerpo contra la adversidad.",
+      "spells": [
+        {
+          "name": "Ayuda",
+          "cost": "1 MP",
+          "duration": "8 Horas",
+          "range": "30 pies",
+          "cast_dc": 11,
+          "effect": "Acción. Elige hasta 3 criaturas. Sus Puntos de Vida Máximos aumentan en 5 durante la duración. (Esto se acumula con PV Temporales)."
+        },
+        {
+          "name": "Mejorar Habilidad",
+          "cost": "2 MP",
+          "duration": "1 Hora (Concentración)",
+          "range": "Toque",
+          "cast_dc": 14,
+          "effect": "Acción. Elige un Atributo (STR, DEX, etc.). El objetivo tiene Ventaja en todas las Pruebas hechas con ese Atributo. (No aplica a Ataques o Salvaciones, solo Pruebas de Habilidad como Atletismo o Sigilo)."
+        },
+        {
+          "name": "Protección contra Energía",
+          "cost": "3 MP",
+          "duration": "1 Hora (Concentración)",
+          "range": "Toque",
+          "cast_dc": 17,
+          "effect": "Acción. Elige Ácido, Frío, Fuego, Rayo o Trueno. La criatura dispuesta gana Resistencia (Mitad de Daño) a ese tipo de daño."
+        }
+      ]
+    },
+    {
+      "name": "Liturgia del Sustento",
+      "type": "Colección",
+      "tags": ["Utilidad", "Supervivencia"],
+      "description": "Superando los peligros de la naturaleza.",
+      "spells": [
+        {
+          "name": "Crear Comida y Agua",
+          "cost": "1 MP",
+          "duration": "Instantáneo",
+          "range": "5 pies",
+          "cast_dc": 10,
+          "effect": "Acción. Creas 45 libras de comida y 30 galones de agua. Suficiente para sostener hasta 15 humanoides o 5 monturas por 24 horas. Previene el Agotamiento por hambre."
+        },
+        {
+          "name": "Caminar sobre el Agua",
+          "cost": "2 MP",
+          "duration": "1 Hora",
+          "range": "30 pies",
+          "cast_dc": 13,
+          "effect": "Ritual (1 Turno). Hasta 10 criaturas dispuestas ganan la capacidad de moverse a través de cualquier superficie líquida (agua, ácido, lodo, arenas movedizas) como si fuera tierra sólida inofensiva."
+        },
+        {
+          "name": "Fundirse en Piedra",
+          "cost": "3 MP",
+          "duration": "8 Horas",
+          "range": "Toque",
+          "cast_dc": 16,
+          "effect": "Acción. Entras en un objeto de piedra o superficie lo suficientemente grande para contenerte. Eres invisible y no puedes ser objetivo, pero no puedes ver fuera. Puedes escuchar débilmente. Útil para Descansos Cortos/Largos seguros en mazmorras."
+        }
+      ]
+    },
+    {
+      "name": "Oración de Consuelo",
+      "type": "Habilidad",
+      "cost": "Acción (Descanso)",
+      "tags": ["Recurso", "1/Descanso"],
+      "effect": "Acción: Recitas una oración de renovación. Recuperas 1d4 Puntos de Maná (MP). Usable una vez por Descanso Largo.",
+      "details": "Asegura que tengas magia para el jefe final."
+    },
+    {
+      "name": "Protección Divina",
+      "type": "Habilidad",
+      "cost": "1 MP",
+      "tags": ["Apoyo", "Reacción"],
+      "effect": "Reacción: Disparador cuando un aliado a 30 pies falla una Tirada de Salvación contra un efecto mágico (ej: Hechizo, Miedo, Maleficio). Efecto: Otórgales una nueva tirada inmediata con Ventaja.",
+      "details": "Puede prevenir una muerte de grupo por control de masas."
+    },
+    {
+      "name": "Potencia Radiante",
+      "type": "Pasivo",
+      "cost": "-",
+      "tags": ["Daño"],
+      "effect": "Cuando tiras daño para un Hechizo, añade tu Modificador de WIS al total.",
+      "details": "Aumenta tus oraciones ofensivas."
+    },
+    {
+      "name": "Foco Divino",
+      "type": "Pasivo",
+      "cost": "-",
+      "tags": ["Mejora"],
+      "effect": "Ganas un Bono permanente de +1 a todas las Pruebas de Lanzamiento.",
+      "details": "Reduce la posibilidad de fallar una cura."
+    },
+    {
+      "name": "Voluntad Divina",
+      "type": "Pasivo",
+      "cost": "-",
+      "tags": ["Recurso", "Repetible"],
+      "effect": "Tu Maná Máximo (MP) aumenta en 2.",
+      "flags": { "repeatable": true, "max_rank": 3 },
+      "modifiers": { "mp_flat": 2 }
+    },
+    {
+      "name": "Estudios Teológicos",
+      "type": "Pasivo",
+      "cost": "-",
+      "tags": ["Habilidad", "Repetible"],
+      "effect": "Elige una Habilidad Entrenada (Saber, Escrutinio, Medicina). Te vuelves Experto (d6) en esa habilidad.",
+      "flags": { "repeatable": true, "select_skill": true }
+    },
+    {
+      "name": "Sanador Bendito",
+      "type": "Pasivo",
+      "cost": "-",
+      "tags": ["Curación"],
+      "effect": "Cuando lanzas un hechizo que restaura PV, puedes volver a tirar cualquier 1 en los dados. Debes usar el nuevo resultado.",
+      "details": "Hace la curación más consistente."
+    },
+    {
+      "name": "Presteza Divina",
+      "type": "Pasivo",
+      "cost": "-",
+      "tags": ["Economía de Acción"],
+      "effect": "Puedes lanzar cualquier Hechizo de Sacerdote con un coste base de 1 MP como una Acción de Movimiento en lugar de una Acción Estándar.",
+      "details": "Te permite Curar y Atacar/Correr en el mismo turno."
+    }
+  ]
+},
+{
+  "id": "arch_primalist",
+  "name": "El Primalista",
+  "role": "Lanzador de Conjuros",
+  "description": "El avatar de la furia de la naturaleza. No eres un sirviente de lo salvaje; eres la tormenta, el terremoto y la bestia. Cambias de forma para destrozar enemigos o remodelar el campo de batalla con fuerza elemental.",
+  "primary_stats": ["WIS"],
+  "resource": "Puntos de Maná (MP)",
+  "proficiencies": {
+    "armor": ["Ligera", "Escudos"],
+    "weapons": ["Simples", "Lanzas", "Hachas de Mano"],
+    "skills": ["Supervivencia (WIS)"]
+  },
+  "talents": [
+    {
+      "name": "Aspecto del Volcán",
+      "type": "Colección",
+      "tags": ["Fuego", "Transformación"],
+      "description": "Canalizando la furia fundida del núcleo de la tierra.",
+      "spells": [
+        {
+          "name": "Producir Llama",
+          "cost": "1 MP",
+          "duration": "10 Minutos",
+          "range": "Propio / 30 pies",
+          "cast_dc": 10,
+          "effect": "Acción. Una llama aparece en tu mano (Fuente de luz). Puedes arrojarla (Prueba de Lanzamiento a Distancia vs Defensa) para infligir 1d8 Daño de Fuego. Arrojarla termina el hechizo inmediatamente."
+        },
+        {
+          "name": "Calentar Metal",
+          "cost": "2 MP",
+          "duration": "1 Minuto (Concentración)",
+          "range": "60 pies",
+          "cast_dc": 15,
+          "effect": "Acción. Objetivo un objeto de metal (arma/armadura). Cualquier criatura tocándolo recibe 2d8 Daño de Fuego. Si lo sostiene, debe hacer Salvación de Constitución o soltarlo. Si lo viste, recibe el daño automáticamente y tiene Desventaja en Ataques."
+        },
+        {
+          "name": "Forma de Magma Viviente",
+          "cost": "3 MP",
+          "duration": "1 Minuto (Concentración)",
+          "range": "Propio",
+          "cast_dc": 18,
+          "effect": "Acción. Te transformas en roca fundida. 1. Ganas Resistencia a Daño Físico e Inmunidad a Fuego. 2. Cualquier criatura que te toque o golpee con ataque melee recibe 1d6 Daño de Fuego. 3. Tus ataques cuerpo a cuerpo infligen Daño de Fuego."
+        }
+      ]
+    },
+    {
+      "name": "Aspecto de la Montaña",
+      "type": "Colección",
+      "tags": ["Tierra", "Transformación"],
+      "description": "Encarnando la resistencia inquebrantable de la piedra.",
+      "spells": [
+        {
+          "name": "Piedra Mágica",
+          "cost": "1 MP",
+          "duration": "1 Minuto",
+          "range": "Toque",
+          "cast_dc": 11,
+          "effect": "Acción Bonificada. Imbuyes 3 guijarros con magia. Tú o un aliado pueden lanzarlos (Rango 60 pies) usando una Prueba de Ataque a Distancia (basada en WIS). Al Impactar: Inflige 1d6 + Mod WIS Daño Contundente (Mágico)."
+        },
+        {
+          "name": "Atadura Terrestre",
+          "cost": "2 MP",
+          "duration": "1 Minuto (Concentración)",
+          "range": "120 pies",
+          "cast_dc": 14,
+          "effect": "Acción. Objetivo una criatura. Haz una Prueba de Lanzamiento vs. Salvación de Fuerza. Fallo: La Velocidad de Vuelo del objetivo se vuelve 0. Cae suavemente al suelo (60 pies por ronda) y no puede volar durante la duración."
+        },
+        {
+          "name": "Forma de Piedra Viviente",
+          "cost": "3 MP",
+          "duration": "1 Minuto (Concentración)",
+          "range": "Propio",
+          "cast_dc": 17,
+          "effect": "Acción. Tu piel se vuelve granito. 1. Ganas +2 Puntuación de Armadura (Se apila con Escudo). 2. No puedes ser Derribado o movido contra tu voluntad. 3. Monstruo de Asedio: Tus ataques melee infligen Doble Daño a objetos y estructuras."
+        }
+      ]
+    },
+    {
+      "name": "Aspecto de la Tormenta",
+      "type": "Colección",
+      "tags": ["Aire", "Transformación"],
+      "description": "Aprovechando la velocidad y violencia del vendaval.",
+      "spells": [
+        {
+          "name": "Estruendo",
+          "cost": "1 MP",
+          "duration": "Instantáneo",
+          "range": "Propio (Radio 5 pies)",
+          "cast_dc": 11,
+          "effect": "Acción. Crea un estallido de sonido. Todas las criaturas a 5 pies deben hacer Salvación de Fortaleza vs. Resultado Lanzamiento. Fallo: Reciben 1d6 Daño de Trueno y son empujadas 5 pies."
+        },
+        {
+          "name": "Muro de Viento",
+          "cost": "2 MP",
+          "duration": "1 Minuto (Concentración)",
+          "range": "60 pies",
+          "cast_dc": 15,
+          "effect": "Acción. Crea un muro de viento (50 pies largo, 15 alto). Flechas y virotes no pueden atravesarlo (fallan automáticamente). Criaturas pasando a través deben salvar Fuerza vs. Resultado o ser empujadas hacia atrás."
+        },
+        {
+          "name": "Forma de Aire Viviente",
+          "cost": "3 MP",
+          "duration": "1 Minuto (Concentración)",
+          "range": "Propio",
+          "cast_dc": 18,
+          "effect": "Acción. Te disuelves en un torbellino. 1. Ganas Velocidad de Vuelo 40 pies (Flotar). 2. Ataques a Distancia contra ti tienen Desventaja. 3. Puedes moverte a través de espacios enemigos sin provocar contraataques."
+        }
+      ]
+    },
+    {
+      "name": "Aspecto de la Marea",
+      "type": "Colección",
+      "tags": ["Agua", "Transformación"],
+      "description": "Usando el peso aplastante y la fluidez del agua.",
+      "spells": [
+        {
+          "name": "Fragmento de Hielo",
+          "cost": "1 MP",
+          "duration": "Instantáneo",
+          "range": "60 pies",
+          "cast_dc": 11,
+          "effect": "Acción. Prueba de Lanzamiento a Distancia vs Defensa. Al Impactar: Inflige 1d8 Daño de Frío. Este ataque ignora 1 punto de Puntuación de Armadura (Perforante)."
+        },
+        {
+          "name": "Choque de Marea",
+          "cost": "2 MP",
+          "duration": "Instantáneo",
+          "range": "Cono 15 pies",
+          "cast_dc": 14,
+          "effect": "Acción. Una ola choca desde tus manos. Criaturas en el área hacen Salvación de Reflejos vs. Resultado Lanzamiento. Fallo: Reciben 2d6 Daño Contundente y caen Derribadas. Éxito: Mitad de daño."
+        },
+        {
+          "name": "Forma de Agua Viviente",
+          "cost": "3 MP",
+          "duration": "1 Minuto (Concentración)",
+          "range": "Propio",
+          "cast_dc": 17,
+          "effect": "Acción. Te vuelves líquido. 1. Ganas Resistencia a daño físico no mágico. 2. Puedes escurrirte por huecos de 1 pulgada sin frenar. 3. Tu alcance cuerpo a cuerpo aumenta en 5 pies (Agua azotadora)."
+        }
+      ]
+    },
+    {
+      "name": "Aspecto de la Arboleda",
+      "type": "Colección",
+      "tags": ["Planta", "Transformación"],
+      "description": "La inevitabilidad aplastante de raíces y espinas.",
+      "spells": [
+        {
+          "name": "Látigo de Espinas",
+          "cost": "1 MP",
+          "duration": "Instantáneo",
+          "range": "30 pies",
+          "cast_dc": 11,
+          "effect": "Acción. Haz una Prueba de Lanzamiento Melee (Alcance 30 pies). Al Impactar: Inflige 1d6 Daño Perforante y tira del objetivo 10 pies más cerca de ti."
+        },
+        {
+          "name": "Enredar",
+          "cost": "2 MP",
+          "duration": "1 Minuto (Concentración)",
+          "range": "60 pies",
+          "cast_dc": 14,
+          "effect": "Acción. Objetivo Cuadrado de 15 pies. Maleza y vides brotan del suelo. El área es Terreno Difícil. Criaturas en el área deben salvar Reflejos vs. Resultado o quedar Restringidas. Pueden usar una Acción para prueba de Fuerza para escapar."
+        },
+        {
+          "name": "Forma del Roble de Hierro",
+          "cost": "3 MP",
+          "duration": "1 Minuto (Concentración)",
+          "range": "Propio",
+          "cast_dc": 17,
+          "effect": "Acción. Tu piel se vuelve corteza. 1. Tu Puntuación de Armadura se vuelve 3 (Armadura Natural). 2. Tu Alcance Melee aumenta en 5 pies. 3. Arraigado: No puedes ser Derribado o movido contra tu voluntad."
+        }
+      ]
+    },
+    {
+      "name": "Aspecto del Enjambre",
+      "type": "Colección",
+      "tags": ["Insecto", "Transformación"],
+      "description": "Mil pequeñas mordeduras trabajando como uno.",
+      "spells": [
+        {
+          "name": "Infestación",
+          "cost": "1 MP",
+          "duration": "Instantáneo",
+          "range": "30 pies",
+          "cast_dc": 11,
+          "effect": "Acción. Objetivo una criatura. Prueba de Lanzamiento vs. Salvación Fortaleza. Fallo: Recibe 1d6 Daño de Veneno y se mueve 5 pies en una dirección aleatoria (d4: N, S, E, O). Este movimiento provoca Ataques de Oportunidad."
+        },
+        {
+          "name": "Capa de Moscas",
+          "cost": "2 MP",
+          "duration": "1 Minuto (Concentración)",
+          "range": "Propio",
+          "cast_dc": 14,
+          "effect": "Acción. Un aura de insectos zumbantes te rodea (Radio 5 pies). Ganas Ventaja en Intimidación. Cualquier criatura que empiece su turno en el aura recibe 1d4 Daño de Veneno automáticamente."
+        },
+        {
+          "name": "Forma de la Colmena",
+          "cost": "3 MP",
+          "duration": "1 Minuto (Concentración)",
+          "range": "Propio",
+          "cast_dc": 18,
+          "effect": "Acción. Te disuelves en un enjambre de escarabajos/avispas. 1. Ganas Resistencia a daño Contundente, Perforante y Cortante. 2. Puedes ocupar el espacio de otra criatura. 3. Vulnerabilidad: Recibes Doble Daño de ataques de Área de Efecto (AoE)."
+        }
+      ]
+    },
+    {
+      "name": "Aspecto de la Serpiente",
+      "type": "Colección",
+      "tags": ["Veneno", "Transformación"],
+      "description": "El golpe silencioso y la bobina aplastante.",
+      "spells": [
+        {
+          "name": "Escupitajo Venenoso",
+          "cost": "1 MP",
+          "duration": "Instantáneo",
+          "range": "30 pies",
+          "cast_dc": 11,
+          "effect": "Acción. Prueba de Lanzamiento a Distancia vs Defensa. Al Impactar: Inflige 1d8 Daño de Veneno. Si el objetivo ya está Envenenado, inflige 1d12 en su lugar."
+        },
+        {
+          "name": "Aliento Nocivo",
+          "cost": "2 MP",
+          "duration": "Instantáneo",
+          "range": "Cono 15 pies",
+          "cast_dc": 15,
+          "effect": "Acción. Exhalas gas verde. Criaturas en el cono salvan Fortaleza vs. Resultado. Fallo: 2d6 Daño Veneno y Enfermo (Desventaja en Ataques) por 1 ronda. Éxito: Mitad de daño."
+        },
+        {
+          "name": "Forma de Serpiente Gigante",
+          "cost": "3 MP",
+          "duration": "1 Minuto (Concentración)",
+          "range": "Propio",
+          "cast_dc": 18,
+          "effect": "Acción. Te alargas y crecen escamas. 1. Ganas Velocidad de Escalada 30 pies. 2. Constreñir: Cuando golpeas con un ataque melee (1d8 daño), el objetivo es automáticamente Agarrado (CD Escape 15). 3. Tienes Ventaja en ataques contra objetivos Agarrados."
+        }
+      ]
+    },
+    {
+      "name": "Aspecto del Raptor",
+      "type": "Colección",
+      "tags": ["Bestial", "Transformación"],
+      "description": "La velocidad y ferocidad de los dinosaurios antiguos.",
+      "spells": [
+        {
+          "name": "Golpe Primario",
+          "cost": "1 MP",
+          "duration": "Instantáneo",
+          "range": "Toque",
+          "cast_dc": 11,
+          "effect": "Acción. Tu mano se convierte en garra momentáneamente. Haz Prueba de Lanzamiento Melee. Al Impactar: Inflige 1d10 Daño Cortante."
+        },
+        {
+          "name": "Pasar Sin Rastro",
+          "cost": "2 MP",
+          "duration": "1 Hora (Concentración)",
+          "range": "Propio (Radio 30 pies)",
+          "cast_dc": 14,
+          "effect": "Acción. Sombras y silencio te siguen. Tú y todos los aliados a 30 pies ganan un Bono de +5 a pruebas de Sigilo y no dejan rastros físicos."
+        },
+        {
+          "name": "Forma del Saurio Atroz",
+          "cost": "3 MP",
+          "duration": "1 Minuto (Concentración)",
+          "range": "Propio",
+          "cast_dc": 18,
+          "effect": "Acción. Te conviertes en un lagarto depredador bípedo. 1. Tu Velocidad aumenta en 10 pies. 2. Tácticas de Manada: Tienes Ventaja en ataques si un aliado está adyacente a tu objetivo. 3. Abalanzarse: Si te mueves 20 pies directo hacia un objetivo y golpeas, es Derribado."
+        }
+      ]
+    },
+    {
+      "name": "Aspecto de la Podredumbre",
+      "type": "Colección",
+      "tags": ["Necrótico", "Transformación"],
+      "description": "El retorno inevitable al suelo.",
+      "spells": [
+        {
+          "name": "Marchitar",
+          "cost": "1 MP",
+          "duration": "Instantáneo",
+          "range": "Toque",
+          "cast_dc": 11,
+          "effect": "Acción. Haz Prueba de Lanzamiento Melee. Al Impactar: Inflige 1d10 Daño Necrótico. Plantas y Elementales de Agua reciben daño máximo. El objetivo no puede curarse hasta el inicio de tu próximo turno."
+        },
+        {
+          "name": "Plaga",
+          "cost": "2 MP",
+          "duration": "Instantáneo",
+          "range": "30 pies",
+          "cast_dc": 15,
+          "effect": "Acción. Drenas humedad de una criatura viva. Prueba Lanzamiento vs. Salvación Fortaleza. Fallo: Recibe 4d8 Daño Necrótico. Éxito: Mitad de daño. No-Muertos y Constructos son inmunes."
+        },
+        {
+          "name": "Forma del Micónido",
+          "cost": "3 MP",
+          "duration": "1 Minuto (Concentración)",
+          "range": "Propio",
+          "cast_dc": 18,
+          "effect": "Acción. Te conviertes en un gigante fúngico. 1. Emite un aura de esporas de 10 pies. Cualquier criatura comenzando su turno allí recibe 1d6 Daño Veneno. 2. Puedes usar Acción Bonificada para explotar un cadáver a 15 pies infligiendo 2d6 daño a enemigos adyacentes."
+        }
+      ]
+    },
+    {
+      "name": "Aspecto de la Luna",
+      "type": "Colección",
+      "tags": ["Radiante", "Transformación"],
+      "description": "La luz plateada que revela la verdad y la locura.",
+      "spells": [
+        {
+          "name": "Fuego Feérico",
+          "cost": "1 MP",
+          "duration": "1 Minuto (Concentración)",
+          "range": "60 pies",
+          "cast_dc": 11,
+          "effect": "Acción. Cubo 20 pies. Criaturas en el área deben salvar Reflejos vs. Resultado. Fallo: Brillan con luz pálida. Ataques contra ellas tienen Ventaja, y no pueden beneficiarse de Invisibilidad."
+        },
+        {
+          "name": "Rayo de Luna",
+          "cost": "2 MP",
+          "duration": "1 Minuto (Concentración)",
+          "range": "60 pies",
+          "cast_dc": 15,
+          "effect": "Acción. Crea un cilindro de luz pálida de 5 pies de radio. Criaturas entrando o empezando turno dentro reciben 2d10 Daño Radiante (Salvación Fortaleza para mitad). Cambiaformas tienen Desventaja en la salvación y revierten a forma original si fallan."
+        },
+        {
+          "name": "Forma de la Bestia Lunar",
+          "cost": "3 MP",
+          "duration": "1 Minuto (Concentración)",
+          "range": "Propio",
+          "cast_dc": 17,
+          "effect": "Acción. Te transformas en una criatura tipo Oso-Lechuza nevado. 1. Ganas 20 PV Temporales. 2. Ganas Visión en la Oscuridad 60 pies. 3. Tu Golpe Desarmado inflige 1d10+2 daño y tienes Ventaja en pruebas de Percepción."
+        }
+      ]
+    },
+    {
+      "name": "Aspecto de la Vitalidad",
+      "type": "Colección",
+      "tags": ["Curación", "Transformación"],
+      "description": "El crecimiento floreciente de la primavera.",
+      "spells": [
+        {
+          "name": "Recrecimiento",
+          "cost": "1 MP",
+          "duration": "Instantáneo",
+          "range": "Toque",
+          "cast_dc": 10,
+          "effect": "Acción. Toca una criatura viva. Recupera 1d4 Puntos de Vida y gana 1d4 Puntos de Vida Temporales. Útil para mantener aliados en pie."
+        },
+        {
+          "name": "Protección contra Veneno",
+          "cost": "2 MP",
+          "duration": "1 Hora",
+          "range": "Toque",
+          "cast_dc": 13,
+          "effect": "Acción. Toca una criatura. Cura un efecto de Veneno afectándola actualmente. Por la próxima hora, tiene Resistencia al daño de Veneno y Ventaja en salvaciones contra ser Envenenado."
+        },
+        {
+          "name": "Forma del Espíritu Primaveral",
+          "cost": "3 MP",
+          "duration": "1 Minuto (Concentración)",
+          "range": "Propio",
+          "cast_dc": 17,
+          "effect": "Acción. Te conviertes en un ser de vides y luz. 1. Aura de Vida: Tú y aliados a 10 pies recuperan 1d4 PV al inicio de tu turno. 2. Eres Inmune al daño Necrótico. 3. Puedes moverte a través de plantas sin frenar."
+        }
+      ]
+    },
+    {
+      "name": "Aspecto de la Caverna",
+      "type": "Colección",
+      "tags": ["Utilidad", "Transformación"],
+      "description": "Adaptación a la oscuridad profunda.",
+      "spells": [
+        {
+          "name": "Golpe Eco",
+          "cost": "1 MP",
+          "duration": "Instantáneo",
+          "range": "30 pies",
+          "cast_dc": 11,
+          "effect": "Acción. Prueba de Lanzamiento a Distancia. Al Impactar: Inflige 1d8 Daño de Trueno. El sonido reverbera, revelando la ubicación del objetivo si está Oculto o Invisible."
+        },
+        {
+          "name": "Visión en la Oscuridad",
+          "cost": "2 MP",
+          "duration": "8 Horas",
+          "range": "Toque",
+          "cast_dc": 13,
+          "effect": "Acción. Una criatura dispuesta gana la habilidad de ver en oscuridad total hasta 60 pies. La visión es en blanco y negro."
+        },
+        {
+          "name": "Forma de Murciélago Gigante",
+          "cost": "3 MP",
+          "duration": "1 Minuto (Concentración)",
+          "range": "Propio",
+          "cast_dc": 17,
+          "effect": "Acción. Te transformas en un monstruo murciélago Grande. 1. Ganas Velocidad de Vuelo 40 pies. 2. Ganas Visión Ciega 30 pies (Ciego pero 'ves' por sonido). 3. Tu mordisco inflige 1d8 Perforante y te cura por la mitad del daño infligido."
+        }
+      ]
+    },
+    {
+      "name": "Recuperación Primaria",
+      "type": "Habilidad",
+      "cost": "Acción (Descanso)",
+      "tags": ["Recurso", "1/Descanso"],
+      "effect": "Acción: Meditas sobre la tierra. Recuperas 1d4 Puntos de Maná (MP). Usable una vez por Descanso Largo.",
+      "details": "Sostén tu magia durante un día largo."
+    },
+    {
+      "name": "Sintonía Primaria",
+      "type": "Habilidad",
+      "cost": "Acción (Descanso)",
+      "tags": ["Utilidad", "1/Descanso"],
+      "effect": "Acción: Abres tus sentidos por 1 minuto. Tienes Ventaja en pruebas de Escrutinio y Supervivencia. Sientes automáticamente la ubicación de todas las criaturas vivas a 30 pies. Usable una vez por Descanso Largo.",
+      "details": "Detecta emboscadas y enemigos invisibles."
+    },
+    {
+      "name": "Hablar con Animales",
+      "type": "Habilidad",
+      "cost": "1 MP",
+      "tags": ["Utilidad", "Social"],
+      "effect": "Acción: Puedes hablar y entender a bestias naturales por 10 minutos. No están obligadas a ayudar, pero generalmente son neutrales.",
+      "details": "Reúne información de ratas y pájaros."
+    },
+    {
+      "name": "Sentido de Bestia",
+      "type": "Habilidad",
+      "cost": "1 MP (Concentración)",
+      "tags": ["Utilidad", "Exploración"],
+      "effect": "Acción: Toca una bestia dispuesta (o tu compañero). Por 1 hora, puedes usar tu Acción para ver a través de sus ojos y oír lo que oye. Estás ciego/sordo a tu propio entorno mientras lo haces.",
+      "details": "Exploración segura."
+    },
+    {
+      "name": "Potencia Primaria",
+      "type": "Pasivo",
+      "cost": "-",
+      "tags": ["Daño"],
+      "effect": "Cuando tiras daño para un Hechizo, añade tu Modificador de WIS al total.",
+      "details": "Aumenta el daño de hechizos y ataques transformados."
+    },
+    {
+      "name": "Foco Primario",
+      "type": "Pasivo",
+      "cost": "-",
+      "tags": ["Mejora"],
+      "effect": "Ganas un Bono permanente de +1 a todas las Pruebas de Lanzamiento.",
+      "details": "Consistencia en magia."
+    },
+    {
+      "name": "Corazón Primario",
+      "type": "Pasivo",
+      "cost": "-",
+      "tags": ["Recurso", "Repetible"],
+      "effect": "Tu Maná Máximo (MP) aumenta en 2.",
+      "flags": { "repeatable": true, "max_rank": 3 },
+      "modifiers": { "mp_flat": 2 }
+    },
+    {
+      "name": "Hijo de lo Salvaje",
+      "type": "Pasivo",
+      "cost": "-",
+      "tags": ["Movimiento"],
+      "effect": "Ignoras Terreno Difícil no mágico (vides, escombros, barro). Tienes Ventaja en pruebas de Supervivencia en la naturaleza.",
+      "details": "Supremacía de movilidad al aire libre."
+    }
+  ]
+}
+],
   "classes": [
     {
       "id": "cls_weapon_master",

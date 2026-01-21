@@ -7,6 +7,17 @@
 
 const UI_DICTIONARY = {
     "en": {
+        // EN
+        "magic_spellbook": "Spellbook",
+        "lbl_range": "Range",
+        "lbl_duration": "Duration",
+        "lbl_target": "Target",
+        "btn_cast": "CAST",
+        "btn_equip": "Equip",
+        "btn_unequip": "Unequip",
+        "btn_delete": "Delete",
+        "lbl_contains": "Contains:", // New key for Feature list
+
         "btn_level_up": "Level Up",
         "btn_level_up_ready": "LEVEL UP!",
         // Skills
@@ -315,6 +326,16 @@ const UI_DICTIONARY = {
         "tbl_btn_roll": "Roll {dice}"
     },
     "es": {
+        // ES
+        "magic_spellbook": "Libro de Hechizos",
+        "lbl_range": "Rango",
+        "lbl_duration": "Duración",
+        "lbl_target": "Objetivo",
+        "btn_cast": "LANZAR",
+        "btn_equip": "Equipar",
+        "btn_unequip": "Desequipar",
+        "btn_delete": "Borrar",
+        "lbl_contains": "Contiene:", // New key
         "btn_level_up": "Subir Nivel",
         "btn_level_up_ready": "¡SUBIR NIVEL!",
         // Skills

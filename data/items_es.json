@@ -26,7 +26,7 @@
       "as": 2,
       "cost": "50o",
       "slots": 2,
-      "req": "STR +1",
+      "req": "STR +1, CON +1",
       "penalty": "Torpe (Desventaja en Sigilo y Esquiva)",
       "description": "Cota de malla, camisa de escamas o piel gruesa."
     },
@@ -51,10 +51,11 @@
       "description": "Escudo de madera o acero. Permite la acción Bloquear."
     }
   ],
-  "weapons": [
+"weapons": [
     {
       "id": "wep_dagger",
       "name": "Daga",
+      "category": "Simples",
       "damage": "1d4",
       "cost": "2o",
       "slots": 1,
@@ -64,6 +65,7 @@
     {
       "id": "wep_club",
       "name": "Garrote",
+      "category": "Simples",
       "damage": "1d4",
       "cost": "1o",
       "slots": 1,
@@ -73,6 +75,7 @@
     {
       "id": "wep_staff",
       "name": "Bastón",
+      "category": "Simples",
       "damage": "1d6",
       "cost": "1o",
       "slots": 1,
@@ -82,6 +85,7 @@
     {
       "id": "wep_spear",
       "name": "Lanza",
+      "category": "Simples",
       "damage": "1d6",
       "cost": "2o",
       "slots": 1,
@@ -91,6 +95,7 @@
     {
       "id": "wep_handaxe",
       "name": "Hacha de Mano",
+      "category": "Simples",
       "damage": "1d6",
       "cost": "5o",
       "slots": 1,
@@ -100,6 +105,7 @@
     {
       "id": "wep_mace",
       "name": "Maza",
+      "category": "Simples",
       "damage": "1d6",
       "cost": "5o",
       "slots": 1,
@@ -109,6 +115,7 @@
     {
       "id": "wep_longsword",
       "name": "Espada Larga",
+      "category": "Marciales",
       "damage": "1d8",
       "cost": "15o",
       "slots": 1,
@@ -118,6 +125,7 @@
     {
       "id": "wep_battleaxe",
       "name": "Hacha de Batalla",
+      "category": "Marciales",
       "damage": "1d8",
       "cost": "15o",
       "slots": 1,
@@ -127,6 +135,7 @@
     {
       "id": "wep_warhammer",
       "name": "Martillo de Guerra",
+      "category": "Marciales",
       "damage": "1d8",
       "cost": "15o",
       "slots": 1,
@@ -136,6 +145,7 @@
     {
       "id": "wep_rapier",
       "name": "Estoque",
+      "category": "Marciales",
       "damage": "1d8",
       "cost": "25o",
       "slots": 1,
@@ -145,6 +155,7 @@
     {
       "id": "wep_flail",
       "name": "Mayal",
+      "category": "Marciales",
       "damage": "1d8",
       "cost": "10o",
       "slots": 1,
@@ -154,6 +165,7 @@
     {
       "id": "wep_whip",
       "name": "Látigo",
+      "category": "Marciales",
       "damage": "1d4",
       "cost": "3o",
       "slots": 1,
@@ -163,6 +175,7 @@
     {
       "id": "wep_greatsword",
       "name": "Espadón",
+      "category": "Marciales",
       "damage": "2d6",
       "cost": "50o",
       "slots": 2,
@@ -172,6 +185,7 @@
     {
       "id": "wep_greataxe",
       "name": "Gran Hacha",
+      "category": "Marciales",
       "damage": "1d12",
       "cost": "50o",
       "slots": 2,
@@ -181,6 +195,7 @@
     {
       "id": "wep_maul",
       "name": "Mazo",
+      "category": "Marciales",
       "damage": "2d6",
       "cost": "45o",
       "slots": 2,
@@ -190,6 +205,7 @@
     {
       "id": "wep_polearm",
       "name": "Arma de Asta",
+      "category": "Marciales",
       "damage": "1d10",
       "cost": "40o",
       "slots": 2,
@@ -199,6 +215,7 @@
     {
       "id": "wep_sling",
       "name": "Honda",
+      "category": "Simples",
       "damage": "1d4",
       "cost": "5p",
       "slots": 1,
@@ -208,6 +225,7 @@
     {
       "id": "wep_shortbow",
       "name": "Arco Corto",
+      "category": "Simples",
       "damage": "1d6",
       "cost": "25o",
       "slots": 2,
@@ -217,6 +235,7 @@
     {
       "id": "wep_longbow",
       "name": "Arco Largo",
+      "category": "Marciales",
       "damage": "1d8",
       "cost": "50o",
       "slots": 2,
@@ -226,6 +245,7 @@
     {
       "id": "wep_hand_crossbow",
       "name": "Ballesta de Mano",
+      "category": "Marciales",
       "damage": "1d6",
       "cost": "75o",
       "slots": 1,
@@ -235,6 +255,7 @@
     {
       "id": "wep_light_crossbow",
       "name": "Ballesta Ligera",
+      "category": "Simples",
       "damage": "1d10",
       "cost": "60o",
       "slots": 2,
@@ -244,6 +265,7 @@
     {
       "id": "wep_heavy_crossbow",
       "name": "Ballesta Pesada",
+      "category": "Marciales",
       "damage": "1d12",
       "cost": "100o",
       "slots": 3,

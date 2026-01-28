@@ -5419,3 +5419,174 @@ input.res-input:focus { border-bottom: 1px solid #fff !important; }
     background: var(--accent-blue);
     color: white;
 }
+
+/* --- MASTERY UI STYLES --- */
+
+.mastery-container {
+    background: rgba(0, 0, 0, 0.3) !important;
+    border: 1px solid #444;
+    padding: 10px !important;
+}
+
+.mastery-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.mastery-rank {
+    background: #222;
+    border: 1px solid #333;
+    padding: 6px 10px;
+    border-radius: 3px;
+    cursor: default;
+    transition: all 0.2s;
+    opacity: 0.6;
+}
+
+/* Available to Buy */
+.mastery-rank.available {
+    opacity: 1;
+    cursor: pointer;
+    border-color: #666;
+}
+.mastery-rank.available:hover {
+    background: #333;
+    border-color: var(--accent-blue);
+}
+
+/* Owned */
+.mastery-rank.selected {
+    opacity: 1;
+    cursor: pointer;
+    background: rgba(197, 160, 89, 0.15);
+    border-color: var(--accent-gold);
+    box-shadow: inset 2px 0 0 var(--accent-gold);
+}
+.mastery-rank.selected:hover {
+    background: rgba(138, 44, 44, 0.2); /* Red hint to show removal */
+    border-color: var(--accent-crimson);
+}
+
+/* Locked (Cannot buy yet) */
+.mastery-rank.locked {
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+/* Add to card border colors */
+.grim-card.reaction { border-left: 4px solid #c5a059; } /* Gold/Yellow for Reactions */
+.grim-card.mastery { border-left: 4px solid #cd7f32; } /* Bronze for Masteries */
+
+/* Tweak gc-meta to handle longer source names like "Shield Arts II" */
+.gc-meta {
+    justify-content: space-between;
+}
+.gc-meta span:first-child {
+    font-weight: bold;
+    color: #aaa;
+}
+
+/* --- TAB CONTENT CENTERING FIX --- */
+/* Forces specific grid containers within the tab content to center */
+/* Add .mgr-header to this rule to ensure titles align with the content */
+.char-tab-content .split-view-magic, 
+.char-tab-content .card-grid,
+.char-tab-content .bio-layout,
+.char-tab-content .mgr-header {   /* <--- ADDED THIS */
+    max-width: var(--content-max-width);
+    margin: 0 auto 1rem auto; /* Added bottom margin for headers */
+    width: 100%;
+}
+
+/* Ensure the card grid fills the available width but respects the max */
+.card-grid {
+    width: 100%; 
+}
+
+/* --- NEW CARD STYLES --- */
+
+/* Exploit (Luck based - Purple/Gold) */
+.grim-card.exploit { 
+    border-left: 4px solid #9c27b0; /* Purple */
+    background: linear-gradient(to bottom right, #1a1a1a, #221825);
+}
+.grim-card.exploit .gc-cost {
+    border-color: #9c27b0;
+    color: #e1bee7;
+    background: rgba(156, 39, 176, 0.1);
+}
+
+/* Recipe/Schematic (Crafting - Industrial/Blueprint) */
+.grim-card.recipe { 
+    border-left: 4px solid #607d8b; /* Blue Grey */
+    border-left-style: dashed; /* Blueprint feel */
+    background: #18191a;
+}
+.grim-card.recipe .gc-header {
+    border-bottom: 1px dashed #444;
+}
+
+/* Mastery (Tiered - Bronze) */
+.grim-card.mastery {
+    border-left: 4px solid #cd7f32; 
+}
+
+/* --- LIBRARY MOBILE FIXES --- */
+
+/* 1. Filter Bar Collapsible Styling (used with <details> in JS) */
+.filter-details {
+    margin-bottom: 2rem;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+}
+
+.filter-summary {
+    padding: 10px 15px;
+    font-family: var(--font-header);
+    color: var(--accent-gold);
+    cursor: pointer;
+    font-weight: bold;
+    list-style: none; /* Remove default triangle */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.filter-summary::after {
+    content: '▼';
+    font-size: 0.8rem;
+}
+
+.filter-details[open] .filter-summary::after {
+    content: '▲';
+}
+
+/* The actual filter container inside the details */
+.filter-content {
+    padding: 15px;
+    border-top: 1px solid var(--border-color);
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 10px;
+}
+
+/* 2. Mobile Adjustments */
+@media (max-width: 1024px) {
+    /* Fix Filter Grid on Mobile */
+    .filter-content {
+        grid-template-columns: 1fr; /* Stack vertically */
+    }
+
+    /* Fix Header Overlap */
+    .lib-header h2 {
+        padding-left: 45px; /* Push title right to clear the hamburger button */
+        margin-top: 5px;
+    }
+    
+    /* Ensure the search input doesn't overflow */
+    .filter-content input, .filter-content select {
+        width: 100%;
+    }
+}

@@ -2,161 +2,12 @@
  * i18n.js
  * Localization, Data Management, and Normalization Utility.
  * Handles loading JSON data, translating UI, and normalizing data logic.
- * v4.0: Comprehensive Dictionary & Robust Normalization
+ * v5.0: Specialist Update (Crafting, Exploits, & Workbench)
  */
 
 const UI_DICTIONARY = {
     "en": {
-        // EN
-        "magic_spellbook": "Spellbook",
-        "lbl_range": "Range",
-        "lbl_duration": "Duration",
-        "lbl_target": "Target",
-        "btn_cast": "CAST",
-        "btn_equip": "Equip",
-        "btn_unequip": "Unequip",
-        "btn_delete": "Delete",
-        "lbl_contains": "Contains:", // New key for Feature list
-
-        "btn_level_up": "Level Up",
-        "btn_level_up_ready": "LEVEL UP!",
-        // Skills
-        "skill_athletics": "Athletics",
-        "skill_acrobatics": "Acrobatics",
-        "skill_stealth": "Stealth",
-        "skill_craft": "Craft",
-        "skill_lore": "Lore",
-        "skill_investigate": "Investigate",
-        "skill_scrutiny": "Scrutiny",
-        "skill_survival": "Survival",
-        "skill_medicine": "Medicine",
-        "skill_influence": "Influence",
-        "skill_deception": "Deception",
-        "skill_intimidation": "Intimidation",
-        // Defenses
-        "def_dodge": "Dodge",
-        "def_parry": "Parry",
-        "def_block": "Block",
-        "lbl_atk_bonus": "Atk",
-        // Inventory Manager
-        "inv_gold": "Gold",
-        "inv_silver": "Silver",
-        "inv_copper": "Copper",
-        "inv_capacity": "Capacity",
-        "inv_item_header": "Item Name",
-        "inv_slots_header": "Slots",
-        "inv_actions_header": "Actions",
-        // Magic Tab
-        "magic_tab_title": "Magic Items",
-        "magic_header": "Attuned / Equipped Magic",
-        "magic_import": "Import from Artificer",
-        "magic_empty": "No magic items found. Use Artificer to create them, then Import here.",
-
-        "mon_sect_universal": "Universal Traits",
-        "mon_lbl_basic_attack": "Basic Attack",
-        "mon_lbl_manual_dmg": "Manual Damage",
-        "mon_lbl_flavor": "Flavor",
-        "mon_btn_roll_flavor": "Roll Random Flavor",
-        "mon_default_atk_name": "Standard Attack",
-        "mon_default_atk_desc": "Deals {dmg} damage.",
-        // --- MISSING IMAGE CONTROLS ---
-        "lbl_zoom": "Zoom",
-        "lbl_pan_x": "Pan X",
-        "lbl_pan_y": "Pan Y",
-        "lbl_reset": "Reset",
-        "lbl_upload": "Upload",
-        "lbl_paste_url": "Paste Image URL...",
-
-        // --- MISSING MONSTER ROLES (Ensure these match your JSON keys lowercase) ---
-        "role_soldier": "Soldier",
-        "role_brute": "Brute",
-        "role_skirmisher": "Skirmisher",
-        "role_controller": "Controller",
-        "role_artillery": "Artillery",
-        "role_lurker": "Lurker",
-        "role_minion": "Minion",
-        "role_solo": "Solo",
-        
-         // --- MISSING ITEM BUILDER KEYS ---
-        "item_default_name": "New Item",
-        "item_default_desc": "Select a base item or edit fields to begin.",
-        "item_ph_magic_name": "Magic Prefix/Name",
-        "item_ph_tags": "Tags",
-        "item_ph_type": "Type",
-        "item_ph_damage": "Damage",
-        "item_ph_ac": "AS",
-        "item_ph_slots": "Slots",
-        
-        // --- BUTTONS ---
-        "btn_save_lib": "Save to Library",
-        "btn_shop": "Open Shop",
-        "btn_add_custom": "Add Custom Item",
-        "inv_empty": "Inventory is empty.",
-        "inv_header_name": "Item Name",
-        "inv_header_slots": "Slots",
-        "inv_header_actions": "Actions",
-        "shop_modal_title": "Provisions & Gear",
-        "lbl_commodity": "Commodity",
-        "lbl_unit": "Unit",
-        "lbl_value": "Value",
-        "lbl_material": "Material",
-        "lbl_form": "Form",
-        "lbl_subject": "Subject",
-        "lbl_reagent": "Reagent",
-        "tag_melee": "Melee",
-        "tag_ranged": "Ranged",
-        "tag_finesse": "Finesse",
-        "tag_light": "Light",
-        "tag_heavy": "Heavy",
-        "tag_two_handed": "Two-Handed",
-        "tag_reach": "Reach",
-        "tag_thrown": "Thrown",
-        "tag_loading": "Loading",
-        "tag_precise": "Precise",
-        "tag_sunder": "Sunder",
-        "tag_messy": "Messy",
-        "tag_guard": "Guard",
-        "tag_brace": "Brace",
-        "wep_unarmed": "Unarmed Strike",
-        "lbl_class_lvl": "Class Lvl",
-        "lbl_archetype": "Archetype",
-        "lbl_worn": "Worn",
-        "lbl_unarmored": "Unarmored",
-        "cg_lbl_anc_feat": "Ancestry Feat",
-        "cg_lbl_skill_training": "Skill Training",
-        "cg_lbl_wealth": "Starting Wealth",
-        "cg_lbl_starting_gear": "Starting Gear",
-        "cg_lbl_synergy_lvl": "Level {lvl} Synergy",
-        "cg_lbl_role": "Role",
-        "cg_lbl_resource": "Resource",
-        "cg_lbl_stats": "Stats",
-        "cg_lbl_skill": "Skill",
-        "cg_lbl_weapons": "Weapons",
-        "cg_lbl_armor": "Armor",
-        "cg_lbl_selected": "{current}/{max} Selected",
-        "cg_lbl_talents_header": "{name} Talents",
-        "sheet_origin_traits": "Origin Traits",
-        "sheet_class_features": "Class Features",
-        "sheet_arch_talents": "Archetype Talents",
-        // --- GENERIC ---
-        "btn_save": "Save",
-        "btn_cancel": "Cancel",
-        "btn_confirm": "Confirm",
-        "btn_delete": "Delete",
-        "btn_edit": "Edit",
-        "btn_view": "View",
-        "btn_print": "Print",
-        "btn_copy": "Copy",
         "btn_import_json": "Import JSON",
-        "btn_export_json": "Export JSON",
-        "lbl_loading": "Loading...",
-        "lbl_name": "Name",
-        "lbl_desc": "Description",
-        "lbl_effect": "Effect",
-        "lbl_cost": "Cost",
-        "lbl_source": "Source",
-        "lbl_level": "Level", // Added based on report
-        
         // --- NAVIGATION ---
         "nav_dashboard": "Dashboard",
         "nav_home": "Rules Reference",
@@ -166,25 +17,58 @@ const UI_DICTIONARY = {
         "nav_library": "My Library",
         "nav_tables": "Tables & Rolls",
 
-        // --- DASHBOARD ---
-        "dash_subtitle": "Dark Pulp RPG Companion",
-        "dash_resume": "Resume",
-        "dash_create": "Create New Character",
-        "dash_new_char": "New Hero",
-        "dash_new_char_desc": "Create a character from scratch.",
-        "dash_new_mon": "New Monster",
-        "dash_new_mon_desc": "Forge a beast or boss.",
-        "dash_new_item": "New Item",
-        "dash_new_item_desc": "Craft magical loot.",
-        "dash_rules": "Rules",
-        "dash_rules_desc": "Lookup tables and mechanics.",
-        "dash_stats": "Library Stats",
-        "dash_heroes": "Heroes",
-        "dash_monsters": "Monsters",
-        "dash_items": "Items",
-        "dash_recent": "Recent Activity",
+        // --- TABS & HEADERS ---
+        "magic_tab_title": "Grimoire & Workbench", // Renamed from Magic Items
+        "magic_header": "Attuned / Equipped Magic",
+        "header_spells": "Spells & Exploits", // New
+        "header_crafting": "Schematics & Workbench", // New
+        "sheet_features": "Features & Talents",
+        "sheet_notes": "Notes",
+        "sheet_inv": "Inventory",
+        "cg_combat_stats": "Combat Stats",
 
-        // --- CHARGEN (WIZARD) ---
+        // --- CRAFTING & EXPLOITS (New) ---
+        "btn_craft": "Craft",
+        "btn_use_exploit": "Execute",
+        "lbl_materials": "Materials:",
+        "lbl_luck_cost": "Luck Cost",
+        "lbl_recipe": "Recipe",
+        "msg_craft_success": "Crafting Successful",
+        "msg_craft_fail": "Crafting Failed",
+        "lbl_passive_effect": "Passive Effect",
+        
+        // --- COMBAT LOGIC (New) ---
+        "wep_fist": "Unarmed Strike",
+        "wep_martial_arts": "Martial Arts",
+        "lbl_proficient": "Proficient",
+        "lbl_atk_bonus": "Atk",
+        "lbl_dmg": "Dmg",
+        
+        // --- GENERIC ---
+        "btn_save": "Save",
+        "btn_cancel": "Cancel",
+        "btn_confirm": "Confirm",
+        "btn_delete": "Delete",
+        "btn_edit": "Edit",
+        "btn_view": "View",
+        "btn_print": "Print",
+        "btn_copy": "Copy",
+        "btn_cast": "CAST",
+        "btn_equip": "Equip",
+        "btn_unequip": "Unequip",
+        "lbl_loading": "Loading...",
+        "lbl_name": "Name",
+        "lbl_desc": "Description",
+        "lbl_effect": "Effect",
+        "lbl_cost": "Cost",
+        "lbl_source": "Source",
+        "lbl_level": "Level",
+        "lbl_range": "Range",
+        "lbl_duration": "Duration",
+        "lbl_target": "Target",
+        "lbl_contains": "Contains:",
+
+        // --- CHARGEN ---
         "cg_step_bio": "Origins",
         "cg_step_class": "Class",
         "cg_step_stats": "Attributes",
@@ -225,12 +109,25 @@ const UI_DICTIONARY = {
         "cg_warn_enc": "ENCUMBERED",
         "cg_currency": "{g}g {s}s {c}c",
         "cg_derived_vitals": "Derived Vitals",
-        "cg_combat_stats": "Combat Stats",
         "cg_initiative": "Initiative",
         "cg_base_def": "Base Defense",
         "cg_class_features": "Class Features",
+        "cg_lbl_skill_training": "Skill Training",
+        "cg_lbl_wealth": "Starting Wealth",
+        "cg_lbl_starting_gear": "Starting Gear",
+        "cg_lbl_synergy_lvl": "Level {lvl} Synergy",
+        "cg_lbl_role": "Role",
+        "cg_lbl_resource": "Resource",
+        "cg_lbl_stats": "Stats",
+        "cg_lbl_skill": "Skill",
+        "cg_lbl_weapons": "Weapons",
+        "cg_lbl_armor": "Armor",
+        "cg_lbl_selected": "{current}/{max} Selected",
+        "cg_lbl_talents_header": "{name} Talents",
 
-        // --- CHARACTER SHEET ---
+        // --- SHEET & HUD ---
+        "btn_level_up": "Level Up",
+        "btn_level_up_ready": "LEVEL UP!",
         "sheet_levelup": "Level Up",
         "sheet_save": "Save",
         "sheet_print": "Print Sheet",
@@ -243,18 +140,43 @@ const UI_DICTIONARY = {
         "sheet_def": "Defenses",
         "sheet_skills": "Skills",
         "sheet_attacks": "Attacks",
-        "sheet_inv": "Inventory",
-        "sheet_notes": "Notes",
-        "sheet_features": "Features & Talents",
         "sheet_origin_traits": "Origin Traits",
         "sheet_class_features": "Class Features",
         "sheet_arch_talents": "Archetype Talents",
         "sheet_dodge": "Dodge",
         "sheet_parry": "Parry",
         "sheet_block": "Block",
-        "sheet_worn": "Worn",
-        "sheet_tools": "Tools",
+        "magic_import": "Import from Artificer",
+        "magic_empty": "No items found.",
         
+        // --- INVENTORY ---
+        "inv_gold": "Gold",
+        "inv_silver": "Silver",
+        "inv_copper": "Copper",
+        "inv_capacity": "Capacity",
+        "inv_item_header": "Item Name",
+        "inv_slots_header": "Slots",
+        "inv_actions_header": "Actions",
+        "inv_empty": "Inventory is empty.",
+        "btn_save_lib": "Save to Library",
+        "btn_shop": "Open Shop",
+        "btn_add_custom": "Add Custom Item",
+        "shop_modal_title": "Provisions & Gear",
+
+        // --- SKILLS ---
+        "skill_athletics": "Athletics",
+        "skill_acrobatics": "Acrobatics",
+        "skill_stealth": "Stealth",
+        "skill_craft": "Craft",
+        "skill_lore": "Lore",
+        "skill_investigate": "Investigate",
+        "skill_scrutiny": "Scrutiny",
+        "skill_survival": "Survival",
+        "skill_medicine": "Medicine",
+        "skill_influence": "Influence",
+        "skill_deception": "Deception",
+        "skill_intimidation": "Intimidation",
+
         // --- ATTRIBUTES & ROLES ---
         "stat_str": "STR",
         "stat_dex": "DEX",
@@ -266,7 +188,7 @@ const UI_DICTIONARY = {
         "role_spellcaster": "Spellcaster",
         "role_specialist": "Specialist",
 
-        // --- LIBRARY ---
+        // --- LIBRARY & MONSTERS ---
         "lib_tab_char": "Characters",
         "lib_tab_mon": "Bestiary",
         "lib_tab_item": "Items",
@@ -274,8 +196,6 @@ const UI_DICTIONARY = {
         "lib_no_char": "No characters found.",
         "lib_no_mon": "No monsters found.",
         "lib_no_item": "No items found.",
-        
-        // --- MONSTER BUILDER ---
         "mon_lbl_role": "Role",
         "mon_lbl_level": "Level",
         "mon_lbl_family": "Family",
@@ -297,8 +217,29 @@ const UI_DICTIONARY = {
         "mon_type_reaction": "Reaction",
         "mon_type_danger": "Danger (DP)",
         "mon_lbl_notes": "GM Notes / Loot",
-        "mon_atk_fmt": "Standard Attack. Deals {dmg} damage.",
-        "mon_meta_fmt": "Level {lvl} {family} {role}",
+        "mon_sect_universal": "Universal Traits",
+        "mon_lbl_basic_attack": "Basic Attack",
+        "mon_lbl_manual_dmg": "Manual Damage",
+        "mon_lbl_flavor": "Flavor",
+        "mon_btn_roll_flavor": "Roll Random Flavor",
+        "mon_default_atk_name": "Standard Attack",
+        "mon_default_atk_desc": "Deals {dmg} damage.",
+        "role_soldier": "Soldier",
+        "role_brute": "Brute",
+        "role_skirmisher": "Skirmisher",
+        "role_controller": "Controller",
+        "role_artillery": "Artillery",
+        "role_lurker": "Lurker",
+        "role_minion": "Minion",
+        "role_solo": "Solo",
+
+        // --- IMAGE CONTROLS ---
+        "lbl_zoom": "Zoom",
+        "lbl_pan_x": "Pan X",
+        "lbl_pan_y": "Pan Y",
+        "lbl_reset": "Reset",
+        "lbl_upload": "Upload",
+        "lbl_paste_url": "Paste Image URL...",
 
         // --- ITEM BUILDER ---
         "item_mode_forge": "Forge",
@@ -318,7 +259,58 @@ const UI_DICTIONARY = {
         "item_cat_weapon": "Weapon",
         "item_cat_armor": "Armor & Shields",
         "item_cat_trinket": "Wondrous Item",
-        "item_name_fmt": "{adj} {noun}", // English order: Corrosive Spear
+        "item_name_fmt": "{adj} {noun}",
+        "item_default_name": "New Item",
+        "item_default_desc": "Select a base item or edit fields to begin.",
+        "item_ph_magic_name": "Magic Prefix/Name",
+        "item_ph_tags": "Tags",
+        "item_ph_type": "Type",
+        "item_ph_damage": "Damage",
+        "item_ph_ac": "AS",
+        "item_ph_slots": "Slots",
+        "lbl_commodity": "Commodity",
+        "lbl_unit": "Unit",
+        "lbl_value": "Value",
+        "lbl_material": "Material",
+        "lbl_form": "Form",
+        "lbl_subject": "Subject",
+        "lbl_reagent": "Reagent",
+
+        // --- TAGS ---
+        "tag_melee": "Melee",
+        "tag_ranged": "Ranged",
+        "tag_finesse": "Finesse",
+        "tag_light": "Light",
+        "tag_heavy": "Heavy",
+        "tag_two_handed": "Two-Handed",
+        "tag_reach": "Reach",
+        "tag_thrown": "Thrown",
+        "tag_loading": "Loading",
+        "tag_precise": "Precise",
+        "tag_sunder": "Sunder",
+        "tag_messy": "Messy",
+        "tag_guard": "Guard",
+        "tag_brace": "Brace",
+        "lbl_worn": "Worn",
+        "lbl_unarmored": "Unarmored",
+
+        // --- DASHBOARD ---
+        "dash_subtitle": "Dark Pulp RPG Companion",
+        "dash_resume": "Resume",
+        "dash_create": "Create New Character",
+        "dash_new_char": "New Hero",
+        "dash_new_char_desc": "Create a character from scratch.",
+        "dash_new_mon": "New Monster",
+        "dash_new_mon_desc": "Forge a beast or boss.",
+        "dash_new_item": "New Item",
+        "dash_new_item_desc": "Craft magical loot.",
+        "dash_rules": "Rules",
+        "dash_rules_desc": "Lookup tables and mechanics.",
+        "dash_stats": "Library Stats",
+        "dash_heroes": "Heroes",
+        "dash_monsters": "Monsters",
+        "dash_items": "Items",
+        "dash_recent": "Recent Activity",
 
         // --- TABLES ---
         "tbl_roll": "Roll",
@@ -326,155 +318,7 @@ const UI_DICTIONARY = {
         "tbl_btn_roll": "Roll {dice}"
     },
     "es": {
-        // ES
-        "magic_spellbook": "Libro de Hechizos",
-        "lbl_range": "Rango",
-        "lbl_duration": "Duración",
-        "lbl_target": "Objetivo",
-        "btn_cast": "LANZAR",
-        "btn_equip": "Equipar",
-        "btn_unequip": "Desequipar",
-        "btn_delete": "Borrar",
-        "lbl_contains": "Contiene:", // New key
-        "btn_level_up": "Subir Nivel",
-        "btn_level_up_ready": "¡SUBIR NIVEL!",
-        // Skills
-        "skill_athletics": "Atletismo",
-        "skill_acrobatics": "Acrobacias",
-        "skill_stealth": "Sigilo",
-        "skill_craft": "Artesanía",
-        "skill_lore": "Saber",
-        "skill_investigate": "Investigar",
-        "skill_scrutiny": "Escrutinio",
-        "skill_survival": "Supervivencia",
-        "skill_medicine": "Medicina",
-        "skill_influence": "Influencia",
-        "skill_deception": "Engaño",
-        "skill_intimidation": "Intimidación",
-        // Defenses
-        "def_dodge": "Esquivar",
-        "def_parry": "Parada",
-        "def_block": "Bloqueo",
-        "lbl_atk_bonus": "Atq",
-        // Inventory Manager
-        "inv_gold": "Oro",
-        "inv_silver": "Plata",
-        "inv_copper": "Cobre",
-        "inv_capacity": "Capacidad",
-        "inv_item_header": "Objeto",
-        "inv_slots_header": "Espacios",
-        "inv_actions_header": "Acciones",
-        // Magic Tab
-        "magic_tab_title": "Objetos Mágicos",
-        "magic_header": "Magia Vinculada / Equipada",
-        "magic_import": "Importar del Artificiero",
-        "magic_empty": "No hay objetos mágicos. Usa el Artificiero para crearlos e impórtalos aquí.",
-
-        "mon_sect_universal": "Rasgos Universales",
-        "mon_lbl_basic_attack": "Ataque Básico",
-        "mon_lbl_manual_dmg": "Daño Manual",
-        "mon_lbl_flavor": "Sabor / Ambientación",
-        "mon_btn_roll_flavor": "Generar Sabor Aleatorio",
-        "mon_default_atk_name": "Ataque Estándar",
-        "mon_default_atk_desc": "Inflige {dmg} de daño.",
-        // --- MISSING IMAGE CONTROLS ---
-        "lbl_zoom": "Zoom",
-        "lbl_pan_x": "Pan X",
-        "lbl_pan_y": "Pan Y",
-        "lbl_reset": "Reiniciar",
-        "lbl_upload": "Subir",
-        "lbl_paste_url": "Pegar URL de Imagen...",
-
-        // --- MISSING MONSTER ROLES ---
-        "role_soldier": "Soldado",
-        "role_brute": "Bruto",
-        "role_skirmisher": "Hostigador",
-        "role_controller": "Controlador",
-        "role_artillery": "Artillería",
-        "role_lurker": "Acechador",
-        "role_minion": "Esbirro",
-        "role_solo": "Solo (Jefe)",
-
-        // --- MISSING ITEM BUILDER KEYS ---
-        "item_default_name": "Nuevo Objeto",
-        "item_default_desc": "Elige un objeto base o edita los campos.",
-        "item_ph_magic_name": "Prefijo Mágico/Nombre",
-        "item_ph_tags": "Etiquetas",
-        "item_ph_type": "Tipo",
-        "item_ph_damage": "Daño",
-        "item_ph_ac": "AS",
-        "item_ph_slots": "Espacios",
-
-        // --- BUTTONS ---
-        "btn_save_lib": "Guardar en Biblioteca",
-        "btn_shop": "Abrir Tienda",
-        "btn_add_custom": "Añadir Personalizado",
-        "inv_empty": "El inventario está vacío.",
-        "inv_header_name": "Objeto",
-        "inv_header_slots": "Espacios",
-        "inv_header_actions": "Acciones",
-        "shop_modal_title": "Provisiones y Equipo",
-        "lbl_commodity": "Mercancía",
-        "lbl_unit": "Unidad",
-        "lbl_value": "Valor",
-        "lbl_material": "Material",
-        "lbl_form": "Forma",
-        "lbl_subject": "Sujeto",
-        "lbl_reagent": "Reactivo",
-        "tag_melee": "Cuerpo a Cuerpo",
-        "tag_ranged": "A Distancia",
-        "tag_finesse": "Sutil",
-        "tag_light": "Ligera",
-        "tag_heavy": "Pesada",
-        "tag_two_handed": "A Dos Manos",
-        "tag_reach": "Alcance",
-        "tag_thrown": "Arrojadiza",
-        "tag_loading": "Recarga",
-        "tag_precise": "Precisa",
-        "tag_sunder": "Hender",
-        "tag_messy": "Desordenada",
-        "tag_guard": "Guardia",
-        "tag_brace": "Preparar",
-        "wep_unarmed": "Golpe Desarmado",
-        "lbl_class_lvl": "Nivel de Clase",
-        "lbl_archetype": "Arquetipo",
-        "lbl_worn": "Puesto",
-        "lbl_unarmored": "Sin Armadura",
-        "cg_lbl_anc_feat": "Talento Ancestral",
-        "cg_lbl_skill_training": "Entrenamiento de Habilidad",
-        "cg_lbl_wealth": "Riqueza Inicial",
-        "cg_lbl_starting_gear": "Equipo Inicial",
-        "cg_lbl_synergy_lvl": "Sinergia Nivel {lvl}",
-        "cg_lbl_role": "Rol",
-        "cg_lbl_resource": "Recurso",
-        "cg_lbl_stats": "Estadísticas",
-        "cg_lbl_skill": "Habilidad",
-        "cg_lbl_weapons": "Armas",
-        "cg_lbl_armor": "Armadura",
-        "cg_lbl_selected": "{current}/{max} Seleccionados",
-        "cg_lbl_talents_header": "Talentos de {name}",
-        "sheet_origin_traits": "Rasgos de Origen",
-        "sheet_class_features": "Rasgos de Clase",
-        "sheet_arch_talents": "Talentos de Arquetipo",
-        // --- GENERIC ---
-        "btn_save": "Guardar",
-        "btn_cancel": "Cancelar",
-        "btn_confirm": "Confirmar",
-        "btn_delete": "Borrar",
-        "btn_edit": "Editar",
-        "btn_view": "Ver",
-        "btn_print": "Imprimir",
-        "btn_copy": "Copiar",
         "btn_import_json": "Importar JSON",
-        "btn_export_json": "Exportar JSON",
-        "lbl_loading": "Cargando...",
-        "lbl_name": "Nombre",
-        "lbl_desc": "Descripción",
-        "lbl_effect": "Efecto",
-        "lbl_cost": "Coste",
-        "lbl_source": "Fuente",
-        "lbl_level": "Nivel",
-
         // --- NAVIGATION ---
         "nav_dashboard": "Tablero",
         "nav_home": "Reglas",
@@ -484,23 +328,56 @@ const UI_DICTIONARY = {
         "nav_library": "Biblioteca",
         "nav_tables": "Tablas y Dados",
 
-        // --- DASHBOARD ---
-        "dash_subtitle": "Compañero RPG de Fantasía Oscura",
-        "dash_resume": "Reanudar",
-        "dash_create": "Crear Nuevo Personaje",
-        "dash_new_char": "Nuevo Héroe",
-        "dash_new_char_desc": "Crear un personaje desde cero.",
-        "dash_new_mon": "Nuevo Monstruo",
-        "dash_new_mon_desc": "Forjar una bestia o jefe.",
-        "dash_new_item": "Nuevo Objeto",
-        "dash_new_item_desc": "Crear botín mágico.",
-        "dash_rules": "Reglas",
-        "dash_rules_desc": "Tablas y mecánicas.",
-        "dash_stats": "Estadísticas",
-        "dash_heroes": "Héroes",
-        "dash_monsters": "Monstruos",
-        "dash_items": "Objetos",
-        "dash_recent": "Actividad Reciente",
+        // --- TABS & HEADERS ---
+        "magic_tab_title": "Grimorio y Taller", // Renamed
+        "magic_header": "Magia Vinculada / Equipada",
+        "header_spells": "Hechizos y Tretas", // New
+        "header_crafting": "Esquemas y Taller", // New
+        "sheet_features": "Rasgos y Talentos",
+        "sheet_notes": "Notas",
+        "sheet_inv": "Inventario",
+        "cg_combat_stats": "Estadísticas de Combate",
+
+        // --- CRAFTING & EXPLOITS (New) ---
+        "btn_craft": "Fabricar",
+        "btn_use_exploit": "Ejecutar",
+        "lbl_materials": "Materiales:",
+        "lbl_luck_cost": "Coste Suerte",
+        "lbl_recipe": "Receta",
+        "msg_craft_success": "Fabricación Exitosa",
+        "msg_craft_fail": "Fallo de Fabricación",
+        "lbl_passive_effect": "Efecto Pasivo",
+
+        // --- COMBAT LOGIC (New) ---
+        "wep_fist": "Golpe Desarmado",
+        "wep_martial_arts": "Artes Marciales",
+        "lbl_proficient": "Competente",
+        "lbl_atk_bonus": "Atq",
+        "lbl_dmg": "Daño",
+
+        // --- GENERIC ---
+        "btn_save": "Guardar",
+        "btn_cancel": "Cancelar",
+        "btn_confirm": "Confirmar",
+        "btn_delete": "Borrar",
+        "btn_edit": "Editar",
+        "btn_view": "Ver",
+        "btn_print": "Imprimir",
+        "btn_copy": "Copiar",
+        "btn_cast": "LANZAR",
+        "btn_equip": "Equipar",
+        "btn_unequip": "Desequipar",
+        "lbl_loading": "Cargando...",
+        "lbl_name": "Nombre",
+        "lbl_desc": "Descripción",
+        "lbl_effect": "Efecto",
+        "lbl_cost": "Coste",
+        "lbl_source": "Fuente",
+        "lbl_level": "Nivel",
+        "lbl_range": "Rango",
+        "lbl_duration": "Duración",
+        "lbl_target": "Objetivo",
+        "lbl_contains": "Contiene:",
 
         // --- CHARGEN ---
         "cg_step_bio": "Orígenes",
@@ -543,12 +420,25 @@ const UI_DICTIONARY = {
         "cg_warn_enc": "SOBRECARGA",
         "cg_currency": "{g}o {s}p {c}c",
         "cg_derived_vitals": "Vitales Derivados",
-        "cg_combat_stats": "Estadísticas de Combate",
         "cg_initiative": "Iniciativa",
         "cg_base_def": "Defensa Base",
         "cg_class_features": "Rasgos de Clase",
+        "cg_lbl_skill_training": "Entrenamiento de Habilidad",
+        "cg_lbl_wealth": "Riqueza Inicial",
+        "cg_lbl_starting_gear": "Equipo Inicial",
+        "cg_lbl_synergy_lvl": "Sinergia Nivel {lvl}",
+        "cg_lbl_role": "Rol",
+        "cg_lbl_resource": "Recurso",
+        "cg_lbl_stats": "Estadísticas",
+        "cg_lbl_skill": "Habilidad",
+        "cg_lbl_weapons": "Armas",
+        "cg_lbl_armor": "Armadura",
+        "cg_lbl_selected": "{current}/{max} Seleccionados",
+        "cg_lbl_talents_header": "Talentos de {name}",
 
-        // --- SHEET ---
+        // --- SHEET & HUD ---
+        "btn_level_up": "Subir Nivel",
+        "btn_level_up_ready": "¡SUBIR NIVEL!",
         "sheet_levelup": "Subir Nivel",
         "sheet_save": "Guardar",
         "sheet_print": "Imprimir",
@@ -561,17 +451,42 @@ const UI_DICTIONARY = {
         "sheet_def": "Defensas",
         "sheet_skills": "Habilidades",
         "sheet_attacks": "Ataques",
-        "sheet_inv": "Inventario",
-        "sheet_notes": "Notas",
-        "sheet_features": "Rasgos y Talentos",
         "sheet_origin_traits": "Rasgos de Origen",
         "sheet_class_features": "Rasgos de Clase",
         "sheet_arch_talents": "Talentos de Arquetipo",
         "sheet_dodge": "Esquivar",
         "sheet_parry": "Parar",
         "sheet_block": "Bloq.",
-        "sheet_worn": "Puesto",
-        "sheet_tools": "Herramientas",
+        "magic_import": "Importar del Artificiero",
+        "magic_empty": "No hay objetos.",
+
+        // --- INVENTORY ---
+        "inv_gold": "Oro",
+        "inv_silver": "Plata",
+        "inv_copper": "Cobre",
+        "inv_capacity": "Capacidad",
+        "inv_item_header": "Objeto",
+        "inv_slots_header": "Espacios",
+        "inv_actions_header": "Acciones",
+        "inv_empty": "El inventario está vacío.",
+        "btn_save_lib": "Guardar en Biblioteca",
+        "btn_shop": "Abrir Tienda",
+        "btn_add_custom": "Añadir Personalizado",
+        "shop_modal_title": "Provisiones y Equipo",
+
+        // --- SKILLS ---
+        "skill_athletics": "Atletismo",
+        "skill_acrobatics": "Acrobacias",
+        "skill_stealth": "Sigilo",
+        "skill_craft": "Artesanía",
+        "skill_lore": "Saber",
+        "skill_investigate": "Investigar",
+        "skill_scrutiny": "Escrutinio",
+        "skill_survival": "Supervivencia",
+        "skill_medicine": "Medicina",
+        "skill_influence": "Influencia",
+        "skill_deception": "Engaño",
+        "skill_intimidation": "Intimidación",
 
         // --- ATTRIBUTES & ROLES ---
         "stat_str": "FUE",
@@ -584,7 +499,7 @@ const UI_DICTIONARY = {
         "role_spellcaster": "Lanzador",
         "role_specialist": "Especialista",
 
-        // --- LIBRARY ---
+        // --- LIBRARY & MONSTERS ---
         "lib_tab_char": "Personajes",
         "lib_tab_mon": "Bestiario",
         "lib_tab_item": "Objetos",
@@ -592,8 +507,6 @@ const UI_DICTIONARY = {
         "lib_no_char": "No hay personajes.",
         "lib_no_mon": "No hay monstruos.",
         "lib_no_item": "No hay objetos.",
-
-        // --- MONSTER BUILDER ---
         "mon_lbl_role": "Rol",
         "mon_lbl_level": "Nivel",
         "mon_lbl_family": "Familia",
@@ -615,8 +528,29 @@ const UI_DICTIONARY = {
         "mon_type_reaction": "Reacción",
         "mon_type_danger": "Peligro (PP)",
         "mon_lbl_notes": "Notas GM / Botín",
-        "mon_atk_fmt": "Ataque Estándar. Inflige {dmg} de daño.",
-        "mon_meta_fmt": "{role} {family} de Nivel {lvl}", // Spanish grammar: Soldado Bestia de Nivel 5
+        "mon_sect_universal": "Rasgos Universales",
+        "mon_lbl_basic_attack": "Ataque Básico",
+        "mon_lbl_manual_dmg": "Daño Manual",
+        "mon_lbl_flavor": "Sabor / Ambientación",
+        "mon_btn_roll_flavor": "Generar Sabor",
+        "mon_default_atk_name": "Ataque Estándar",
+        "mon_default_atk_desc": "Inflige {dmg} de daño.",
+        "role_soldier": "Soldado",
+        "role_brute": "Bruto",
+        "role_skirmisher": "Hostigador",
+        "role_controller": "Controlador",
+        "role_artillery": "Artillería",
+        "role_lurker": "Acechador",
+        "role_minion": "Esbirro",
+        "role_solo": "Solo (Jefe)",
+
+        // --- IMAGE CONTROLS ---
+        "lbl_zoom": "Zoom",
+        "lbl_pan_x": "Pan X",
+        "lbl_pan_y": "Pan Y",
+        "lbl_reset": "Reiniciar",
+        "lbl_upload": "Subir",
+        "lbl_paste_url": "Pegar URL de Imagen...",
 
         // --- ITEM BUILDER ---
         "item_mode_forge": "Forja",
@@ -636,7 +570,58 @@ const UI_DICTIONARY = {
         "item_cat_weapon": "Arma",
         "item_cat_armor": "Armadura y Escudos",
         "item_cat_trinket": "Objeto Maravilloso",
-        "item_name_fmt": "{noun} {adj}", // Spanish order: Lanza Corrosiva
+        "item_name_fmt": "{noun} {adj}",
+        "item_default_name": "Nuevo Objeto",
+        "item_default_desc": "Elige un objeto base o edita los campos.",
+        "item_ph_magic_name": "Prefijo Mágico/Nombre",
+        "item_ph_tags": "Etiquetas",
+        "item_ph_type": "Tipo",
+        "item_ph_damage": "Daño",
+        "item_ph_ac": "AS",
+        "item_ph_slots": "Espacios",
+        "lbl_commodity": "Mercancía",
+        "lbl_unit": "Unidad",
+        "lbl_value": "Valor",
+        "lbl_material": "Material",
+        "lbl_form": "Forma",
+        "lbl_subject": "Sujeto",
+        "lbl_reagent": "Reactivo",
+
+        // --- TAGS ---
+        "tag_melee": "Cuerpo a Cuerpo",
+        "tag_ranged": "A Distancia",
+        "tag_finesse": "Sutil",
+        "tag_light": "Ligera",
+        "tag_heavy": "Pesada",
+        "tag_two_handed": "A Dos Manos",
+        "tag_reach": "Alcance",
+        "tag_thrown": "Arrojadiza",
+        "tag_loading": "Recarga",
+        "tag_precise": "Precisa",
+        "tag_sunder": "Hender",
+        "tag_messy": "Desordenada",
+        "tag_guard": "Guardia",
+        "tag_brace": "Preparar",
+        "lbl_worn": "Puesto",
+        "lbl_unarmored": "Sin Armadura",
+
+        // --- DASHBOARD ---
+        "dash_subtitle": "Compañero RPG de Fantasía Oscura",
+        "dash_resume": "Reanudar",
+        "dash_create": "Crear Nuevo Personaje",
+        "dash_new_char": "Nuevo Héroe",
+        "dash_new_char_desc": "Crear un personaje desde cero.",
+        "dash_new_mon": "Nuevo Monstruo",
+        "dash_new_mon_desc": "Forjar una bestia o jefe.",
+        "dash_new_item": "Nuevo Objeto",
+        "dash_new_item_desc": "Crear botín mágico.",
+        "dash_rules": "Reglas",
+        "dash_rules_desc": "Tablas y mecánicas.",
+        "dash_stats": "Estadísticas",
+        "dash_heroes": "Héroes",
+        "dash_monsters": "Monstruos",
+        "dash_items": "Objetos",
+        "dash_recent": "Actividad Reciente",
 
         // --- TABLES ---
         "tbl_roll": "Tirada",
@@ -645,7 +630,7 @@ const UI_DICTIONARY = {
     }
 };
 
-/* --- NORMALIZATION MAPS (For Logic Fixes) --- */
+/* --- NORMALIZATION MAPS --- */
 const SYSTEM_KEYS = {
     roles: {
         "guerrero": "Warrior", "warrior": "Warrior",
@@ -660,11 +645,11 @@ const SYSTEM_KEYS = {
         "inteligencia": "INT", "int": "INT",
         "sabiduría": "WIS", "wis": "WIS",
         "carisma": "CHA", "cha": "CHA",
-        "f": "STR", "d": "DEX", "c": "CON", "i": "INT", "s": "WIS", "car": "CHA" // Short codes
+        "f": "STR", "d": "DEX", "c": "CON", "i": "INT", "s": "WIS", "car": "CHA"
     }
 };
 
-// Central Store for loaded JSON content
+// Central Store
 const DATA_STORE = {
     rules: null,
     options: null,
@@ -680,7 +665,7 @@ export const I18n = {
 
     init: async () => {
         console.log("Initializing Localization...");
-        await I18n.loadData('en'); // Default load
+        await I18n.loadData('en'); 
         I18n.updateDOM();
 
         const btnEn = document.getElementById('btn-lang-en');
@@ -739,17 +724,10 @@ export const I18n = {
         });
     },
 
-    /**
-     * Get a specific UI string.
-     */
     t: (key) => {
         return UI_DICTIONARY[I18n.currentLang][key] || key;
     },
 
-    /**
-     * Interpolate variables into a string.
-     * Use {key} in the dictionary string.
-     */
     fmt: (key, vars = {}) => {
         let str = UI_DICTIONARY[I18n.currentLang][key] || key;
         for (const [k, v] of Object.entries(vars)) {
@@ -769,7 +747,6 @@ export const I18n = {
         if (!value) return null;
         let lower = String(value).toLowerCase().trim();
         
-        // Strip prefixes if present (e.g., "role_guerrero" -> "guerrero")
         if (lower.startsWith('role_')) lower = lower.replace('role_', '');
 
         if (SYSTEM_KEYS[type] && SYSTEM_KEYS[type][lower]) {
@@ -779,34 +756,21 @@ export const I18n = {
     },
 
     matches: (userInput, translationKey) => {
-    if (!userInput) return true;
-    const localized = I18n.t(translationKey).toLowerCase();
-    const raw = translationKey.replace('role_', '').replace('type_', '').toLowerCase();
-    const input = userInput.toLowerCase();
-    
-    // Check against Localized OR Raw (English)
-    return localized.includes(input) || raw.includes(input);
+        if (!userInput) return true;
+        const localized = I18n.t(translationKey).toLowerCase();
+        const raw = translationKey.replace('role_', '').replace('type_', '').toLowerCase();
+        const input = userInput.toLowerCase();
+        return localized.includes(input) || raw.includes(input);
     },
     
     updateEntry: (category, newItem) => {
         if (!DATA_STORE[category]) return;
-        
         const idx = DATA_STORE[category].findIndex(i => i.id === newItem.id);
-        if (idx > -1) {
-            // Update existing
-            DATA_STORE[category][idx] = newItem;
-        } else {
-            // Add new
-            DATA_STORE[category].push(newItem);
-        }
-        console.log(`I18n: Updated ${category} entry: ${newItem.name}`);
+        if (idx > -1) DATA_STORE[category][idx] = newItem;
+        else DATA_STORE[category].push(newItem);
     },
 
     getData: (type) => {
         return DATA_STORE[type];
     }
-
 };
-
-
-

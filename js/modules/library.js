@@ -68,45 +68,48 @@ export const Library = {
                     </div>
                 </div>
 
-                <!-- Filters -->
-                <div class="filter-bar">
-                    <input type="text" id="lib-search" placeholder="${t('lib_search')}" value="${Library.filters.search}">
-                    
-                    <!-- Monster Filters -->
-                    <select id="filter-role" style="display: ${isMon ? 'block' : 'none'}">
-                        <option value="all">-- ${t('mon_lbl_role')} --</option>
-                        <option value="soldier">${t('role_soldier')}</option>
-                        <option value="brute">${t('role_brute')}</option>
-                        <option value="skirmisher">${t('role_skirmisher')}</option>
-                        <option value="controller">${t('role_controller')}</option>
-                        <option value="artillery">${t('role_artillery')}</option>
-                        <option value="lurker">${t('role_lurker')}</option>
-                        <option value="minion">${t('role_minion')}</option>
-                        <option value="solo">${t('role_solo')}</option>
-                    </select>
+                <!-- COLLAPSIBLE FILTERS -->
+                <details class="filter-details" open>
+                    <summary class="filter-summary">🔍 ${t('lib_search')} & Filters</summary>
+                    <div class="filter-content">
+                        <input type="text" id="lib-search" placeholder="${t('lib_search')}" value="${Library.filters.search}">
+                        
+                        <!-- Monster Filters -->
+                        <select id="filter-role" style="display: ${isMon ? 'block' : 'none'}">
+                            <option value="all">-- ${t('mon_lbl_role')} --</option>
+                            <option value="soldier">${t('role_soldier')}</option>
+                            <option value="brute">${t('role_brute')}</option>
+                            <option value="skirmisher">${t('role_skirmisher')}</option>
+                            <option value="controller">${t('role_controller')}</option>
+                            <option value="artillery">${t('role_artillery')}</option>
+                            <option value="lurker">${t('role_lurker')}</option>
+                            <option value="minion">${t('role_minion')}</option>
+                            <option value="solo">${t('role_solo')}</option>
+                        </select>
 
-                    <select id="filter-family" style="display: ${isMon ? 'block' : 'none'}">
-                        ${familyOptions}
-                    </select>
+                        <select id="filter-family" style="display: ${isMon ? 'block' : 'none'}">
+                            ${familyOptions}
+                        </select>
 
-                    <!-- Item Filters -->
-                    <select id="filter-type" style="display: ${isItem ? 'block' : 'none'}">
-                        <option value="all">-- All Types --</option>
-                        <option value="Weapon">${t('item_cat_weapon')}</option>
-                        <option value="Armor">${t('item_cat_armor')}</option>
-                        <option value="Trinket">${t('item_cat_trinket')}</option>
-                        <option value="Clothing">Clothing</option>
-                        <option value="Focus">Focus</option>
-                        <option value="Loot">Loot</option>
-                    </select>
+                        <!-- Item Filters -->
+                        <select id="filter-type" style="display: ${isItem ? 'block' : 'none'}">
+                            <option value="all">-- All Types --</option>
+                            <option value="Weapon">${t('item_cat_weapon')}</option>
+                            <option value="Armor">${t('item_cat_armor')}</option>
+                            <option value="Trinket">${t('item_cat_trinket')}</option>
+                            <option value="Clothing">Clothing</option>
+                            <option value="Focus">Focus</option>
+                            <option value="Loot">Loot</option>
+                        </select>
 
-                    <!-- Source Filter -->
-                    <select id="filter-source" style="display: ${isChar ? 'none' : 'block'}">
-                        <option value="all">-- ${t('lbl_source')} --</option>
-                        <option value="official">Official</option>
-                        <option value="custom">Custom</option>
-                    </select>
-                </div>
+                        <!-- Source Filter -->
+                        <select id="filter-source" style="display: ${isChar ? 'none' : 'block'}">
+                            <option value="all">-- ${t('lbl_source')} --</option>
+                            <option value="official">Official</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                    </div>
+                </details>
 
                 <!-- Action Bar -->
                 <div style="display:flex; justify-content:flex-end; gap:10px; margin-bottom:1rem;">
@@ -135,6 +138,11 @@ export const Library = {
         if(isMon) {
             document.getElementById('filter-role').value = Library.filters.role;
             document.getElementById('filter-family').value = Library.filters.family;
+        }
+
+        // On mobile, default close the details to save space
+        if (window.innerWidth <= 768) {
+            Library.container.querySelector('.filter-details').removeAttribute('open');
         }
 
         Library.refreshContent();

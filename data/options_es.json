@@ -347,164 +347,224 @@
     }
   ],
   "backgrounds": [
-    {
+{
       "id": "bg_acolyte",
       "name": "Acólito",
-      "description": "Pasó la vida al servicio de un dios o culto. Conoce ritos antiguos e incienso de sacrificio.",
+      "description": "Pasaste tus años formativos en un templo, monasterio o culto. Conoces la jerarquía de la fe, el olor del incienso de sacrificio y los ritos antiguos que apaciguan a los dioses. Ya sea que huiste o fuiste enviado en una misión sagrada, tu fe es tu armadura.",
       "skill": "Saber y Conocimiento (INT)",
-      "feat": { "name": "Santuario Divino", "effect": "Refugio seguro en templos. Derechos de huésped." },
+      "feat": { 
+        "name": "Santuario Divino", 
+        "effect": "Comandas respeto entre los fieles. Tú y tu grupo podéis recibir curación, comida y refugio gratuitos en cualquier templo, santuario o sitio sagrado de tu fe, siempre que no representéis un peligro para el clero." 
+      },
       "gear": ["Símbolo Sagrado", "Libro de Oraciones", "Mochila", "Raciones (3 Días)", "Odre", "Velas", "Pedernal y Acero", "30 Oro"]
     },
     {
       "id": "bg_scholar",
       "name": "Erudito Prohibido",
-      "description": "Estudió textos heréticos encerrados en bóvedas profundas. Tu educación es peligrosa.",
+      "description": "Has leído libros que llevan a mentes menores a la locura. Tu conocimiento proviene de bibliotecas prohibidas y pergaminos heréticos encerrados en bóvedas profundas. Sabes cosas sobre el cosmos que los dioses trataron de ocultar, y ese conocimiento es tanto un arma como una carga.",
       "skill": "Saber y Conocimiento (INT)",
-      "feat": { "name": "Susurros del Vacío", "effect": "Pregunta al GM información oscura sobre saber prohibido." },
+      "feat": { 
+        "name": "Susurros del Vacío", 
+        "effect": "Una vez por sesión, puedes pedirle al GM una pieza específica de saber oscuro o prohibido con respecto a un monstruo, artefacto o ubicación. El GM debe responder con la verdad, aunque la información puede ser críptica." 
+      },
       "gear": ["Tomo Prohibido", "Mochila", "Raciones (3 Días)", "Odre", "Tiza (10)", "Velas", "Pedernal y Acero", "30 Oro"]
     },
     {
       "id": "bg_antiquarian",
       "name": "Anticuario",
-      "description": "Un buscador del pasado que ve el valor oculto en la historia.",
+      "description": "Estás obsesionado con el pasado. Las ruinas no son solo montones de piedra; son rompecabezas esperando ser resueltos. Puedes diferenciar entre basura antigua y una reliquia invaluable solo por el polvo que tiene.",
       "skill": "Investigar (INT)",
-      "feat": { "name": "Ojo para el Valor", "effect": "Ventaja para tasar objetos. Vende Arte por +10% de valor." },
+      "feat": { 
+        "name": "Ojo para el Valor", 
+        "effect": "Tienes Ventaja en pruebas de Inteligencia para estimar el valor de objetos de arte y gemas. Al vender tales objetos durante el Tiempo Muerto, puedes negociar un aumento del 10% en el precio de venta." 
+      },
       "gear": ["Lupa", "Cuaderno y Lápiz", "Palanca", "Mochila", "Raciones (3 Días)", "Odre", "Velas", "Pedernal y Acero", "35 Oro"]
     },
     {
       "id": "bg_medic",
       "name": "Médico de Campo",
-      "description": "Un cirujano de batalla. Conoces el olor de la gangrena y el sonido de un último aliento.",
+      "description": "Aprendiste tu oficio en el barro y la sangre de la guerra. Has aserrado extremidades para detener la gangrena y cosido tripas bajo fuego. No eres un mago; eres un mecánico de la carne.",
       "skill": "Competencia Kit de Medicina",
-      "feat": { "name": "Triaje", "effect": "Acción: Evaluar el estado físico exacto de una criatura." },
+      "feat": { 
+        "name": "Triaje", 
+        "effect": "Como Acción Estándar, puedes analizar a una criatura que puedas ver. Conoces sus PV actuales, PV Máximos y cualquier Condición Física activa (ej: Envenenado, Sangrando) que le afecte." 
+      },
       "gear": ["Kit de Medicina", "Mochila", "Raciones (3 Días)", "Odre", "Antorchas", "Pedernal y Acero", "25 Oro"]
     },
     {
       "id": "bg_alchemist",
       "name": "Aprendiz de Alquimista",
-      "description": "Pasó años limpiando vasos y oliendo vapores. Sabe convertir la inmundicia en fuego.",
+      "description": "Pasaste tu juventud moliendo reactivos, fregando calderos e inhalando vapores tóxicos. Entiendes la química volátil del mundo. Sabes qué musgos explotan y qué ácidos disuelven cerraduras.",
       "skill": "Competencia Kit de Alquimista",
-      "feat": { "name": "Ojo Alquímico", "effect": "Ventaja para identificar pociones/venenos." },
+      "feat": { 
+        "name": "Ojo Alquímico", 
+        "effect": "Puedes identificar pociones, venenos y sustancias alquímicas por gusto, olfato u observación sin hacer una prueba. Sabes automáticamente los ingredientes necesarios para fabricarlos." 
+      },
       "gear": ["Kit de Alquimista", "Mochila", "Raciones (3 Días)", "Odre", "Velas", "Pedernal y Acero", "30 Oro"]
     },
-    {
+{
       "id": "bg_artisan",
       "name": "Artesano",
-      "description": "Un creador. Herreros, hojalateros, albañiles. Sabes que todo tiene un punto de ruptura.",
+      "description": "Eres un creador de cosas. Ya seas herrero, albañil o carpintero, entiendes cómo está armado el mundo. Ves las líneas de tensión en un muro y el defecto en una hoja antes que nadie.",
       "skill": "Competencia Kit de Artesanía",
-      "feat": { "name": "Ojo para la Obra", "effect": "Pregunta al GM sobre la construcción/debilidad de un objeto." },
+      "feat": { 
+        "name": "Ojo para la Obra", 
+        "effect": "Puedes determinar el origen, la calidad del material y el punto débil estructural de cualquier objeto manufacturado o edificio estudiándolo por 1 minuto. Esto otorga Ventaja en pruebas para romperlo o desmantelarlo." 
+      },
       "gear": ["Kit de Artesanía", "Martillo", "Mochila", "Raciones (3 Días)", "Odre", "Antorchas", "Pedernal y Acero", "30 Oro"]
     },
     {
       "id": "bg_herbalist",
       "name": "Herbolario",
-      "description": "Un recolector silvestre que sabe qué raíces detienen el sangrado y qué hongos detienen el corazón.",
+      "description": "Viviste tu vida en los lugares salvajes, aprendiendo las viejas formas de raíces y hojas. Sabes qué bayas detienen una herida sangrante y qué hongos detienen un corazón.",
       "skill": "Competencia Kit de Herbolario",
-      "feat": { "name": "Saber del Recolector", "effect": "Identifica efectos de plantas/hongos al instante." },
+      "feat": { 
+        "name": "Saber del Recolector", 
+        "effect": "Identificas automáticamente plantas y hongos al verlos. Ganas Ventaja en pruebas de Supervivencia hechas para cosechar flora o encontrar comida y agua natural." 
+      },
       "gear": ["Kit de Herbolario", "Mochila", "Raciones (3 Días)", "Odre", "Antorchas", "Pedernal y Acero", "25 Oro"]
     },
     {
       "id": "bg_poisoner",
       "name": "Envenenador",
-      "description": "Trata con la muerte en una sola gota. Entiende los trucos rastreros y ardientes de la naturaleza.",
+      "description": "Tratas con la muerte en una sola gota. Podrías haber sido asistente de un asesino o catador de la corte. Entiendes los trucos rastreros, ardientes y paralizantes de la naturaleza mejor que nadie.",
       "skill": "Competencia Kit de Envenenador",
-      "feat": { "name": "Ojo del Envenenador", "effect": "Ventaja para identificar venenos." },
+      "feat": { 
+        "name": "Ojo del Envenenador", 
+        "effect": "Puedes identificar el tipo y origen de un veneno con un vistazo. Además, eres inmune a envenenarte accidentalmente al aplicar toxinas a las armas." 
+      },
       "gear": ["Kit de Envenenador", "Daga", "Mochila", "Raciones (3 Días)", "Odre", "Velas", "Pedernal y Acero", "35 Oro"]
     },
     {
       "id": "bg_urchin",
       "name": "Pillo",
-      "description": "Criado en las calles. Una rata de alcantarilla que sabe cómo ser invisible.",
+      "description": "Criado por los adoquines y la alcantarilla. Eras el niño al que nadie miraba dos veces, un fantasma en la ciudad aprendiendo los secretos de la supervivencia en las sombras de los ricos.",
       "skill": "Sigilo y Robo (DEX)",
-      "feat": { "name": "Caminos Ocultos", "effect": "Ventaja navegando ciudades. Encuentra lugares seguros para descansar." },
+      "feat": { 
+        "name": "Caminos Ocultos", 
+        "effect": "Te mueves al doble de velocidad a través de entornos urbanos. Siempre puedes encontrar una ubicación segura y oculta para que el grupo tome un Descanso Corto o Largo dentro de una ciudad o alcantarilla." 
+      },
       "gear": ["Daga", "Mochila", "Raciones (3 Días)", "Odre", "Saco", "Pedernal y Acero", "25 Oro"]
     },
     {
       "id": "bg_burglar",
       "name": "Ladrón de Guante Blanco",
-      "description": "Un artista del segundo piso. Ve muros y cerraduras como rompecabezas a resolver.",
+      "description": "Un artista del segundo piso. No ves muros; ves escaleras. No ves puertas cerradas; ves rompecabezas. Tratas los derechos de propiedad como una sugerencia en lugar de una regla.",
       "skill": "Competencia Herramientas de Ladrón",
-      "feat": { "name": "Estudiar el Lugar", "effect": "Observa ubicación 10m para preguntar al GM un detalle de seguridad." },
+      "feat": { 
+        "name": "Estudiar el Lugar", 
+        "effect": "Si pasas 10 minutos observando un edificio o ubicación, puedes hacerle al GM una pregunta específica sobre su seguridad (ej: rutas de patrulla de guardias, ubicaciones de alarmas o puntos de entrada) que debe responder con la verdad." 
+      },
       "gear": ["Herramientas de Ladrón", "Cuerda (50 pies)", "Mochila", "Raciones (3 Días)", "Odre", "Tiza", "Pedernal y Acero", "35 Oro"]
     },
-    {
+{
       "id": "bg_smuggler",
       "name": "Contrabandista",
-      "description": "Mueve cosas que no deberían moverse. Conoce los caminos traseros y los sobornos correctos.",
+      "description": "Mueves cosas que no deberían moverse. Ya sean bienes ilícitos, refugiados o textos prohibidos, conoces los caminos traseros, los sobornos y los compartimentos secretos. Crees que las leyes son solo sugerencias para personas sin imaginación.",
       "skill": "Engaño (CHA)",
-      "feat": { "name": "Compartimento Oculto", "effect": "Gana 1 Espacio de Inventario Oculto." },
+      "feat": { 
+        "name": "Compartimento Oculto", 
+        "effect": "Tienes una pieza de equipo modificada (tacón de bota, fondo falso en mochila) que otorga 1 Espacio de Inventario Oculto. Los objetos en este espacio no pueden ser encontrados por un registro a menos que el buscador tenga éxito en una prueba de Escrutinio CD 18." 
+      },
       "gear": ["Palanca", "Mochila", "Raciones (3 Días)", "Odre", "Antorchas", "Pedernal y Acero", "40 Oro"]
     },
     {
       "id": "bg_gambler",
       "name": "Tahúr",
-      "description": "Vive por la tirada de un dado. Experto en leer señales y calcular probabilidades.",
+      "description": "Vives por la tirada del dado y el giro de una carta. No solo tienes suerte; eres observador. Sabes calcular probabilidades en una fracción de segundo y detectar el tic nervioso de un mentiroso.",
       "skill": "Escrutinio (WIS)",
-      "feat": { "name": "Leer la Señal", "effect": "Conversa 1 min para preguntar al GM sobre la intención de una criatura." },
+      "feat": { 
+        "name": "Leer la Señal", 
+        "effect": "Después de observar o conversar con una criatura durante 1 minuto, puedes hacerle al GM una pregunta de sí/no sobre sus intenciones actuales o su honestidad. El GM debe responder con la verdad." 
+      },
       "gear": ["Dados Cargados", "Daga", "Mochila", "Raciones (3 Días)", "Odre", "Velas", "Pedernal y Acero", "50 Oro"]
     },
     {
       "id": "bg_sellsword",
       "name": "Mercenario",
-      "description": "Una espada de alquiler. No un héroe, sino un profesional que sabe que la lealtad pertenece al mejor postor.",
+      "description": "Eres un asesino profesional. No un héroe, ni un villano, sino un trabajador cuyo oficio es la violencia. Entiendes los contratos, la cadena de mando y que la lealtad pertenece al mejor postor.",
       "skill": "Intimidación (CHA)",
-      "feat": { "name": "Reputación de Mercenario", "effect": "Ventaja en Pruebas de Influencia para trabajos/bajos fondos." },
+      "feat": { 
+        "name": "Reputación de Mercenario", 
+        "effect": "Conoces los signos y códigos del bajo mundo criminal y las organizaciones militares. Ganas Ventaja en pruebas de Influencia para reunir información o asegurar reuniones con bandas locales o guardias." 
+      },
       "gear": ["Hacha de Mano", "Mochila", "Saco de Dormir", "Raciones (3 Días)", "Odre", "Antorchas", "Pedernal y Acero", "30 Oro"]
     },
     {
       "id": "bg_gladiator",
       "name": "Gladiador",
-      "description": "Sobreviviente de los pozos. Un luchador práctico que sabe cómo medir a un oponente.",
+      "description": "Sobreviviste a los pozos. Ya sea que luchaste por libertad o gloria, aprendiste que el combate es una actuación. Sabes cómo jugar con la multitud y cómo detectar la debilidad en la postura de un oponente.",
       "skill": "Atletismo (STR)",
-      "feat": { "name": "Medir Oponente", "effect": "Acción: Prueba de Escrutinio. Revela fuerza/debilidad física." },
+      "feat": { 
+        "name": "Medir Oponente", 
+        "effect": "Como Acción Estándar, puedes observar a una criatura. El GM te dice si sus puntuaciones de Fuerza, Destreza o Constitución son mayores, menores o iguales a las tuyas." 
+      },
       "gear": ["Lanza", "Mochila", "Saco de Dormir", "Raciones (3 Días)", "Odre", "Antorchas", "Pedernal y Acero", "30 Oro"]
     },
     {
       "id": "bg_watch",
       "name": "Guardia de la Ciudad",
-      "description": "Un ex-oficial. Tiene un ojo cínico para los problemas y sabe cómo hacer hablar a la gente.",
+      "description": "Un ex-oficial de la ley. Has patrullado las calles, disuelto peleas y aceptado sobornos. Tienes un ojo cínico para los problemas y sabes exactamente cómo aplicar presión para hacer hablar a un sospechoso.",
       "skill": "Escrutinio (WIS)",
-      "feat": { "name": "Voz de Autoridad", "effect": "Ventaja en Intimidación vs criminales/plebeyos." },
+      "feat": { 
+        "name": "Voz de Autoridad", 
+        "effect": "Tienes Ventaja en pruebas de Intimidación contra plebeyos y criminales. A menudo puedes asegurar el paso a través de puertas de la ciudad o puestos de control mostrando tu vieja placa o invocando la ley." 
+      },
       "gear": ["Garrote", "Mochila", "Saco de Dormir", "Raciones (3 Días)", "Odre", "Antorchas", "Pedernal y Acero", "30 Oro"]
     },
-    {
+{
       "id": "bg_deserter",
       "name": "Desertor",
-      "description": "Huyó de la guerra. Aprendió a sobrevivir de la tierra y detectar cazarrecompensas.",
+      "description": "Huiste de la guerra cuando la causa se agrió o la matanza fue demasiada. Aprendiste a vivir de la tierra mientras mirabas por encima del hombro, identificando amenazas antes de que te encuentren.",
       "skill": "Supervivencia (WIS)",
-      "feat": { "name": "Pasar Desapercibido", "effect": "Ventaja en Supervivencia para encontrar campamentos ocultos." },
+      "feat": { 
+        "name": "Pasar Desapercibido", 
+        "effect": "Tienes Ventaja en pruebas de Supervivencia para encontrar campamentos ocultos o caminos seguros a través de la naturaleza que eviten patrullas. Sabes cómo desaparecer cuando hay problemas." 
+      },
       "gear": ["Hacha de Mano", "Mochila", "Saco de Dormir", "Raciones (3 Días)", "Odre", "Pedernal y Acero", "25 Oro"]
     },
     {
       "id": "bg_courtier",
       "name": "Cortesano",
-      "description": "Criatura de la corte. Prospera en una jungla de sedas, susurros y veneno.",
+      "description": "Una criatura de la corte, prosperando en una jungla de seda y veneno. Sabes que una palabra susurrada puede matar más rápido que un cuchillo. Entiendes la compleja danza de la etiqueta, el linaje y la influencia.",
       "skill": "Influencia (CHA)",
-      "feat": { "name": "Gracias Cortesanas", "effect": "Ventaja en Pruebas de Influencia en entornos formales." },
+      "feat": { 
+        "name": "Gracias Cortesanas", 
+        "effect": "Tienes Ventaja en pruebas de Influencia en entornos formales o al tratar con la alta sociedad. Generalmente puedes asegurar una invitación a eventos sociales o bailes donde se intercambia información." 
+      },
       "gear": ["Ropa Fina", "Mochila", "Raciones (3 Días)", "Odre", "Velas", "Pedernal y Acero", "50 Oro"]
     },
     {
       "id": "bg_noble",
       "name": "Noble Exiliado",
-      "description": "Nacido con privilegios, lo perdió todo. Lleva el peso de un nombre y educación.",
+      "description": "Nacido con privilegios pero despojado de tus tierras. Puedes haber perdido tu fortuna, pero conservaste tu educación y tu nombre. Te comportas con una autoridad que exige respeto, incluso en harapos.",
       "skill": "Influencia (CHA)",
-      "feat": { "name": "Porte Noble", "effect": "Ventaja en Influencia vs nobleza/oficiales." },
+      "feat": { 
+        "name": "Porte Noble", 
+        "effect": "Tienes Ventaja en pruebas de Influencia al tratar con la nobleza, burócratas u oficiales. Puedes exigir una audiencia con gobernantes locales, aunque pueden no conceder tus peticiones." 
+      },
       "gear": ["Anillo de Sello", "Estoque", "Mochila", "Raciones (3 Días)", "Odre", "50 Oro"]
     },
     {
       "id": "bg_charlatan",
       "name": "Charlatán",
-      "description": "Estafador y falso obrador de milagros. La fe es una herramienta, y la usas bien.",
+      "description": "Vendedor de aceite de serpiente o falso profeta. Entiendes que la gente quiere creer en milagros, y estás feliz de venderles uno. Eres un experto en falsificar documentos e identidades.",
       "skill": "Engaño (CHA)",
-      "feat": { "name": "Identidad Falsa", "effect": "Ventaja en Engaño para mantener alias." },
+      "feat": { 
+        "name": "Identidad Falsa", 
+        "effect": "Tienes un alter ego establecido con documentación. Tienes Ventaja en pruebas de Engaño para mantener esta personalidad. Puedes falsificar documentos simples (papeles de viaje, cartas) con 1 hora de trabajo." 
+      },
       "gear": ["Accesorio (Objeto Falso)", "Daga", "Mochila", "Raciones (3 Días)", "Odre", "Velas", "Pedernal y Acero", "45 Oro"]
     },
     {
       "id": "bg_cultist",
       "name": "Cultista Fugado",
-      "description": "Vio detrás de la cortina y huyó. Conoce las señales de las órdenes oscuras que te cazan.",
+      "description": "Serviste a un poder oscuro hasta que viste detrás de la cortina y huiste. Estás marcado por tu pasado, pero conoces las señales de las entidades profundas. Conoces los apretones de manos secretos y la locura en los ojos de los fieles.",
       "skill": "Engaño (CHA)",
-      "feat": { "name": "Susurros Oscuros", "effect": "Ventaja para reconocer símbolos/ritos de culto." },
+      "feat": { 
+        "name": "Susurros Oscuros", 
+        "effect": "Tienes Ventaja en pruebas para identificar símbolos de culto, rituales o la influencia de aberraciones. A menudo puedes pasar como miembro de una orden oscura para reunir información sin levantar sospechas." 
+      },
       "gear": ["Ídolo Perturbador", "Daga", "Mochila", "Saco de Dormir", "Raciones (3 Días)", "Odre", "Antorchas", "Pedernal y Acero", "25 Oro"]
     }
   ],
@@ -6971,3 +7031,4 @@
   ]
 
 }
+

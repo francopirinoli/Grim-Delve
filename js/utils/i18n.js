@@ -7,6 +7,8 @@
 
 const UI_DICTIONARY = {
     "en": {
+        "dash_browse_mon": "Browse Bestiary",
+        "dash_browse_mon_desc": "View and manage your library of creatures.",
         "sheet_saves": "Saving Throws",
         "save_fort": "Fortitude",
         "save_ref": "Reflex",
@@ -322,6 +324,8 @@ const UI_DICTIONARY = {
         "tbl_btn_roll": "Roll {dice}"
     },
     "es": {
+        "dash_browse_mon": "Explorar Bestiario",
+        "dash_browse_mon_desc": "Ver y gestionar tu biblioteca de criaturas.",
         "sheet_saves": "Tiradas de Salvación",
         "save_fort": "Fortaleza",
         "save_ref": "Reflejos",
@@ -783,3 +787,4 @@ export const I18n = {
     }
 
 };
+

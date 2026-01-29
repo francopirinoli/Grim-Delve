@@ -7,6 +7,10 @@
 
 const UI_DICTIONARY = {
     "en": {
+        "sheet_saves": "Saving Throws",
+        "save_fort": "Fortitude",
+        "save_ref": "Reflex",
+        "save_will": "Will",
         "btn_import_json": "Import JSON",
         // --- NAVIGATION ---
         "nav_dashboard": "Dashboard",
@@ -318,6 +322,10 @@ const UI_DICTIONARY = {
         "tbl_btn_roll": "Roll {dice}"
     },
     "es": {
+        "sheet_saves": "Tiradas de Salvación",
+        "save_fort": "Fortaleza",
+        "save_ref": "Reflejos",
+        "save_will": "Voluntad",
         "btn_import_json": "Importar JSON",
         // --- NAVIGATION ---
         "nav_dashboard": "Tablero",
@@ -773,4 +781,5 @@ export const I18n = {
     getData: (type) => {
         return DATA_STORE[type];
     }
+
 };

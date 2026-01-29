@@ -828,30 +828,30 @@ export const CharGen = {
 
             arch.talents.forEach((tal, idx) => {
                 // --- MASTERY HANDLING ---
-                if (tal.type === 'Mastery' && tal.ranks) {
+                if ((tal.type === 'Mastery' || tal.type === 'Maestría') && tal.ranks) {
                     html += CharGen._renderMasterySelector(tal, arch, idx, colId);
-                    return; // Skip standard render
+                    return; 
                 }
 
-                // --- STANDARD TALENT/COLLECTION HANDLING ---
+                // --- FIXED: COLLECTION HANDLING (Supports EN and ES) ---
                 const isSelected = CharGen.char.talents.some(sel => sel.name === tal.name);
-                const isCollection = tal.type === 'Collection';
+                const isCollection = tal.type === 'Collection' || tal.type === 'Colección';
                 
-                // Logic to handle Spells OR Recipes
                 let badge = '';
                 let collectionItems = [];
 
                 if (isCollection) {
-                    if (tal.spells) {
-                        badge = `<span class="tag-badge">📚 ${tal.spells.length} Spells</span>`;
-                        collectionItems = tal.spells;
-                    } else if (tal.recipes) {
-                        badge = `<span class="tag-badge">🛠️ ${tal.recipes.length} Recipes</span>`;
-                        collectionItems = tal.recipes;
+                    // Check both English and Spanish property names
+                    const listItems = tal.spells || tal.hechizos || tal.recipes || tal.recetas || [];
+                    if (tal.spells || tal.hechizos) {
+                        badge = `<span class="tag-badge">📚 ${listItems.length} ${I18n.t('header_spells')}</span>`;
+                        collectionItems = listItems;
+                    } else if (tal.recipes || tal.recetas) {
+                        badge = `<span class="tag-badge">🛠️ ${listItems.length} ${I18n.t('header_crafting')}</span>`;
+                        collectionItems = listItems;
                     }
                 }
                 
-                // Exploit Badge (Visual Polish)
                 if (tal.type === 'Exploit' || tal.type === 'Treta') {
                     badge = `<span class="tag-badge" style="background:#5e35b1; color:white;">Luck</span>`;
                 }
@@ -870,7 +870,7 @@ export const CharGen = {
                         </div>
                         
                         <div class="talent-opt-desc">
-                            ${isCollection ? `<em>${tal.description}</em>` : tal.effect}
+                            ${isCollection ? `<em>${tal.description || tal.desc || ''}</em>` : (tal.effect || tal.desc || '')}
                         </div>
                         ${isCollection && isSelected ? CharGen._renderSpellMiniList(collectionItems) : ''}
                     </div>
@@ -4760,5 +4760,6 @@ renderPrintVersion: async (container) => {
     }
 
 };
+
 
 

@@ -39,6 +39,7 @@ const calculateMonsterSaves = (role, baseDC) => {
         will: baseDC + modW
     };
 };
+
 /**
  * Normalizes monster data into a standard renderable format.
  * v4.5: Calculates Fort/Ref/Will saves dynamically.
@@ -348,6 +349,12 @@ export const MonsterBuilder = {
         if (!m.custom_abilities) m.custom_abilities = [];
         if (!m.notes) m.notes = "";
 
+        // Polyfill Saves if missing (Old Data)
+        if (!m.stats.saves) {
+             const baseSave = m.stats.save || 12; // Fallback
+             m.stats.saves = calculateMonsterSaves(m.role, baseSave);
+        }
+
         // If official, treat as a copy
         if (monsterData.source === 'official') {
             m.id = null;
@@ -443,13 +450,25 @@ export const MonsterBuilder = {
                     <!-- Stats Section -->
                     <div class="info-box" style="margin-bottom:1rem;">
                         <h4 style="margin-top:0; color:var(--accent-blue); font-size:0.9rem; text-transform:uppercase;">${t('mon_chassis')}</h4>
-                        <div class="stat-grid" style="grid-template-columns: repeat(3, 1fr); gap:10px;">
+                        
+                        <!-- Core Stats -->
+                        <div class="stat-grid" style="grid-template-columns: repeat(3, 1fr); gap:10px; margin-bottom:10px;">
                             <div class="stat-input"><label>${t('mon_stat_hp')}</label><input type="number" id="mb-hp"></div>
                             <div class="stat-input"><label>${t('mon_stat_as')}</label><input type="number" id="mb-as"></div>
                             <div class="stat-input"><label>${t('mon_stat_spd')}</label><input type="text" id="mb-speed"></div>
+                            
                             <div class="stat-input"><label>${t('mon_stat_atk')}</label><input type="number" id="mb-atk"></div>
                             <div class="stat-input"><label>${t('mon_stat_def')}</label><input type="number" id="mb-def"></div>
-                            <div class="stat-input"><label>${t('mon_stat_save')}</label><input type="number" id="mb-save"></div>
+                            <!-- Spacer for alignment -->
+                            <div class="stat-input" style="opacity:0; pointer-events:none;"></div>
+                        </div>
+
+                        <!-- Saving Throws (New) -->
+                        <h5 style="margin:10px 0 5px 0; color:#888; font-size:0.8rem; text-transform:uppercase; border-top:1px dashed #444; padding-top:5px;">${t('sheet_saves')}</h5>
+                        <div class="stat-grid" style="grid-template-columns: repeat(3, 1fr); gap:10px;">
+                            <div class="stat-input"><label>${t('save_fort').substring(0,4)}</label><input type="number" id="mb-save-fort"></div>
+                            <div class="stat-input"><label>${t('save_ref').substring(0,3)}</label><input type="number" id="mb-save-ref"></div>
+                            <div class="stat-input"><label>${t('save_will').substring(0,4)}</label><input type="number" id="mb-save-will"></div>
                         </div>
                         
                         <div style="margin-top:10px; border-top:1px solid #444; padding-top:10px;">
@@ -567,12 +586,26 @@ export const MonsterBuilder = {
         });
 
         // Stats Manual Edits
-        const statIds = ['mb-hp', 'mb-as', 'mb-speed', 'mb-atk', 'mb-def', 'mb-save', 'mb-dmg'];
+        const statIds = ['mb-hp', 'mb-as', 'mb-speed', 'mb-atk', 'mb-def', 'mb-dmg'];
         statIds.forEach(id => {
             const el = document.getElementById(id);
             if(el) el.addEventListener('input', () => {
                 const key = id.replace('mb-', '');
                 MonsterBuilder.currentMonster.stats[key] = el.value;
+                MonsterBuilder.renderCard();
+            });
+        });
+
+        const saveIds = ['mb-save-fort', 'mb-save-ref', 'mb-save-will'];
+        saveIds.forEach(id => {
+            const el = document.getElementById(id);
+            if(el) el.addEventListener('input', () => {
+                // Extract key: 'fort', 'ref', 'will'
+                const key = id.replace('mb-save-', '');
+                if (!MonsterBuilder.currentMonster.stats.saves) {
+                    MonsterBuilder.currentMonster.stats.saves = { fort:0, ref:0, will:0 };
+                }
+                MonsterBuilder.currentMonster.stats.saves[key] = parseInt(el.value);
                 MonsterBuilder.renderCard();
             });
         });
@@ -688,8 +721,15 @@ export const MonsterBuilder = {
         set('mb-speed', m.stats.speed);
         set('mb-atk', m.stats.atk);
         set('mb-def', m.stats.def);
-        set('mb-save', m.stats.save);
         set('mb-dmg', m.stats.dmg);
+        
+        // Sync Saves
+        if (m.stats.saves) {
+            set('mb-save-fort', m.stats.saves.fort);
+            set('mb-save-ref', m.stats.saves.ref);
+            set('mb-save-will', m.stats.saves.will);
+        }
+
         set('mb-notes', m.notes);
 
         if (m.imageUrl) set('mb-img-url', m.imageUrl);
@@ -722,7 +762,6 @@ export const MonsterBuilder = {
         const level = parseInt(levelEl.value);
         const familyKey = familyEl.value;
         
-        // Safe access in case role key doesn't exist yet
         const chassisList = data.chassis[role] || data.chassis['soldier'];
         const chassis = chassisList.find(c => c.lvl === level) || chassisList[0];
         
@@ -736,8 +775,10 @@ export const MonsterBuilder = {
         m.stats.speed = chassis.speed;
         m.stats.atk = chassis.atk_dc;
         m.stats.def = chassis.def_dc;
-        m.stats.save = chassis.save_dc;
         m.stats.dmg = chassis.dmg;
+        
+        // New Save Calculation
+        m.stats.saves = calculateMonsterSaves(role, chassis.save_dc);
 
         MonsterBuilder.syncDOMFromState();
         MonsterBuilder.renderAbilityPickers(familyKey);
@@ -994,3 +1035,4 @@ export const MonsterBuilder = {
     }
 
 };
+

@@ -2776,12 +2776,12 @@
           "effect": "A loud ringing noise erupts in a 10ft radius area. Creatures inside make a Fortitude Save vs Casting Result. Fail: 3d8 Thunder damage (Half on success). Inorganic creatures (Constructs) have Disadvantage on the save."
         },
         {
-          "name": "Wall of Force",
+          "name": "Resilient Sphere",
           "cost": "3 MP",
           "duration": "1 Minute (Concentration)",
-          "range": "60 ft",
-          "cast_dc": 18,
-          "effect": "Create an invisible, indestructible wall of force (20ft wide, 10ft high). It blocks all physical objects and spells. It cannot be dispelled, only disintegrated or waited out."
+          "range": "30 ft",
+          "cast_dc": 17,
+          "effect": "Action. Enclose a creature or object in a shimmering sphere of force. It is immune to all damage, but cannot move or attack anything outside. An unwilling target makes a Reflex Save vs Result to dodge."
         }
       ]
     },
@@ -6967,4 +6967,5 @@
       ]
     }
   ]
+
 }

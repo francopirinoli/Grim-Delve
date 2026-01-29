@@ -362,16 +362,17 @@
       "category": "Combat",
       "dice": "1d8",
       "rows": [
-        { "roll": 1, "result": "Searing Ray: Defense Check. Fail: 2d6 Fire + Burning." },
-        { "roll": 2, "result": "Frost Ray: Defense Check. Fail: 2d6 Cold + Frozen (Speed 0)." },
-        { "roll": 3, "result": "Telekinetic Ray: Strength Save. Fail: Thrown 30ft, 2d6 Impact." },
-        { "roll": 4, "result": "Fear Ray: Will Save. Fail: Frightened 1 min." },
-        { "roll": 5, "result": "Charm Ray: Will Save. Fail: Charmed 1 min." },
-        { "roll": 6, "result": "Enervation Ray: Fortitude Save. Fail: 3d6 Necrotic + Weakened." },
-        { "roll": 7, "result": "Petrification Ray: Fortitude Save. Fail: Restrained (turning to stone)." },
-        { "roll": 8, "result": "Death Ray: Fortitude Save. Fail: 5d8 Necrotic. (0 HP = Death)." }
+        { "roll": 1, "result": "Searing Ray. A lance of magma-red light. Defense Check. Fail: 2d8 Fire Damage. The target catches fire (Burning, 1d6/turn)." },
+        { "roll": 2, "result": "Frost Ray. A pale blue beam snaps the air. Defense Check. Fail: 2d8 Cold Damage. The target is Frozen (Speed 0, cannot Dash) for 1 round." },
+        { "roll": 3, "result": "Telekinetic Ray. An invisible hammer of force. Fortitude Save. Fail: Target is thrown 30 feet backward, takes 2d6 Impact Damage, and lands Prone." },
+        { "roll": 4, "result": "Fear Ray. A beam of shadowy gray light. Will Save. Fail: Target is Frightened for 1 minute. They must spend their turns fleeing the source." },
+        { "roll": 5, "result": "Charm Ray. Spiraling pink and gold light. Will Save. Fail: Target is Charmed for 1 minute. They regard the Watcher as a close friend and cannot attack it." },
+        { "roll": 6, "result": "Enervation Ray. A beam of necrotic black energy. Fortitude Save. Fail: 3d6 Necrotic Damage. Target is Weakened (Deals Half Damage) until they Rest." },
+        { "roll": 7, "result": "Petrification Ray. A dull olive beam. Fortitude Save. Fail: Target is Restrained as skin hardens. Repeat Save at end of turn; Fail = Petrified (Statue)." },
+        { "roll": 8, "result": "Death Ray. Crackling green energy. Fortitude Save. Fail: 5d8 Necrotic Damage. If this reduces the target to 0 HP, they die instantly and turn to dust." }
       ]
     }
   ]
 
 }
+

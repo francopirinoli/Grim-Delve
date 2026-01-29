@@ -1006,57 +1006,77 @@ export const CharGen = {
     toggleTalent: (archId, talentIdx, colId) => {
         const data = I18n.getData('options');
         const arch = data.archetypes.find(a => a.id === archId);
+        if (!arch) return console.error("Archetype not found", archId);
+        
         const talent = arch.talents[talentIdx];
+        
+        // 1. Check if we already own this talent (by name)
+        // Note: For repeatables, this logic might need tweaking, but for standard toggles:
         const existIdx = CharGen.char.talents.findIndex(t => t.name === talent.name);
 
+        // --- REMOVE LOGIC ---
         if (existIdx > -1) {
+            // Remove it
             CharGen.char.talents.splice(existIdx, 1);
-        } else {
-            // Check Limits
-            const isPure = (CharGen.char.archA === CharGen.char.archB);
-            const limit = isPure ? 2 : 2; // (Technically limit is 2 total, 1 per side for hybrid, but simpler to just cap at 2 for now)
-            
-            // Hybrid Enforce: Can only pick 1 from Arch A and 1 from Arch B
-            if (!isPure) {
-                const existingFromSource = CharGen.char.talents.filter(t => t.source === arch.name);
-                if (existingFromSource.length >= 1) {
-                    // Swap logic: Remove the old one from this archetype
-                    const oldIdx = CharGen.char.talents.indexOf(existingFromSource[0]);
-                    CharGen.char.talents.splice(oldIdx, 1);
-                }
+            // Re-render UI to update class selection counts
+            if (CharGen.currentStep === 2) {
+                CharGen.renderTalentSelectorsFromIDs(CharGen.char.archA, CharGen.char.archB);
             } else {
-                if (CharGen.char.talents.length >= limit) return alert("Limit reached.");
+                // If in Edit mode (sheet), we might need a full recalc
+                CharGen.recalcAll();
+                CharGen.renderSheet(CharGen.container);
             }
-            
-            // Add with Source
-            const talentCopy = JSON.parse(JSON.stringify(talent));
-            talentCopy.source = arch.name;
-            CharGen.char.talents.push(talentCopy);
-        }
-        
-        // Re-render to show/hide the mini-list
-        CharGen.renderTalentSelectorsFromIDs(CharGen.char.archA, CharGen.char.archB);
-    },
-
-    toggleTalent: (archId, talentIdx, colId) => {
-        const data = I18n.getData('options');
-        const arch = data.archetypes.find(a => a.id === archId);
-        const talent = arch.talents[talentIdx];
-        const existIdx = CharGen.char.talents.findIndex(t => t.name === talent.name);
-
-        if (existIdx > -1) {
-            CharGen.char.talents.splice(existIdx, 1);
-            CharGen.renderTalentSelectors(data.archetypes.find(a => a.id === CharGen.char.archA), data.archetypes.find(a => a.id === CharGen.char.archB));
             return;
-        } 
+        }
+
+        // --- ADD LOGIC ---
         
+        // 2. Check for Choice Requirements (Modal)
+        // If the talent needs a selection (Skill, Mod, Property), stop and show modal.
         if (talent.flags && (talent.flags.select_skill || talent.flags.select_mod || talent.flags.select_property)) {
             CharGen.renderChoiceModal(talent, archId, talentIdx, colId);
             return; 
         }
 
+        // 3. Check Limits (Only relevant during Step 2: Class Creation)
+        if (CharGen.currentStep === 2) {
+            const isPure = (CharGen.char.archA === CharGen.char.archB);
+            const limit = 2; // Total talents allowed at creation
+            
+            // Current total
+            if (CharGen.char.talents.length >= limit) {
+                // Smart Hybrid Logic: If we are full, check if we are swapping
+                // If Hybrid, we need 1 from A and 1 from B.
+                if (!isPure) {
+                    // Check how many we have from this specific source archetype
+                    const existingFromSource = CharGen.char.talents.filter(t => t.source === arch.name);
+                    if (existingFromSource.length >= 1) {
+                        // We are swapping the talent from THIS archetype. 
+                        // Remove the old one, add the new one.
+                        const oldTalent = existingFromSource[0];
+                        const oldIdx = CharGen.char.talents.indexOf(oldTalent);
+                        CharGen.char.talents.splice(oldIdx, 1);
+                        // Proceed to add...
+                    } else {
+                        return alert("You must select 1 Talent from each Archetype.");
+                    }
+                } else {
+                    return alert("Limit reached (2 Talents). Deselect one first.");
+                }
+            }
+        }
+
+        // 4. Confirm Addition
+        // Pass null as choiceValue because we handled choice talents in step 2
         CharGen.confirmTalentAdd(talent, archId, null);
-        CharGen.renderTalentSelectors(data.archetypes.find(a => a.id === CharGen.char.archA), data.archetypes.find(a => a.id === CharGen.char.archB));
+        
+        // 5. Re-render
+        if (CharGen.currentStep === 2) {
+            CharGen.renderTalentSelectorsFromIDs(CharGen.char.archA, CharGen.char.archB);
+        } else {
+            CharGen.recalcAll();
+            CharGen.renderSheet(CharGen.container);
+        }
     },
 
     updateTalentCount: () => {
@@ -3083,7 +3103,11 @@ renderTabMagic: (container) => {
         const t = I18n.t;
 
         const allFeatures = CharGen.getFlattenedFeatures();
-        const activeAbilities = allFeatures.filter(f => f.isSpell || f.isExploit);
+        
+        // FIX: Filter OUT Exploits. Only show Spells (isSpell) here.
+        // Exploits will remain visible in the "Features" tab.
+        const activeAbilities = allFeatures.filter(f => f.isSpell); 
+        
         const recipes = allFeatures.filter(f => f.isCraftable);
 
         const magicItems = c.inventory.map((item, index) => ({...item, originalIndex: index}))
@@ -3092,13 +3116,12 @@ renderTabMagic: (container) => {
         container.innerHTML = `
             <div class="split-view-magic" style="display:grid; grid-template-columns: 1fr 1fr; gap:2rem;">
                 
-                <!-- LEFT COL: SPELLS & EXPLOITS -->
+                <!-- LEFT COL: SPELLS ONLY -->
                 <div>
                     <div class="mgr-header" style="display:flex; justify-content:space-between; align-items:center;">
                         <span>📜 ${t('header_spells')}</span>
                         <div style="font-size:0.8rem; text-align:right;">
                             <div style="color:var(--accent-blue);">MP: <b>${c.current.mp}</b> / ${c.derived.maxMP}</div>
-                            <div style="color:var(--accent-gold);">Luck: <b>${c.current.luck}</b> / ${c.derived.maxLuck}</div>
                         </div>
                     </div>
                     
@@ -3108,14 +3131,8 @@ renderTabMagic: (container) => {
                         ${activeAbilities.map((s, idx) => {
                             let btnText = t('btn_cast');
                             let badgeClass = "spell";
-                            let btnClass = "js-cast-btn"; // New class for listeners
+                            let btnClass = "js-cast-btn"; 
                             
-                            if (s.isExploit) {
-                                btnText = t('btn_use_exploit');
-                                badgeClass = "exploit";
-                                btnClass = "js-exploit-btn"; // New class
-                            }
-
                             const metaInfo = s.cast_dc ? `${t('lbl_target')}: DC ${s.cast_dc}` : (s.tags ? s.tags.join(', ') : '-');
 
                             return `
@@ -3163,7 +3180,6 @@ renderTabMagic: (container) => {
                                     <div class="gc-text">${r.effect}</div>
                                 </div>
                                 <div class="gc-footer">
-                                    <!-- Using data attributes instead of inline JS to prevent quote syntax errors -->
                                     <button class="btn-cast js-craft-btn" style="border-color:#555; color:#ccc;"
                                             data-name="${r.name}" 
                                             data-cost="${r.cost}" 
@@ -3212,27 +3228,25 @@ renderTabMagic: (container) => {
             </div>
         `;
 
-        // --- ATTACH LISTENERS ---
+        // 3. Attach Listeners
 
-        // 1. Crafting Buttons (Safe listener attachment)
+        // Crafting Buttons
         container.querySelectorAll('.js-craft-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 CharGen.craftItem(btn.dataset.name, btn.dataset.cost, parseInt(btn.dataset.dc));
             });
         });
 
-        // 2. Cast/Exploit Buttons
+        // Cast Buttons (Spells only)
         container.querySelectorAll('.js-cast-btn').forEach(btn => {
             btn.addEventListener('click', () => CharGen.castSpell(btn.dataset.name));
         });
-        container.querySelectorAll('.js-exploit-btn').forEach(btn => {
-            btn.addEventListener('click', () => CharGen.useExploit(btn.dataset.name));
-        });
 
-        // 3. Existing Magic Item Listeners
+        // Magic Item Import
         const btnImport = document.getElementById('btn-import-magic');
         if (btnImport) btnImport.onclick = CharGen.openMagicImportModal;
 
+        // Magic Item Equip
         container.querySelectorAll('.js-magic-equip').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const idx = parseInt(e.target.dataset.idx);
@@ -3241,6 +3255,7 @@ renderTabMagic: (container) => {
             });
         });
 
+        // Magic Item Delete
         container.querySelectorAll('.js-magic-delete').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 if (confirm(t('btn_confirm') + '?')) {
@@ -4681,4 +4696,5 @@ renderPrintVersion: async (container) => {
 
         return list;
     }
+
 };

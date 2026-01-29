@@ -167,7 +167,7 @@
       }
     ]
   },
-  {
+{
     "id": "ch6",
     "title": "Capítulo 6: Reglas de Combate",
     "sections": [
@@ -191,24 +191,30 @@
       },
       {
         "id": "6.4",
+        "title": "Tiradas de Salvación",
+        "content": "<p>Al resistir efectos especiales como veneno, magia o miedo, realizas una <strong>Tirada de Salvación</strong> contra la Clase de Dificultad (CD) de la fuente.</p><h3>Calculando tus Salvaciones</h3><p>A diferencia de las habilidades estándar, las Salvaciones utilizan el <strong>Mayor</strong> de dos Atributos.</p><div class='formula'>d20 + Modificador Más Alto + Dado de Competencia vs. CD del Efecto</div><table class='table'><thead><tr><th>Salvación</th><th>Atributos</th><th>Usado Para</th></tr></thead><tbody><tr><td><strong>Fortaleza (FORT)</strong></td><td><strong>STR</strong> o <strong>CON</strong></td><td>Resistir Veneno, Enfermedad, Aturdimiento, Movimiento Forzado y Agotamiento.</td></tr><tr><td><strong>Reflejos (REF)</strong></td><td><strong>DEX</strong> o <strong>WIS</strong></td><td>Esquivar Efectos de Área (Bola de Fuego), Trampas, Escombros y Agarres.</td></tr><tr><td><strong>Voluntad (VOL)</strong></td><td><strong>INT</strong> o <strong>CHA</strong></td><td>Resistir Miedo, Encanto, Daño Psíquico, Confusión y Posesión.</td></tr></tbody></table><p><em>Ejemplo: Un Mago con INT +4 y CHA -1 usa su INT (+4) para las Salvaciones de Voluntad.</em></p>",
+        "tags": ["salvaciones", "fortaleza", "reflejos", "voluntad", "resistencia", "magia"]
+      },
+      {
+        "id": "6.5",
         "title": "Salud y Muerte",
         "content": "<h3>Puntuación de Armadura (AS)</h3><p>La armadura en Grim Delve es <strong>Reducción de Daño</strong>. Cuando recibes daño físico (Contundente, Perforante, Cortante), resta tu AS del total.</p><ul><li><em>Ejemplo:</em> Recibes 6 de daño usando Cota de Malla (AS 2). Pierdes 4 PV.</li><li><em>Magia:</em> La armadura generalmente no reduce daño Mágico o Elemental a menos que tenga encantamientos específicos.</li></ul><h3>Moribundo (0 PV)</h3><p>Cuando alcanzas <strong>0 PV</strong>, caes <strong>Inconsciente</strong> y estás <strong>Moribundo</strong>.</p><h4>La Lucha contra la Muerte</h4><p>Mueres permanentemente si acumulas <strong>3 Fallos de Muerte</strong>. Los fallos se reinician solo después de un <strong>Descanso</strong>.</p><p>Al inicio de tu turno, haz una <strong>Prueba de CON (CD 13)</strong>:</p><ul><li><strong>Pasa:</strong> Te vuelves <strong>Estable</strong> (0 PV, Inconsciente, no muriendo). Dejas de tirar pruebas hasta recibir daño.</li><li><strong>Falla:</strong> Tomas <strong>1 Fallo de Muerte</strong>.</li><li><strong>1 Nat:</strong> Tomas <strong>2 Fallos de Muerte</strong>.</li><li><strong>20 Nat:</strong> La adrenalina surge. Reinicia tus Fallos a 0, recupera <strong>1 PV</strong> y toma tu turno inmediatamente.</li></ul><h4>Recibir Daño mientras Mueres</h4><p>Mientras estás Inconsciente, no puedes Defenderte. Cualquier ataque que te golpee es un <strong>Golpe Crítico Automático</strong>.</p><ul><li><strong>El Coste:</strong> Si recibes daño estando a 0 PV, tomas <strong>2 Fallos de Muerte</strong> inmediatamente.</li><li><strong>Daño Masivo:</strong> Si un solo golpe inflige daño igual o mayor a tus PV Máximos, mueres instantáneamente.</li></ul><h4>Estabilizar</h4><p>Un aliado puede gastar una Acción para hacer una <strong>Prueba de Medicina (CD 13)</strong>. En un éxito, estás <strong>Estable</strong> (0 PV, Inconsciente). Dejas de tirar pruebas hasta recibir daño de nuevo.</p>",
         "tags": ["pv", "salud", "muerte", "moribundo", "puntuación de armadura", "as", "recuperación", "curación", "fallos"]
       },
       {
-        "id": "6.5",
+        "id": "6.6",
         "title": "Acciones Especiales: Agarrar y Sigilo",
         "content": "<h3>Agarrar</h3><p>Para agarrar a un enemigo, usa la <strong>Acción de Ataque</strong>.</p><ul><li><strong>La Prueba:</strong> Haz una <strong>Prueba de Atletismo (STR)</strong> contra el <strong>Valor de Salvación de Reflejos</strong> del objetivo (o su propio resultado de Atletismo/Acrobacias).</li><li><strong>Éxito:</strong> El objetivo está <strong>Agarrado</strong>.<ul><li><strong>Velocidad:</strong> 0.</li><li><strong>Penalización:</strong> Tienen Desventaja en Pruebas de Ataque y Salvaciones de Destreza.</li><li><strong>Movimiento:</strong> Puedes mover al objetivo a la Mitad de Velocidad.</li></ul></li><li><strong>Escapar:</strong> El objetivo debe usar una <strong>Acción</strong> para tener éxito en una Prueba de Atletismo o Acrobacias contra tu CD de Atletismo.</li></ul><h3>Empujar</h3><p>Haz una <strong>Prueba de Atletismo (STR)</strong> contra el <strong>Valor de Salvación de Reflejos</strong> del objetivo. En un éxito, los empujas <strong>5 pies</strong> o los dejas <strong>Derribados</strong>.</p><h3>Esconderse (Sigilo)</h3><p>Puedes usar la <strong>Acción Esconderse</strong> durante el combate si rompes la Línea de Visión.</p><ul><li><strong>Requisito:</strong> Debes estar <strong>Oscurecido</strong> (Oscuridad, Niebla) o detrás de <strong>Cobertura</strong>. No puedes Esconderte si un enemigo puede verte claramente.</li><li><strong>La Prueba:</strong> Tira <strong>Sigilo (DEX)</strong> contra el <strong>Escrutinio Pasivo</strong> más alto entre los enemigos (10 + WIS + Prof).</li><li><strong>Éxito:</strong> Ganas la condición <strong>Oculto</strong>. Tienes Ventaja en tu siguiente ataque. Atacar o Lanzar te revela.</li></ul>",
         "tags": ["agarrar", "empujar", "sigilo", "esconderse", "maniobras", "atletismo"]
       },
       {
-        "id": "6.6",
+        "id": "6.7",
         "title": "Peligros Ambientales",
         "content": "<h3>Caída</h3><p>Las criaturas reciben <strong>1d6 Daño Contundente</strong> por cada 10 pies que caen. Al aterrizar, caen <strong>Derribadas</strong>.</p><ul><li><strong>Velocidad Terminal:</strong> El daño se limita a <strong>20d6</strong>.</li><li><strong>Agua:</strong> Caer en agua profunda reduce el daño a la mitad.</li></ul><h3>Asfixia y Ahogamiento</h3><p>Una criatura puede contener la respiración durante un número de minutos igual a <strong>1 + Modificador de CON</strong> (Mínimo 30 segundos).</p><ul><li><strong>El Ahogo:</strong> Una vez que se acaba el aire, la criatura sobrevive por un número de Rondas igual a su <strong>Puntuación de CON</strong>.</li><li><strong>Muerte:</strong> Al final de este temporizador, la criatura cae a <strong>0 PV</strong> y está Muriendo. No pueden ser estabilizados hasta que puedan respirar de nuevo.</li></ul><h3>Clima Extremo</h3><p>Exploradores en Frío Congelante o Calor Abrasador sin el equipo adecuado deben hacer una <strong>Salvación de Fortaleza (CD 11)</strong> cada hora. En un fallo, ganan 1 nivel de <strong>Agotamiento</strong>.</p>",
         "tags": ["caída", "ahogamiento", "asfixia", "entorno", "daño"]
       },
       {
-        "id": "6.7",
+        "id": "6.8",
         "title": "Descanso y Recuperación",
         "content": "<h3>El Respiro (Descanso Corto)</h3><p>Una pausa en la acción para vendar heridas y recuperar el aliento. Toma <strong>1 Turno de Mazmorra (10 Minutos)</strong>.</p><ul><li><strong>Coste:</strong> 1 Ración (si tiene hambre) o duración de 1 Antorcha.</li><li><strong>Beneficio:</strong> Puedes gastar tu <strong>Dado de Golpe</strong>. Tira el dado + Modificador de CON y recupera esa cantidad de Puntos de Vida.</li><li><strong>Límite:</strong> Tienes un número de Dados de Golpe igual a tu <strong>Nivel</strong>. Estos se recargan en un Descanso Largo.</li><li><strong>Aguante:</strong> Los guerreros recuperan <strong>1d4 de Aguante</strong>.</li></ul><h3>El Refugio (Descanso Largo)</h3><p>Una noche completa de sueño en un lugar seguro y fortificado (Pueblo, Posada o Fortaleza Mágica). Acampar en una mazmorra <strong>no</strong> cuenta a menos que lo indique explícitamente el GM.</p><ul><li><strong>Beneficio:</strong> Recupera <strong>TODOS</strong> los Puntos de Vida y Dados de Golpe.</li><li><strong>Recursos:</strong> Recupera <strong>TODO</strong> el Maná y Suerte.</li><li><strong>Condiciones:</strong> Reduce el Agotamiento en 1 nivel.</li></ul>",
         "tags": ["descanso", "curación", "recuperación", "dados de golpe", "descanso corto", "descanso largo"]
@@ -329,7 +335,7 @@
       }
     ]
   },
-  {
+{
     "id": "ch10",
     "title": "Capítulo 10: Bestiario",
     "sections": [
@@ -348,14 +354,14 @@
       {
         "id": "10.3",
         "title": "Leyendo las Estadísticas",
-        "content": "<p>Dado que el GM no tira, las estadísticas de los monstruos son Números Objetivo para los jugadores.</p><ul><li><strong>CD de Ataque:</strong> El número que un jugador debe superar con su <strong>Prueba de Defensa</strong> (Esquivar/Bloquear/Parar) para evitar recibir daño. Alta CD de Ataque significa que el monstruo es preciso o poderoso.</li><li><strong>CD de Defensa:</strong> El número que un jugador debe superar con su <strong>Prueba de Ataque</strong> para golpear al monstruo. Alta CD de Defensa significa que el monstruo está blindado o es evasivo.</li><li><strong>CD de Salvación:</strong> El número que un jugador debe superar con una <strong>Tirada de Salvación</strong> para resistir efectos especiales (Veneno, Miedo, Magia).</li><li><strong>Daño:</strong> La cantidad fija de daño que el monstruo inflige al impactar (a menos que se tire un Crítico contra el jugador).</li></ul>",
+        "content": "<p>Dado que el GM no tira, las estadísticas de los monstruos son Números Objetivo para los jugadores.</p><ul><li><strong>CD de Ataque:</strong> El número que un jugador debe superar con su <strong>Prueba de Defensa</strong> (Esquivar/Bloquear/Parar) para evitar recibir daño.</li><li><strong>CD de Defensa:</strong> El número que un jugador debe superar con su <strong>Prueba de Ataque</strong> para golpear al monstruo.</li><li><strong>CDs de Salvación:</strong> Los monstruos tienen CDs específicas para Fortaleza, Reflejos y Voluntad. Cuando un jugador fuerza a un monstruo a hacer una salvación (ej: \"El monstruo hace una Salvación de Fortaleza\"), el jugador tira <strong>d20 + Modificadores de Salvación</strong> contra la CD de Salvación del Monstruo. Si el jugador saca más alto, el Monstruo falla la salvación.</li><li><strong>Daño:</strong> La cantidad fija de daño que el monstruo inflige al impactar (a menos que se tire un Crítico contra el jugador).</li></ul>",
         "tags": ["estadísticas", "cd", "leyendo", "matemáticas"]
       },
       {
         "id": "10.4",
         "title": "Las Tablas de Chasis",
-        "content": "<p>Usa estas tablas para encontrar las estadísticas base de cualquier monstruo por Nivel.</p>[[DYNAMIC_CHASSIS_TABLES]]",
-        "tags": ["tablas", "matemáticas", "estadísticas", "pv", "ca"]
+        "content": "<p>Usa estas tablas para encontrar las estadísticas base de cualquier monstruo por Nivel.</p>[[DYNAMIC_CHASSIS_TABLES]]<h3>Modificadores de Salvación por Rol</h3><p>Modifica la CD de Salvación Base de la tabla anterior según el Rol del Monstruo:</p><table class='table'><thead><tr><th>Rol</th><th>Fortaleza</th><th>Reflejos</th><th>Voluntad</th></tr></thead><tbody><tr><td><strong>Soldado</strong></td><td>+2</td><td>0</td><td>-2</td></tr><tr><td><strong>Bruto</strong></td><td>+2</td><td>-2</td><td>-2</td></tr><tr><td><strong>Hostigador</strong></td><td>-2</td><td>+2</td><td>0</td></tr><tr><td><strong>Acechador</strong></td><td>-2</td><td>+2</td><td>0</td></tr><tr><td><strong>Artillería</strong></td><td>-2</td><td>+2</td><td>0</td></tr><tr><td><strong>Controlador</strong></td><td>-2</td><td>0</td><td>+2</td></tr><tr><td><strong>Solo</strong></td><td>+2</td><td>0</td><td>+2</td></tr><tr><td><strong>Esbirro</strong></td><td>0</td><td>0</td><td>0</td></tr></tbody></table>",
+        "tags": ["tablas", "matemáticas", "estadísticas", "pv", "ca", "salvaciones"]
       },
       {
         "id": "10.5",
@@ -401,4 +407,5 @@
       }
     ]
   }
+
 ]

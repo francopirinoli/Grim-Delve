@@ -580,24 +580,25 @@
         { "roll": 20, "result": "Agujero Portátil (Pozo en cualquier superficie)." }
       ]
     },
-    {
+   {
       "id": "tbl_eye_rays",
       "title": "Rayos Oculares del Observador",
       "category": "Combate",
       "dice": "1d8",
       "rows": [
-        { "roll": 1, "result": "Rayo Abrasador: Prueba de Defensa. Fallo: 2d6 Fuego + Quemadura." },
-        { "roll": 2, "result": "Rayo de Escarcha: Prueba de Defensa. Fallo: 2d6 Frío + Congelado (Velocidad 0)." },
-        { "roll": 3, "result": "Rayo Telequinético: Salvación de Fuerza. Fallo: Lanzado 30 pies, 2d6 Impacto." },
-        { "roll": 4, "result": "Rayo de Miedo: Salvación de Voluntad. Fallo: Asustado 1 min." },
-        { "roll": 5, "result": "Rayo de Encanto: Salvación de Voluntad. Fallo: Hechizado 1 min." },
-        { "roll": 6, "result": "Rayo de Enervación: Salvación de Fortaleza. Fallo: 3d6 Necrótico + Debilitado." },
-        { "roll": 7, "result": "Rayo de Petrificación: Salvación de Fortaleza. Fallo: Restringido (Convirtiéndose en piedra)." },
-        { "roll": 8, "result": "Rayo de Muerte: Salvación de Fortaleza. Fallo: 5d8 Necrótico. (0 PV = Muerte)." }
+        { "roll": 1, "result": "Rayo Abrasador. Una lanza de luz roja como el magma. Prueba de Defensa. Fallo: 2d8 Daño de Fuego. El objetivo Arde (1d6/turno)." },
+        { "roll": 2, "result": "Rayo de Escarcha. Un rayo azul pálido rompe el aire. Prueba de Defensa. Fallo: 2d8 Daño de Frío. El objetivo queda Congelado (Velocidad 0) por 1 ronda." },
+        { "roll": 3, "result": "Rayo Telequinético. Un martillo invisible de fuerza. Salvación de Fortaleza. Fallo: Lanzado 30 pies hacia atrás, 2d6 Daño de Impacto y cae Derribado." },
+        { "roll": 4, "result": "Rayo de Miedo. Un rayo de luz gris sombría. Salvación de Voluntad. Fallo: Asustado por 1 minuto. Debe gastar sus turnos huyendo." },
+        { "roll": 5, "result": "Rayo de Encanto. Luz rosa y dorada en espiral. Salvación de Voluntad. Fallo: Hechizado por 1 minuto. Considera al Observador un amigo cercano." },
+        { "roll": 6, "result": "Rayo de Enervación. Un rayo de energía negra necrótica. Salvación de Fortaleza. Fallo: 3d6 Daño Necrótico. El objetivo queda Debilitado (Mitad de Daño) hasta Descansar." },
+        { "roll": 7, "result": "Rayo de Petrificación. Un rayo oliva apagado. Salvación de Fortaleza. Fallo: Restringido (la piel se endurece). Repetir Salvación al final del turno; Fallo = Petrificado (Estatua)." },
+        { "roll": 8, "result": "Rayo de Muerte. Energía verde crepitante. Salvación de Fortaleza. Fallo: 5d8 Daño Necrótico. Si esto reduce al objetivo a 0 PV, muere instantáneamente y se convierte en polvo." }
       ]
     }
   ]
 }
+
 
 
 

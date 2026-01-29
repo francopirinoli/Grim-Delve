@@ -5590,3 +5590,80 @@ input.res-input:focus { border-bottom: 1px solid #fff !important; }
         width: 100%;
     }
 }
+
+/* --- SAVING THROW STYLES (Added in v4.5) --- */
+
+/* Interactive Sheet Grid */
+.save-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 2rem;
+}
+
+.save-card {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 4px;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+}
+
+.save-card:hover {
+    background: #252525;
+    border-color: var(--accent-gold);
+    transform: translateY(-2px);
+}
+
+.save-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    color: #888;
+    font-weight: bold;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+}
+
+.save-val {
+    font-family: var(--font-mono);
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: #e0e0e0;
+}
+
+/* Color Coding for Saves */
+.save-card.fort { border-top: 3px solid #8a2c2c; } /* Crimson */
+.save-card.ref { border-top: 3px solid #388e3c; }  /* Green */
+.save-card.will { border-top: 3px solid #4a6fa5; } /* Blue */
+
+/* Print View Specifics */
+@media print {
+    .p-save-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 5px;
+        text-align: center;
+    }
+    
+    .p-save-box {
+        border: 1px solid #000;
+        padding: 5px;
+        background: #eee;
+    }
+
+    .p-save-val {
+        font-size: 14pt;
+        font-weight: 800;
+        font-family: 'Fira Code', monospace;
+        display: block;
+    }
+
+    .p-save-lbl {
+        font-size: 7pt;
+        text-transform: uppercase;
+    }
+}

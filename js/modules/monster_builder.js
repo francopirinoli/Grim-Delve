@@ -8,23 +8,63 @@ import { I18n } from '../utils/i18n.js';
 import { Storage } from '../utils/storage.js';
 import { ImageStore } from '../utils/image_store.js';
 
-// --- SHARED RENDERER ---
+/**
+ * Calculates specific saves based on Role and Base DC.
+ */
+const calculateMonsterSaves = (role, baseDC) => {
+    const r = (role || '').toLowerCase();
+    let modF = 0; // Fortitude
+    let modR = 0; // Reflex
+    let modW = 0; // Will
+
+    // Apply Role Modifiers (Based on Design Doc)
+    if (r.includes('soldier') || r === 'soldado') {
+        modF = 2; modW = -2;
+    } else if (r.includes('brute') || r === 'bruto') {
+        modF = 2; modR = -2; modW = -2;
+    } else if (r.includes('skirmisher') || r === 'hostigador' || 
+               r.includes('lurker') || r === 'acechador' || 
+               r.includes('artillery') || r === 'artillería') {
+        modF = -2; modR = 2;
+    } else if (r.includes('controller') || r === 'controlador') {
+        modF = -2; modW = 2;
+    } else if (r.includes('solo')) {
+        modF = 2; modW = 2;
+    }
+    // Minion / Default stays at Base DC
+
+    return {
+        fort: baseDC + modF,
+        ref: baseDC + modR,
+        will: baseDC + modW
+    };
+};
 /**
  * Normalizes monster data into a standard renderable format.
- * Handles both "Old Builder" data and "New Official" data.
+ * v4.5: Calculates Fort/Ref/Will saves dynamically.
  */
 const normalizeMonsterData = (m) => {
     // Deep copy
     const data = JSON.parse(JSON.stringify(m));
 
     // 1. Unify Stats
+    const baseAtk = data.combat ? data.combat.atk_dc : data.stats.atk;
+    const baseDef = data.combat ? data.combat.def_dc : data.stats.def;
+    const baseSave = data.combat ? data.combat.save_dc : data.stats.save;
+    
+    // Calculate Saves (If not explicitly provided in a future update)
+    let saves = data.stats.saves;
+    if (!saves) {
+        saves = calculateMonsterSaves(data.role, baseSave);
+    }
+
     const stats = {
         hp: data.stats.hp,
         as: data.stats.as,
         speed: data.stats.speed,
-        atk: data.combat ? data.combat.atk_dc : data.stats.atk,
-        def: data.combat ? data.combat.def_dc : data.stats.def,
-        save: data.combat ? data.combat.save_dc : data.stats.save,
+        atk: baseAtk,
+        def: baseDef,
+        saves: saves, // Object { fort, ref, will }
         dmg: data.combat ? data.combat.dmg : data.stats.dmg
     };
 
@@ -34,11 +74,10 @@ const normalizeMonsterData = (m) => {
     let actions = [];
     let dangers = [];
 
-    // --- FIX: Always check for explicit 'attacks' array (From Dropdown or JSON) ---
+    // Check for explicit 'attacks' array
     if (data.attacks && Array.isArray(data.attacks)) {
         attacks.push(...data.attacks);
     }
-    // -----------------------------------------------------------------------------
 
     // Check if we have the NEW "abilities" array (Official Data)
     const hasNewAbilities = data.abilities && Array.isArray(data.abilities) && data.abilities.length > 0;
@@ -47,10 +86,7 @@ const normalizeMonsterData = (m) => {
         data.abilities.forEach(a => {
             const t = a.type ? a.type.toLowerCase() : 'trait';
             
-            // Normalize Spanish/English keys
             if (t.includes('attack') || t.includes('ataque')) {
-                // If it's an attack not already in the main array, add it
-                // (Prevent duplicates if data.attacks already existed)
                 if (!attacks.some(existing => existing.name === a.name)) {
                     attacks.push(a);
                 }
@@ -67,13 +103,12 @@ const normalizeMonsterData = (m) => {
         });
 
     } else {
-        // Fallback: Use OLD 'traits'/'actions' arrays (Custom Builder Data)
+        // Fallback: Old Builder Data
         if (data.traits) traits.push(...data.traits);
         if (data.actions) actions.push(...data.actions);
         if (data.danger_abilities) dangers.push(...data.danger_abilities);
     }
     
-    // Always add Builder Custom Abilities
     if (data.custom_abilities) {
         data.custom_abilities.forEach(c => {
             if (c.type === 'Danger') dangers.push(c);
@@ -109,7 +144,6 @@ const normalizeMonsterData = (m) => {
 
 export const MonsterRenderer = {
     
-    // ... (Keep formatStat function as is) ...
     formatStat: (val) => {
         if (!val && val !== 0) return `<span class="stat-main">-</span>`;
         const str = String(val);
@@ -124,15 +158,13 @@ export const MonsterRenderer = {
         return `<span class="stat-main">${str}</span>`;
     },
 
-    getHTML: (rawMonster, imageSrc, forceLang = null) => {
+getHTML: (rawMonster, imageSrc, forceLang = null) => {
         const t = I18n.t;
-        const fmt = I18n.fmt;
         
         const txt = (key) => forceLang ? I18n.force(key, forceLang) : t(key);
         const m = normalizeMonsterData(rawMonster);
         const s = m.derivedStats;
 
-        // ... (Role and Family Logic stays the same) ...
         const rawRole = m.role ? m.role.toLowerCase() : 'soldier';
         const roleKey = `role_${rawRole}`;
         
@@ -155,34 +187,24 @@ export const MonsterRenderer = {
         if (lang === 'es') metaLine = `${roleName} ${familyName} de Nivel ${m.level}`; 
         else metaLine = `Level ${m.level} ${familyName} ${roleName}`;
 
-        // Image
         let imgHtml = '';
         if (imageSrc) {
             const style = `transform: translate(${m.imgPos.x}px, ${m.imgPos.y}px) scale(${m.imgPos.scale}); width:100%; height:100%; object-fit:cover;`;
             imgHtml = `<div class="sb-image-container"><img src="${imageSrc}" style="${style}" draggable="false"></div>`;
         }
 
-        // --- IMPROVED RENDER ROW ---
-        // Handles {dmg} replacement and proper Tag formatting
         const renderRow = (list, cssClass = '') => list.map(item => {
-            // 1. Swap Damage Placeholder
             let text = item.effect || item.desc || '';
-            
-            // We use the chassis damage (s.dmg) to replace the placeholder
             if (s.dmg) {
                 text = text.replace('{dmg}', `<strong>${s.dmg}</strong>`);
-                text = text.replace('Weapon Damage', `<strong>${s.dmg}</strong>`); // Fallback for old data
-                text = text.replace('Daño de Arma', `<strong>${s.dmg}</strong>`); // Fallback for old ES data
+                text = text.replace('Weapon Damage', `<strong>${s.dmg}</strong>`); 
+                text = text.replace('Daño de Arma', `<strong>${s.dmg}</strong>`); 
             }
-
-            // 2. Format Tags
             let tagHtml = '';
             if (item.tags) {
-                // Remove parentheses if they exist in data to avoid double parens
                 let cleanTag = item.tags.replace(/^\(|\)$/g, '');
                 tagHtml = `<span class="sb-prop-tags">(${cleanTag})</span>`;
             }
-
             return `
             <div class="sb-property ${cssClass}">
                 <div class="sb-prop-header">
@@ -194,9 +216,7 @@ export const MonsterRenderer = {
                 <div class="sb-prop-text">${text}</div>
             </div>`;
         }).join('');
-        // ---------------------------
 
-        // Basic Attack Line
         let mainAttackHtml = '';
         const atkLabel = txt('sheet_attacks').toUpperCase();
 
@@ -212,6 +232,7 @@ export const MonsterRenderer = {
         const headActions = txt('mon_sect_actions');
         const headDanger = txt('mon_sect_danger');
 
+        // --- NEW 8-GRID LAYOUT ---
         return `
             <div class="monster-card">
                 <div class="mc-header">
@@ -221,7 +242,8 @@ export const MonsterRenderer = {
                 
                 ${imgHtml}
 
-                <div class="mc-stats-grid">
+                <div class="mc-stats-grid" style="grid-template-columns: repeat(4, 1fr);">
+                    <!-- ROW 1 -->
                     <div class="mc-stat hp">
                         <div class="mc-stat-val">${MonsterRenderer.formatStat(s.hp)}</div>
                         <div class="mc-stat-label">${txt('mon_stat_hp')}</div>
@@ -238,13 +260,23 @@ export const MonsterRenderer = {
                         <div class="mc-stat-val">${MonsterRenderer.formatStat(s.atk)}</div>
                         <div class="mc-stat-label">${txt('mon_stat_atk')}</div>
                     </div>
+                    
+                    <!-- ROW 2: Defenses & Saves -->
                     <div class="mc-stat">
-                        <div class="mc-stat-val">${MonsterRenderer.formatStat(s.def)}</div>
+                        <div class="mc-stat-val" style="color:var(--accent-blue)">${MonsterRenderer.formatStat(s.def)}</div>
                         <div class="mc-stat-label">${txt('mon_stat_def')}</div>
                     </div>
                     <div class="mc-stat">
-                        <div class="mc-stat-val">${MonsterRenderer.formatStat(s.save)}</div>
-                        <div class="mc-stat-label">${txt('mon_stat_save')}</div>
+                        <div class="mc-stat-val">${MonsterRenderer.formatStat(s.saves.fort)}</div>
+                        <div class="mc-stat-label">${txt('save_fort').substring(0,4)}</div>
+                    </div>
+                    <div class="mc-stat">
+                        <div class="mc-stat-val">${MonsterRenderer.formatStat(s.saves.ref)}</div>
+                        <div class="mc-stat-label">${txt('save_ref').substring(0,3)}</div>
+                    </div>
+                    <div class="mc-stat">
+                        <div class="mc-stat-val">${MonsterRenderer.formatStat(s.saves.will)}</div>
+                        <div class="mc-stat-label">${txt('save_will').substring(0,4)}</div>
                     </div>
                 </div>
 
@@ -960,4 +992,5 @@ export const MonsterBuilder = {
         localStorage.setItem('grim_monsters', JSON.stringify(lib));
         alert(`Saved ${m.name} to Library.`);
     }
+
 };

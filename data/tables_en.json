@@ -267,6 +267,96 @@
       ]
     },
     {
+      "id": "tbl_stat_array",
+      "title": "Ability Score Array",
+      "category": "Character Creation",
+      "dice": "1d12",
+      "rows": [
+        { "roll": 1, "result": "The Jack: +1, +1, +1, +1, +1, 0" },
+        { "roll": 2, "result": "The Standard: +2, +1, +1, +1, 0, 0" },
+        { "roll": 3, "result": "The Dualist: +2, +2, +1, 0, 0, 0" },
+        { "roll": 4, "result": "The Savant: +3, +1, +1, 0, 0, 0" },
+        { "roll": 5, "result": "The Specialist: +3, +2, 0, 0, 0, 0" },
+        { "roll": 6, "result": "Flawed Hero: +3, +2, +1, 0, 0, -1" },
+        { "roll": 7, "result": "The Min-Max: +3, +3, 0, 0, 0, -1" },
+        { "roll": 8, "result": "The Triad: +2, +2, +2, 0, 0, -1" },
+        { "roll": 9, "result": "The Wild Card: +3, +2, +2, -1, -1, 0" },
+        { "roll": 10, "result": "The Focused: +3, +3, +1, -1, -1, 0" },
+        { "roll": 11, "result": "The Complex: +2, +2, +2, +1, -1, -1" },
+        { "roll": 12, "result": "The High Stakes: +3, +3, +2, -1, -1, -1" }
+      ]
+    },
+    {
+      "id": "tbl_room_content",
+      "title": "Dungeon Room Content",
+      "category": "World",
+      "dice": "1d6",
+      "rows": [
+        { "roll": 1, "result": "Empty / Atmosphere (Drains Time/Light)." },
+        { "roll": 2, "result": "Empty / Atmosphere (Good for Resting)." },
+        { "roll": 3, "result": "Trap / Hazard (Drains Health/Resources)." },
+        { "roll": 4, "result": "Monster (Combat Encounter)." },
+        { "roll": 5, "result": "Treasure (Unguarded but hidden/locked)." },
+        { "roll": 6, "result": "Special (Roll d6: 1-3 Monster+Loot, 4-5 Trap+Loot, 6 Boss)." }
+      ]
+    },
+    {
+      "id": "tbl_encounter_die",
+      "title": "Overloaded Encounter Die",
+      "category": "World",
+      "dice": "1d6",
+      "rows": [
+        { "roll": 1, "result": "Encounter! A wandering monster attacks immediately." },
+        { "roll": 2, "result": "Peril / Sign. Hazard activates or clue appears." },
+        { "roll": 3, "result": "Exhaustion. 1 Torch burns out. If 3rd time, eat Ration." },
+        { "roll": 4, "result": "Expiration. Spells with 10 min/1 hour duration end." },
+        { "roll": 5, "result": "Dungeon Shift. Door slams, trap resets, environment changes." },
+        { "roll": 6, "result": "Clear. Safe passage. Party catches breath." }
+      ]
+    },
+    {
+      "id": "tbl_dt_carousing",
+      "title": "Downtime: Carousing",
+      "category": "Downtime",
+      "dice": "1d20",
+      "rows": [
+        { "roll": "1", "result": "Disaster! (0 XP). Arrested, Robbed, or Cursed." },
+        { "roll": "2-5", "result": "Regret (1 XP). Start next adventure Exhausted." },
+        { "roll": "6-10", "result": "Trouble (2 XP). Bar brawl or gambling debt (2d20g)." },
+        { "roll": "11-15", "result": "Good Time (3 XP). Reputation grows." },
+        { "roll": "16-20", "result": "Local Hero (4 XP). Advantage on next Influence check." },
+        { "roll": "21-30", "result": "Legendary (6 XP). Befriend powerful NPC." }
+      ]
+    },
+    {
+      "id": "tbl_dt_research",
+      "title": "Downtime: Research",
+      "category": "Downtime",
+      "dice": "1d20",
+      "rows": [
+        { "roll": "1", "result": "Misled (0 XP). Follow a false lead into a trap." },
+        { "roll": "2-5", "result": "Cold Trail (1 XP). Disadvantage on next Investigate check." },
+        { "roll": "6-10", "result": "Rumors (2 XP). Vague whispers of location." },
+        { "roll": "11-15", "result": "Solid Lead (3 XP). Actionable Quest Hook." },
+        { "roll": "16-20", "result": "Insight (4 XP). Tactical Intel on enemy." },
+        { "roll": "21-30", "result": "Forbidden Lore (6 XP). GM reveals a Secret/True Name." }
+      ]
+    },
+    {
+      "id": "tbl_dt_selling",
+      "title": "Downtime: Selling Loot",
+      "category": "Downtime",
+      "dice": "1d20",
+      "rows": [
+        { "roll": "1", "result": "Scammed (0% Value). Item seized or stolen." },
+        { "roll": "2-5", "result": "Desperate (25% Value). Pawned for pittance." },
+        { "roll": "6-10", "result": "Low-Ball (50% Value). Sold for scrap." },
+        { "roll": "11-15", "result": "Fair (80% Value). Respectable deal." },
+        { "roll": "16-20", "result": "Market (100% Value). Full value received." },
+        { "roll": "21-30", "result": "Bidding War (150% Value). Desperate collector." }
+      ]
+    },
+    {
       "id": "tbl_eye_rays",
       "title": "Watcher Eye Rays",
       "category": "Combat",
@@ -283,4 +373,5 @@
       ]
     }
   ]
+
 }

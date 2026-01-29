@@ -158,12 +158,6 @@
         "title": "Equipo de Aventuras",
         "content": "<p>Las herramientas son tan vitales como las armas. Gestionar la luz y la comida es la clave para sobrevivir al Turno de Mazmorra.</p>[[DYNAMIC_GEAR]]",
         "tags": ["equipo", "herramientas", "objetos", "tienda", "luz"]
-      },
-      {
-        "id": "5.5",
-        "title": "El Sistema de Reactivos",
-        "content": "<p>Los Reactivos son la munición de las clases de Especialista. Son objetos poderosos de un solo uso creados a partir de partes de monstruos y materias primas.</p><h4>1. Materias Primas</h4><p>Cosechadas de monstruos o encontradas en la naturaleza. <strong>3 Lotes = 1 Espacio</strong>.</p><ul><li><strong>Orgánicos:</strong> Carne, veneno, glándulas. (Venenos/Ácidos)</li><li><strong>Flora:</strong> Plantas, hongos, raíces. (Curación/Utilidad)</li><li><strong>Chatarra:</strong> Metal, engranajes, vidrio. (Explosivos/Trampas)</li><li><strong>Esencia:</strong> Ectoplasma, polvo, magia. (Encantamiento)</li></ul><h4>2. Reglas de Creación</h4><ul><li><strong>Tiempo Muerto:</strong> Creación segura. Prueba vs CD de Artesanía. Éxito = 1 Lote. Crítico = 2 Lotes. Fallo = Materiales perdidos.</li><li><strong>Creación de Campo:</strong> Posible pero arriesgada. Toma 1 Turno de Mazmorra. <strong>Desventaja</strong> en la prueba a menos que tengas Talentos de Clase específicos.</li></ul>[[DYNAMIC_REAGENTS]]",
-        "tags": ["creación", "alquimia", "reactivos", "bombas", "venenos", "cosecha"]
       }
     ]
   },
@@ -242,6 +236,12 @@
         "title": "Creación de Consumibles",
         "content": "<p>La artesanía convierte Materias Primas en <strong>Reactivos</strong> (Bombas, Pociones, Kits). Esta es principalmente una Actividad de Tiempo Muerto.</p><h3>El Proceso</h3><ol><li><strong>Receta:</strong> Debes conocer la Receta (vía Talento de Clase o Botín).</li><li><strong>Kit:</strong> Debes tener el Kit de Herramientas correcto (Alquimista, Envenenador, etc.).</li><li><strong>Materiales:</strong> Debes gastar los Lotes requeridos.</li></ol><h3>La Prueba</h3><div class='formula'>Artesanía y Maña (INT) vs. CD de Creación del Objeto</div><table class='table'><thead><tr><th>Resultado</th><th>Consecuencia</th></tr></thead><tbody><tr><td><strong>Éxito Crítico</strong></td><td>Creas <strong>2 Lotes</strong> por el coste de 1.</td></tr><tr><td><strong>Éxito</strong></td><td>Creas <strong>1 Lote</strong> (generalmente 1d4 objetos). Materiales consumidos.</td></tr><tr><td><strong>Fallo</strong></td><td>La creación falla. <strong>La mitad</strong> de los materiales se pierden.</td></tr><tr><td><strong>Pifia (1 Nat)</strong></td><td><strong>Explosión.</strong> Todos los materiales perdidos. Recibes 1d6 de Daño. GM Gana 1 PP.</td></tr></tbody></table><h3>Creación de Campo</h3><p>Crear dentro de una mazmorra es peligroso. Toma <strong>1 Turno de Mazmorra</strong> y todas las Pruebas se hacen con <strong>Desventaja</strong> a menos que tengas Talentos específicos (ej: <em>Alquimia de Campo</em>).</p>",
         "tags": ["creación", "alquimia", "reactivos", "tiempo muerto"]
+      },
+      {
+        "id": "7.4",
+        "title": "El Sistema de Reactivos",
+        "content": "<p>Los Reactivos son la munición de las clases de Especialista. Son objetos poderosos de un solo uso creados a partir de partes de monstruos y materias primas.</p><h4>1. Materias Primas</h4><p>Cosechadas de monstruos o encontradas en la naturaleza. <strong>3 Lotes = 1 Espacio</strong>.</p><ul><li><strong>Orgánicos:</strong> Carne, veneno, glándulas. (Venenos/Ácidos)</li><li><strong>Flora:</strong> Plantas, hongos, raíces. (Curación/Utilidad)</li><li><strong>Chatarra:</strong> Metal, engranajes, vidrio. (Explosivos/Trampas)</li><li><strong>Esencia:</strong> Ectoplasma, polvo, magia. (Encantamiento)</li></ul><h4>2. Reglas de Creación</h4><ul><li><strong>Tiempo Muerto:</strong> Creación segura. Prueba vs CD de Artesanía. Éxito = 1 Lote. Crítico = 2 Lotes. Fallo = Materiales perdidos.</li><li><strong>Creación de Campo:</strong> Posible pero arriesgada. Toma 1 Turno de Mazmorra. <strong>Desventaja</strong> en la prueba a menos que tengas Talentos de Clase específicos.</li></ul>[[DYNAMIC_REAGENTS]]",
+        "tags": ["creación", "alquimia", "reactivos", "bombas", "venenos", "cosecha"]
       }
     ]
   },
@@ -409,3 +409,4 @@
   }
 
 ]
+

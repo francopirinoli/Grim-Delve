@@ -2639,15 +2639,9 @@ export const CharGen = {
         });
 
         const renderAttackRow = (atk) => {
-            // Proficiency Star
             const profBadge = atk.isProficient ? `<span style="color:var(--accent-gold); margin-right:4px;" title="${t('lbl_proficient')}">★</span>` : '';
-            
-            // Clean logic for the "Atk +X" string
-            // If negative (-1), we want "-1". If positive (2), we want "+2".
             const sign = atk.atk >= 0 ? '+' : '';
             const valDisplay = `${sign}${atk.atk}`;
-            
-            // If proficient, show the +d4 explicitly for clarity
             const profDisplay = atk.isProficient ? `<span style="color:#888; font-size:0.8em;">+d4</span>` : '';
 
             if (isEdit) {
@@ -2682,9 +2676,7 @@ export const CharGen = {
 
         // 3. Defense Row Helper
         const renderDefense = (labelKey, type, dataObj, statLabel) => {
-            // Ensure we are translating the label
             const label = `${t(labelKey)} (${statLabel})`;
-            
             if (isEdit) {
                  return `
                 <div class="skill-row edit-mode">
@@ -2706,11 +2698,23 @@ export const CharGen = {
                 </div>`;
             }
         };
+        
+        // 4. Saving Throw Helper (NEW)
+        const renderSave = (key, val, cssClass) => {
+            const label = t('save_' + key);
+            const sign = val >= 0 ? '+' : '';
+            return `
+                <div class="save-card ${cssClass} js-roll-save" data-name="${label}" data-mod="${val}">
+                    <div class="save-label">${label}</div>
+                    <div class="save-val">${sign}${val}</div>
+                </div>
+            `;
+        };
 
         // --- RENDER HTML ---
         container.innerHTML = `
             <div class="manager-grid">
-                <!-- COL 1: Stats & Defenses -->
+                <!-- COL 1: Stats, Saves, Defenses -->
                 <div class="mgr-col">
                     <div>
                         <div class="mgr-header">${t('cg_step_stats')}</div>
@@ -2727,6 +2731,17 @@ export const CharGen = {
                             `).join('')}
                         </div>
                     </div>
+
+                    <!-- NEW SAVING THROWS SECTION -->
+                    <div>
+                        <div class="mgr-header">${t('sheet_saves')}</div>
+                        <div class="save-grid">
+                            ${renderSave('fort', c.saves.fort, 'fort')}
+                            ${renderSave('ref', c.saves.ref, 'ref')}
+                            ${renderSave('will', c.saves.will, 'will')}
+                        </div>
+                    </div>
+
                     <div>
                         <div class="mgr-header">${t('sheet_def')}</div>
                         <div class="def-row">
@@ -2740,14 +2755,14 @@ export const CharGen = {
                                 <div class="def-val">${CharGen.renderEditableValue('speed', speedVal, "30'", false)}</div>
                             </div>
                         </div>
-                        <!-- Defenses List -->
-                    <div style="margin-top:10px; background:#1a1a1a; padding:10px; border-radius:4px; border:1px solid #333;">
-                        ${renderDefense('sheet_dodge', 'dodge', def.dodge, 'DEX')}
-                        ${renderDefense('sheet_parry', 'parry', def.parry, 'STR')}
-                        ${renderDefense('sheet_block', 'block', def.block, 'CON')}
-                    </div>
+                        <div style="margin-top:10px; background:#1a1a1a; padding:10px; border-radius:4px; border:1px solid #333;">
+                            ${renderDefense('sheet_dodge', 'dodge', def.dodge, 'DEX')}
+                            ${renderDefense('sheet_parry', 'parry', def.parry, 'STR')}
+                            ${renderDefense('sheet_block', 'block', def.block, 'CON')}
+                        </div>
                     </div>
                 </div>
+
                 <!-- COL 2: Combat & Skills -->
                 <div class="mgr-col">
                     <div>
@@ -2796,28 +2811,36 @@ export const CharGen = {
             container.querySelectorAll('.js-roll-stat').forEach(el => {
                 el.addEventListener('click', () => CharGen.performRoll(el.dataset.stat + ' Check', null, parseInt(el.dataset.mod)));
             });
+            
+            // NEW: Saving Throw Listeners
+            container.querySelectorAll('.js-roll-save').forEach(el => {
+                el.addEventListener('click', () => {
+                    CharGen.performRoll(el.dataset.name, null, parseInt(el.dataset.mod), 'save');
+                });
+            });
+
             container.querySelectorAll('.js-roll-def').forEach(el => {
                 el.addEventListener('click', () => CharGen.performRoll(el.dataset.label, el.dataset.die, parseInt(el.dataset.val)));
             });
+            
             container.querySelectorAll('.js-roll-attack').forEach(el => {
                 el.addEventListener('click', () => {
                     const name = el.dataset.name;
                     const mod = parseInt(el.dataset.mod);
                     const dmg = el.dataset.dmg;
-                    const isProf = el.dataset.prof === "true"; // Read data-prof
+                    const isProf = el.dataset.prof === "true"; 
                     
-                    // 1. Roll Attack (Now checks isProf)
-                    // Passing '4' as proficiency die value if true, else 0. 
-                    // (Future: Check for Expert d6 via Talents if needed, for now d4 is standard)
+                    // Attack Roll
                     CharGen.performRoll(`${name} (Atk)`, isProf ? "1d4" : null, mod, 'attack');
                     
-                    // 2. Roll Damage
+                    // Damage Roll
                     setTimeout(() => {
                         const res = Dice.roll(dmg);
-                        DiceUI.show(`${name} (Dmg)`, res, 'damage');
+                        import('./dice_ui.js').then(m => m.DiceUI.show(`${name} (Dmg)`, res, 'damage'));
                     }, 800);
                 });
             });
+            
             container.querySelectorAll('.js-roll-skill').forEach(el => {
                 el.addEventListener('click', () => {
                     const die = el.dataset.die === '-' ? null : el.dataset.die;
@@ -2826,7 +2849,7 @@ export const CharGen = {
             });
         }
     },
-
+    
     // --- SKILL & DEFENSE OVERRIDE HELPERS ---
 
     setSkillOverride: (id, die) => {
@@ -3844,12 +3867,9 @@ renderPrintVersion: async (container) => {
         const def = c.defenses;
         const skills = CharGen.calculateSkills();
         
-        // Get Attacks (using the new logic with Proficiency stars)
+        // Get Attacks
         const attacks = [];
-        // Unarmed
-        const unarmed = CharGen._calculateUnarmed();
-        attacks.push(unarmed);
-        // Weapons
+        attacks.push(CharGen._calculateUnarmed());
         c.inventory.filter(i => (i.type === 'Melee' || i.type === 'Ranged' || i.type === 'Cuerpo a Cuerpo' || i.type === 'A Distancia') && i.equipped).forEach(w => {
             const isFinesse = w.tags && (String(w.tags).includes("Finesse") || String(w.tags).includes("Sutil"));
             const isRanged = w.type.includes('Ranged') || w.type.includes('Distancia');
@@ -3858,10 +3878,9 @@ renderPrintVersion: async (container) => {
             else if (isFinesse) mod = Math.max(c.stats.STR || 0, c.stats.DEX || 0);
             
             const isProf = CharGen._checkProficiency(w);
-            const uid = `wep_${w.name}`; // Simplified ID for print
+            const uid = `wep_${w.name}`;
             const ov = c.overrides.attacks?.[uid] || {};
             
-            // Calculate final Attack Bonus
             let atkVal = ov.atk !== undefined ? ov.atk : mod;
             let dmgVal = ov.dmg !== undefined ? ov.dmg : `${w.damage} ${mod >= 0 ? '+' : ''}${mod}`;
             
@@ -3874,19 +3893,14 @@ renderPrintVersion: async (container) => {
             });
         });
 
-        // Get Features (Unpacked)
+        // Get Features
         const allFeatures = CharGen.getFlattenedFeatures();
-        
-        // Split Features for Organization
         const passiveFeatures = allFeatures.filter(f => !f.isSpell && !f.isCraftable && !f.isExploit);
-        // FIX: Variable name match (activeAbilities)
         const activeAbilities = allFeatures.filter(f => f.isExploit || f.isSpell); 
-        const recipes = allFeatures.filter(f => f.isCraftable); // Schematics
+        const recipes = allFeatures.filter(f => f.isCraftable); 
 
-        // Archetype Label
         const archDisplay = CharGen.getArchetypeDisplay();
 
-        // Image Handling
         let imgHTML = `<div style="font-size:3rem; color:#ccc; text-align:center; line-height:100px;">👤</div>`;
         if (c.imageUrl) imgHTML = `<img src="${c.imageUrl}">`;
         else if (c.imageId) {
@@ -3941,6 +3955,16 @@ renderPrintVersion: async (container) => {
                         </div>
                     </div>
 
+                    <!-- NEW SAVING THROWS SECTION -->
+                    <div class="p-section">
+                        <div class="p-header">${t('sheet_saves')}</div>
+                        <div class="p-save-row">
+                            <div class="p-save-box"><span class="p-save-val">${c.saves.fort >= 0 ? '+'+c.saves.fort : c.saves.fort}</span><span class="p-save-lbl">${t('save_fort')}</span></div>
+                            <div class="p-save-box"><span class="p-save-val">${c.saves.ref >= 0 ? '+'+c.saves.ref : c.saves.ref}</span><span class="p-save-lbl">${t('save_ref')}</span></div>
+                            <div class="p-save-box"><span class="p-save-val">${c.saves.will >= 0 ? '+'+c.saves.will : c.saves.will}</span><span class="p-save-lbl">${t('save_will')}</span></div>
+                        </div>
+                    </div>
+
                     <div class="p-defense-grid">
                         <div class="p-def-box"><span class="p-def-val">${armorScore}</span><span class="p-def-lbl">${t('sheet_ac')}</span></div>
                         <div class="p-def-box"><span class="p-def-val">${def.dodge.val}</span><span class="p-def-lbl">${t('sheet_dodge')}</span></div>
@@ -3973,7 +3997,6 @@ renderPrintVersion: async (container) => {
                             <thead><tr><th>Name</th><th width="40">Atk</th><th>Dmg</th><th>Tags</th></tr></thead>
                             <tbody>
                                 ${attacks.map(a => {
-                                    // Visual star for proficiency
                                     const star = a.isProf ? '★ ' : '';
                                     const profDie = a.isProf ? '<small>+d4</small>' : '';
                                     return `
@@ -3988,7 +4011,6 @@ renderPrintVersion: async (container) => {
                         </table>
                     </div>
 
-                    <!-- PASSIVE FEATURES (Background, Ancestry, etc) -->
                     <div class="p-section">
                         <div class="p-header">${t('sheet_features')}</div>
                         ${passiveFeatures.map(f => `
@@ -4012,16 +4034,13 @@ renderPrintVersion: async (container) => {
                             Gold: ${c.currency.g} | Silver: ${c.currency.s} | Copper: ${c.currency.c}
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
 
         <!-- PAGE 2: SPELLS, CRAFTING & NOTES -->
         <div class="print-page">
-            
             <div class="p-grid-2">
-                <!-- ACTIVE ABILITIES (Exploits / Spells) -->
                 <div class="p-col">
                      ${activeAbilities.length > 0 ? `
                         <div class="p-section">
@@ -4061,7 +4080,6 @@ renderPrintVersion: async (container) => {
                     }
                 </div>
 
-                <!-- NOTES -->
                 <div class="p-col">
                      <div class="p-section" style="height: 100%;">
                         <div class="p-header">${t('sheet_notes')}</div>
@@ -4742,4 +4760,5 @@ renderPrintVersion: async (container) => {
     }
 
 };
+
 

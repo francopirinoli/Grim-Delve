@@ -1,13 +1,14 @@
 /**
  * dashboard.js
  * The Home Screen / Command Center.
- * v3.5: Localized
+ * v4.0: Added Direct Bestiary Access.
  */
 
 import { Storage } from '../utils/storage.js';
 import { CharGen } from './chargen.js';
 import { MonsterBuilder } from './monster_builder.js';
 import { ItemBuilder } from './item_builder.js';
+import { Library } from './library.js'; // Added Import
 import { I18n } from '../utils/i18n.js';
 
 export const Dashboard = {
@@ -56,21 +57,25 @@ export const Dashboard = {
 
                 <!-- Quick Actions Grid -->
                 <div class="dash-grid">
-                    <div class="dash-card action-card" id="card-new-char">
-                        <div class="dash-icon">👤</div>
-                        <h3>${t('dash_new_char')}</h3>
-                        <p>${t('dash_new_char_desc')}</p>
+                    <!-- CHANGED: Replaced New Hero with Browse Bestiary -->
+                    <div class="dash-card action-card" id="card-browse-bestiary">
+                        <div class="dash-icon">🐉</div>
+                        <h3>${t('dash_browse_mon')}</h3>
+                        <p>${t('dash_browse_mon_desc')}</p>
                     </div>
+                    
                     <div class="dash-card action-card" id="card-new-mon">
                         <div class="dash-icon">💀</div>
                         <h3>${t('dash_new_mon')}</h3>
                         <p>${t('dash_new_mon_desc')}</p>
                     </div>
+                    
                     <div class="dash-card action-card" id="card-new-item">
                         <div class="dash-icon">⚒️</div>
                         <h3>${t('dash_new_item')}</h3>
                         <p>${t('dash_new_item_desc')}</p>
                     </div>
+                    
                     <div class="dash-card action-card" id="card-rules">
                         <div class="dash-icon">📜</div>
                         <h3>${t('dash_rules')}</h3>
@@ -154,7 +159,7 @@ export const Dashboard = {
     },
 
     attachListeners: (lastChar) => {
-        // Hero Button
+        // Hero Button (Resume Last Character)
         const resumeBtn = document.getElementById('btn-dash-resume');
         if (resumeBtn && lastChar) {
             resumeBtn.onclick = () => {
@@ -168,24 +173,35 @@ export const Dashboard = {
             };
         }
         
+        // Hero Button (Create New Character)
         const createBtn = document.getElementById('btn-dash-create');
         if (createBtn) {
             createBtn.onclick = () => document.querySelector('[data-module="chargen"]').click();
         }
 
-        // Action Cards
-        document.getElementById('card-new-char').onclick = () => document.querySelector('[data-module="chargen"]').click();
+        // --- Action Cards ---
+
+        // 1. Browse Bestiary (NEW)
+        document.getElementById('card-browse-bestiary').onclick = () => {
+            // Pre-set the Library to the Bestiary Tab
+            Library.currentTab = 'bestiary';
+            // Trigger the Library module via the Sidebar button to ensure state is clean
+            document.querySelector('[data-module="library"]').click();
+        };
         
+        // 2. New Monster
         document.getElementById('card-new-mon').onclick = () => {
             MonsterBuilder.currentMonster.id = null; // Reset
             document.querySelector('[data-module="bestiary"]').click();
         };
 
+        // 3. New Item
         document.getElementById('card-new-item').onclick = () => {
             ItemBuilder.currentItem.id = null; // Reset
             document.querySelector('[data-module="artificer"]').click();
         };
 
+        // 4. Rules
         document.getElementById('card-rules').onclick = () => document.querySelector('[data-module="rules"]').click();
 
         // Recent List

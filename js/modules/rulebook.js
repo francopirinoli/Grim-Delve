@@ -125,43 +125,46 @@ export const Rulebook = {
 
     processContent: (text) => {
         let processed = text;
-        
-        // 1. Inject Keywords
-        for (const [key, desc] of Object.entries(Rulebook.keywords)) {
-            const regex = new RegExp(`\\b(${key})\\b`, 'g'); 
-            processed = processed.replace(regex, `<span class="keyword" title="${desc}">$1</span>`);
-        }
 
-        // 2. Dynamic Data Injection
-        // Char Options
+        // 1. Dynamic Data Injection (Must happen BEFORE keyword processing)
         if (text.includes('[[DYNAMIC_ANCESTRIES]]')) processed = processed.replace('[[DYNAMIC_ANCESTRIES]]', Rulebook.generateAncestryTable());
         if (text.includes('[[DYNAMIC_BACKGROUNDS]]')) processed = processed.replace('[[DYNAMIC_BACKGROUNDS]]', Rulebook.generateBackgroundTable());
         if (text.includes('[[DYNAMIC_ARCHETYPES]]')) processed = processed.replace('[[DYNAMIC_ARCHETYPES]]', Rulebook.generateArchetypeTable());
         if (text.includes('[[DYNAMIC_CLASSES]]')) processed = processed.replace('[[DYNAMIC_CLASSES]]', Rulebook.generateClassTable());
-        
-        // Items & Economy
         if (text.includes('[[DYNAMIC_ARMOR]]')) processed = processed.replace('[[DYNAMIC_ARMOR]]', Rulebook.generateArmorTable());
         if (text.includes('[[DYNAMIC_WEAPONS]]')) processed = processed.replace('[[DYNAMIC_WEAPONS]]', Rulebook.generateWeaponTable());
         if (text.includes('[[DYNAMIC_GEAR]]')) processed = processed.replace('[[DYNAMIC_GEAR]]', Rulebook.generateGearTable());
         if (text.includes('[[DYNAMIC_REAGENTS]]')) processed = processed.replace('[[DYNAMIC_REAGENTS]]', Rulebook.generateReagentTable());
-
-        // Bestiary
         if (text.includes('[[DYNAMIC_CHASSIS_TABLES]]')) processed = processed.replace('[[DYNAMIC_CHASSIS_TABLES]]', Rulebook.generateChassisTables());
         if (text.includes('[[DYNAMIC_FAMILY_REFERENCE]]')) processed = processed.replace('[[DYNAMIC_FAMILY_REFERENCE]]', Rulebook.generateFamilyReference());
-        
-        // Loot Tables
         if (text.includes('[[DYNAMIC_LOOT_TABLE_1]]')) processed = processed.replace('[[DYNAMIC_LOOT_TABLE_1]]', Rulebook.generateLootTable('tier_1'));
         if (text.includes('[[DYNAMIC_LOOT_TABLE_2]]')) processed = processed.replace('[[DYNAMIC_LOOT_TABLE_2]]', Rulebook.generateLootTable('tier_2'));
         if (text.includes('[[DYNAMIC_LOOT_TABLE_3]]')) processed = processed.replace('[[DYNAMIC_LOOT_TABLE_3]]', Rulebook.generateLootTable('tier_3'));
-
-        // NEW: Chapter 11 Tables
         if (text.includes('[[DYNAMIC_COMMODITIES]]')) processed = processed.replace('[[DYNAMIC_COMMODITIES]]', Rulebook.generateCommoditiesTable());
         if (text.includes('[[DYNAMIC_ART_GENERATOR]]')) processed = processed.replace('[[DYNAMIC_ART_GENERATOR]]', Rulebook.generateArtTable());
         if (text.includes('[[DYNAMIC_CURIOS]]')) processed = processed.replace('[[DYNAMIC_CURIOS]]', Rulebook.generateCuriosTable());
-        
         if (text.includes('[[DYNAMIC_MAGIC_ARMOR]]')) processed = processed.replace('[[DYNAMIC_MAGIC_ARMOR]]', Rulebook.generateMagicTable('armor'));
         if (text.includes('[[DYNAMIC_MAGIC_WEAPONS]]')) processed = processed.replace('[[DYNAMIC_MAGIC_WEAPONS]]', Rulebook.generateMagicTable('weapon'));
         if (text.includes('[[DYNAMIC_MAGIC_WONDROUS]]')) processed = processed.replace('[[DYNAMIC_MAGIC_WONDROUS]]', Rulebook.generateMagicTable('wondrous'));
+
+        // 2. Shield Headers (Temporary removal of headers to prevent tooltips inside them)
+        const headers = [];
+        processed = processed.replace(/<h[1-6]>.*?<\/h[1-6]>/gi, (match) => {
+            headers.push(match);
+            return `__HEADER_${headers.length - 1}__`;
+        });
+
+        // 3. Inject Keywords into Text Nodes only
+        // Regex Logic: \b(Key)\b(?![^<]*>) checks that the word is NOT inside < > brackets
+        for (const [key, desc] of Object.entries(Rulebook.keywords)) {
+            const regex = new RegExp(`\\b(${key})\\b(?![^<]*>)`, 'gi'); 
+            processed = processed.replace(regex, `<span class="keyword" title="${desc}">$1</span>`);
+        }
+
+        // 4. Restore Headers
+        headers.forEach((h, i) => {
+            processed = processed.replace(`__HEADER_${i}__`, h);
+        });
 
         return processed;
     },
@@ -257,10 +260,34 @@ export const Rulebook = {
         const t = I18n.t;
         const data = I18n.getData('items');
         if (!data) return "<em>Data missing.</em>";
-        let html = `<table class="table"><thead><tr><th>${t('item_cat_armor')}</th><th>${t('mon_stat_as')}</th><th>${t('cg_lbl_slots')}</th><th>${t('lbl_cost')}</th><th>${t('lbl_desc')}</th></tr></thead><tbody>`;
+
+        let html = `<table class="table">
+            <thead>
+                <tr>
+                    <th>${t('item_cat_armor')}</th>
+                    <th>${t('mon_stat_as')}</th>
+                    <th>Req</th>
+                    <th>${t('cg_lbl_slots')}</th>
+                    <th>${t('lbl_cost')}</th>
+                    <th>${t('lbl_desc')}</th>
+                </tr>
+            </thead>
+            <tbody>`;
+
         data.armor.forEach(i => {
-            html += `<tr><td><strong>${i.name}</strong></td><td>${i.as}</td><td>${i.slots}</td><td>${i.cost}</td><td><span style="font-size:0.85em">${i.penalty || i.description || "-"}</span></td></tr>`;
+            const requirement = i.req ? i.req : "-";
+            const penaltyDesc = i.penalty ? `<br><small style="color:var(--accent-crimson)">${i.penalty}</small>` : "";
+            
+            html += `<tr>
+                <td><strong>${i.name}</strong></td>
+                <td>${i.as}</td>
+                <td style="font-size:0.8em; font-family:var(--font-mono);">${requirement}</td>
+                <td>${i.slots}</td>
+                <td>${i.cost}</td>
+                <td><span style="font-size:0.85em">${i.description}${penaltyDesc}</span></td>
+            </tr>`;
         });
+
         html += `</tbody></table>`;
         return html;
     },
@@ -561,4 +588,5 @@ export const Rulebook = {
             }
         });
     }
+
 };

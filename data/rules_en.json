@@ -167,7 +167,7 @@
       }
     ]
   },
-  {
+{
     "id": "ch6",
     "title": "Chapter 6: Combat Rules",
     "sections": [
@@ -191,24 +191,30 @@
       },
       {
         "id": "6.4",
+        "title": "Saving Throws",
+        "content": "<p>When resisting special effects like poison, magic, or fear, you make a <strong>Saving Throw</strong> against the source's Difficulty Class (DC).</p><h3>Calculating Your Saves</h3><p>Unlike standard skills, Saving Throws use the <strong>Higher</strong> of two Attributes.</p><div class='formula'>d20 + Highest Mod + Proficiency Die vs. Effect DC</div><table class='table'><thead><tr><th>Save</th><th>Stats</th><th>Used For</th></tr></thead><tbody><tr><td><strong>Fortitude (FORT)</strong></td><td><strong>STR</strong> or <strong>CON</strong></td><td>Resisting Poison, Disease, Stunning, Forced Movement, and Exhaustion.</td></tr><tr><td><strong>Reflex (REF)</strong></td><td><strong>DEX</strong> or <strong>WIS</strong></td><td>Dodging Area Effects (Fireball), Traps, Falling Debris, and Grapples.</td></tr><tr><td><strong>Will (WILL)</strong></td><td><strong>INT</strong> or <strong>CHA</strong></td><td>Resisting Fear, Charm, Psychic Damage, Confusion, and Possession.</td></tr></tbody></table><p><em>Example: A Wizard with INT +4 and CHA -1 uses their INT (+4) for Will Saves.</em></p>",
+        "tags": ["saves", "fortitude", "reflex", "will", "resistance", "magic"]
+      },
+      {
+        "id": "6.5",
         "title": "Health & Death",
         "content": "<h3>Armor Score (AS)</h3><p>Armor in Grim Delve is <strong>Damage Reduction</strong>. When you take physical damage (Bludgeoning, Piercing, Slashing), subtract your AS from the total.</p><ul><li><em>Example:</em> You take 6 damage while wearing Chainmail (AS 2). You lose 4 HP.</li><li><em>Magic:</em> Armor usually does not reduce Magical or Elemental damage unless it has specific enchantments.</li></ul><h3>Dying (0 HP)</h3><p>When you reach <strong>0 HP</strong>, you fall <strong>Unconscious</strong> and are <strong>Dying</strong>.</p><h4>The Death Struggle</h4><p>You die permanently if you accumulate <strong>3 Death Failures</strong>. Failures reset only after a <strong>Rest</strong>.</p><p>At the start of your turn, make a <strong>CON Check (DC 13)</strong>:</p><ul><li><strong>Pass:</strong> You become <strong>Stable</strong> (0 HP, Unconscious, not dying). You stop rolling checks until you take damage.</li><li><strong>Fail:</strong> You take <strong>1 Death Failure</strong>.</li><li><strong>Nat 1:</strong> You take <strong>2 Death Failures</strong>.</li><li><strong>Nat 20:</strong> The adrenaline surges. Reset your Failures to 0, regain <strong>1 HP</strong>, and take your turn immediately.</li></ul><h4>Taking Damage while Dying</h4><p>While Unconscious, you cannot Defend. Any attack that hits you is an <strong>Automatic Critical Hit</strong>.</p><ul><li><strong>The Cost:</strong> If you take damage while at 0 HP, you take <strong>2 Death Failures</strong> immediately.</li><li><strong>Massive Damage:</strong> If a single hit deals damage equal to or greater than your Max HP, you die instantly.</li></ul><h4>Stabilizing</h4><p>An ally can spend an Action to make a <strong>Medicine Check (DC 13)</strong>. On a success, you are <strong>Stable</strong> (0 HP, Unconscious). You stop rolling checks until you take damage again.</p>",
         "tags": ["hp", "health", "death", "dying", "armor score", "as", "recovery", "healing", "failures"]
       },
       {
-        "id": "6.5",
+        "id": "6.6",
         "title": "Special Actions: Grappling & Stealth",
         "content": "<h3>Grappling</h3><p>To grab an enemy, you use the <strong>Attack Action</strong>.</p><ul><li><strong>The Check:</strong> Make an <strong>Athletics (STR) Check</strong> against the target's <strong>Reflex Save Value</strong> (or their own Athletics/Acrobatics result).</li><li><strong>Success:</strong> The target is <strong>Grappled</strong>.<ul><li><strong>Speed:</strong> 0.</li><li><strong>Penalty:</strong> They have Disadvantage on Attack Checks and Dexterity Saves.</li><li><strong>Movement:</strong> You can move the target at Half Speed.</li></ul></li><li><strong>Escaping:</strong> The target must use an <strong>Action</strong> to succeed on an Athletics or Acrobatics Check against your Athletics DC.</li></ul><h3>Shoving</h3><p>Make an <strong>Athletics (STR) Check</strong> against the target's <strong>Reflex Save Value</strong>. On a success, you push them <strong>5 feet</strong> or knock them <strong>Prone</strong>.</p><h3>Hiding (Stealth)</h3><p>You can use the <strong>Hide Action</strong> during combat if you break Line of Sight.</p><ul><li><strong>Requirement:</strong> You must be <strong>Obscured</strong> (Darkness, Fog) or behind <strong>Cover</strong>. You cannot Hide if an enemy can see you clearly.</li><li><strong>The Check:</strong> Roll <strong>Stealth (DEX)</strong> against the highest <strong>Passive Scrutiny</strong> among enemies (10 + WIS + Prof).</li><li><strong>Success:</strong> You gain the <strong>Hidden</strong> condition. You have Advantage on your next attack. Attacking or Casting reveals you.</li></ul>",
         "tags": ["grapple", "shove", "stealth", "hide", "maneuvers", "athletics"]
       },
       {
-        "id": "6.6",
+        "id": "6.7",
         "title": "Environmental Hazards",
         "content": "<h3>Falling</h3><p>Creatures take <strong>1d6 Bludgeoning Damage</strong> for every 10 feet they fall. Upon landing, they fall <strong>Prone</strong>.</p><ul><li><strong>Terminal Velocity:</strong> Damage caps at <strong>20d6</strong>.</li><li><strong>Water:</strong> Falling into deep water halves the damage.</li></ul><h3>Suffocation & Drowning</h3><p>A creature can hold its breath for a number of minutes equal to <strong>1 + CON Modifier</strong> (Minimum 30 seconds).</p><ul><li><strong>The Choke:</strong> Once air runs out, the creature survives for a number of Rounds equal to its <strong>CON Score</strong>.</li><li><strong>Death:</strong> At the end of this timer, the creature drops to <strong>0 HP</strong> and is Dying. They cannot be stabilized until they can breathe again.</li></ul><h3>Extreme Weather</h3><p>Explorers in Freezing Cold or Scorching Heat without proper gear must make a <strong>Fortitude Save (DC 11)</strong> every hour. On a failure, they gain 1 level of <strong>Exhaustion</strong>.</p>",
         "tags": ["falling", "drowning", "suffocation", "environment", "damage"]
       },
       {
-        "id": "6.7",
+        "id": "6.8",
         "title": "Resting & Recovery",
         "content": "<h3>The Breather (Short Rest)</h3><p>A pause in the action to bind wounds and catch your breath. Takes <strong>1 Dungeon Turn (10 Minutes)</strong>.</p><ul><li><strong>Cost:</strong> 1 Ration (if hungry) or 1 Torch duration.</li><li><strong>Benefit:</strong> You may spend your <strong>Hit Die</strong>. Roll the die + CON Modifier and regain that many Hit Points.</li><li><strong>Limit:</strong> You have a number of Hit Dice equal to your <strong>Level</strong>. These recharge on a Long Rest.</li><li><strong>Stamina:</strong> Warriors regain <strong>1d4 Stamina</strong>.</li></ul><h3>The Haven (Long Rest)</h3><p>A full night's sleep in a safe, fortified location (Town, Inn, or Magical Fortress). Camping in a dungeon does <strong>not</strong> count unless explicitly stated by the GM.</p><ul><li><strong>Benefit:</strong> Regain <strong>ALL</strong> Hit Points and Hit Dice.</li><li><strong>Resources:</strong> Regain <strong>ALL</strong> Mana and Luck.</li><li><strong>Conditions:</strong> Reduces Exhaustion by 1 level.</li></ul>",
         "tags": ["resting", "healing", "recovery", "hit dice", "short rest", "long rest"]
@@ -329,7 +335,7 @@
       }
     ]
   },
-  {
+{
     "id": "ch10",
     "title": "Chapter 10: Bestiary",
     "sections": [
@@ -348,14 +354,14 @@
       {
         "id": "10.3",
         "title": "Reading the Stats",
-        "content": "<p>Since the GM does not roll, monster stats are Target Numbers for the players.</p><ul><li><strong>Attack DC:</strong> The number a player must beat with their <strong>Defense Check</strong> (Dodge/Block/Parry) to avoid taking damage. High Attack DC means the monster is accurate or powerful.</li><li><strong>Defense DC:</strong> The number a player must beat with their <strong>Attack Check</strong> to hit the monster. High Defense DC means the monster is armored or evasive.</li><li><strong>Save DC:</strong> The number a player must beat with a <strong>Saving Throw</strong> to resist special effects (Poison, Fear, Magic).</li><li><strong>Damage:</strong> The fixed amount of damage the monster deals on a hit (unless a Critical is rolled against the player).</li></ul>",
+        "content": "<p>Since the GM does not roll, monster stats are Target Numbers for the players.</p><ul><li><strong>Attack DC:</strong> The number a player must beat with their <strong>Defense Check</strong> (Dodge/Block/Parry) to avoid taking damage.</li><li><strong>Defense DC:</strong> The number a player must beat with their <strong>Attack Check</strong> to hit the monster.</li><li><strong>Save DCs:</strong> Monsters have specific DCs for Fortitude, Reflex, and Will. When a player forces a monster to make a save (e.g. \"Monster makes a Fortitude Save\"), the player rolls <strong>d20 + Save Modifiers</strong> against the Monster's Save DC. If the player rolls higher, the Monster fails the save.</li><li><strong>Damage:</strong> The fixed amount of damage the monster deals on a hit (unless a Critical is rolled against the player).</li></ul>",
         "tags": ["stats", "dc", "reading", "math"]
       },
       {
         "id": "10.4",
         "title": "The Chassis Tables",
-        "content": "<p>Use these tables to find the base statistics for any monster by Level.</p>[[DYNAMIC_CHASSIS_TABLES]]",
-        "tags": ["tables", "math", "stats", "hp", "ac"]
+        "content": "<p>Use these tables to find the base statistics for any monster by Level.</p>[[DYNAMIC_CHASSIS_TABLES]]<h3>Role Save Modifiers</h3><p>Modify the Base Save DC from the table above based on the Monster's Role:</p><table class='table'><thead><tr><th>Role</th><th>Fortitude</th><th>Reflex</th><th>Will</th></tr></thead><tbody><tr><td><strong>Soldier</strong></td><td>+2</td><td>0</td><td>-2</td></tr><tr><td><strong>Brute</strong></td><td>+2</td><td>-2</td><td>-2</td></tr><tr><td><strong>Skirmisher</strong></td><td>-2</td><td>+2</td><td>0</td></tr><tr><td><strong>Lurker</strong></td><td>-2</td><td>+2</td><td>0</td></tr><tr><td><strong>Artillery</strong></td><td>-2</td><td>+2</td><td>0</td></tr><tr><td><strong>Controller</strong></td><td>-2</td><td>0</td><td>+2</td></tr><tr><td><strong>Solo</strong></td><td>+2</td><td>0</td><td>+2</td></tr><tr><td><strong>Minion</strong></td><td>0</td><td>0</td><td>0</td></tr></tbody></table>",
+        "tags": ["tables", "math", "stats", "hp", "ac", "saves"]
       },
       {
         "id": "10.5",
@@ -413,4 +419,5 @@
       }
     ]
   }
+
 ]

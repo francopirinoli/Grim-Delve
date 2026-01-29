@@ -113,24 +113,37 @@ export const CharGen = {
             archA: null, archB: null, classId: null, className: "",
             stats: { STR: null, DEX: null, CON: null, INT: null, WIS: null, CHA: null },
             derived: { maxHP: 0, maxMP: 0, maxSTA: 0, maxLuck: 0, slots: 8 },
-            calculated: { maxHP: 0, maxMP: 0, maxSTA: 0, maxLuck: 0, slots: 8 },
-            overrides: { maxHP: null, maxMP: null, maxSTA: null, maxLuck: null, ac: null },
+            
+            // Added 'saves' to calculated object
+            calculated: { maxHP: 0, maxMP: 0, maxSTA: 0, maxLuck: 0, slots: 8, saves: { fort: 0, ref: 0, will: 0 } },
+            
+            overrides: { 
+                maxHP: null, maxMP: null, maxSTA: null, maxLuck: null, 
+                ac: null, initiative: null, speed: null,
+                defenses: {},
+                skills: {},
+                attacks: {},
+                saves: {} // Placeholder for potential manual save overrides
+            },
             baseHP: 0,
             current: { hp: null, mp: null, sta: null, luck: null, xp: 0 }, 
+            
+            // Active calculated values
             defenses: { dodge: {val:0, die:"-"}, parry: {val:0, die:"-"}, block: {val:0, die:"-"} },
+            saves: { fort: 0, ref: 0, will: 0 }, // NEW: Active Save Values
+            
             inventory: [],
             currency: { g: 0, s: 0, c: 0 },
             talents: [],
             ancestryFeatIndex: null,
-            overrides: {
-                maxHP: null, maxMP: null, maxSTA: null, maxLuck: null,
-                ac: null,
-                initiative: null, 
-                speed: null,
-                skills: {},   // Format: { "athletics": { val: 5, die: "1d6" } }
-                defenses: {},  // Format: { "dodge": { val: 12, die: "1d4" } }
-                attacks: {}
-            },
+            
+            activeConditions: [],
+            notes: "",
+            ancestryChoice: null, 
+            ancestrySkill: null,
+            ancestryElement: null,
+            imageId: null,
+            imageUrl: null
         };
         CharGen.statState = { manualMode: false, arrayValues: [], assignedIndices: {}, selectedValIndex: null };
         CharGen.isEditMode = false;
@@ -1542,25 +1555,23 @@ export const CharGen = {
         if (isFullWarrior) hitDie = 10;
         if (isFullCaster) hitDie = 6;
 
-        // Level 1: HP is deterministic (Max Die + CON). 
-        // We recalculate this constantly to ensure Stats changes in the Wizard update the HP.
+        // HP Calculation
         if (c.level === 1) {
             c.baseHP = Math.max(1, hitDie + (s.CON || 0));
-        } 
-        // Higher Levels: Rely on stored cumulative rolls. 
-        // Safety fallback if data is missing.
-        else if (!c.baseHP) {
+        } else if (!c.baseHP) {
             c.baseHP = Math.max(1, hitDie + (s.CON || 0));
         }
         
         let calcHP = c.baseHP;
 
+        // Stamina
         let calcSTA = 0;
         if (isFullWarrior) {
             const phys = [(s.STR||0), (s.DEX||0), (s.CON||0)].sort((a,b) => b - a);
             calcSTA = Math.max(1, phys[0] + phys[1]);
         } else if (hasWarrior) calcSTA = Math.max(1, (s.STR||0), (s.DEX||0), (s.CON||0));
 
+        // Mana
         let calcMP = 0;
         if (hasCaster) {
             const getCastStat = (arch) => {
@@ -1575,15 +1586,29 @@ export const CharGen = {
             const modB = getCastStat(archB);
             let castMod = Math.max(modA, modB);
             if (castMod === 0) castMod = Math.max((s.INT||0), (s.WIS||0), (s.CHA||0));
-            if (isFullCaster) calcMP = ((c.level + 1) * 2) + castMod;
-            else calcMP = (c.level + 1) + castMod;
+            
+            // Formula: (Level + 1) * Multiplier + Stat
+            const multiplier = isFullCaster ? 2 : 1;
+            calcMP = ((c.level + 1) * multiplier) + castMod;
         }
 
+        // Luck
         let calcLuck = 1;
         if (isFullSpecialist) calcLuck = Math.max(1, (s.CHA||0) * 2);
         else if (hasSpecialist) calcLuck = Math.max(1, (s.CHA||0));
 
+        // Inventory Slots
         let calcSlots = 8 + (s.STR||0) + (s.CON||0);
+
+        // --- NEW: SAVING THROWS CALCULATION ---
+        // Fortitude: Max(STR, CON)
+        let calcFort = Math.max((s.STR || 0), (s.CON || 0));
+        
+        // Reflex: Max(DEX, WIS)
+        let calcRef = Math.max((s.DEX || 0), (s.WIS || 0));
+        
+        // Will: Max(INT, CHA)
+        let calcWill = Math.max((s.INT || 0), (s.CHA || 0));
 
         // --- PHASE 3: APPLY BONUSES (Feats/Items) ---
         const applyModifiers = (mods) => {
@@ -1598,6 +1623,10 @@ export const CharGen = {
                 const normStat = I18n.normalize('stats', mods.sta_mod);
                 calcSTA += (s[normStat] || 0);
             }
+            // Future Save bonuses from feats can be added here
+            if (mods.save_fort) calcFort += mods.save_fort;
+            if (mods.save_ref) calcRef += mods.save_ref;
+            if (mods.save_will) calcWill += mods.save_will;
         };
 
         if (c.ancestry) {
@@ -1627,21 +1656,36 @@ export const CharGen = {
         calcLuck += itemMods.luck;
         calcSlots += itemMods.slots;
 
-        // --- PHASE 4: RESOLVE OVERRIDES ---
+        // --- PHASE 4: RESOLVE OVERRIDES & SAVE ---
         c.calculated = {
             maxHP: Math.max(1, calcHP),
             maxMP: Math.max(0, calcMP),
             maxSTA: Math.max(0, calcSTA),
             maxLuck: Math.max(1, calcLuck),
-            slots: Math.max(8, calcSlots)
+            slots: Math.max(8, calcSlots),
+            saves: { 
+                fort: calcFort, 
+                ref: calcRef, 
+                will: calcWill 
+            }
         };
 
+        // Apply overrides if they exist, otherwise use calculated
         c.derived.maxHP = c.overrides.maxHP !== null ? c.overrides.maxHP : c.calculated.maxHP;
         c.derived.maxMP = c.overrides.maxMP !== null ? c.overrides.maxMP : c.calculated.maxMP;
         c.derived.maxSTA = c.overrides.maxSTA !== null ? c.overrides.maxSTA : c.calculated.maxSTA;
         c.derived.maxLuck = c.overrides.maxLuck !== null ? c.overrides.maxLuck : c.calculated.maxLuck;
         c.derived.slots = c.calculated.slots;
+        
+        // Final Save Values (Calculated + potential future overrides)
+        const ovSaves = c.overrides.saves || {};
+        c.saves = {
+            fort: ovSaves.fort !== undefined ? ovSaves.fort : c.calculated.saves.fort,
+            ref: ovSaves.ref !== undefined ? ovSaves.ref : c.calculated.saves.ref,
+            will: ovSaves.will !== undefined ? ovSaves.will : c.calculated.saves.will
+        };
 
+        // Update Wizard UI if active
         const stepContainer = document.getElementById('step-container');
         if (stepContainer && CharGen.currentStep === 3) CharGen.updateStatPreview(hitDie);
     },
@@ -4698,3 +4742,4 @@ renderPrintVersion: async (container) => {
     }
 
 };
+

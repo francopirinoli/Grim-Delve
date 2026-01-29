@@ -357,6 +357,118 @@
       ]
     },
     {
+      "id": "tbl_art_mat",
+      "title": "Art Object: Material",
+      "category": "Treasure",
+      "dice": "1d20",
+      "rows": [
+        { "roll": 1, "result": "Obsidian" },
+        { "roll": 2, "result": "Jade" },
+        { "roll": 3, "result": "Gold" },
+        { "roll": 4, "result": "Bone" },
+        { "roll": 5, "result": "Silver" },
+        { "roll": 6, "result": "Bronze" },
+        { "roll": 7, "result": "Ivory" },
+        { "roll": 8, "result": "Crystal" },
+        { "roll": 9, "result": "Petrified Wood" },
+        { "roll": 10, "result": "Porcelain" },
+        { "roll": 11, "result": "Electrum" },
+        { "roll": 12, "result": "Soapstone" },
+        { "roll": 13, "result": "Glass" },
+        { "roll": 14, "result": "Coral" },
+        { "roll": 15, "result": "Amber" },
+        { "roll": 16, "result": "Marble" },
+        { "roll": 17, "result": "Leather" },
+        { "roll": 18, "result": "Copper" },
+        { "roll": 19, "result": "Pearl" },
+        { "roll": 20, "result": "Platinum" }
+      ]
+    },
+    {
+      "id": "tbl_art_form",
+      "title": "Art Object: Form",
+      "category": "Treasure",
+      "dice": "1d20",
+      "rows": [
+        { "roll": 1, "result": "Idol" },
+        { "roll": 2, "result": "Mask" },
+        { "roll": 3, "result": "Chalice" },
+        { "roll": 4, "result": "Dagger" },
+        { "roll": 5, "result": "Necklace" },
+        { "roll": 6, "result": "Coin" },
+        { "roll": 7, "result": "Tablet" },
+        { "roll": 8, "result": "Comb" },
+        { "roll": 9, "result": "Box" },
+        { "roll": 10, "result": "Urn" },
+        { "roll": 11, "result": "Ring" },
+        { "roll": 12, "result": "Pipe" },
+        { "roll": 13, "result": "Bottle" },
+        { "roll": 14, "result": "Crown" },
+        { "roll": 15, "result": "Beetle" },
+        { "roll": 16, "result": "Bust" },
+        { "roll": 17, "result": "Book" },
+        { "roll": 18, "result": "Plate" },
+        { "roll": 19, "result": "Orb" },
+        { "roll": 20, "result": "Sarcophagus" }
+      ]
+    },
+    {
+      "id": "tbl_art_sub",
+      "title": "Art Object: Subject",
+      "category": "Treasure",
+      "dice": "1d20",
+      "rows": [
+        { "roll": 1, "result": "The Beast" },
+        { "roll": 2, "result": "The Skull" },
+        { "roll": 3, "result": "The King" },
+        { "roll": 4, "result": "The Serpent" },
+        { "roll": 5, "result": "Celestial Bodies" },
+        { "roll": 6, "result": "The Warrior" },
+        { "roll": 7, "result": "The Demon" },
+        { "roll": 8, "result": "The Eye" },
+        { "roll": 9, "result": "Geometry" },
+        { "roll": 10, "result": "The Flower" },
+        { "roll": 11, "result": "The Spider" },
+        { "roll": 12, "result": "The Ship" },
+        { "roll": 13, "result": "The Lover" },
+        { "roll": 14, "result": "The Fish" },
+        { "roll": 15, "result": "The Insect" },
+        { "roll": 16, "result": "The God" },
+        { "roll": 17, "result": "The Map" },
+        { "roll": 18, "result": "The Dragon" },
+        { "roll": 19, "result": "The Storm" },
+        { "roll": 20, "result": "The Void" }
+      ]
+    },
+    {
+      "id": "tbl_curios",
+      "title": "Curios & Relics",
+      "category": "Treasure",
+      "dice": "1d20",
+      "rows": [
+        { "roll": 1, "result": "Coin of Whispers (Repeats last 5 words spoken near it)." },
+        { "roll": 2, "result": "Lantern of Revealing (Reveals Invisible creatures)." },
+        { "roll": 3, "result": "Rope of Climbing (Knots and climbs on command)." },
+        { "roll": 4, "result": "Bag of Holding (Holds 50 Slots/500lbs)." },
+        { "roll": 5, "result": "Chime of Opening (Unlocks one lock/day)." },
+        { "roll": 6, "result": "Dust of Dryness (Destroys 100 gallons of water)." },
+        { "roll": 7, "result": "Ever-Burning Torch (Cold flame, no fuel)." },
+        { "roll": 8, "result": "Goggles of Night (Darkvision 60ft)." },
+        { "roll": 9, "result": "Immovable Rod (Stays fixed in space)." },
+        { "roll": 10, "result": "Sending Stones (Pair. Communicate over distance)." },
+        { "roll": 11, "result": "Decanter of Water (Pours endless water)." },
+        { "roll": 12, "result": "Helm of Comprehension (Read any language)." },
+        { "roll": 13, "name": "Cloak of the Bat (Advantage Stealth in dim light)." },
+        { "roll": 14, "result": "Ring of Feather Fall (No fall damage)." },
+        { "roll": 15, "result": "Gem of Brightness (50 Charges of Light/Blind)." },
+        { "roll": 16, "result": "Skeleton Key (Opens any door, breaks on 1 in 1d6)." },
+        { "roll": 17, "result": "Folding Boat (Box becomes boat)." },
+        { "roll": 18, "result": "Boots of Striding (Ignore Encumbrance)." },
+        { "roll": 19, "result": "Wand of Secrets (Pulses near secret doors)." },
+        { "roll": 20, "result": "Portable Hole (Opens pit on any surface)." }
+      ]
+    },
+    {
       "id": "tbl_eye_rays",
       "title": "Rayos Oculares del Observador",
       "category": "Combate",
@@ -374,5 +486,6 @@
     }
   ]
 }
+
 
 

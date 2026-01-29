@@ -2777,12 +2777,12 @@
           "effect": "Un fuerte ruido resonante estalla en un área de 10 pies de radio. Criaturas dentro hacen Salvación de Fortaleza vs Resultado de Lanzamiento. Fallo: 3d8 Daño de Trueno (Mitad en éxito). Criaturas inorgánicas (Constructos) tienen Desventaja."
         },
         {
-          "name": "Muro de Fuerza",
+          "name": "Esfera Resiliente",
           "cost": "3 MP",
           "duration": "1 Minuto (Concentración)",
-          "range": "60 pies",
-          "cast_dc": 18,
-          "effect": "Crea un muro de fuerza invisible e indestructible (20 pies ancho, 10 pies alto). Bloquea todos los objetos físicos y hechizos. No puede ser disipado, solo desintegrado o esperado."
+          "range": "30 pies",
+          "cast_dc": 17,
+          "effect": "Acción. Encierra a una criatura u objeto en una esfera de fuerza brillante. Es inmune a todo daño, pero no puede moverse ni atacar nada fuera. Un objetivo no dispuesto hace una Salvación de Reflejos vs Resultado para esquivar."
         }
       ]
     },
@@ -6969,4 +6969,5 @@
       ]
     }
   ]
+
 }

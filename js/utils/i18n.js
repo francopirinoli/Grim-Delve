@@ -26,8 +26,8 @@ const UI_DICTIONARY = {
         // --- TABS & HEADERS ---
         "magic_tab_title": "Grimoire & Workbench", // Renamed from Magic Items
         "magic_header": "Attuned / Equipped Magic",
-        "header_spells": "Spells & Exploits", // New
-        "header_crafting": "Schematics & Workbench", // New
+        "header_spells": "Spells", // New
+        "header_crafting": "Schematics", // New
         "sheet_features": "Features & Talents",
         "sheet_notes": "Notes",
         "sheet_inv": "Inventory",
@@ -343,8 +343,8 @@ const UI_DICTIONARY = {
         // --- TABS & HEADERS ---
         "magic_tab_title": "Grimorio y Taller", // Renamed
         "magic_header": "Magia Vinculada / Equipada",
-        "header_spells": "Hechizos y Tretas", // New
-        "header_crafting": "Esquemas y Taller", // New
+        "header_spells": "Hechizos", // New
+        "header_crafting": "Esquemas", // New
         "sheet_features": "Rasgos y Talentos",
         "sheet_notes": "Notas",
         "sheet_inv": "Inventario",
@@ -787,4 +787,5 @@ export const I18n = {
     }
 
 };
+
 

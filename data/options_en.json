@@ -347,164 +347,224 @@
     }
   ],
 "backgrounds": [
-    {
+{
       "id": "bg_acolyte",
       "name": "Acolyte",
-      "description": "Spent life in service to a god or cult. Knows ancient rites and sacrificial incense.",
+      "description": "You spent your formative years in a temple, monastery, or cult. You know the hierarchy of faith, the smell of sacrificial incense, and the ancient rites that appease the gods. Whether you fled or were sent on a holy mission, your faith is your armor.",
       "skill": "Lore & Knowledge (INT)",
-      "feat": { "name": "Divine Sanctuary", "effect": "Safe haven at temples. Guest rights." },
+      "feat": { 
+        "name": "Divine Sanctuary", 
+        "effect": "You command respect among the faithful. You and your party can receive free healing, food, and shelter at any temple, shrine, or holy site of your faith, provided you do not pose a danger to the clergy." 
+      },
       "gear": ["Holy Symbol", "Prayer Book", "Backpack", "Rations (3 Days)", "Waterskin", "Candles", "Flint & Steel", "30 Gold"]
     },
     {
       "id": "bg_scholar",
       "name": "Forbidden Scholar",
-      "description": "Studied heretical texts locked in deep vaults. Your education is dangerous.",
+      "description": "You have read books that drive lesser minds to madness. Your knowledge comes from banned libraries and heretical scrolls locked in deep vaults. You know things about the cosmos that the gods tried to hide, and that knowledge is both a weapon and a burden.",
       "skill": "Lore & Knowledge (INT)",
-      "feat": { "name": "Whispers of the Void", "effect": "Ask GM for obscure info about forbidden lore." },
+      "feat": { 
+        "name": "Whispers of the Void", 
+        "effect": "Once per session, you can ask the GM for a specific piece of obscure or forbidden lore regarding a monster, artifact, or location. The GM must answer truthfully, though the information may be cryptic." 
+      },
       "gear": ["Forbidden Tome", "Backpack", "Rations (3 Days)", "Waterskin", "Chalk (10)", "Candles", "Flint & Steel", "30 Gold"]
     },
     {
       "id": "bg_antiquarian",
       "name": "Antiquarian",
-      "description": "A seeker of the past who sees the value hidden within history.",
+      "description": "You are obsessed with the past. Ruins are not just piles of stone; they are puzzles waiting to be solved. You can tell the difference between ancient junk and a priceless relic just by the dust on it.",
       "skill": "Investigate (INT)",
-      "feat": { "name": "Eye for Value", "effect": "Advantage to appraise items. Sell Art for +10% value." },
+      "feat": { 
+        "name": "Eye for Value", 
+        "effect": "You have Advantage on Intelligence checks to estimate the value of art objects and gems. When selling such items during Downtime, you can negotiate a 10% increase in the sale price." 
+      },
       "gear": ["Magnifying Glass", "Notebook & Pencil", "Crowbar", "Backpack", "Rations (3 Days)", "Waterskin", "Candles", "Flint & Steel", "35 Gold"]
     },
     {
       "id": "bg_medic",
       "name": "Field Medic",
-      "description": "A battlefield sawbones. You know the smell of gangrene and the sound of a dying breath.",
+      "description": "You learned your trade in the mud and blood of war. You have sawed off limbs to stop gangrene and stitched guts back together under fire. You aren't a magician; you are a mechanic of the flesh.",
       "skill": "Medicine Kit Proficiency",
-      "feat": { "name": "Triage", "effect": "Action: Assess creature's exact physical state." },
+      "feat": { 
+        "name": "Triage", 
+        "effect": "As a Standard Action, you can analyze a creature you can see. You learn its current HP, Maximum HP, and any active Physical Conditions (e.g., Poisoned, Bleeding) affecting it." 
+      },
       "gear": ["Medicine Kit", "Backpack", "Rations (3 Days)", "Waterskin", "Torches", "Flint & Steel", "25 Gold"]
     },
     {
       "id": "bg_alchemist",
       "name": "Alchemist's Apprentice",
-      "description": "Spent years cleaning beakers and inhaling fumes. Knows how to turn filth into fire.",
+      "description": "You spent your youth grinding reagents, scrubbing cauldrons, and inhaling toxic fumes. You understand the volatile chemistry of the world. You know which mosses explode and which acids dissolve locks.",
       "skill": "Alchemist's Kit Proficiency",
-      "feat": { "name": "Alchemical Eye", "effect": "Advantage to identify potions/poisons." },
+      "feat": { 
+        "name": "Alchemical Eye", 
+        "effect": "You can identify potions, poisons, and alchemical substances by taste, smell, or observation without making a check. You automatically know the ingredients required to craft them." 
+      },
       "gear": ["Alchemist's Kit", "Backpack", "Rations (3 Days)", "Waterskin", "Candles", "Flint & Steel", "30 Gold"]
     },
-    {
+{
       "id": "bg_artisan",
       "name": "Artisan",
-      "description": "A maker of things. Smiths, tinkers, masons. You know everything has a breaking point.",
+      "description": "You are a maker of things. Whether a blacksmith, mason, or carpenter, you understand how the world is put together. You see the stress lines in a wall and the flaw in a blade before anyone else does.",
       "skill": "Crafting Kit Proficiency",
-      "feat": { "name": "Eye for Craft", "effect": "Ask GM for info on object construction/weakness." },
+      "feat": { 
+        "name": "Eye for Craft", 
+        "effect": "You can determine the origin, material quality, and structural weak point of any manufactured object or building by studying it for 1 minute. This grants Advantage on checks to break or dismantle it." 
+      },
       "gear": ["Crafting Kit", "Hammer", "Backpack", "Rations (3 Days)", "Waterskin", "Torches", "Flint & Steel", "30 Gold"]
     },
     {
       "id": "bg_herbalist",
       "name": "Herbalist",
-      "description": "A wild-crafter who knows which roots stop bleeding and which mushrooms stop a heart.",
+      "description": "You lived your life in the wild places, learning the old ways of roots and leaves. You know which berries stop a bleeding wound and which mushrooms stop a heart.",
       "skill": "Herbalism Kit Proficiency",
-      "feat": { "name": "Forager's Lore", "effect": "Identify plants/fungi effects instantly." },
+      "feat": { 
+        "name": "Forager's Lore", 
+        "effect": "You automatically identify plants and fungi upon seeing them. You gain Advantage on Survival checks made to harvest flora or find natural food and water." 
+      },
       "gear": ["Herbalism Kit", "Backpack", "Rations (3 Days)", "Waterskin", "Torches", "Flint & Steel", "25 Gold"]
     },
     {
       "id": "bg_poisoner",
       "name": "Poisoner",
-      "description": "Deals in death with a single drop. Understands the crawling and burning tricks of nature.",
+      "description": "You deal in death with a single drop. You might have been an assassin's assistant or a court taster. You understand the crawling, burning, and paralyzing tricks of nature better than anyone.",
       "skill": "Poisoner's Kit Proficiency",
-      "feat": { "name": "Poisoner's Eye", "effect": "Advantage to identify poisons." },
+      "feat": { 
+        "name": "Poisoner's Eye", 
+        "effect": "You can identify a poison's type and origin with a glance. Additionally, you are immune to accidentally poisoning yourself when applying toxins to weapons." 
+      },
       "gear": ["Poisoner's Kit", "Dagger", "Backpack", "Rations (3 Days)", "Waterskin", "Candles", "Flint & Steel", "35 Gold"]
     },
     {
       "id": "bg_urchin",
       "name": "Urchin",
-      "description": "Raised by the streets. A gutter rat who knows how to be invisible.",
+      "description": "Raised by the cobblestones and the gutter. You were the child no one looked at twice, a ghost in the city learning the secrets of survival in the shadows of the wealthy.",
       "skill": "Stealth & Thievery (DEX)",
-      "feat": { "name": "Hidden Paths", "effect": "Advantage navigating cities. Find safe rest spots." },
+      "feat": { 
+        "name": "Hidden Paths", 
+        "effect": "You move at double speed through urban environments. You can always find a safe, hidden location for the party to take a Short or Long Rest within a city or sewer." 
+      },
       "gear": ["Dagger", "Backpack", "Rations (3 Days)", "Waterskin", "Sack", "Flint & Steel", "25 Gold"]
     },
     {
       "id": "bg_burglar",
       "name": "Cat Burglar",
-      "description": "A second-story artist. Sees walls and locks as puzzles to be solved.",
+      "description": "A second-story artist. You don't see walls; you see ladders. You don't see locked doors; you see puzzles. You treat property rights as a suggestion rather than a rule.",
       "skill": "Thieves' Tools Proficiency",
-      "feat": { "name": "Case the Joint", "effect": "Observe location 10m to ask GM one security detail." },
+      "feat": { 
+        "name": "Case the Joint", 
+        "effect": "If you spend 10 minutes observing a building or location, you can ask the GM one specific question about its security (e.g., guard patrol routes, alarm locations, or entry points) which they must answer truthfully." 
+      },
       "gear": ["Thieves' Tools", "Rope (50ft)", "Backpack", "Rations (3 Days)", "Waterskin", "Chalk", "Flint & Steel", "35 Gold"]
     },
-    {
+{
       "id": "bg_smuggler",
       "name": "Smuggler",
-      "description": "Moves things that shouldn't be moved. Knows the back roads and the right bribes.",
+      "description": "You move things that shouldn't be moved. Whether it's illicit goods, refugees, or forbidden texts, you know the back roads, the bribes, and the secret compartments. You believe laws are just suggestions for people who lack imagination.",
       "skill": "Deception (CHA)",
-      "feat": { "name": "Hidden Compartment", "effect": "Gain 1 Hidden Inventory Slot." },
+      "feat": { 
+        "name": "Hidden Compartment", 
+        "effect": "You have a modified piece of gear (boot heel, false bottom in backpack) that grants 1 Hidden Inventory Slot. Items in this slot cannot be found by a search unless the searcher succeeds on a DC 18 Scrutiny check." 
+      },
       "gear": ["Crowbar", "Backpack", "Rations (3 Days)", "Waterskin", "Torches", "Flint & Steel", "40 Gold"]
     },
     {
       "id": "bg_gambler",
       "name": "Gambler",
-      "description": "Lives by the roll of a die. Expert at reading tells and calculating odds.",
+      "description": "You live by the roll of the die and the turn of a card. You aren't just lucky; you are observant. You know how to calculate odds in a split second and how to spot the nervous twitch of a liar.",
       "skill": "Scrutiny (WIS)",
-      "feat": { "name": "Read the Tell", "effect": "Converse 1 min to ask GM about creature's intent." },
+      "feat": { 
+        "name": "Read the Tell", 
+        "effect": "After observing or conversing with a creature for 1 minute, you can ask the GM one yes/no question about their current intentions or honesty. The GM must answer truthfully." 
+      },
       "gear": ["Loaded Dice", "Dagger", "Backpack", "Rations (3 Days)", "Waterskin", "Candles", "Flint & Steel", "50 Gold"]
     },
     {
       "id": "bg_sellsword",
       "name": "Sellsword",
-      "description": "A hired blade. Not a hero, but a professional who knows loyalty belongs to the highest bidder.",
+      "description": "You are a professional killer. Not a hero, not a villain, but a worker whose trade is violence. You understand contracts, chain of command, and that loyalty belongs to the highest bidder.",
       "skill": "Intimidation (CHA)",
-      "feat": { "name": "Mercenary's Reputation", "effect": "Advantage on Influence Checks for jobs/underworld." },
+      "feat": { 
+        "name": "Mercenary's Reputation", 
+        "effect": "You know the signs and codes of the criminal underworld and military organizations. You gain Advantage on Influence checks to gather information or secure meetings with local gangs or guards." 
+      },
       "gear": ["Handaxe", "Backpack", "Bedroll", "Rations (3 Days)", "Waterskin", "Torches", "Flint & Steel", "30 Gold"]
     },
     {
       "id": "bg_gladiator",
       "name": "Gladiator",
-      "description": "Survivor of the pits. A practical fighter who knows how to size up an opponent.",
+      "description": "You survived the pits. Whether you fought for freedom or glory, you learned that combat is a performance. You know how to play to the crowd and how to spot the weakness in an opponent's stance.",
       "skill": "Athletics (STR)",
-      "feat": { "name": "Sizing Up", "effect": "Action: Scrutiny Check. Reveal physical strength/weakness." },
+      "feat": { 
+        "name": "Size Up", 
+        "effect": "As a Standard Action, you can observe a creature. The GM tells you if their Strength, Dexterity, or Constitution scores are higher, lower, or equal to yours." 
+      },
       "gear": ["Spear", "Backpack", "Bedroll", "Rations (3 Days)", "Waterskin", "Torches", "Flint & Steel", "30 Gold"]
     },
     {
       "id": "bg_watch",
       "name": "City Watch",
-      "description": "A former copper. Has a cynical eye for trouble and knows how to make people talk.",
+      "description": "A former officer of the law. You have walked the beat, broken up brawls, and taken bribes. You have a cynical eye for trouble and know exactly how to apply pressure to make a suspect talk.",
       "skill": "Scrutiny (WIS)",
-      "feat": { "name": "Voice of Authority", "effect": "Advantage on Intimidation vs criminals/commoners." },
+      "feat": { 
+        "name": "Voice of Authority", 
+        "effect": "You have Advantage on Intimidation checks against commoners and criminals. You can often secure passage through city gates or checkpoints by flashing your old badge or invoking the law." 
+      },
       "gear": ["Club", "Backpack", "Bedroll", "Rations (3 Days)", "Waterskin", "Torches", "Flint & Steel", "30 Gold"]
     },
-    {
+{
       "id": "bg_deserter",
       "name": "Deserter",
-      "description": "Ran from the war. Learned to survive off the land and spot bounty hunters.",
+      "description": "You fled the war when the cause turned sour or the slaughter became too much. You learned to live off the land while looking over your shoulder, identifying threats before they find you.",
       "skill": "Survival (WIS)",
-      "feat": { "name": "Lie Low", "effect": "Advantage on Survival to find hidden campsites." },
+      "feat": { 
+        "name": "Lie Low", 
+        "effect": "You have Advantage on Survival checks to find hidden campsites or safe paths through wilderness that avoid patrols. You know how to disappear when the heat is on." 
+      },
       "gear": ["Handaxe", "Backpack", "Bedroll", "Rations (3 Days)", "Waterskin", "Flint & Steel", "25 Gold"]
     },
     {
       "id": "bg_courtier",
       "name": "Courtier",
-      "description": "Creature of the court. Thrives in a jungle of silks, whispers, and poison.",
+      "description": "A creature of the court, thriving in a jungle of silk and poison. You know that a whispered word can kill faster than a knife. You understand the complex dance of etiquette, lineage, and leverage.",
       "skill": "Influence (CHA)",
-      "feat": { "name": "Courtly Graces", "effect": "Advantage on Influence Checks in formal settings." },
+      "feat": { 
+        "name": "Courtly Graces", 
+        "effect": "You have Advantage on Influence checks in formal settings or when dealing with high society. You can usually secure an invitation to social events or balls where information is traded." 
+      },
       "gear": ["Fine Clothes", "Backpack", "Rations (3 Days)", "Waterskin", "Candles", "Flint & Steel", "50 Gold"]
     },
     {
       "id": "bg_noble",
       "name": "Exiled Noble",
-      "description": "Born to privilege, lost it all. Carries the weight of a name and education.",
+      "description": "Born to privilege but stripped of your lands. You may have lost your fortune, but you kept your education and your name. You carry yourself with an authority that demands respect, even in rags.",
       "skill": "Influence (CHA)",
-      "feat": { "name": "Noble Bearing", "effect": "Advantage on Influence vs nobility/officials." },
+      "feat": { 
+        "name": "Noble Bearing", 
+        "effect": "You have Advantage on Influence checks when dealing with nobility, bureaucrats, or officers. You can demand an audience with local rulers, though they may not grant your requests." 
+      },
       "gear": ["Signet Ring", "Rapier", "Backpack", "Rations (3 Days)", "Waterskin", "50 Gold"]
     },
     {
       "id": "bg_charlatan",
       "name": "Charlatan",
-      "description": "Con artist and fake miracle-worker. Faith is a tool, and you wield it well.",
+      "description": "A snake-oil salesman or false prophet. You understand that people want to believe in miracles, and you are happy to sell them one. You are an expert at forging documents and identities.",
       "skill": "Deception (CHA)",
-      "feat": { "name": "False Identity", "effect": "Advantage on Deception to maintain alias." },
+      "feat": { 
+        "name": "False Identity", 
+        "effect": "You have an established alter ego with documentation. You have Advantage on Deception checks to maintain this persona. You can forge simple documents (travel papers, letters) with 1 hour of work." 
+      },
       "gear": ["Prop (Fake Item)", "Dagger", "Backpack", "Rations (3 Days)", "Waterskin", "Candles", "Flint & Steel", "45 Gold"]
     },
     {
       "id": "bg_cultist",
       "name": "Escaped Cultist",
-      "description": "Saw behind the curtain and fled. Knows the signs of the dark orders hunting you.",
+      "description": "You served a dark power until you saw behind the curtain and fled. You are branded by your past, but you know the signs of the deep entities. You know the secret handshakes and the madness in the eyes of the faithful.",
       "skill": "Deception (CHA)",
-      "feat": { "name": "Dark Whispers", "effect": "Advantage to recognize cult symbols/rites." },
+      "feat": { 
+        "name": "Dark Whispers", 
+        "effect": "You have Advantage on checks to identify cult symbols, rituals, or the influence of aberrations. You can often pass as a member of a dark order to gather information without raising suspicion." 
+      },
       "gear": ["Disturbing Idol", "Dagger", "Backpack", "Bedroll", "Rations (3 Days)", "Waterskin", "Torches", "Flint & Steel", "25 Gold"]
     }
   ],
@@ -6969,3 +7029,4 @@
   ]
 
 }
+

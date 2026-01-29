@@ -469,6 +469,118 @@
       ]
     },
     {
+      "id": "tbl_art_mat",
+      "title": "Objeto de Arte: Material",
+      "category": "Tesoro",
+      "dice": "1d20",
+      "rows": [
+        { "roll": 1, "result": "Obsidiana" },
+        { "roll": 2, "result": "Jade" },
+        { "roll": 3, "result": "Oro" },
+        { "roll": 4, "result": "Hueso" },
+        { "roll": 5, "result": "Plata" },
+        { "roll": 6, "result": "Bronce" },
+        { "roll": 7, "result": "Marfil" },
+        { "roll": 8, "result": "Cristal" },
+        { "roll": 9, "result": "Madera Petrificada" },
+        { "roll": 10, "result": "Porcelana" },
+        { "roll": 11, "result": "Electrum" },
+        { "roll": 12, "result": "Esteatita" },
+        { "roll": 13, "result": "Vidrio" },
+        { "roll": 14, "result": "Coral" },
+        { "roll": 15, "result": "Ámbar" },
+        { "roll": 16, "result": "Mármol" },
+        { "roll": 17, "result": "Cuero" },
+        { "roll": 18, "result": "Cobre" },
+        { "roll": 19, "result": "Perla" },
+        { "roll": 20, "result": "Platino" }
+      ]
+    },
+    {
+      "id": "tbl_art_form",
+      "title": "Objeto de Arte: Forma",
+      "category": "Tesoro",
+      "dice": "1d20",
+      "rows": [
+        { "roll": 1, "result": "Ídolo" },
+        { "roll": 2, "result": "Máscara" },
+        { "roll": 3, "result": "Cáliz" },
+        { "roll": 4, "result": "Daga" },
+        { "roll": 5, "result": "Collar" },
+        { "roll": 6, "result": "Moneda" },
+        { "roll": 7, "result": "Tablilla" },
+        { "roll": 8, "result": "Peine" },
+        { "roll": 9, "result": "Caja" },
+        { "roll": 10, "result": "Urna" },
+        { "roll": 11, "result": "Anillo" },
+        { "roll": 12, "result": "Pipa" },
+        { "roll": 13, "result": "Botella" },
+        { "roll": 14, "result": "Corona" },
+        { "roll": 15, "result": "Escarabajo" },
+        { "roll": 16, "result": "Busto" },
+        { "roll": 17, "result": "Libro" },
+        { "roll": 18, "result": "Plato" },
+        { "roll": 19, "result": "Orbe" },
+        { "roll": 20, "result": "Sarcófago" }
+      ]
+    },
+    {
+      "id": "tbl_art_sub",
+      "title": "Objeto de Arte: Sujeto",
+      "category": "Tesoro",
+      "dice": "1d20",
+      "rows": [
+        { "roll": 1, "result": "La Bestia" },
+        { "roll": 2, "result": "La Calavera" },
+        { "roll": 3, "result": "El Rey" },
+        { "roll": 4, "result": "La Serpiente" },
+        { "roll": 5, "result": "Cuerpos Celestes" },
+        { "roll": 6, "result": "El Guerrero" },
+        { "roll": 7, "result": "El Demonio" },
+        { "roll": 8, "result": "El Ojo" },
+        { "roll": 9, "result": "Geometría" },
+        { "roll": 10, "result": "La Flor" },
+        { "roll": 11, "result": "La Araña" },
+        { "roll": 12, "result": "El Barco" },
+        { "roll": 13, "result": "El Amante" },
+        { "roll": 14, "result": "El Pez" },
+        { "roll": 15, "result": "El Insecto" },
+        { "roll": 16, "result": "El Dios" },
+        { "roll": 17, "result": "El Mapa" },
+        { "roll": 18, "result": "El Dragón" },
+        { "roll": 19, "result": "La Tormenta" },
+        { "roll": 20, "result": "El Vacío" }
+      ]
+    },
+    {
+      "id": "tbl_curios",
+      "title": "Curiosidades y Reliquias",
+      "category": "Tesoro",
+      "dice": "1d20",
+      "rows": [
+        { "roll": 1, "result": "Moneda de Susurros (Repite últimas palabras)." },
+        { "roll": 2, "result": "Linterna de Revelación (Revela Invisibilidad)." },
+        { "roll": 3, "result": "Cuerda de Escalada (Se mueve sola)." },
+        { "roll": 4, "result": "Bolsa de Contención (50 Espacios)." },
+        { "roll": 5, "result": "Campana de Apertura (Abre cerraduras)." },
+        { "roll": 6, "result": "Polvo de Sequedad (Destruye agua)." },
+        { "roll": 7, "result": "Antorcha Eterna (Llama fría)." },
+        { "roll": 8, "result": "Gafas de la Noche (Visión Oscuridad)." },
+        { "roll": 9, "result": "Vara Inamovible (Se fija en el espacio)." },
+        { "roll": 10, "result": "Piedras Mensajeras (Comunicación a distancia)." },
+        { "roll": 11, "result": "Decantador de Agua (Agua infinita)." },
+        { "roll": 12, "result": "Yelmo de Comprensión (Leer idiomas)." },
+        { "roll": 13, "result": "Capa del Murciélago (Ventaja Sigilo)." },
+        { "roll": 14, "result": "Anillo de Caída de Pluma (Sin daño caída)." },
+        { "roll": 15, "result": "Gema de Brillo (Cegar enemigos)." },
+        { "roll": 16, "result": "Llave Maestra (Abre puertas estándar)." },
+        { "roll": 17, "result": "Bote Plegable (Caja se hace barco)." },
+        { "roll": 18, "result": "Botas de Zancada (Ignora Sobrecarga)." },
+        { "roll": 19, "result": "Varita de Secretos (Detecta puertas)." },
+        { "roll": 20, "result": "Agujero Portátil (Pozo en cualquier superficie)." }
+      ]
+    },
+    {
       "id": "tbl_eye_rays",
       "title": "Rayos Oculares del Observador",
       "category": "Combate",
@@ -486,6 +598,7 @@
     }
   ]
 }
+
 
 
 

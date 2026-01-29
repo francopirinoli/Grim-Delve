@@ -267,6 +267,96 @@
       ]
     },
     {
+      "id": "tbl_stat_array",
+      "title": "Matriz de Atributos",
+      "category": "Creación de Personaje",
+      "dice": "1d12",
+      "rows": [
+        { "roll": 1, "result": "La Sota: +1, +1, +1, +1, +1, 0" },
+        { "roll": 2, "result": "El Estándar: +2, +1, +1, +1, 0, 0" },
+        { "roll": 3, "result": "El Dualista: +2, +2, +1, 0, 0, 0" },
+        { "roll": 4, "result": "El Sabio: +3, +1, +1, 0, 0, 0" },
+        { "roll": 5, "result": "El Especialista: +3, +2, 0, 0, 0, 0" },
+        { "roll": 6, "result": "Héroe con Defecto: +3, +2, +1, 0, 0, -1" },
+        { "roll": 7, "result": "El Min-Max: +3, +3, 0, 0, 0, -1" },
+        { "roll": 8, "result": "La Tríada: +2, +2, +2, 0, 0, -1" },
+        { "roll": 9, "result": "El Comodín: +3, +2, +2, -1, -1, 0" },
+        { "roll": 10, "result": "El Enfocado: +3, +3, +1, -1, -1, 0" },
+        { "roll": 11, "result": "El Complejo: +2, +2, +2, +1, -1, -1" },
+        { "roll": 12, "result": "Alto Riesgo: +3, +3, +2, -1, -1, -1" }
+      ]
+    },
+    {
+      "id": "tbl_room_content",
+      "title": "Contenido de Habitación",
+      "category": "Mundo",
+      "dice": "1d6",
+      "rows": [
+        { "roll": 1, "result": "Vacío / Atmósfera (Drena Tiempo/Luz)." },
+        { "roll": 2, "result": "Vacío / Atmósfera (Bueno para Descansar)." },
+        { "roll": 3, "result": "Trampa / Peligro (Drena Salud/Recursos)." },
+        { "roll": 4, "result": "Monstruo (Combate)." },
+        { "roll": 5, "result": "Tesoro (Sin vigilancia pero oculto/cerrado)." },
+        { "roll": 6, "result": "Especial (Tira d6: 1-3 Monstruo+Botín, 4-5 Trampa+Botín, 6 Jefe)." }
+      ]
+    },
+    {
+      "id": "tbl_encounter_die",
+      "title": "Dado de Encuentro Sobrecargado",
+      "category": "Mundo",
+      "dice": "1d6",
+      "rows": [
+        { "roll": 1, "result": "¡Encuentro! Un monstruo errante ataca inmediatamente." },
+        { "roll": 2, "result": "Peligro / Señal. Se activa peligro o aparece pista." },
+        { "roll": 3, "result": "Agotamiento. 1 Antorcha se apaga. Si 3ª vez, comer Ración." },
+        { "roll": 4, "result": "Expiración. Hechizos de 10 min/1 hora terminan." },
+        { "roll": 5, "result": "Cambio de Mazmorra. Puerta se cierra, trampa se reinicia." },
+        { "roll": 6, "result": "Despejado. Paso seguro. El grupo recupera el aliento." }
+      ]
+    },
+    {
+      "id": "tbl_dt_carousing",
+      "title": "Tiempo Muerto: Juerga",
+      "category": "Tiempo Muerto",
+      "dice": "1d20",
+      "rows": [
+        { "roll": "1", "result": "¡Desastre! (0 XP). Arrestado, Robado o Maldito." },
+        { "roll": "2-5", "result": "Arrepentimiento (1 XP). Comienzas Agotado." },
+        { "roll": "6-10", "result": "Problemas (2 XP). Pelea o deuda (2d20o)." },
+        { "roll": "11-15", "result": "Buen Momento (3 XP). La reputación crece." },
+        { "roll": "16-20", "result": "Héroe Local (4 XP). Ventaja en Influencia." },
+        { "roll": "21-30", "result": "Legendario (6 XP). Aliado NPC poderoso." }
+      ]
+    },
+    {
+      "id": "tbl_dt_research",
+      "title": "Tiempo Muerto: Investigación",
+      "category": "Tiempo Muerto",
+      "dice": "1d20",
+      "rows": [
+        { "roll": "1", "result": "Engañado (0 XP). Pista falsa hacia una trampa." },
+        { "roll": "2-5", "result": "Pista Fría (1 XP). Desventaja en Investigar." },
+        { "roll": "6-10", "result": "Rumores (2 XP). Susurros vagos." },
+        { "roll": "11-15", "result": "Pista Sólida (3 XP). Gancho de Misión." },
+        { "roll": "16-20", "result": "Perspicacia (4 XP). Inteligencia Táctica." },
+        { "roll": "21-30", "result": "Saber Prohibido (6 XP). Secreto/Nombre Verdadero." }
+      ]
+    },
+    {
+      "id": "tbl_dt_selling",
+      "title": "Tiempo Muerto: Vender Botín",
+      "category": "Tiempo Muerto",
+      "dice": "1d20",
+      "rows": [
+        { "roll": "1", "result": "Estafado (0% Valor). Incautado o robado." },
+        { "roll": "2-5", "result": "Desesperado (25% Valor). Empeñado." },
+        { "roll": "6-10", "result": "Oferta Baja (50% Valor). Valor de chatarra." },
+        { "roll": "11-15", "result": "Justo (80% Valor). Trato respetable." },
+        { "roll": "16-20", "result": "Mercado (100% Valor). Valor completo." },
+        { "roll": "21-30", "result": "Guerra de Pujas (150% Valor). Coleccionista." }
+      ]
+    },
+    {
       "id": "tbl_eye_rays",
       "title": "Rayos Oculares del Observador",
       "category": "Combate",
@@ -284,4 +374,5 @@
     }
   ]
 }
+
 

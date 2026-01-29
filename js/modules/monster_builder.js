@@ -269,15 +269,15 @@ getHTML: (rawMonster, imageSrc, forceLang = null) => {
                     </div>
                     <div class="mc-stat">
                         <div class="mc-stat-val">${MonsterRenderer.formatStat(s.saves.fort)}</div>
-                        <div class="mc-stat-label">${txt('save_fort').substring(0,4)}</div>
+                        <div class="mc-stat-label">${txt('save_fort')}</div>
                     </div>
                     <div class="mc-stat">
                         <div class="mc-stat-val">${MonsterRenderer.formatStat(s.saves.ref)}</div>
-                        <div class="mc-stat-label">${txt('save_ref').substring(0,3)}</div>
+                        <div class="mc-stat-label">${txt('save_ref')}</div>
                     </div>
                     <div class="mc-stat">
                         <div class="mc-stat-val">${MonsterRenderer.formatStat(s.saves.will)}</div>
-                        <div class="mc-stat-label">${txt('save_will').substring(0,4)}</div>
+                        <div class="mc-stat-label">${txt('save_will')}</div>
                     </div>
                 </div>
 
@@ -1035,4 +1035,5 @@ export const MonsterBuilder = {
     }
 
 };
+
 

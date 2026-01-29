@@ -158,12 +158,6 @@
         "title": "Adventuring Gear",
         "content": "<p>Tools are just as vital as weapons. Managing light and food is the key to surviving the Dungeon Turn.</p>[[DYNAMIC_GEAR]]",
         "tags": ["gear", "tools", "items", "shop", "light"]
-      },
-      {
-        "id": "5.5",
-        "title": "The Reagent System",
-        "content": "<p>Reagents are the ammunition of the Specialist classes. They are powerful, single-use items crafted from monster parts and raw materials.</p><h4>1. Raw Materials</h4><p>Harvested from monsters or found in the wild. <strong>3 Bundles = 1 Slot</strong>.</p><ul><li><strong>Organics:</strong> Flesh, venom, glands. (Poisons/Acids)</li><li><strong>Flora:</strong> Plants, fungi, roots. (Healing/Utility)</li><li><strong>Scrap:</strong> Metal, gears, glass. (Explosives/Traps)</li><li><strong>Essence:</strong> Ectoplasm, dust, magic. (Enchanting)</li></ul><h4>2. Crafting Rules</h4><ul><li><strong>Downtime:</strong> Safe crafting. Check vs Craft DC. Success = 1 Batch. Crit = 2 Batches. Fail = Materials lost.</li><li><strong>Field Crafting:</strong> Possible but risky. Takes 1 Dungeon Turn. <strong>Disadvantage</strong> on the check unless you have specific Class Talents.</li></ul>[[DYNAMIC_REAGENTS]]",
-        "tags": ["crafting", "alchemy", "reagents", "bombs", "poisons", "harvesting"]
       }
     ]
   },
@@ -242,6 +236,12 @@
         "title": "Crafting Consumables",
         "content": "<p>Crafting turns Raw Materials into <strong>Reagents</strong> (Bombs, Potions, Kits). This is primarily a Downtime Activity.</p><h3>The Process</h3><ol><li><strong>Recipe:</strong> You must know the Recipe (via Class Talent or Loot).</li><li><strong>Kit:</strong> You must have the correct Tool Kit (Alchemist, Poisoner, etc.).</li><li><strong>Materials:</strong> You must expend the required Bundles.</li></ol><h3>The Check</h3><div class='formula'>Craft & Tinker (INT) vs. Item Craft DC</div><table class='table'><thead><tr><th>Result</th><th>Outcome</th></tr></thead><tbody><tr><td><strong>Critical Success</strong></td><td>Create <strong>2 Batches</strong> for the cost of 1.</td></tr><tr><td><strong>Success</strong></td><td>Create <strong>1 Batch</strong> (usually 1d4 items). Materials consumed.</td></tr><tr><td><strong>Failure</strong></td><td>Creation fails. <strong>Half</strong> the materials are wasted.</td></tr><tr><td><strong>Whiff (Nat 1)</strong></td><td><strong>Explosion.</strong> All materials lost. Take 1d6 Damage. GM Gains 1 DP.</td></tr></tbody></table><h3>Field Crafting</h3><p>Crafting inside a dungeon is dangerous. It takes <strong>1 Dungeon Turn</strong> and all Checks are made with <strong>Disadvantage</strong> unless you have a specific Talent (e.g., <em>Field Alchemy</em>).</p>",
         "tags": ["crafting", "alchemy", "reagents", "downtime"]
+      },
+      {
+        "id": "7.4",
+        "title": "The Reagent System",
+        "content": "<p>Reagents are the ammunition of the Specialist classes. They are powerful, single-use items crafted from monster parts and raw materials.</p><h4>1. Raw Materials</h4><p>Harvested from monsters or found in the wild. <strong>3 Bundles = 1 Slot</strong>.</p><ul><li><strong>Organics:</strong> Flesh, venom, glands. (Poisons/Acids)</li><li><strong>Flora:</strong> Plants, fungi, roots. (Healing/Utility)</li><li><strong>Scrap:</strong> Metal, gears, glass. (Explosives/Traps)</li><li><strong>Essence:</strong> Ectoplasm, dust, magic. (Enchanting)</li></ul><h4>2. Crafting Rules</h4><ul><li><strong>Downtime:</strong> Safe crafting. Check vs Craft DC. Success = 1 Batch. Crit = 2 Batches. Fail = Materials lost.</li><li><strong>Field Crafting:</strong> Possible but risky. Takes 1 Dungeon Turn. <strong>Disadvantage</strong> on the check unless you have specific Class Talents.</li></ul>[[DYNAMIC_REAGENTS]]",
+        "tags": ["crafting", "alchemy", "reagents", "bombs", "poisons", "harvesting"]
       }
     ]
   },
@@ -421,3 +421,4 @@
   }
 
 ]
+

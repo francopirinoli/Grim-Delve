@@ -2560,6 +2560,63 @@ export const CharGen = {
         return isCatMatch || isNameMatch;
     },
 
+    getProficiencyList: () => {
+        const c = CharGen.char;
+        const data = I18n.getData('options');
+        
+        let armor = new Set();
+        let weapons = new Set();
+        let others = new Set(); // Skills/Tools
+
+        // 1. Archetypes (Base Proficiencies)
+        [c.archA, c.archB].forEach(id => {
+            const arch = data.archetypes.find(a => a.id === id);
+            if (arch && arch.proficiencies) {
+                if (arch.proficiencies.armor) arch.proficiencies.armor.forEach(x => armor.add(x));
+                if (arch.proficiencies.weapons) arch.proficiencies.weapons.forEach(x => weapons.add(x));
+            }
+        });
+
+        // 2. Background (Skill/Tool Training)
+        if (c.background) {
+            const bg = data.backgrounds.find(b => b.id === c.background);
+            if (bg && bg.skill) others.add(bg.skill);
+        }
+
+        // 3. Talents & Feats (Scanning Modifiers)
+        const scanMods = (mods) => {
+            if (!mods) return;
+            if (mods.weapon_training) mods.weapon_training.forEach(x => weapons.add(x));
+            // Check for specific armor grants via modifiers if they exist
+        };
+
+        // Ancestry Feat
+        if (c.ancestry) {
+            const anc = data.ancestries.find(a => a.id === c.ancestry);
+            if (anc && c.ancestryFeatIndex !== null && anc.feats[c.ancestryFeatIndex]) {
+                scanMods(anc.feats[c.ancestryFeatIndex].modifiers);
+            }
+        }
+
+        // Class Talents
+        c.talents.forEach(tal => {
+            if (tal.modifiers) scanMods(tal.modifiers);
+            // Handle Hardcoded "Armor Training" talent name check for edge cases
+            const name = tal.name.toLowerCase();
+            if (name.includes("armor training") || name.includes("entrenamiento con armadura")) {
+                // Determine localized string for "Heavy"
+                const heavyLbl = I18n.currentLang === 'es' ? "Pesada" : "Heavy";
+                armor.add(heavyLbl);
+            }
+        });
+
+        return {
+            armor: Array.from(armor).join(', ') || '-',
+            weapons: Array.from(weapons).join(', ') || '-',
+            other: Array.from(others).join(', ') || '-'
+        };
+    },
+
     renderTabMain: (container) => {
         const c = CharGen.char;
         const t = I18n.t;
@@ -2714,8 +2771,10 @@ export const CharGen = {
         // --- RENDER HTML ---
         container.innerHTML = `
             <div class="manager-grid">
-                <!-- COL 1: Stats, Saves, Defenses -->
+                <!-- COL 1: Stats, Saves, Defenses, Proficiencies -->
                 <div class="mgr-col">
+                    
+                    <!-- Attributes -->
                     <div>
                         <div class="mgr-header">${t('cg_step_stats')}</div>
                         <div class="attr-grid">
@@ -2732,6 +2791,7 @@ export const CharGen = {
                         </div>
                     </div>
 
+                    <!-- Saving Throws -->
                     <div>
                         <div class="mgr-header">${t('sheet_saves')}</div>
                         <div class="save-grid">
@@ -2741,6 +2801,7 @@ export const CharGen = {
                         </div>
                     </div>
 
+                    <!-- Defenses -->
                     <div>
                         <div class="mgr-header">${t('sheet_def')}</div>
                         <div class="def-row">
@@ -2756,9 +2817,22 @@ export const CharGen = {
                         </div>
                         <div style="margin-top:10px; background:#1a1a1a; padding:10px; border-radius:4px; border:1px solid #333;">
                             ${renderDefense('sheet_dodge', 'dodge', def.dodge, 'DEX')}
-                            <!-- UPDATED LABEL FOR PARRY -->
                             ${renderDefense('sheet_parry', 'parry', def.parry, 'WPN')}
                             ${renderDefense('sheet_block', 'block', def.block, 'CON')}
+                        </div>
+
+                        <!-- Proficiencies Box -->
+                        <div style="margin-top:10px; background:#1a1a1a; padding:10px; border-radius:4px; border:1px solid #333; font-size:0.85rem;">
+                            <div style="margin-bottom:5px; color:var(--accent-gold); font-weight:bold; text-transform:uppercase; font-size:0.75rem; border-bottom:1px solid #444;">${t('cg_lbl_skill_training') || 'Proficiencies'}</div>
+                            
+                            ${(() => {
+                                const profs = CharGen.getProficiencyList();
+                                return `
+                                    <div style="margin-bottom:4px;"><strong style="color:#888;">${t('cg_lbl_armor')}:</strong> ${profs.armor}</div>
+                                    <div style="margin-bottom:4px;"><strong style="color:#888;">${t('cg_lbl_weapons')}:</strong> ${profs.weapons}</div>
+                                    <div><strong style="color:#888;">${t('cg_lbl_skill')}:</strong> ${profs.other}</div>
+                                `;
+                            })()}
                         </div>
                     </div>
                 </div>
@@ -3860,16 +3934,20 @@ renderPrintVersion: async (container) => {
         const t = I18n.t;
         const fmt = I18n.fmt;
         
+        // Ensure latest math
         CharGen.recalcAll();
         
         // 1. Prepare Data
         const armorScore = CharGen.calculateArmorScore();
         const def = c.defenses;
         const skills = CharGen.calculateSkills();
+        const profs = CharGen.getProficiencyList(); // Get Proficiencies
         
         // Get Attacks
         const attacks = [];
+        // Unarmed
         attacks.push(CharGen._calculateUnarmed());
+        // Weapons
         c.inventory.filter(i => (i.type === 'Melee' || i.type === 'Ranged' || i.type === 'Cuerpo a Cuerpo' || i.type === 'A Distancia') && i.equipped).forEach(w => {
             const isFinesse = w.tags && (String(w.tags).includes("Finesse") || String(w.tags).includes("Sutil"));
             const isRanged = w.type.includes('Ranged') || w.type.includes('Distancia');
@@ -3901,6 +3979,7 @@ renderPrintVersion: async (container) => {
 
         const archDisplay = CharGen.getArchetypeDisplay();
 
+        // Image Handling
         let imgHTML = `<div style="font-size:3rem; color:#ccc; text-align:center; line-height:100px;">👤</div>`;
         if (c.imageUrl) imgHTML = `<img src="${c.imageUrl}">`;
         else if (c.imageId) {
@@ -3955,7 +4034,7 @@ renderPrintVersion: async (container) => {
                         </div>
                     </div>
 
-                    <!-- NEW SAVING THROWS SECTION -->
+                    <!-- SAVING THROWS -->
                     <div class="p-section">
                         <div class="p-header">${t('sheet_saves')}</div>
                         <div class="p-save-row">
@@ -3965,10 +4044,11 @@ renderPrintVersion: async (container) => {
                         </div>
                     </div>
 
+                    <!-- DEFENSES -->
                     <div class="p-defense-grid">
                         <div class="p-def-box"><span class="p-def-val">${armorScore}</span><span class="p-def-lbl">${t('sheet_ac')}</span></div>
                         <div class="p-def-box"><span class="p-def-val">${def.dodge.val}</span><span class="p-def-lbl">${t('sheet_dodge')}</span></div>
-                        <div class="p-def-box"><span class="p-def-val">${def.parry.val!==null?def.parry.val:'-'}</span><span class="p-def-lbl">${t('sheet_parry')}</span></div>
+                        <div class="p-def-box"><span class="p-def-val">${def.parry.val!==null?def.parry.val:'-'}</span><span class="p-def-lbl">${t('sheet_parry')} (WPN)</span></div>
                         <div class="p-def-box"><span class="p-def-val">${(c.stats.DEX||0)>=0?'+'+c.stats.DEX:c.stats.DEX}</span><span class="p-def-lbl">${t('cg_initiative')}</span></div>
                     </div>
 
@@ -3985,6 +4065,13 @@ renderPrintVersion: async (container) => {
                                     <span>${mod} ${sk.die !== '-' ? '/ <strong>+'+sk.die+'</strong>' : ''}</span>
                                 </div>`;
                             }).join('')}
+                        </div>
+
+                        <!-- PROFICIENCIES -->
+                        <div style="margin-top:10px; padding-top:5px; border-top:1px dotted #000; font-size:8pt;">
+                            <div style="margin-bottom:2px;"><strong>${t('cg_lbl_armor')}:</strong> ${profs.armor}</div>
+                            <div style="margin-bottom:2px;"><strong>${t('cg_lbl_weapons')}:</strong> ${profs.weapons}</div>
+                            <div><strong>${t('cg_lbl_skill')}:</strong> ${profs.other}</div>
                         </div>
                     </div>
                 </div>
@@ -4011,6 +4098,7 @@ renderPrintVersion: async (container) => {
                         </table>
                     </div>
 
+                    <!-- PASSIVE FEATURES -->
                     <div class="p-section">
                         <div class="p-header">${t('sheet_features')}</div>
                         ${passiveFeatures.map(f => `
@@ -4021,6 +4109,7 @@ renderPrintVersion: async (container) => {
                         `).join('')}
                     </div>
                     
+                    <!-- INVENTORY -->
                     <div class="p-section">
                         <div class="p-header">${t('sheet_inv')}</div>
                         <div style="column-count: 2; font-size: 8pt; gap: 10px;">
@@ -4034,6 +4123,7 @@ renderPrintVersion: async (container) => {
                             Gold: ${c.currency.g} | Silver: ${c.currency.s} | Copper: ${c.currency.c}
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -4041,6 +4131,7 @@ renderPrintVersion: async (container) => {
         <!-- PAGE 2: SPELLS, CRAFTING & NOTES -->
         <div class="print-page">
             <div class="p-grid-2">
+                <!-- ACTIVE ABILITIES (Exploits / Spells) -->
                 <div class="p-col">
                      ${activeAbilities.length > 0 ? `
                         <div class="p-section">
@@ -4080,6 +4171,7 @@ renderPrintVersion: async (container) => {
                     }
                 </div>
 
+                <!-- NOTES -->
                 <div class="p-col">
                      <div class="p-section" style="height: 100%;">
                         <div class="p-header">${t('sheet_notes')}</div>
@@ -4772,6 +4864,7 @@ renderPrintVersion: async (container) => {
     }
 
 };
+
 
 
 

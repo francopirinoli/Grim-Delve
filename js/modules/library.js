@@ -277,9 +277,19 @@ export const Library = {
                     <div class="lib-card-meta">${t('lbl_level')} ${c.level} ${c.className || 'Adventurer'}</div>
                     
                     <div class="lib-mini-stats">
-                        <div class="lms-box"><div class="lms-label">${t('mon_stat_hp')}</div><div class="lms-val" style="color:#d32f2f">${c.current ? c.current.hp : 0}/${c.derived ? c.derived.maxHP : 0}</div></div>
-                        <div class="lms-box"><div class="lms-label">${t('stat_con')}</div><div class="lms-val" style="color:#388e3c">${c.current ? c.current.sta : 0}/${c.derived ? c.derived.maxSTA : 0}</div></div>
-                        <div class="lms-box"><div class="lms-label">${t('sheet_mp')}</div><div class="lms-val" style="color:#1976d2">${c.current ? c.current.mp : 0}/${c.derived ? c.derived.maxMP : 0}</div></div>
+                        <div class="lms-box">
+                            <div class="lms-label">${t('mon_stat_hp')}</div>
+                            <div class="lms-val" style="color:#d32f2f">${c.current ? c.current.hp : 0}/${c.derived ? c.derived.maxHP : 0}</div>
+                        </div>
+                        <!-- CHANGED: Replaced CON/STA with LUCK -->
+                        <div class="lms-box">
+                            <div class="lms-label">${t('sheet_luck')}</div>
+                            <div class="lms-val" style="color:#fbc02d">${c.current ? c.current.luck : 0}/${c.derived ? c.derived.maxLuck : 0}</div>
+                        </div>
+                        <div class="lms-box">
+                            <div class="lms-label">${t('sheet_mp')}</div>
+                            <div class="lms-val" style="color:#1976d2">${c.current ? c.current.mp : 0}/${c.derived ? c.derived.maxMP : 0}</div>
+                        </div>
                     </div>
                 </div>
                 <div class="lib-card-footer">
@@ -762,3 +772,4 @@ export const Library = {
         reader.readAsText(file);
     }
 };
+

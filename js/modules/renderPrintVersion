@@ -3937,17 +3937,15 @@ renderPrintVersion: async (container) => {
         // Ensure latest math
         CharGen.recalcAll();
         
-        // 1. Prepare Data
+        // --- 1. PREPARE DATA ---
         const armorScore = CharGen.calculateArmorScore();
         const def = c.defenses;
         const skills = CharGen.calculateSkills();
-        const profs = CharGen.getProficiencyList(); // Get Proficiencies
+        const profs = CharGen.getProficiencyList();
         
-        // Get Attacks
+        // Attacks
         const attacks = [];
-        // Unarmed
         attacks.push(CharGen._calculateUnarmed());
-        // Weapons
         c.inventory.filter(i => (i.type === 'Melee' || i.type === 'Ranged' || i.type === 'Cuerpo a Cuerpo' || i.type === 'A Distancia') && i.equipped).forEach(w => {
             const isFinesse = w.tags && (String(w.tags).includes("Finesse") || String(w.tags).includes("Sutil"));
             const isRanged = w.type.includes('Ranged') || w.type.includes('Distancia');
@@ -3971,15 +3969,32 @@ renderPrintVersion: async (container) => {
             });
         });
 
-        // Get Features
+        // Feature Sorting
         const allFeatures = CharGen.getFlattenedFeatures();
-        const passiveFeatures = allFeatures.filter(f => !f.isSpell && !f.isCraftable && !f.isExploit);
-        const activeAbilities = allFeatures.filter(f => f.isExploit || f.isSpell); 
-        const recipes = allFeatures.filter(f => f.isCraftable); 
+        
+        // Filter: Spells (Magic Tab)
+        const spellList = allFeatures.filter(f => f.isSpell);
+        
+        // Filter: Recipes (Crafting)
+        const recipeList = allFeatures.filter(f => f.isCraftable);
+        
+        // Filter: Active Abilities (Exploits, Class Actions, but NOT Spells/Recipes)
+        const activeList = allFeatures.filter(f => 
+            !f.isSpell && 
+            !f.isCraftable && 
+            (f.isExploit || f.type === 'Action' || f.type === 'Reaction' || f.type === 'Free Action' || f.cost)
+        );
+
+        // Filter: Passives (Everything else)
+        const passiveList = allFeatures.filter(f => 
+            !f.isSpell && 
+            !f.isCraftable && 
+            !activeList.includes(f)
+        );
 
         const archDisplay = CharGen.getArchetypeDisplay();
 
-        // Image Handling
+        // Image
         let imgHTML = `<div style="font-size:3rem; color:#ccc; text-align:center; line-height:100px;">👤</div>`;
         if (c.imageUrl) imgHTML = `<img src="${c.imageUrl}">`;
         else if (c.imageId) {
@@ -3992,7 +4007,8 @@ renderPrintVersion: async (container) => {
 
         // --- RENDER HTML ---
         container.innerHTML = `
-        <!-- PAGE 1: COMBAT & STATS -->
+        
+        <!-- PAGE 1: THE CHARACTER SHEET (Gameplay) -->
         <div class="print-page">
             
             <!-- HEADER -->
@@ -4020,11 +4036,11 @@ renderPrintVersion: async (container) => {
                 <div class="p-vital-box"><label>${t('cg_lbl_slots')}</label><span>${c.derived.slots}</span></div>
             </div>
 
-            <!-- MAIN BODY -->
-            <div class="p-columns-2">
+            <!-- MAIN GAMEPLAY GRID (3 Columns) -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1.5fr; gap: 10px; margin-bottom: 10px;">
                 
-                <!-- LEFT COLUMN: STATS -->
-                <div class="p-col-left">
+                <!-- COL 1: ATTRIBUTES & DEFENSE -->
+                <div style="display:flex; flex-direction:column; gap:10px;">
                     <div class="p-section">
                         <div class="p-header">${t('cg_step_stats')}</div>
                         <div class="p-attr-row">
@@ -4034,110 +4050,132 @@ renderPrintVersion: async (container) => {
                         </div>
                     </div>
 
-                    <!-- SAVING THROWS -->
                     <div class="p-section">
                         <div class="p-header">${t('sheet_saves')}</div>
                         <div class="p-save-row">
-                            <div class="p-save-box"><span class="p-save-val">${c.saves.fort >= 0 ? '+'+c.saves.fort : c.saves.fort}</span><span class="p-save-lbl">${t('save_fort')}</span></div>
-                            <div class="p-save-box"><span class="p-save-val">${c.saves.ref >= 0 ? '+'+c.saves.ref : c.saves.ref}</span><span class="p-save-lbl">${t('save_ref')}</span></div>
-                            <div class="p-save-box"><span class="p-save-val">${c.saves.will >= 0 ? '+'+c.saves.will : c.saves.will}</span><span class="p-save-lbl">${t('save_will')}</span></div>
+                            <div class="p-save-box"><span class="p-save-val">${c.saves.fort >= 0 ? '+'+c.saves.fort : c.saves.fort}</span><span class="p-save-lbl">${t('save_fort').substring(0,4)}</span></div>
+                            <div class="p-save-box"><span class="p-save-val">${c.saves.ref >= 0 ? '+'+c.saves.ref : c.saves.ref}</span><span class="p-save-lbl">${t('save_ref').substring(0,3)}</span></div>
+                            <div class="p-save-box"><span class="p-save-val">${c.saves.will >= 0 ? '+'+c.saves.will : c.saves.will}</span><span class="p-save-lbl">${t('save_will').substring(0,4)}</span></div>
                         </div>
                     </div>
 
-                    <!-- DEFENSES -->
                     <div class="p-defense-grid">
                         <div class="p-def-box"><span class="p-def-val">${armorScore}</span><span class="p-def-lbl">${t('sheet_ac')}</span></div>
                         <div class="p-def-box"><span class="p-def-val">${def.dodge.val}</span><span class="p-def-lbl">${t('sheet_dodge')}</span></div>
-                        <div class="p-def-box"><span class="p-def-val">${def.parry.val!==null?def.parry.val:'-'}</span><span class="p-def-lbl">${t('sheet_parry')} (WPN)</span></div>
+                        <div class="p-def-box"><span class="p-def-val">${def.parry.val!==null?def.parry.val:'-'}</span><span class="p-def-lbl">${t('sheet_parry')}</span></div>
                         <div class="p-def-box"><span class="p-def-val">${(c.stats.DEX||0)>=0?'+'+c.stats.DEX:c.stats.DEX}</span><span class="p-def-lbl">${t('cg_initiative')}</span></div>
-                    </div>
-
-                    <div class="p-section">
-                        <div class="p-header">${t('sheet_skills')}</div>
-                        <div class="p-skill-list">
-                            ${skills.map(sk => {
-                                const mod = sk.statMod >= 0 ? '+'+sk.statMod : sk.statMod;
-                                let className = "p-skill-row";
-                                if(sk.count === 1) className += " trained";
-                                if(sk.count >= 2) className += " expert";
-                                return `<div class="${className}">
-                                    <span>${sk.name} <span style="color:#666; font-size:0.8em">(${sk.stat})</span></span>
-                                    <span>${mod} ${sk.die !== '-' ? '/ <strong>+'+sk.die+'</strong>' : ''}</span>
-                                </div>`;
-                            }).join('')}
-                        </div>
-
-                        <!-- PROFICIENCIES -->
-                        <div style="margin-top:10px; padding-top:5px; border-top:1px dotted #000; font-size:8pt;">
-                            <div style="margin-bottom:2px;"><strong>${t('cg_lbl_armor')}:</strong> ${profs.armor}</div>
-                            <div style="margin-bottom:2px;"><strong>${t('cg_lbl_weapons')}:</strong> ${profs.weapons}</div>
-                            <div><strong>${t('cg_lbl_skill')}:</strong> ${profs.other}</div>
-                        </div>
                     </div>
                 </div>
 
-                <!-- RIGHT COLUMN: COMBAT & ABILITIES -->
-                <div class="p-col-right">
-                    <div class="p-section">
-                        <div class="p-header">${t('sheet_attacks')}</div>
-                        <table class="p-table">
-                            <thead><tr><th>Name</th><th width="40">Atk</th><th>Dmg</th><th>Tags</th></tr></thead>
-                            <tbody>
-                                ${attacks.map(a => {
-                                    const star = a.isProf ? '★ ' : '';
-                                    const profDie = a.isProf ? '<small>+d4</small>' : '';
-                                    return `
-                                    <tr>
-                                        <td><strong>${star}${a.name}</strong></td>
-                                        <td>${a.atk >= 0 ? '+'+a.atk : a.atk} ${profDie}</td>
-                                        <td>${a.dmg}</td>
-                                        <td style="font-size:7pt; color:#444;">${a.tags}</td>
-                                    </tr>`;
-                                }).join('')}
-                            </tbody>
-                        </table>
+                <!-- COL 2: SKILLS & PROFICIENCIES -->
+                <div class="p-section">
+                    <div class="p-header">${t('sheet_skills')}</div>
+                    <div class="p-skill-list">
+                        ${skills.map(sk => {
+                            const mod = sk.statMod >= 0 ? '+'+sk.statMod : sk.statMod;
+                            let className = "p-skill-row";
+                            if(sk.count === 1) className += " trained";
+                            if(sk.count >= 2) className += " expert";
+                            return `<div class="${className}">
+                                <span>${sk.name} <span style="color:#666; font-size:0.8em">(${sk.stat})</span></span>
+                                <span>${mod} ${sk.die !== '-' ? '/ <strong>+'+sk.die+'</strong>' : ''}</span>
+                            </div>`;
+                        }).join('')}
                     </div>
+                    <div style="margin-top:10px; padding-top:5px; border-top:1px dotted #000; font-size:8pt;">
+                        <div style="margin-bottom:2px;"><strong>${t('cg_lbl_armor')}:</strong> ${profs.armor}</div>
+                        <div style="margin-bottom:2px;"><strong>${t('cg_lbl_weapons')}:</strong> ${profs.weapons}</div>
+                        <div><strong>${t('cg_lbl_skill')}:</strong> ${profs.other}</div>
+                    </div>
+                </div>
 
-                    <!-- PASSIVE FEATURES -->
+                <!-- COL 3: ATTACKS -->
+                <div class="p-section">
+                    <div class="p-header">${t('sheet_attacks')}</div>
+                    <table class="p-table">
+                        <thead><tr><th>Name</th><th width="30">Atk</th><th>Dmg</th><th>Tags</th></tr></thead>
+                        <tbody>
+                            ${attacks.map(a => {
+                                const star = a.isProf ? '★ ' : '';
+                                const profDie = a.isProf ? '<small>+d4</small>' : '';
+                                return `
+                                <tr>
+                                    <td><strong>${star}${a.name}</strong></td>
+                                    <td>${a.atk >= 0 ? '+'+a.atk : a.atk} ${profDie}</td>
+                                    <td>${a.dmg}</td>
+                                    <td style="font-size:7pt; color:#444;">${a.tags}</td>
+                                </tr>`;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- INVENTORY & CURRENCY -->
+            <div class="p-section">
+                <div class="p-header">${t('sheet_inv')}</div>
+                <div style="column-count: 3; font-size: 8pt; gap: 10px;">
+                    ${c.inventory.map(i => `
+                        <div style="break-inside: avoid; margin-bottom: 2px;">
+                            ${i.equipped ? '●' : '○'} <strong>${i.name}</strong> <span style="color:#666">(${i.slots})</span>
+                        </div>
+                    `).join('')}
+                </div>
+                <div style="margin-top:5px; border-top:1px solid #ccc; padding-top:2px; font-weight:bold; font-size:8pt;">
+                    ${t('inv_gold')}: ${c.currency.g} | ${t('inv_silver')}: ${c.currency.s} | ${t('inv_copper')}: ${c.currency.c}
+                </div>
+            </div>
+
+            <!-- NOTES (Moved to Page 1) -->
+            <div class="p-section" style="flex-grow: 1;">
+                <div class="p-header">${t('sheet_notes')}</div>
+                <div class="p-notes-area">${c.notes || ''}</div>
+            </div>
+        </div>
+
+        <!-- PAGE 2: FEATURES, SPELLS & RULES -->
+        <div class="print-page">
+            <div class="p-grid-2">
+                
+                <!-- LEFT COLUMN: ABILITIES -->
+                <div class="p-col">
+                    <!-- CLASS ACTIONS (New Category) -->
+                    ${activeList.length > 0 ? `
+                        <div class="p-section">
+                            <div class="p-header">Actions & Exploits</div>
+                            ${activeList.map(f => `
+                                <div class="p-card exploit">
+                                    <div class="p-card-top">
+                                        <span class="p-card-title">${f.name}</span>
+                                        <span class="p-card-cost">${f.cost || 'Action'}</span>
+                                    </div>
+                                    <div class="p-card-meta">${f.type} &bull; ${f.source || 'Class'}</div>
+                                    <div class="p-card-desc">${f.effect || f.desc}</div>
+                                </div>
+                            `).join('')}
+                        </div>` : ''
+                    }
+
+                    <!-- PASSIVES -->
                     <div class="p-section">
                         <div class="p-header">${t('sheet_features')}</div>
-                        ${passiveFeatures.map(f => `
+                        ${passiveList.map(f => `
                             <div class="p-feat-row">
                                 <div class="p-feat-name">${f.name} <span class="p-feat-source">[${f.source}]</span></div>
                                 <div class="p-feat-desc">${f.desc}</div>
                             </div>
                         `).join('')}
                     </div>
-                    
-                    <!-- INVENTORY -->
-                    <div class="p-section">
-                        <div class="p-header">${t('sheet_inv')}</div>
-                        <div style="column-count: 2; font-size: 8pt; gap: 10px;">
-                            ${c.inventory.map(i => `
-                                <div style="break-inside: avoid; margin-bottom: 2px;">
-                                    ${i.equipped ? '●' : '○'} <strong>${i.name}</strong> <span style="color:#666">(${i.slots})</span>
-                                </div>
-                            `).join('')}
-                        </div>
-                        <div style="margin-top:5px; border-top:1px solid #ccc; padding-top:2px; font-weight:bold; font-size:8pt;">
-                            Gold: ${c.currency.g} | Silver: ${c.currency.s} | Copper: ${c.currency.c}
-                        </div>
-                    </div>
-
                 </div>
-            </div>
-        </div>
 
-        <!-- PAGE 2: SPELLS, CRAFTING & NOTES -->
-        <div class="print-page">
-            <div class="p-grid-2">
-                <!-- ACTIVE ABILITIES (Exploits / Spells) -->
+                <!-- RIGHT COLUMN: MAGIC & CRAFTING -->
                 <div class="p-col">
-                     ${activeAbilities.length > 0 ? `
+                    <!-- SPELLS -->
+                    ${spellList.length > 0 ? `
                         <div class="p-section">
                             <div class="p-header">${t('header_spells')}</div>
-                            ${activeAbilities.map(f => `
-                                <div class="p-card ${f.isExploit ? 'exploit' : 'spell'}">
+                            ${spellList.map(f => `
+                                <div class="p-card spell">
                                     <div class="p-card-top">
                                         <span class="p-card-title">${f.name}</span>
                                         <span class="p-card-cost">${f.cost}</span>
@@ -4152,10 +4190,11 @@ renderPrintVersion: async (container) => {
                         </div>` : ''
                     }
 
-                    ${recipes.length > 0 ? `
-                        <div class="p-section" style="margin-top:10px;">
+                    <!-- SCHEMATICS -->
+                    ${recipeList.length > 0 ? `
+                        <div class="p-section">
                             <div class="p-header">${t('header_crafting')}</div>
-                            ${recipes.map(r => `
+                            ${recipeList.map(r => `
                                 <div class="p-card recipe">
                                     <div class="p-card-top">
                                         <span class="p-card-title">${r.name}</span>
@@ -4170,19 +4209,11 @@ renderPrintVersion: async (container) => {
                         </div>` : ''
                     }
                 </div>
-
-                <!-- NOTES -->
-                <div class="p-col">
-                     <div class="p-section" style="height: 100%;">
-                        <div class="p-header">${t('sheet_notes')}</div>
-                        <div class="p-notes-area">${c.notes || ''}</div>
-                    </div>
-                </div>
             </div>
         </div>
         `;
     },
-
+    
     attachManagerListeners: () => {
         const bind = (selector, type) => {
             document.querySelectorAll(selector).forEach(el => {
@@ -4864,6 +4895,7 @@ renderPrintVersion: async (container) => {
     }
 
 };
+
 
 
 

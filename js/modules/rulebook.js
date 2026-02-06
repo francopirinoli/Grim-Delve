@@ -5,6 +5,7 @@ export const Rulebook = {
     
     // Hover-over definitions for common terms
     keywords: {
+        // English
         "Advantage": "Roll 2d20, keep the Highest.",
         "Disadvantage": "Roll 2d20, keep the Lowest.",
         "Critical Pass": "Natural 20. Auto-Success + Bonus.",
@@ -13,14 +14,34 @@ export const Rulebook = {
         "Stamina": "Warrior Resource. Regains on Crit or Catch Breath.",
         "Mana": "Caster Resource. Regains on Long Rest.",
         "Luck": "Specialist Resource. Regains on Crit or Long Rest.",
+        
+        // Spanish
+        "Ventaja": "Tira 2d20, quédate con el más alto.",
+        "Desventaja": "Tira 2d20, quédate con el más bajo.",
+        "Éxito Crítico": "20 Natural. Éxito automático + Bono.",
+        "Pifia": "1 Natural. Fallo automático + Punto de Peligro.",
+        "Punto de Peligro": "Moneda del GM para activar eventos negativos.",
+        "Aguante": "Recurso de Guerrero. Se recupera con Críticos o Tomar un Respiro.",
+        "Maná": "Recurso de Lanzador. Se recupera con Descanso Largo.",
+        "Suerte": "Recurso de Especialista. Se recupera con Críticos o Descanso Largo.",
+
+        // Conditions (Common across both)
         "Blinded": "Disadvantage on Attacks/Checks. Enemies have Advantage.",
+        "Cegado": "Desventaja en Ataques/Pruebas. Enemigos tienen Ventaja.",
         "Frightened": "Cannot move closer. Disadvantage on checks.",
+        "Asustado": "No puede acercarse. Desventaja en pruebas.",
         "Dazed": "Action OR Move only. No Reactions.",
+        "Atontado": "Solo Acción O Movimiento. Sin Reacciones.",
         "Stunned": "Incapacitated. Auto-fail Defense.",
+        "Aturdido": "Incapacitado. Falla Defensa automáticamente.",
         "Grappled": "Speed 0.",
+        "Agarrado": "Velocidad 0.",
         "Restrained": "Speed 0. Disadvantage on DEX saves/Attacks.",
+        "Restringido": "Velocidad 0. Desventaja en salvaciones de DES/Ataques.",
         "Prone": "Disadvantage on Attacks. Melee has Advantage against you.",
-        "Weakened": "Damage dealt is halved."
+        "Derribado": "Desventaja en Ataques. Melee tiene Ventaja contra ti.",
+        "Weakened": "Damage dealt is halved.",
+        "Debilitado": "El daño infligido se reduce a la mitad."
     },
 
     init: (container) => {

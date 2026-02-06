@@ -2699,7 +2699,7 @@ export const CharGen = {
             }
         };
         
-        // 4. Saving Throw Helper (NEW)
+        // 4. Saving Throw Helper
         const renderSave = (key, val, cssClass) => {
             const label = t('save_' + key);
             const sign = val >= 0 ? '+' : '';
@@ -2732,7 +2732,6 @@ export const CharGen = {
                         </div>
                     </div>
 
-                    <!-- NEW SAVING THROWS SECTION -->
                     <div>
                         <div class="mgr-header">${t('sheet_saves')}</div>
                         <div class="save-grid">
@@ -2757,7 +2756,8 @@ export const CharGen = {
                         </div>
                         <div style="margin-top:10px; background:#1a1a1a; padding:10px; border-radius:4px; border:1px solid #333;">
                             ${renderDefense('sheet_dodge', 'dodge', def.dodge, 'DEX')}
-                            ${renderDefense('sheet_parry', 'parry', def.parry, 'STR')}
+                            <!-- UPDATED LABEL FOR PARRY -->
+                            ${renderDefense('sheet_parry', 'parry', def.parry, 'WPN')}
                             ${renderDefense('sheet_block', 'block', def.block, 'CON')}
                         </div>
                     </div>
@@ -4183,21 +4183,33 @@ renderPrintVersion: async (container) => {
         if (dodgeRank >= 2) dodgeDie = "1d6";
 
         // 2. PARRY (STR or DEX)
-        const hasWeapon = c.inventory.some(i => i.type === "Melee" && i.equipped);
+        // Check for ANY equipped melee weapon
+        const hasWeapon = c.inventory.some(i => i.equipped && (i.type === "Melee" || i.type === "Cuerpo a Cuerpo"));
         let parryVal = null;
         let parryDie = "-";
 
         if (hasWeapon) {
             parryVal = Math.max(str, dex);
-            const hasGuardWeapon = c.inventory.some(i => i.tags && i.tags.includes("Guard") && i.equipped);
+            // Guard Property Check
+            const hasGuardWeapon = c.inventory.some(i => i.equipped && i.tags && (i.tags.includes("Guard") || i.tags.includes("Guardia")));
             if (hasGuardWeapon) parryVal += 1;
+            
             c.talents.forEach(t => {
                 if (t.modifiers && t.modifiers.defense_bonus_parry) parryVal += t.modifiers.defense_bonus_parry;
             });
         }
 
         // 3. BLOCK (CON)
-        const hasShield = c.inventory.some(i => i.name.includes("Shield") && i.equipped);
+        // Improved Check: Looks for Type "Shield" OR Name "Shield/Escudo"
+        const hasShield = c.inventory.some(i => 
+            i.equipped && (
+                i.type === "Shield" || 
+                i.type === "Escudo" || 
+                i.name.toLowerCase().includes("shield") || 
+                i.name.toLowerCase().includes("escudo")
+            )
+        );
+
         let blockVal = null;
         let blockDie = "-";
         
@@ -4760,6 +4772,7 @@ renderPrintVersion: async (container) => {
     }
 
 };
+
 
 
 
